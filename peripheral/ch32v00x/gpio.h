@@ -2,13 +2,12 @@
 // Created by anton on 26/12/2024.
 //
 
-#ifndef GPIO_H
-#define GPIO_H
+#pragma once
 
 #include <array>
 #include <cstdint>
 
-namespace BundledPeripheral::Gpio {
+namespace Peripheral::Gpio{
 
 
     #pragma region Enums
@@ -22,158 +21,169 @@ namespace BundledPeripheral::Gpio {
 
 
     enum class PinMode: std::uint8_t {
-        directionInput       = 0b00,
-        directionOutput10Mhz = 0b01,
-        directionOutput2Mhz  = 0b10,
-        directionOutput50Mhz = 0b11
-    };
-
-
-    enum class PinConfig: std::uint8_t {
-        inputAnalog                = 0b00,
-        inputDigitalFloating       = 0b01,
-        inputDigitalPullDownOrUp   = 0b10, // up/down is set with OUTDR
-        outputPushPull             = 0b00,
-        outputOpenDrain            = 0b01,
-        outputMultiplexedPushPull  = 0b10,
-        outputMultiplexedOpenDrain = 0b11,
+        inputAnalog                           = 0b00'00,
+        inputFloating                         = 0b01'00,
+        inputPullUpOrDown                     = 0b10'00, // up/down is set with OUTDR
+        outputPushPullNormalSpeed             = 0b00'01, // 10Mhz
+        outputOpenDrainNormalSpeed            = 0b01'01, // 10Mhz
+        alternateFunctionPushPullNormalSpeed  = 0b10'01, // 10Mhz
+        alternateFunctionOpenDrainNormalSpeed = 0b11'01, // 10Mhz
+        outputPushPullSlowSpeed               = 0b00'10, // 5Mhz
+        outputOpenDrainSlowSpeed              = 0b01'10, // 5Mhz
+        alternateFunctionPushPullSlowSpeed    = 0b10'10, // 5Mhz
+        alternateFunctionOpenDrainSlowSpeed   = 0b11'10, // 5Mhz
+        outputPushPullFastSpeed               = 0b00'11, // 50Mhz for all, expect 30Mhz for CH32V003
+        outputOpenDrainFastSpeed              = 0b01'11, // 50Mhz for all, expect 30Mhz for CH32V003
+        alternateFunctionPushPullFastSpeed    = 0b10'11, // 50Mhz for all, expect 30Mhz for CH32V003
+        alternateFunctionOpenDrainFastSpeed   = 0b11'11, // 50Mhz for all, expect 30Mhz for CH32V003
     };
 
 
     #pragma endregion
 
+
     #pragma region Declarations
 
-    struct ActuationEntity {
-        const int portBaseAddress;
-        const std::array<int, 8> pinNumbers;
+
+    struct SequenceEntity {
+        const std::uint32_t portBaseAddress;
+        const std::array<std::uint8_t, 8> pinNumbers;
         const ActuationType action;
         const int value;
     };
 
 
     struct Pins {
-        const int portBaseAddress;
-        const std::array<int, 8> pinNumbers;
+        const std::uint32_t portBaseAddress;
+        const std::array<std::uint8_t, 8> pinNumbers;
 
         auto operator=(int value) const -> const Pins &; // NOLINT(*-unconventional-assign-operator)
 
         auto SetOutputValue(int value) const -> void;
 
-        [[nodiscard]] constexpr auto actuate() const;
+        [[nodiscard]] constexpr auto sequence() const;
 
-        template<PinConfig pinConfig>
+        template<PinMode TplPinMode>
         [[nodiscard]] constexpr auto mode() const;
     };
 
 
-    template <Pins... Entities>
-    struct PinsPack {
-        static constexpr std::array<ActuationEntity, sizeof...(Entities)> entities = { Entities ... };
+    template <Pins... TplPinsEntities>
+    struct PinsSet {
+        static constexpr std::array<SequenceEntity, sizeof...(TplPinsEntities)> entities = { TplPinsEntities ... };
 
-        auto operator=(int value) const -> const PinsPack &; // NOLINT(*-unconventional-assign-operator)
+        auto operator=(int value) const -> const PinsSet &; // NOLINT(*-unconventional-assign-operator)
     };
 
 
-    template<int BaseAddress>
-    struct Base {
-        struct Registers {
-            constexpr static int baseAddress       = BaseAddress;         // CFGLR
-            constexpr static int inputData         = BaseAddress + 0x08;  // INDR
-            constexpr static int outputData        = BaseAddress + 0x0C;  // OUTDR
-            constexpr static int setReset          = BaseAddress + 0x10;  // BSHR
-            constexpr static int reset             = BaseAddress + 0x14;  // BCR
-            constexpr static int configurationLock = BaseAddress + 0x18;  // LCKR
+    template<std::uint32_t TplBaseAddress>
+    struct Port {
+    private:
+        template<std::uint32_t TplRegisterBase>
+        struct RegistersType {
+            constexpr static std::uint32_t configuration     = TplRegisterBase;         // CFGLR, sometimes CFGHR
+            constexpr static std::uint32_t inputData         = TplRegisterBase + 0x08;  // INDR
+            constexpr static std::uint32_t outputData        = TplRegisterBase + 0x0C;  // OUTDR
+            constexpr static std::uint32_t setReset          = TplRegisterBase + 0x10;  // BSHR
+            constexpr static std::uint32_t reset             = TplRegisterBase + 0x14;  // BCR
+            constexpr static std::uint32_t configurationLock = TplRegisterBase + 0x18;  // LCKR
         };
 
+    public:
+        constexpr static std::uint32_t baseAddress = TplBaseAddress;
+
+        struct RegistersType<TplBaseAddress> Registers = {};
+
         // ReSharper disable once CppNonExplicitConversionOperator
-        constexpr operator int() const; // NOLINT(*-explicit-constructor)
+        constexpr operator std::uint32_t() const; // NOLINT(*-explicit-constructor)
 
-        constexpr static auto GetPin(int pin) -> Pins ;
+        constexpr static auto GetPin(std::uint8_t pin) -> Pins;
 
-        constexpr static auto GetPins(const std::array<int, 8> &pins) -> Pins ;
+        constexpr static auto GetPin(const std::array<std::uint8_t, 8> &pins) -> Pins;
     };
 
 
-    template<ActuationEntity ... Entities>
-    struct Actuations {
-        static constexpr std::array<ActuationEntity, sizeof...(Entities)> actuations = { Entities ... };
+    template<SequenceEntity ... TplEntities>
+    struct Sequence {
+        static constexpr std::array<SequenceEntity, sizeof...(TplEntities)> actuations = { TplEntities ... };
 
-        template<Pins Pins>
+        template<Pins TplPinsToSetOn>
         [[nodiscard]] constexpr auto on() const;
 
-        template<Pins Pins>
+        template<Pins TplPinsToSetOff>
         [[nodiscard]] constexpr auto off() const;
 
-        template<Pins Pins, PinConfig mode>
+        template<Pins TplPins, PinMode TplMode>
         [[nodiscard]] constexpr auto mode() const;
 
-        [[nodiscard]] constexpr int commitExact() const;
+        [[nodiscard]] constexpr int executeExact() const;  // TODO no discard is tempory while returning
+
+//        void executeFast() const;
     };
 
     #pragma endregion
 
 
-    #pragma region Definition - Base
+    #pragma region Definition - Port
 
 
-    template<int BaseAddress>
-    constexpr Base<BaseAddress>::operator int() const { // NOLINT(*-explicit-constructor)
-        return Registers::baseAddress;
+    template<std::uint32_t TplBaseAddress>
+    constexpr Port<TplBaseAddress>::operator std::uint32_t() const { // NOLINT(*-explicit-constructor)
+        return baseAddress;
     }
 
 
-    template<int BaseAddress>
-    constexpr auto Base<BaseAddress>::GetPin(const int pin) -> Pins {
-        return Pins{Registers::baseAddress, {pin}};
+    template<std::uint32_t TplBaseAddress>
+    constexpr auto Port<TplBaseAddress>::GetPin(const std::uint8_t pin) -> Pins {
+        return Pins{baseAddress, {pin}};
     }
 
 
-    template<int BaseAddress>
-    constexpr auto Base<BaseAddress>::GetPins(const std::array<int, 8> &pins) -> Pins {
-        return Pins{Registers::baseAddress, pins};
+    template<std::uint32_t TplBaseAddress>
+    constexpr auto Port<TplBaseAddress>::GetPin(const std::array<std::uint8_t, 8> &pins) -> Pins {
+        return Pins{baseAddress, pins};
     }
 
 
     #pragma endregion
 
 
-    #pragma region Definition - Actuations
+    #pragma region Definition - Sequence
 
 
-    template<ActuationEntity... Entities>
-    template<Pins Pins>
-    constexpr auto Actuations<Entities...>::on() const {
-        constexpr ActuationEntity newEntity{Pins.portBaseAddress, Pins.pinNumbers, ActuationType::set, 1};
-        constexpr Actuations<newEntity, Entities ...> ans;
+    template<SequenceEntity... TplEntities>
+    template<Pins TplPins>
+    constexpr auto Sequence<TplEntities...>::on() const {
+        constexpr SequenceEntity newEntity{TplPins.portBaseAddress, TplPins.pinNumbers, ActuationType::set, 1};
+        constexpr Sequence<newEntity, TplEntities ...> ans;
         return ans;
     }
 
 
-    template<ActuationEntity... Entities>
-    template<Pins Pins>
-    constexpr auto Actuations<Entities...>::off() const {
-        constexpr ActuationEntity newEntity{Pins.portBaseAddress, Pins.pinNumbers, ActuationType::set, 0};
-        constexpr Actuations<newEntity, Entities ...> ans;
+    template<SequenceEntity... TplEntities>
+    template<Pins TplPins> // TODO support variadic
+    constexpr auto Sequence<TplEntities...>::off() const {
+        constexpr SequenceEntity newEntity{TplPins.portBaseAddress, TplPins.pinNumbers, ActuationType::set, 0};
+        constexpr Sequence<newEntity, TplEntities ...> ans;
         return ans;
     }
 
-    template<ActuationEntity... Entities>
-    template<Pins Pins, PinConfig mode>
-    constexpr auto Actuations<Entities...>::mode() const {
-        constexpr ActuationEntity newEntity{
-            Pins.portBaseAddress,
-            Pins.pinNumbers,
+    template<SequenceEntity... TplEntities>
+    template<Pins TplPins, PinMode TplPinMode>
+    constexpr auto Sequence<TplEntities...>::mode() const {
+        constexpr SequenceEntity newEntity{
+            TplPins.portBaseAddress,
+            TplPins.pinNumbers,
             ActuationType::modeChange,
-            static_cast<uint8_t>(mode)};
+            static_cast<uint8_t>(TplPinMode)};
 
-        constexpr Actuations<newEntity, Entities ...> ans;
+        constexpr Sequence<newEntity, TplEntities ...> ans;
         return ans;
     }
 
 
-    template<ActuationEntity... Entities>
-    constexpr int Actuations<Entities...>::commitExact() const {
+    template<SequenceEntity... TplEntities>
+    constexpr int Sequence<TplEntities...>::executeExact() const {
         int sum = 0;
         for (auto action : actuations) {
             sum += action.pinNumbers[0];
@@ -203,21 +213,21 @@ namespace BundledPeripheral::Gpio {
 
 
     // ReSharper disable once CppMemberFunctionMayBeStatic
-    constexpr auto Pins::actuate() const { // NOLINT(*-convert-member-functions-to-static)
-        constexpr Actuations<> ans;
+    constexpr auto Pins::sequence() const { // NOLINT(*-convert-member-functions-to-static)
+        constexpr Sequence<> ans;
         return ans;
     }
 
 
-    template<PinConfig pinConfig>
+    template<PinMode TplPinMode>
     constexpr auto Pins::mode() const {
-        constexpr ActuationEntity newEntity{
+        constexpr SequenceEntity newEntity{
             portBaseAddress,
             pinNumbers,
             ActuationType::modeChange,
-            static_cast<std::uint8_t>(pinConfig)};
+            static_cast<std::uint8_t>(TplPinMode)};
 
-        constexpr Actuations<newEntity> ans;
+        constexpr Sequence<newEntity> ans;
         return ans;
     }
 
@@ -228,8 +238,8 @@ namespace BundledPeripheral::Gpio {
     #pragma region Definition - PinsPack
 
 
-    template<Pins... Entities>
-    auto PinsPack<Entities...>::operator=(int) const -> const PinsPack &  {
+    template<Pins... TplEntities>
+    auto PinsSet<TplEntities...>::operator=(int) const -> const PinsSet &  {
         return *this;
     }
 
@@ -240,7 +250,6 @@ namespace BundledPeripheral::Gpio {
 }
 
 
-#endif //GPIO_H
 
 // template<>
 // struct ChangesCt<> {
