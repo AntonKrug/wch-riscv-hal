@@ -7,15 +7,19 @@ set(CMAKE_CXX_STANDARD 23)
 
 set (headers
         peripheral/ch32v00x/gpio.h
+        peripheral/ch32v00x/rcc.h
+        peripheral/ch32v00x/timer.h
+        peripheral/ch32v00x/usart.h
         system/ch32v003/soc.h
+        system/soc_types.h
+        utils/delay.h
+        utils/literals/delay.h
+        utils/literals/helper_templates.h
+        utils/literals/timer.h
 )
 
 set (sources
         main.cpp
-        peripheral/ch32v00x/usart.h
-        system/soc_types.h
-        peripheral/ch32v00x/rcc.h
-        utils/delay.h
 )
 
 foreach(source_file IN LISTS sources)

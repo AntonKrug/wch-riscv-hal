@@ -4,6 +4,8 @@
 
 #include "system/ch32v003/soc.h"
 #include "utils/delay.h"
+#include "utils/literals/delay.h"
+#include "utils/literals/timer.h"
 
 using namespace Peripheral;
 
@@ -39,7 +41,9 @@ int main(int argc, char *argv[]) {
     constexpr auto data = Soc::Gpio.C.GetPin({ 2, 4, 5, 7 });
     // data = argc;
 
-    using namespace DelayLiterals;
+    using namespace Literals::Delay;
+    using namespace Literals::Timer;
+    constexpr auto timer = 4111.5_mhz_to_hz;
     // constexpr auto time = 1_hour_to_ms + 30_min_to_ms;
     // Utils::delayMs(time);
 
@@ -61,6 +65,7 @@ int main(int argc, char *argv[]) {
 
 
     auto uart = Soc::Usart::Channel1Mapping1.device.registers.baudrate;
+
 
     //changes.on<tdi>().commitExact();
 
