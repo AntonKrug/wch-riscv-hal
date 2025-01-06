@@ -8,22 +8,27 @@
 
 namespace Literals::Timer {
 
-    #pragma region toHz
-    consteval auto operator""_mhz_to_hz(const unsigned long long hours) -> std::uint32_t {
-        return Literals::HelperTemplates::multiply<1'000'000>(hours);
+    #pragma region frequencyToHz
+    consteval auto operator""_mhz_to_hz(const unsigned long long megaherz) -> std::uint32_t {
+        return Literals::HelperTemplates::multiply<1'000'000>(megaherz);
     }
 
-    consteval auto operator""_mhz_to_hz(const long double hours) -> std::uint32_t {
-        return Literals::HelperTemplates::multiply<1'000'000>(hours);
+    consteval auto operator""_mhz_to_hz(const long double megaherz) -> std::uint32_t {
+        return Literals::HelperTemplates::multiply<1'000'000>(megaherz);
     }
 
-    consteval auto operator""_khz_to_hz(const unsigned long long hours) -> std::uint32_t {
-        return Literals::HelperTemplates::multiply<1'000>(hours);
+    consteval auto operator""_khz_to_hz(const unsigned long long kiloherz) -> std::uint32_t {
+        return Literals::HelperTemplates::multiply<1'000>(kiloherz);
     }
 
-    consteval auto operator""_khz_to_hz(const long double hours) -> std::uint32_t {
-        return Literals::HelperTemplates::multiply<1'000>(hours);
+    consteval auto operator""_khz_to_hz(const long double kiloherz) -> std::uint32_t {
+        return Literals::HelperTemplates::multiply<1'000>(kiloherz);
     }
     #pragma endregion
 
+    #pragma region periodToHz
+    consteval auto operator""_ms_to_hz(const unsigned long long milisecond) -> std::uint32_t {
+        return Literals::HelperTemplates::invert<1'000>(milisecond);
+    }
+    #pragma endregion
 }

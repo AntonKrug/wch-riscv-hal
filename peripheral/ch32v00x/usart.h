@@ -7,6 +7,8 @@
 #include <array>
 #include <cstdint>
 
+// TODO usart baud rates and enum
+
 namespace Peripheral::Usart{
 
     #pragma region Declarations

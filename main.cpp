@@ -2,6 +2,8 @@
 
 #define WCH_TARGET_WCH_W32V307
 
+#include <iostream>
+
 #include "system/ch32v003/soc.h"
 #include "utils/delay.h"
 #include "utils/literals/delay.h"
@@ -43,7 +45,10 @@ int main(int argc, char *argv[]) {
 
     using namespace Literals::Delay;
     using namespace Literals::Timer;
-    constexpr auto timer = 4111.5_mhz_to_hz;
+    constexpr auto timer = 100_ms_to_hz;
+
+    std::cout << timer << std::endl;
+
     // constexpr auto time = 1_hour_to_ms + 30_min_to_ms;
     // Utils::delayMs(time);
 
