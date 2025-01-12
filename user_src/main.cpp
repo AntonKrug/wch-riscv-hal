@@ -4,10 +4,10 @@
 
 #include <iostream>
 
-#include "system/ch32v003/soc.h"
-#include "utils/delay.h"
-#include "utils/literals/delay.h"
-#include "utils/literals/timer.h"
+#include "system.h"
+//#include "utils/delay.h"
+#include "utils/literals/all.h"
+#include "utils/firmware_build_info.h"
 
 using namespace Peripheral;
 
@@ -28,11 +28,7 @@ using namespace Peripheral;
 //
 // }
 
-constexpr long double operator""_deg_to_rad(long double deg)
-{
-    long double radians = deg * 3.14 / 180;
-    return radians;
-}
+// TODO: section check of IRQ being aligned
 
 
 // NOLINTBEGIN(readability-static-accessed-through-instance)
@@ -45,10 +41,17 @@ int main(int argc, char *argv[]) {
 
     using namespace Literals::Delay;
     using namespace Literals::Timer;
+    using namespace Literals::Usart;
     constexpr auto timer = 100_ms_to_hz;
 
     std::cout << timer << std::endl;
 
+
+    std::cout << "Date: " << firmwareBuildInfo::date << " time: " << firmwareBuildInfo::time << std::endl;
+
+    //constexpr auto div = Usart::calculateUsartDivCT<2_mhz_to_hz, 1_mbaud>();
+
+    //std::cout << div << std::endl;
     // constexpr auto time = 1_hour_to_ms + 30_min_to_ms;
     // Utils::delayMs(time);
 
