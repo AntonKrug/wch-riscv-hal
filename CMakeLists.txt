@@ -13,6 +13,7 @@ set (headers
         peripheral/ch32v00x/usart.h
         system/ch32v003/soc.h
         system/soc_types.h
+        user_src/firmware_build_info.h
         user_src/system.h
         utils/delay.h
         utils/firmware_build_info.h
@@ -37,6 +38,8 @@ set (sources
 #        COMMENT "Forcing recompile by touching ${PROJECT_SOURCE_DIR}/utils/firmware_build_info.h"
 #)
 
+# Force to rebuild this file on each compilation, making sure the date
+# and time info in the file are always up to date
 set_source_files_properties(${PROJECT_SOURCE_DIR}/utils/firmware_build_info.h PROPERTIES COMPILE_FLAGS "-DFORCE_REBUILD")
 
 foreach(source_file IN LISTS sources)
