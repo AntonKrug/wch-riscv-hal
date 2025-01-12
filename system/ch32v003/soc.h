@@ -5,8 +5,11 @@
 #pragma once
 
 #define SYSTEM_WCH
-#define SYSTEM_WCH_CH32v00x
-#define SYSTEM_WCH_CH32v003
+#define SYSTEM_WCH_CH32V00x
+#define SYSTEM_WCH_CH32V003
+
+#define SYSTEM_WCH_ROM_SIZE 16k
+#define SYSTEM_WCH_RAM_SIZE 2k
 
 #include "../soc_types.h"
 
