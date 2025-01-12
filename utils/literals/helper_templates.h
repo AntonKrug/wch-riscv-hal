@@ -5,6 +5,7 @@
 #pragma once
 
 #include <limits>
+#include <cassert>
 
 namespace Literals::HelperTemplates {
 
