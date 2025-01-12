@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
     std::cout << timer << std::endl;
 
 
-    std::cout << "Date: " << firmwareBuildInfo::date << " time: " << firmwareBuildInfo::time << std::endl;
+    std::cout << "Version: " << firmwareBuildInfo::version << " date: " << firmwareBuildInfo::date << " time: " << firmwareBuildInfo::time << std::endl;
 
     //constexpr auto div = Usart::calculateUsartDivCT<2_mhz_to_hz, 1_mbaud>();
 
