@@ -7,7 +7,7 @@
 #include "system.h"
 //#include "utils/delay.h"
 #include "utils/literals/all.h"
-#include "utils/firmware_build_info.h"
+#include "firmware_build_info.h"
 
 using namespace Peripheral;
 
