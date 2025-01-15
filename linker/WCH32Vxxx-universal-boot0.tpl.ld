@@ -1,4 +1,4 @@
-/* Chip: CH32V003 */
+/* Chip: CH32Vxxx */
 /* References:
     https://mcuoneclipse.com/2013/04/14/text-data-and-bss-code-and-data-size-explained/
     https://www.sifive.com/blog/all-aboard-part-3-linker-relaxation-in-riscv-toolchain
@@ -15,32 +15,33 @@
     https://five-embeddev.com/quickref/global_pointer.html
     https://hackmd.io/@hauhsu/rJ89ghF6n?utm_source=preview-mode&utm_medium=rec
     https://stackoverflow.com/questions/19781375/how-to-place-constant-at-specific-address-with-ld-linker-command-file
+    https://stackoverflow.com/questions/38239722/how-to-place-a-symbol-at-certain-address-via-the-linker-script
     https://users.informatik.haw-hamburg.de/~krabat/FH-Labor/gnupro/5_GNUPro_Utilities/c_Using_LD/ldLinker_scripts.html#MEMORY_command
     https://man7.org/linux/man-pages/man5/elf.5.html
     https://stackoverflow.com/questions/6387614/how-to-determine-maximum-stack-usage-in-embedded-system-with-gcc
     https://www.eevblog.com/forum/programming/gccs-risc-v-msmall-data-limit-option/
     http://freertoshal.github.io/doxygen/group__LINKER.html
     https://stackoverflow.com/questions/28837199/can-i-use-preprocessor-directives-in-ld-file
-    ${cross_prefix}${cross_c}${cross_suffix} -E -P -x c ../Ld/Link.ld >> ../Ld/out.ld
+    ${cross_prefix}${cross_c}${cross_suffix} -E -P -x c ../Ld/WCH32Vxxx-universal.ld.tpl -o ../Ld/Link.ld
+    https://stackoverflow.com/questions/70863659/what-does-hidden-and-provide-hidden-in-linker-scripts-exactly-do
+    https://www.reddit.com/r/RISCV/comments/1bcdq5h/software_threads_in_riscv/
 */
+
+/* DO NOT DIRECTLY EDIT THIS FILE, but edit the included header file, it contains comments how to tweak this linker script too */
+
+#include "user_src/system.h" /* open this header file to see details about the defines */
+
 
 OUTPUT_ARCH("riscv")
 
+
 ENTRY(entry_jump_to_init)
 
-ROM_SIZE              = 16k;
-RAM_SIZE              = 2k;  /* GP can relax 100% of the 12-bit wide 4k accesses */
-STACK_SIZE            = 256; /* RAM_SIZE > STACK_SIZE + HEAP_SIZE https://stackoverflow.com/questions/6387614/how-to-determine-maximum-stack-usage-in-embedded-system-with-gcc */
-HEAP_SIZE             = 0;
-LARGEST_TYPE_ALIGMENT = 4; /* when using any 64-byte types, double, long long, uint64_t then switch to 8, otherwise leave value at 4, can be used for ALIGNMENT_FOR_GP and other */
-GP_OFFSET             = 1 << 11;  /* 0 = whatever point used for this calculation is midpoint (and will be able to reach data before this location). the 1<<11 will offset the 12-bit GP that it will mark just the begining of GP's range */
-/*SMALL_RO_DATA_IN_ROM*/ /* depending on GP location, it might lose GP's relaxation optimization benefits if put into ROM, or otherwise waste RAM on content which could be in ROM, just to get GP's relaxation optimizations */
-/*GP_INSIDE_RODATA*/
 
 MEMORY
 {
-	ROM (rx)   : ORIGIN = 0x00000000, LENGTH = ROM_SIZE
-	RAM (rwx)  : ORIGIN = 0x20000000, LENGTH = RAM_SIZE
+	ROM (rx)   : ORIGIN = 0x00000000, LENGTH = SYSTEM_WCH_CHIP_ROM_SIZE
+	RAM (rwx)  : ORIGIN = 0x20000000, LENGTH = SYSTEM_WCH_CHIP_RAM_SIZE
 }
 
 
@@ -70,15 +71,35 @@ SECTIONS
   {
     *(.text.handle_reset) /* part of the HAL's init, setting up clock, gp, intializing (with zeros and values) variables */
     *(.text*)             /* "gcc -ffunction-sections" */
-    *(.rodata*)           /* read only data (constant global/static variables) TODO: maybe want to put it closer to end of the flash for GP having access, but ram is far away 0x2000000 */
-                          /* TODO: does RODATA maybe want align8 when using 64-bit types? */
-    *(.gnu.linkonce.t.*)  /* to merge duplicate C++ template instances and vague linking of weakly defined symbols */
-    *(.gnu.linkonce.r.*)  /* to merge duplicate readonly C++ static constructors and destructors, or read only static data/variabled ***** maybe allow it to be placed to text */
+#ifdef SYSTEM_WCH_LINKER_GP_INSIDE_ROM
+    . = ALIGN(SYSTEM_WCH_LINKER_LARGEST_TYPE_ALIGNMENT);          /* see system.h for details */
+    PROVIDE( __global_pointer_without_offset = .);
+    PROVIDE( __global_pointer = . + SYSTEM_WCH_LINKER_GP_OFFSET); /* see system.h for details */
+#endif /* SYSTEM_WCH_LINKER_GP_INSIDE_ROM */
+#ifndef SYSTEM_WCH_LINKER_SMALL_RO_DATA_IN_RAM
+    /* small read-only data placed in ROM together with other ROM content */
+    PROVIDE( _small_ro_data_in_ROM_begin = .);
+    . = ALIGN(2)
+    *(.srodata.cst16) /* 16-bit  constants 2 byte */
+    . = ALIGN(1)
+    *(.srodata.cst8)  /*  8-bit  constants 1 byte */
+    . = ALIGN(4)
+    *(.srodata.cst4)  /*  4-byte constants 32-bit */
+    . = ALIGN(2)
+    *(.srodata.cst2)  /*  2-byte constants (similar to cst16) */
+    . = ALIGN(4)
+    *(.srodata*)      /* eveyrthing else */
+    PROVIDE( _small_ro_data_in_ROM_end = .);
+#endif /* end SYSTEM_WCH_LINKER_SMALL_RO_DATA_IN_RAM */
+    . = ALIGN(SYSTEM_WCH_LINKER_LARGEST_TYPE_ALIGNMENT); /* see system.h for details in case rodata contains 64-bit variables */
+    *(.rodata*)            /* read only data (constant global/static variables) */
+    *(.gnu.linkonce.t.*)   /* to merge duplicate C++ template instances and vague linking of weakly defined symbols */
+    *(.gnu.linkonce.r.*)   /* to merge duplicate readonly C++ static constructors and destructors, or read only static data/variabled ***** maybe allow it to be placed to text */
   } > ROM
 
 
   /* function pointers to be run before init, before C runtime startup - vtable validation, global initialization */
-  /* DT_PREINIT_ARRAY: This element holds the address of the array of pointers to pre-initialization functions, discussed in ``Initialization and Termination Functions'' below. The DT_PREINIT_ARRAY table is processed only in an executable file; it is ignored if contained in a shared object. */
+  /* https://maskray.me/blog/2021-11-07-init-ctors-init-array ********************************************************************** */
   .preinit_array :
   {
     PROVIDE_HIDDEN(__preinit_array_start = .);
@@ -133,18 +154,28 @@ SECTIONS
   /* these global/static variables will require in startup to be initialized with values loaded from flash */
   .data : ALIGN(4)
   {
-    *(.data*)            /* main section containg many if not all variables */
+    *(.data*)            /* main section contains many if not all variables */
     *(.gnu.linkonce.d.*) /* shared link-only-once data to merge references to writable data, static variables which are defined in multiple objects and need to be merged into one  */
-    . = ALIGN(LARGEST_TYPE_ALIGMENT); /* align more for the data GP could point to, the GP needs just align 4, but might be able to point to 64-bit variables which need 8byte alignment*/
-    PROVIDE( __global_pointer$ = . + GP_OFFSET); /*we want GP be offset by 11bits because it's signed 12bits and we want be sure it can reach this point */
+#ifndef SYSTEM_WCH_LINKER_GP_INSIDE_ROM
+    . = ALIGN(SYSTEM_WCH_LINKER_LARGEST_TYPE_ALIGNMENT);          /* see system.h for details */
+    PROVIDE( __global_pointer_without_offset = .);
+    PROVIDE( __global_pointer = . + SYSTEM_WCH_LINKER_GP_OFFSET); /* see system.h for details */
+#endif /* SYSTEM_WCH_LINKER_GP_INSIDE_ROM */
+
+    PROVIDE( _small_rw_data_begin = .);
     *(.sdata*)
+    PROVIDE( _small_rw_data_end = .);
 /*    *(.gnu.linkonce.s.*) */ /* to merge special section - platform specific data, metadata, debuging section, runtime configuration data */
-    *(.srodata*)      /* small read-only data wasting RAM just to be close to GP*/
+#ifdef SYSTEM_WCH_LINKER_SMALL_RO_DATA_IN_RAM
+    /* small read-only data wasting RAM just to be close to GP*/
+    PROVIDE( _small_ro_data_in_RAM_begin = .);
     *(.srodata.cst16) /* 16-bit  constants 2 byte */
     *(.srodata.cst8)  /*  8-bit  constants 1 byte */
     *(.srodata.cst4)  /*  4-byte constants 32-bit */
     *(.srodata.cst2)  /*  2-byte constants (similar to cst16) */
-    *(.srodata*)
+    *(.srodata*)      /* eveyrthing else */
+    PROVIDE( _small_ro_data_in_RAM_end = .);
+#endif /* end SYSTEM_WCH_LINKER_SMALL_RO_DATA_IN_RAM */
 
     . = ALIGN(4);
     PROVIDE( _data_ram_end = .); /* for startup code - where to stop when copying values when doing ROM -> RAM values initialization */
@@ -160,29 +191,29 @@ SECTIONS
                                                /* special case of *.gnu.linkonce.b. needing aditional handling */
     *(.bss*)                                   /* the main block of unitialized (to be zeroized) static/global variables */
     *(.gnu.linkonce.b.*)                       /* to merge duplicate static or global unintialized (to be zeroized) variables */
-    *(COMMON*)
-    . = ALIGN(4);
+    *(COMMON*)                                 /* common extern declared, but not defined symbols */
+    . = ALIGN(4);                              /* align the stop below to whole multiples of 4 so the for loop can work on word size all the time */
     PROVIDE(_block_started_by_symbol_end = .); /* for startup code - where to stop zeroing */
   } >RAM AT>ROM
 
 
   /* for `malloc()`, `calloc()`, or `realloc()`, `new` etc... */
-  .heap : ALIGN(4)
+  .heap : ALIGN(SYSTEM_WCH_LINKER_LARGEST_TYPE_ALIGNMENT) /* see system.h for details */
   {
     PROVIDE(__heap_start = .);
     . += HEAP_SIZE;
     __heap_end = .;
-    . = ALIGN(LARGEST_TYPE_ALIGMENT);
+    . = ALIGN(SYSTEM_WCH_LINKER_LARGEST_TYPE_ALIGNMENT); /* see system.h for details */
     PROVIDE(_heap_end = __heap_end);
   } >RAM
 
 
   /* Callstack, local variables, saving register when calling IRQ, return addresses when returning from methods, */
   /* temporary values etc... */
-	.stack ORIGIN(RAM) + LENGTH(RAM) - STACK_SIZE : ALIGN(4)
+	.stack ORIGIN(RAM) + LENGTH(RAM) - SYSTEM_WCH_LINKER_STACK_SIZE : ALIGN(4)
 	{
 	    PROVIDE(_stack_start = . );
-	    . = . + STACK_SIZE;
+	    . = . + SYSTEM_WCH_LINKER_STACK_SIZE;
 	    PROVIDE(_stack_end = .);
 	} >RAM
 
