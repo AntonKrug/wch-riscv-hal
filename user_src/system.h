@@ -10,6 +10,10 @@
 // up to date. This allows single project serve multiple different SoCs without having
 // need for many different (but very similar) linker scripts.
 
+/* Larger devices with 256k ROM can have their ROM/RAM sizes tweaked, see SRAM_CODE_MODE in
+ * their datasheet. For other devices this setting is ignored. Note: this needs to be defined
+ * before including the system's soc header, as it's ROM/RAM size settings depend on this define */
+#define SYSTEM_WCH_SRAM_CODE_MODE "10x"
 
 #include "system/ch32v003/soc.h" // keep this unused include as the linker script will use it later
 #include "system/linker_utils.h"

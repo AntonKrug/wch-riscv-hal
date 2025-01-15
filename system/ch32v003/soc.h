@@ -14,6 +14,16 @@
 #define SYSTEM_WCH_CHIP_ROM_SIZE 16k // Flash size of the chip
 #define SYSTEM_WCH_CHIP_RAM_SIZE 2k  // RAM so small that GP's 12-bit (4k) can fully cover it to offer relaxation optimizations
 
+/* TODO: for larger SoCs
+ *   Devices with 256k flash can their sizes tweaked
+ *   ROM  RAM   SRAM_CODE_MODE
+ *   288K 32K   111
+ *   256K 64K   10x  - default
+ *   224K 96K   01x
+ *   192K 128K  00x
+ *   128K 192K  110
+ */
+
 #ifndef __PREPROCESSOR_RUN_FOR_LINKER_SCRIPT__
 #include "../soc_types.h"
 
