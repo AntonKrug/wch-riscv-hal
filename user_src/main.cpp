@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
     constexpr auto uartAddr = Peripheral::Usart::MakeBaseAddress<0x4001'3800>();
     constexpr auto gpioAddr = Peripheral::Gpio::MakeBaseAddress<0x4001'3800>();
     Peripheral::Usart::Device<SoC::PeripheralAddreses::usart1> device2;
-    Peripheral::Usart::Device<gpioAddr> device3;
+    Peripheral::Usart::Device<uartAddr> device3;
 
     std::cout << "Uart base address " << static_cast<std::uint32_t>(device2.baseAddress) << std::endl;
 
