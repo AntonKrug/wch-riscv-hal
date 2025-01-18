@@ -7,12 +7,18 @@
 #include <array>
 #include <cstdint>
 #include <type_traits>
+#include "system/memory_map/concepts.h"
 
 namespace Peripheral::Gpio{
 
 
     #pragma region Enums
 
+    // Use as safety trick to keep addresses types of different peripherals
+    // from mixing and enforce type sctrictness with this address type,
+    // alternative could be:
+    // https://github.com/dbj-systems/nothingbut
+    enum class GpioBaseAddress : std::uint32_t;
 
     enum class ActuationType: std::uint8_t {
         execusionPrecission,
@@ -45,18 +51,9 @@ namespace Peripheral::Gpio{
 
     #pragma region Declarations
 
-    using BaseAddress = std::uint32_t;
-
-
-    // Define a concept that restricts the parameter strictly to BaseAddress
-    // and accidental replacements with different addresses (like GPIO peripheral)
-    // or literal addresses are not possible
-    template<typename T>
-    concept IsBaseAddress = std::is_same_v<T, BaseAddress>;
-
 
     struct SequenceEntity {
-        const BaseAddress portBaseAddress;
+        const GpioBaseAddress portBaseAddress;
         const std::array<std::uint8_t, 8> pinNumbers;
         const ActuationType action;
         const int value;
@@ -64,7 +61,7 @@ namespace Peripheral::Gpio{
 
 
     struct Pins {
-        const BaseAddress portBaseAddress;
+        const GpioBaseAddress portBaseAddress;
         const std::array<std::uint8_t, 8> pinNumbers;
 
         auto operator=(int value) const -> const Pins &; // NOLINT(*-unconventional-assign-operator)
@@ -86,21 +83,23 @@ namespace Peripheral::Gpio{
     };
 
 
-    template<BaseAddress TplBaseAddress>
+    template<GpioBaseAddress TplBaseAddress>
     struct Port {
     private:
-        template<BaseAddress TplRegisterBase>
+        template<GpioBaseAddress TplRegisterBase>
         struct RegistersType {
-            constexpr static std::uint32_t configuration     = TplRegisterBase;         // CFGLR, sometimes CFGHR
-            constexpr static std::uint32_t inputData         = TplRegisterBase + 0x08;  // INDR
-            constexpr static std::uint32_t outputData        = TplRegisterBase + 0x0C;  // OUTDR
-            constexpr static std::uint32_t setReset          = TplRegisterBase + 0x10;  // BSHR
-            constexpr static std::uint32_t reset             = TplRegisterBase + 0x14;  // BCR
-            constexpr static std::uint32_t configurationLock = TplRegisterBase + 0x18;  // LCKR
+            constexpr static std::uint32_t RegisterBaseUint32 = static_cast<std::uint32_t>(TplRegisterBase);
+            constexpr static std::uint32_t configuration      = RegisterBaseUint32;         // CFGLR, sometimes CFGHR
+            constexpr static std::uint32_t inputData          = RegisterBaseUint32 + 0x08;  // INDR
+            constexpr static std::uint32_t outputData         = RegisterBaseUint32 + 0x0C;  // OUTDR
+            constexpr static std::uint32_t setReset           = RegisterBaseUint32 + 0x10;  // BSHR
+            constexpr static std::uint32_t reset              = RegisterBaseUint32 + 0x14;  // BCR
+            constexpr static std::uint32_t configurationLock  = RegisterBaseUint32 + 0x18;  // LCKR
         };
 
     public:
-        constexpr static BaseAddress baseAddress = TplBaseAddress;
+        constexpr static GpioBaseAddress baseAddress        = TplBaseAddress;
+        constexpr static std::uint32_t   RbaseAddressUint32 = static_cast<std::uint32_t>(TplBaseAddress);
 
         struct RegistersType<TplBaseAddress> Registers = {};
 
@@ -137,19 +136,19 @@ namespace Peripheral::Gpio{
     #pragma region Definition - Port
 
 
-    template<BaseAddress TplBaseAddress>
+    template<GpioBaseAddress TplBaseAddress>
     constexpr Port<TplBaseAddress>::operator std::uint32_t() const { // NOLINT(*-explicit-constructor)
-        return baseAddress;
+        return static_cast<uint32_t>(baseAddress);
     }
 
 
-    template<BaseAddress TplBaseAddress>
+    template<GpioBaseAddress TplBaseAddress>
     constexpr auto Port<TplBaseAddress>::GetPin(const std::uint8_t pin) -> Pins {
         return Pins{baseAddress, {pin}};
     }
 
 
-    template<BaseAddress TplBaseAddress>
+    template<GpioBaseAddress TplBaseAddress>
     constexpr auto Port<TplBaseAddress>::GetPin(const std::array<std::uint8_t, 8> &pins) -> Pins {
         return Pins{baseAddress, pins};
     }
@@ -253,6 +252,16 @@ namespace Peripheral::Gpio{
         return *this;
     }
 
+
+    #pragma endregion
+
+    #pragma region Defintion - other
+
+    template<long long int address>
+    requires ValidPeripheralBaseAddress<address>
+    constexpr static auto MakeBaseAddress() -> GpioBaseAddress {
+        return static_cast<GpioBaseAddress>(address);
+    };
 
     #pragma endregion
 
