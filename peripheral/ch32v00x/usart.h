@@ -113,8 +113,9 @@ namespace Peripheral::Usart{
         };
 
     public:
-        constexpr static UsartBaseAddress              baseAddress = TplBaseAddress;
-        struct           RegistersType<TplBaseAddress> registers   = {};
+        constexpr static UsartBaseAddress              baseAddress       = TplBaseAddress;
+        constexpr static std::uint32_t                 baseAddressUint32 = static_cast<std::uint32_t>(baseAddress);
+        struct           RegistersType<TplBaseAddress> registers         = {};
     };
 
     #pragma endregion

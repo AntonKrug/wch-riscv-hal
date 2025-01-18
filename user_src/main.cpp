@@ -60,14 +60,12 @@ int main(int argc, char *argv[]) {
     Utils::delayMs(1.5_hour_to_ms);
     constexpr auto div = Usart::calculateUsartDivCT<20_mhz_to_hz, 9.6_kbaud>();
     constexpr auto timerFrequencySetting = 20_ns_to_hz;
-    auto something = Soc::Usart::Channel1Mapping0.device;
+    // auto something = Soc::Usart::Channel1Mapping0.device;
+    // constexpr auto uartAddr = Peripheral::Usart::MakeBaseAddress<0x4001'3800>();
+    // constexpr auto gpioAddr = Peripheral::Gpio::MakeBaseAddress<0x4001'3800>();
 
-    constexpr auto uartAddr = Peripheral::Usart::MakeBaseAddress<0x4001'3800>();
-    constexpr auto gpioAddr = Peripheral::Gpio::MakeBaseAddress<0x4001'3800>();
-    Peripheral::Usart::Device<SoC::PeripheralAddreses::usart1> device2;
-    Peripheral::Usart::Device<uartAddr> device3;
-
-    std::cout << "Uart base address " << static_cast<std::uint32_t>(device2.baseAddress) << std::endl;
+    Peripheral::Usart::Device<SoC::PeripheralAddreses::uart7> device2;
+    std::cout << "Uart base address " << device2.baseAddressUint32 << std::endl;
 
     Rcc::PeripheralBus2Reset a {
         .ioAuxiliary = Rcc::Reset::reset,

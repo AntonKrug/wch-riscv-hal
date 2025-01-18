@@ -98,8 +98,8 @@ namespace Peripheral::Gpio{
         };
 
     public:
-        constexpr static GpioBaseAddress baseAddress        = TplBaseAddress;
-        constexpr static std::uint32_t   RbaseAddressUint32 = static_cast<std::uint32_t>(TplBaseAddress);
+        constexpr static GpioBaseAddress baseAddress       = TplBaseAddress;
+        constexpr static std::uint32_t   baseAddressUint32 = static_cast<std::uint32_t>(TplBaseAddress);
 
         struct RegistersType<TplBaseAddress> Registers = {};
 
