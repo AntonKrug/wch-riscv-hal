@@ -37,8 +37,8 @@
  */
 
 #ifndef __PREPROCESSOR_RUN_FOR_LINKER_SCRIPT__
-#include "../soc_types.h"
-#include "../peripheral_addresses.h"
+#include "system/soc_types.h"
+#include "system/memory_map/peripheral_addresses.h"
 
 
 namespace Soc {

@@ -5,9 +5,9 @@
 #pragma once
 
 
-#include "../peripheral/ch32v00x/gpio.h"
-#include "../peripheral/ch32v00x/usart.h"
-#include "../peripheral/ch32v00x/rcc.h"
+#include "peripheral/ch32v00x/gpio.h"
+#include "peripheral/ch32v00x/usart.h"
+#include "peripheral/ch32v00x/rcc.h"
 
 
 namespace Soc::Types {
