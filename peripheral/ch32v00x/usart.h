@@ -18,8 +18,9 @@ namespace Peripheral::Usart{
 
     #pragma region Enums
 
-    // Use as safety trick to keep addresses of different peripherals from mixing
-    // and enforce type sctrictness with our type, alternative could be:
+    // Use as safety trick to keep addresses types of different peripherals
+    // from mixing and enforce type sctrictness with this address type,
+    // alternative could be:
     // https://github.com/dbj-systems/nothingbut
     enum class UsartBaseAddress : std::uint32_t;
 
