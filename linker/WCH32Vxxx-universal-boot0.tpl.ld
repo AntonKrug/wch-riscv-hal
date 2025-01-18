@@ -29,6 +29,8 @@
     https://gcc.gnu.org/onlinedocs/gcc/RISC-V-Function-Attributes.html
 */
 
+/*TODO: allow GP to be placed to periheral range as well */
+
 /* DO NOT DIRECTLY EDIT THIS FILE, but edit the included header file,
    it contains comments how to tweak this linker script too */
 
@@ -177,7 +179,7 @@ SECTIONS
   } >ROM
 
 
-  /* these global/static variables will require in startup to be initialized with values loaded from flash */
+  /* These global/static variables will require in startup to be initialized with values loaded from flash */
   .data : ALIGN(4)
   {
     *(.data*)            /* main section contains many if not all variables */
@@ -204,8 +206,8 @@ SECTIONS
 #endif /* end SYSTEM_WCH_LINKER_SMALL_RO_DATA_IN_RAM */
 
     . = ALIGN(4);
-    PROVIDE( _data_ram_end = .); /* for startup code - where to stop when copying values when doing ROM -> RAM values initialization */
-  } >RAM AT>ROM
+    PROVIDE( _data_ram_end = .); /* For startup code - where to stop when copying values when doing ROM -> RAM values initialization */
+  } >RAM AT>ROM                  /* Loaded from ROM and placed to RAM */
 
 
   /* uninitialized data - global/static variables which just need to be zeroized, do not need to be loaded */

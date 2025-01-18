@@ -8,11 +8,15 @@
 
 namespace Utils {
 
+
      inline auto delayUs(const std::uint32_t us) -> void {
           // TODO finish
      }
 
+
      inline auto delayMs(const std::uint32_t us) -> void {
           // TODO finish
      }
+
+
 }

@@ -35,34 +35,28 @@ using namespace Peripheral;
 
 // NOLINTBEGIN(readability-static-accessed-through-instance)
 int main(int argc, char *argv[]) {
-    constexpr auto tdi  = Soc::Gpio.A.GetPin(0);
-    constexpr auto tms  = Soc::Gpio.A.GetPin(1);
-    constexpr auto tdo  = Soc::Gpio.A.GetPin(2);
-    constexpr auto data = Soc::Gpio.C.GetPin({ 2, 4, 5, 7 });
-    // data = argc;
+    // Firmware build info
+    std::cout << "Version: " << firmwareBuildInfo::version << " date: " << firmwareBuildInfo::date << " time: " << firmwareBuildInfo::time << std::endl;
 
+    // Custom literals
     using namespace Literals::Delay;
     using namespace Literals::Timer;
     using namespace Literals::Usart;
+
     constexpr auto timer = 100_ms_to_hz;
-
     std::cout << timer << std::endl;
-
-
-    std::cout << "Version: " << firmwareBuildInfo::version << " date: " << firmwareBuildInfo::date << " time: " << firmwareBuildInfo::time << std::endl;
-
-    //constexpr auto div = Usart::calculateUsartDivCT<2_mhz_to_hz, 1_mbaud>();
-
-    //std::cout << div << std::endl;
-    constexpr auto time = 1_hour_to_ms + 30_min_to_ms;
-
-
     Utils::delayMs(1.5_hour_to_ms);
-    constexpr auto div = Usart::calculateUsartDivCT<20_mhz_to_hz, 9.6_kbaud>();
     constexpr auto timerFrequencySetting = 20_ns_to_hz;
     // auto something = Soc::Usart::Channel1Mapping0.device;
-    // constexpr auto uartAddr = Peripheral::Usart::MakeBaseAddress<0x4001'3800>();
-    // constexpr auto gpioAddr = Peripheral::Gpio::MakeBaseAddress<0x4001'3800>();
+
+    // UART div calculations
+    // This should fail as they are close frequencies
+    // constexpr auto div11 = Usart::calculateUsartDivCT<2_mhz_to_hz, 1_mbaud>();
+    // std::cout << "Usart DIV " << div11 << std::endl;
+    // constexpr auto time = 1_hour_to_ms + 30_min_to_ms;
+
+    // This should pass
+    constexpr auto div = Usart::calculateUsartDivCT<20_mhz_to_hz, 9.6_kbaud>();
 
     Peripheral::Usart::Device<SoC::PeripheralAddreses::uart7> device2;
     std::cout << "Uart base address " << device2.baseAddressUint32 << std::endl;
@@ -75,7 +69,14 @@ int main(int argc, char *argv[]) {
         .portA = Rcc::ModuleClock::on,
     };
 
+
     // Utils::delay(100ms);
+
+    constexpr auto tdi  = Soc::Gpio.A.GetPin(0);
+    constexpr auto tms  = Soc::Gpio.A.GetPin(1);
+    constexpr auto tdo  = Soc::Gpio.A.GetPin(2);
+    constexpr auto data = Soc::Gpio.C.GetPin({ 2, 4, 5, 7 });
+    // data = argc;
 
     // auto var = tdi.mode<Driver::Gpio::PinMode::outputPushPull>().on<tdi>().commitExact();
     Gpio::PinsSet<tdi, tdo, tms>() = 11;

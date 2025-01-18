@@ -18,6 +18,7 @@ namespace Peripheral::Usart{
 
     #pragma region Enums
 
+
     // Use as safety trick to keep addresses types of different peripherals
     // from mixing and enforce type sctrictness with this address type,
     // alternative could be:
@@ -82,22 +83,8 @@ namespace Peripheral::Usart{
 
     #pragma region Declarations
 
-    // static UsartBaseAddress operator=(std::uint32_t value)
-    // {
-    //     return static_cast<UsartBaseAddress>(value);
-    // }
-//    using UsartBaseAddress = ;
-
-
-    // Define a concept that restricts the parameter strictly to BaseAddress
-    // and accidental replacements with different addresses (like GPIO peripheral)
-    // or literal addresses are not possible
-    // template<auto SomeType>
-    // concept IsBaseAddress = std::is_same_v<decltype(SomeType), UsartBaseAddress>;
-
 
     template<UsartBaseAddress TplBaseAddress>
-//    requires std::is_same_v<decltype(TplBaseAddress), UsartBaseAddress>
     struct Device {
     private:
         template<UsartBaseAddress TplRegisterBase>
@@ -118,7 +105,9 @@ namespace Peripheral::Usart{
         struct           RegistersType<TplBaseAddress> registers         = {};
     };
 
+
     #pragma endregion
+
 
     #pragma region Definition
 

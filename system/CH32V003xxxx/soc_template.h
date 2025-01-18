@@ -53,6 +53,8 @@ namespace Soc {
 
     // NOLINTBEGIN(readability-static-accessed-through-instance)
     namespace Usart {
+
+
         static constexpr Types::UartInstance<
             SoC::PeripheralAddreses::usart1,
             0b00,             // Pin mapping variant
@@ -62,6 +64,7 @@ namespace Soc {
             Gpio.D.GetPin(3), // D3 = Cts
             Gpio.C.GetPin(2)> // C2 = Rts
         Channel1Mapping0 = {};
+
 
         static constexpr Types::UartInstance<
             SoC::PeripheralAddreses::usart1,
@@ -73,6 +76,7 @@ namespace Soc {
             Gpio.C.GetPin(2)> // C2 = Rts
         Channel1Mapping1 = {};
 
+
         static constexpr Types::UartInstance<
             SoC::PeripheralAddreses::usart1,
             0b01,             // Pin mapping variant
@@ -82,6 +86,7 @@ namespace Soc {
             Gpio.C.GetPin(6), // C6 = Cts
             Gpio.C.GetPin(7)> // C7 = Rts
         Channel1Mapping2 = {};
+
 
         static constexpr Types::UartInstance<
             SoC::PeripheralAddreses::usart1,
@@ -93,6 +98,7 @@ namespace Soc {
             Gpio.C.GetPin(7)> // C7 = Rts
         Channel1Mapping3 = {};
 
+
         // struct Channel1 {
         //     // operator[] overload
         // }
@@ -103,19 +109,5 @@ namespace Soc {
 
 }
 
-// static const struct Soc = {
-//     int a;
-//
-//     // static const struct Gpio {
-//     //     constexpr static Peripheral::Gpio::Port<0x40010800> A = {};
-//     //     constexpr static Peripheral::Gpio::Port<0x40011000> B = {};
-//     //     constexpr static Peripheral::Gpio::Port<0x40011400> C = {};
-//     // };
-//     // static const struct Uart {
-//     //     static const struct Instance1 {
-//     //         constexpr static Soc::Gpio::
-//     //     };
-//     // };
-// };
 
 #endif

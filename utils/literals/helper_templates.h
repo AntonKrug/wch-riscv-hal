@@ -9,6 +9,7 @@
 
 namespace Literals::HelperTemplates {
 
+
     template<
         typename FROM,
         typename TO,
@@ -18,6 +19,7 @@ namespace Literals::HelperTemplates {
         assert(value <= (std::numeric_limits<TO>::max() / multiplier));
         return static_cast<TO>((value * static_cast<FROM>(multiplier)));
     }
+
 
     template<
         typename FROM,
@@ -33,6 +35,7 @@ namespace Literals::HelperTemplates {
         return static_cast<TO>(static_cast<FROM>(multiplier)/value);
     }
 
+
     template<
         std::uint32_t multiplier,
         typename FROM>
@@ -40,10 +43,13 @@ namespace Literals::HelperTemplates {
         return multiplyFromAnyToAny<FROM, std::uint32_t, multiplier>(value);
     }
 
+
     template<
         std::uint32_t multiplier,
         typename FROM>
     consteval auto invert(const FROM value) -> std::uint32_t {
         return invertFromAnyToAnyWhileMultiply<FROM, std::uint32_t, multiplier>(value);
     }
+
+
 }

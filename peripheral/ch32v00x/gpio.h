@@ -6,7 +6,6 @@
 
 #include <array>
 #include <cstdint>
-#include <type_traits>
 #include "system/memory_map/concepts.h"
 
 namespace Peripheral::Gpio{
@@ -14,11 +13,13 @@ namespace Peripheral::Gpio{
 
     #pragma region Enums
 
+
     // Use as safety trick to keep addresses types of different peripherals
     // from mixing and enforce type sctrictness with this address type,
     // alternative could be:
     // https://github.com/dbj-systems/nothingbut
     enum class GpioBaseAddress : std::uint32_t;
+
 
     enum class ActuationType: std::uint8_t {
         execusionPrecission,
@@ -130,6 +131,7 @@ namespace Peripheral::Gpio{
 //        void executeFast() const;
     };
 
+
     #pragma endregion
 
 
@@ -176,6 +178,7 @@ namespace Peripheral::Gpio{
         constexpr Sequence<newEntity, TplEntities ...> ans;
         return ans;
     }
+
 
     template<SequenceEntity... TplEntities>
     template<Pins TplPins, PinMode TplPinMode>
@@ -255,7 +258,9 @@ namespace Peripheral::Gpio{
 
     #pragma endregion
 
+
     #pragma region Defintion - other
+
 
     template<long long int address>
     requires ValidPeripheralBaseAddress<address>
@@ -263,63 +268,8 @@ namespace Peripheral::Gpio{
         return static_cast<GpioBaseAddress>(address);
     };
 
+
     #pragma endregion
 
 
 }
-
-
-
-// template<>
-// struct ChangesCt<> {
-//     template<Pins Pins>
-//     [[nodiscard]] constexpr auto on() const {
-//         constexpr ChangeAction newAction(Pins.portBaseAddress, Pins.pinNumbers, ChangeActionType::set, 1);
-//         constexpr ChangesCt<newAction> ans;
-//         return ans;
-//     }
-// };
-
-
-/*
-*    struct ChangeAction {
-// Can't contain Pins struct without forward declaraction somewhere at some point,
-// that will require to use pointer somewhere which then will end up being a template argument
-// and we can't make constexpr value into a pointer one and even if we could we could end up
-// with multiple template instances for a same pin?
-const int portBaseAddress;
-const std::array<int, 8> pinNumbers;
-const ChangeActionType action;
-const int value;
-};
-
-
-// template<ChangeAction ... Val>
-// struct ChangesCt;
-
-// template<ChangeAction ... Val>
-// struct ChangesCt;
-
-
-template<int BaseAddress>
-    struct Base {
-        //  using value_type = T;
-        // using type = Registers<BaseAddress>;
-        struct Registers {
-            constexpr static int baseAddress       = BaseAddress;         // CFGLR
-            constexpr static int inputData         = BaseAddress + 0x08;  // INDR
-            constexpr static int outputData        = BaseAddress + 0x0C;  // OUTDR
-            constexpr static int setReset          = BaseAddress + 0x10;  // BSHR
-            constexpr static int reset             = BaseAddress + 0x14;  // BCR
-            constexpr static int configurationLock = BaseAddress + 0x18;  // LCKR
-        };
-
-        // ReSharper disable once CppNonExplicitConversionOperator
-        constexpr operator int() const; // NOLINT(*-explicit-constructor)
-
-        constexpr static auto GetPin(int pin) -> Pins ;
-
-        constexpr static auto GetPins(const std::array<int, 8> &pins) -> Pins ;
-    };
-
-*/
