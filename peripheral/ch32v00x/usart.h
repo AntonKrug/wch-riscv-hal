@@ -9,9 +9,20 @@
 #include <cmath>
 #include <utility>
 
+#include "system/memory_map/concepts.h"
+
 // TODO usart baud rates and enum
 
 namespace Peripheral::Usart{
+
+
+    #pragma region Enums
+
+    // Use as safety trick to keep addresses of different peripherals from mixing
+    // and enforce type sctrictness with our type, alternative could be:
+    // https://github.com/dbj-systems/nothingbut
+    enum class UsartBaseAddress : std::uint32_t;
+
 
     enum class BaudRate: std::uint32_t {
         baud4_8k   =   4'800,
@@ -22,6 +33,10 @@ namespace Peripheral::Usart{
         baud115_2k = 115'200, // often used - faster baudrate
         baud230_4k = 230'400,
     };
+
+
+    #pragma endregion
+
 
     namespace {
         // https://medium.com/@mane.tako/understanding-unnamed-namespaces-in-c-7d41d367fd47
@@ -66,14 +81,6 @@ namespace Peripheral::Usart{
 
     #pragma region Declarations
 
-
-    // Use as safety trick to keep addresses of different peripherals from mixing
-    // and enforce type sctrictness with our type, alternative could be:
-    // https://github.com/dbj-systems/nothingbut
-    enum class UsartBaseAddress : std::uint32_t;
-
-    constexpr static auto MakeBaseAddress(long long int address) -> UsartBaseAddress;
-
     // static UsartBaseAddress operator=(std::uint32_t value)
     // {
     //     return static_cast<UsartBaseAddress>(value);
@@ -114,12 +121,8 @@ namespace Peripheral::Usart{
 
 
     template<long long int address>
+    requires ValidPeripheralBaseAddress<address>
     constexpr static auto MakeBaseAddress() -> UsartBaseAddress {
-        static_assert(
-            address >= 0x4000'0000 ||
-            address <= 0x5005'0400,
-            "Peripheral base address outside 0x4000'0000 - 0x5005'0400 range");
-
         return static_cast<UsartBaseAddress>(address);
     };
 
