@@ -5,7 +5,7 @@
 #include <iostream>
 
 #include "system.h"
-//#include "utils/delay.h"
+#include "utils/delay.h"
 #include "utils/literals/all.h"
 #include "firmware_build_info.h"
 
@@ -52,8 +52,12 @@ int main(int argc, char *argv[]) {
     //constexpr auto div = Usart::calculateUsartDivCT<2_mhz_to_hz, 1_mbaud>();
 
     //std::cout << div << std::endl;
-    // constexpr auto time = 1_hour_to_ms + 30_min_to_ms;
-    // Utils::delayMs(time);
+    constexpr auto time = 1_hour_to_ms + 30_min_to_ms;
+
+
+    Utils::delayMs(1.5_hour_to_ms);
+    constexpr auto div = Usart::calculateUsartDivCT<20_mhz_to_hz, 9.6_kbaud>();
+    constexpr auto timerFrequencySetting = 20_ns_to_hz;
 
     Rcc::PeripheralBus2Reset a {
         .ioAuxiliary = Rcc::Reset::reset,
