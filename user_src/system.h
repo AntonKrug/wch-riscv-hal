@@ -15,7 +15,7 @@
  * before including the system's soc header, as it's ROM/RAM size settings depend on this define */
 #define SYSTEM_WCH_SRAM_CODE_MODE "10x"
 
-#include "system/ch32v003/soc.h" // keep this unused include as the linker script will use it later
+#include "system/CH32V003xxxx/soc.h" // keep this unused include as the linker script will use it later
 #include "system/linker_utils.h"
 
 /* RAM_SIZE > STACK_SIZE + HEAP_SIZE:

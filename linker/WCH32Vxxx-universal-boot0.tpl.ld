@@ -25,11 +25,14 @@
     ${cross_prefix}${cross_c}${cross_suffix} -E -P -x c ../Ld/WCH32Vxxx-universal.ld.tpl -o ../Ld/Link.ld
     https://stackoverflow.com/questions/70863659/what-does-hidden-and-provide-hidden-in-linker-scripts-exactly-do
     https://www.reddit.com/r/RISCV/comments/1bcdq5h/software_threads_in_riscv/
+    https://www.eevblog.com/forum/microcontrollers/ch32v307-risc-v-minicore-with-ethernet/125/
+    https://gcc.gnu.org/onlinedocs/gcc/RISC-V-Function-Attributes.html
 */
 
-/* DO NOT DIRECTLY EDIT THIS FILE, but edit the included header file, it contains comments how to tweak this linker script too */
+/* DO NOT DIRECTLY EDIT THIS FILE, but edit the included header file,
+   it contains comments how to tweak this linker script too */
 
-#include "user_src/system.h" /* open this header file to see details about the defines */
+#include "user_src/system.h" /* This for the c pre-processor, open user_src/system.h file to see details */
 
 
 OUTPUT_ARCH("riscv")
@@ -40,8 +43,11 @@ ENTRY(entry_jump_to_init)
 
 MEMORY
 {
-	ROM (rx)   : ORIGIN = 0x00000000, LENGTH = SYSTEM_WCH_CHIP_ROM_SIZE
-	RAM (rwx)  : ORIGIN = 0x20000000, LENGTH = SYSTEM_WCH_CHIP_RAM_SIZE
+  ROM      (rx)   : ORIGIN = 0x00000000,               LENGTH = SYSTEM_WCH_CHIP_ROM_SIZE
+#ifdef SYSTEM_WCH_CHIP_EEPROM_SIZE
+  ROM_SLOW (rx)   : ORIGIN = SYSTEM_WCH_CHIP_ROM_SIZE, LENGTH = SYSTEM_WCH_CHIP_EEPROM_SIZE - SYSTEM_WCH_CHIP_ROM_SIZE
+#endif
+  RAM      (rwx)  : ORIGIN = 0x20000000,               LENGTH = SYSTEM_WCH_CHIP_RAM_SIZE
 }
 
 
@@ -79,14 +85,14 @@ SECTIONS
 #ifndef SYSTEM_WCH_LINKER_SMALL_RO_DATA_IN_RAM
     /* small read-only data placed in ROM together with other ROM content */
     PROVIDE( _small_ro_data_in_ROM_begin = .);
-    . = ALIGN(2)
-    *(.srodata.cst16) /* 16-bit  constants 2 byte */
-    . = ALIGN(1)
-    *(.srodata.cst8)  /*  8-bit  constants 1 byte */
     . = ALIGN(4)
     *(.srodata.cst4)  /*  4-byte constants 32-bit */
     . = ALIGN(2)
     *(.srodata.cst2)  /*  2-byte constants (similar to cst16) */
+    . = ALIGN(2)
+    *(.srodata.cst16) /* 16-bit  constants 2 byte */
+    . = ALIGN(1)
+    *(.srodata.cst8)  /*  8-bit  constants 1 byte */
     . = ALIGN(4)
     *(.srodata*)      /* eveyrthing else */
     PROVIDE( _small_ro_data_in_ROM_end = .);
@@ -95,8 +101,28 @@ SECTIONS
     *(.rodata*)            /* read only data (constant global/static variables) */
     *(.gnu.linkonce.t.*)   /* to merge duplicate C++ template instances and vague linking of weakly defined symbols */
     *(.gnu.linkonce.r.*)   /* to merge duplicate readonly C++ static constructors and destructors, or read only static data/variabled ***** maybe allow it to be placed to text */
+#ifndef SYSTEM_WCH_CHIP_EEPROM_SIZE
+    /* This is fallback for all the SoCs who do not expose the non-zero-wait-flash
+       and make the code more portable between SoC. The code targeting ROM_SLOW can
+       be just fine executed from regular "faster ROM" */
+    *(.rom_slow*)
+#endif
   } > ROM
 
+#ifdef SYSTEM_WCH_CHIP_EEPROM_SIZE
+/* When SoC contains non-zero-wait-flash aka 480k-R0WAIT or 224k-R0WAIT eeprom,
+   and user explicitly adds it as attribute before function, then place that code
+   into the slow non-zero-wait section:
+   __attribute__ ((section (".rom_slow")))
+   void doSomething()
+   {
+   }
+ */
+  .rom_slow : ALIGN(4)
+  {
+    *(.rom_slow*)
+  } > ROM_SLOW
+#endif
 
   /* function pointers to be run before init, before C runtime startup - vtable validation, global initialization */
   /* https://maskray.me/blog/2021-11-07-init-ctors-init-array ********************************************************************** */
@@ -169,10 +195,10 @@ SECTIONS
 #ifdef SYSTEM_WCH_LINKER_SMALL_RO_DATA_IN_RAM
     /* small read-only data wasting RAM just to be close to GP*/
     PROVIDE( _small_ro_data_in_RAM_begin = .);
-    *(.srodata.cst16) /* 16-bit  constants 2 byte */
-    *(.srodata.cst8)  /*  8-bit  constants 1 byte */
     *(.srodata.cst4)  /*  4-byte constants 32-bit */
     *(.srodata.cst2)  /*  2-byte constants (similar to cst16) */
+    *(.srodata.cst16) /* 16-bit  constants 2 byte */
+    *(.srodata.cst8)  /*  8-bit  constants 1 byte */
     *(.srodata*)      /* eveyrthing else */
     PROVIDE( _small_ro_data_in_RAM_end = .);
 #endif /* end SYSTEM_WCH_LINKER_SMALL_RO_DATA_IN_RAM */
