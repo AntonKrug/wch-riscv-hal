@@ -14,7 +14,10 @@ namespace Soc::Types {
     // TODO private, maybe local/static
 
 
-    template<int TplBaseAddressA, int TplBaseAddressC, int TplBaseAddressD>
+    template<
+        Peripheral::Gpio::BaseAddress TplBaseAddressA,
+        Peripheral::Gpio::BaseAddress TplBaseAddressC,
+        Peripheral::Gpio::BaseAddress TplBaseAddressD>
     struct GpioACD {
         constexpr static Peripheral::Gpio::Port<TplBaseAddressA> A = {};
         constexpr static Peripheral::Gpio::Port<TplBaseAddressC> C = {};
@@ -23,7 +26,7 @@ namespace Soc::Types {
 
 
     template<
-        Peripheral::Usart::BaseAddress TplBaseAddress,
+        Peripheral::Usart::UsartBaseAddress TplBaseAddress,
         std::uint8_t TplMapping,
         Peripheral::Gpio::Pins TplCk,
         Peripheral::Gpio::Pins TplTx,
@@ -40,5 +43,7 @@ namespace Soc::Types {
 
         constexpr static Peripheral::Usart::Device<TplBaseAddress> device = {};
     };
+
+
 }
 
