@@ -102,13 +102,14 @@ namespace Peripheral::Usart{
     private:
         template<UsartBaseAddress TplRegisterBase>
         struct RegistersType {
-            constexpr static std::uint32_t status                 = static_cast<std::uint32_t>(TplRegisterBase);         // R32_USART_STATR
-            constexpr static std::uint32_t data                   = static_cast<std::uint32_t>(TplRegisterBase) + 0x04;  // R32_USART_DATAR
-            constexpr static std::uint32_t baudrate               = static_cast<std::uint32_t>(TplRegisterBase) + 0x08;  // R32_USART_BRR
-            constexpr static std::uint32_t control1               = static_cast<std::uint32_t>(TplRegisterBase) + 0x0C;  // R32_USART_CTLR1
-            constexpr static std::uint32_t control2               = static_cast<std::uint32_t>(TplRegisterBase) + 0x10;  // R32_USART_CTLR2
-            constexpr static std::uint32_t control3               = static_cast<std::uint32_t>(TplRegisterBase) + 0x14;  // R32_USART_CTLR3
-            constexpr static std::uint32_t protectionAndPrescaler = static_cast<std::uint32_t>(TplRegisterBase) + 0x18;  // R32_USART_GPR
+            constexpr static std::uint32_t RegisterBaseUint32     = static_cast<std::uint32_t>(TplRegisterBase);
+            constexpr static std::uint32_t status                 = RegisterBaseUint32;         // R32_USART_STATR
+            constexpr static std::uint32_t data                   = RegisterBaseUint32 + 0x04;  // R32_USART_DATAR
+            constexpr static std::uint32_t baudrate               = RegisterBaseUint32 + 0x08;  // R32_USART_BRR
+            constexpr static std::uint32_t control1               = RegisterBaseUint32 + 0x0C;  // R32_USART_CTLR1
+            constexpr static std::uint32_t control2               = RegisterBaseUint32 + 0x10;  // R32_USART_CTLR2
+            constexpr static std::uint32_t control3               = RegisterBaseUint32 + 0x14;  // R32_USART_CTLR3
+            constexpr static std::uint32_t protectionAndPrescaler = RegisterBaseUint32 + 0x18;  // R32_USART_GPR
         };
 
     public:
