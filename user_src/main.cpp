@@ -8,6 +8,8 @@
 #include "utils/delay.h"
 #include "utils/literals/all.h"
 #include "firmware_build_info.h"
+#include "system/soc_types.h"
+#include "peripheral/ch32v00x/usart.h"
 
 using namespace Peripheral;
 
@@ -58,6 +60,14 @@ int main(int argc, char *argv[]) {
     Utils::delayMs(1.5_hour_to_ms);
     constexpr auto div = Usart::calculateUsartDivCT<20_mhz_to_hz, 9.6_kbaud>();
     constexpr auto timerFrequencySetting = 20_ns_to_hz;
+    auto something = Soc::Usart::Channel1Mapping0.device;
+
+    constexpr auto uartAddr = Peripheral::Usart::MakeBaseAddress(0x40013808);
+//    constexpr Peripheral::Gpio::BaseAddress  gpioAddr(0x40013800);
+    Peripheral::Usart::Device<SoC::PeripheralAddreses::usart1> device2;
+    Peripheral::Usart::Device<uartAddr> device3;
+
+    std::cout << "Uart base address " << static_cast<std::uint32_t>(device2.baseAddress) << std::endl;
 
     Rcc::PeripheralBus2Reset a {
         .ioAuxiliary = Rcc::Reset::reset,
