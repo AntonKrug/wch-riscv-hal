@@ -38,22 +38,23 @@
 
 #ifndef __PREPROCESSOR_RUN_FOR_LINKER_SCRIPT__
 #include "../soc_types.h"
+#include "../peripheral_addresses.h"
 
 
 namespace Soc {
 
 
     static constexpr Types::GpioACD<
-        0x40010800,
-        0x40011000,
-        0x40011400> Gpio = {};
+        SoC::PeripheralAddreses::gpioA,
+        SoC::PeripheralAddreses::gpioC,
+        SoC::PeripheralAddreses::gpioD> Gpio = {};
 
 
     // NOLINTBEGIN(readability-static-accessed-through-instance)
     namespace Usart {
         static constexpr Types::UartInstance<
-            Peripheral::Usart::BaseAddress(0x40013800),
-            0b00,             // Mapping
+            SoC::PeripheralAddreses::usart1,
+            0b00,             // Pin mapping variant
             Gpio.D.GetPin(4), // D4 = Ck
             Gpio.D.GetPin(5), // D5 = Tx
             Gpio.D.GetPin(6), // D6 = Rx
@@ -62,8 +63,8 @@ namespace Soc {
         Channel1Mapping0 = {};
 
         static constexpr Types::UartInstance<
-            Peripheral::Usart::BaseAddress(0x40013800),
-            0b01,             // Mapping
+            SoC::PeripheralAddreses::usart1,
+            0b01,             // Pin mapping variant
             Gpio.D.GetPin(7), // D7 = Ck
             Gpio.D.GetPin(0), // D0 = Tx
             Gpio.D.GetPin(1), // D1 = Rx
@@ -72,8 +73,8 @@ namespace Soc {
         Channel1Mapping1 = {};
 
         static constexpr Types::UartInstance<
-            Peripheral::Usart::BaseAddress(0x40013800),
-            0b01,             // Mapping
+            SoC::PeripheralAddreses::usart1,
+            0b01,             // Pin mapping variant
             Gpio.D.GetPin(7), // D7 = Ck
             Gpio.D.GetPin(6), // D6 = Tx
             Gpio.D.GetPin(5), // D5 = Rx
@@ -82,8 +83,8 @@ namespace Soc {
         Channel1Mapping2 = {};
 
         static constexpr Types::UartInstance<
-            Peripheral::Usart::BaseAddress(0x40013800),
-            0b01,             // Mapping
+            SoC::PeripheralAddreses::usart1,
+            0b01,             // Pin mapping variant
             Gpio.C.GetPin(5), // C5 = Ck
             Gpio.C.GetPin(0), // C0 = Tx
             Gpio.C.GetPin(1), // C1 = Rx
