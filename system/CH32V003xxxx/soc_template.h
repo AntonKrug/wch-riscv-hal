@@ -47,7 +47,8 @@ namespace Soc {
     static constexpr Types::GpioACD<
         SoC::PeripheralAddreses::gpioA,
         SoC::PeripheralAddreses::gpioC,
-        SoC::PeripheralAddreses::gpioD> Gpio = {};
+        SoC::PeripheralAddreses::gpioD>
+    Gpio = {};
 
 
     // NOLINTBEGIN(readability-static-accessed-through-instance)
