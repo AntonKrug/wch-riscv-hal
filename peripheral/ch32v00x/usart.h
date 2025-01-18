@@ -113,7 +113,13 @@ namespace Peripheral::Usart{
     #pragma region Definition
 
 
-    constexpr static auto MakeBaseAddress(long long int address) -> UsartBaseAddress {
+    template<long long int address>
+    constexpr static auto MakeBaseAddress() -> UsartBaseAddress {
+        static_assert(
+            address >= 0x4000'0000 ||
+            address <= 0x5005'0400,
+            "Peripheral base address outside 0x4000'0000 - 0x5005'0400 range");
+
         return static_cast<UsartBaseAddress>(address);
     };
 
