@@ -12,7 +12,7 @@ set (headers
         peripheral/ch32v00x/rcc.h
         peripheral/ch32v00x/timer.h
         peripheral/ch32v00x/usart.h
-        system/CH32V003xxxx/soc.h
+        system/CH32V003xxxx/soc_template.h
         system/soc_types.h
         user_src/firmware_build_info.h
         user_src/system.h
