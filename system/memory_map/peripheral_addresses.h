@@ -7,9 +7,11 @@
 #include "system/soc_types.h"
 
 namespace SoC::PeripheralAddreses {
-    constexpr static Peripheral::Gpio::BaseAddress  gpioA = 0x4001'0800;
-    constexpr static Peripheral::Gpio::BaseAddress  gpioC = 0x4001'1000;
-    constexpr static Peripheral::Gpio::BaseAddress  gpioD = 0x4001'1400;
+    constexpr static auto gpioA = Peripheral::Gpio::MakeBaseAddress<0x4001'0800>();;
+    constexpr static auto gpioB = Peripheral::Gpio::MakeBaseAddress<0x4001'0C00>();;
+    constexpr static auto gpioC = Peripheral::Gpio::MakeBaseAddress<0x4001'1000>();;
+    constexpr static auto gpioD = Peripheral::Gpio::MakeBaseAddress<0x4001'1400>();
+    constexpr static auto gpioE = Peripheral::Gpio::MakeBaseAddress<0x4001'1800>();;
 
     constexpr static auto usart1 = Peripheral::Usart::MakeBaseAddress<0x4001'3800>();
     constexpr static auto usart2 = Peripheral::Usart::MakeBaseAddress<0x4001'4400>();
