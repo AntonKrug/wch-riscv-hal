@@ -17,8 +17,6 @@
 //#define SYSTEM_WCH_CHIP_EEPROM_SIZE 480k
 //#define SYSTEM_WCH_CHIP_EEPROM_SIZE 224k
 
-// CH32V303xCxx, CH32V307xCxx, CH32V317xCxx, CH32V203RBT6 and CH32V208xBxx .
-
 /* TODO: for larger SoCs
  *   Devices with 256k (CH32V303xCxx, CH32V307xCxx, CH32V317xCxx) flash can their sizes tweaked
  *   ROM  RAM   SRAM_CODE_MODE
@@ -31,8 +29,7 @@
  *                     section 32.4.6 that it's possible and software confirming that 317 has this option and
  *                     for 317 it's default
  *
- *   Some devices with 128k flash can have their size tweaked too:
- *   CH32V203RBT6 and CH32V208xBxx .
+ *   Some devices with 128k flash (CH32V203RBT6 and CH32V208xBxx) can have their size tweaked too:
  *   ROM  RAM   SRAM_CODE_MODE
  *   128K 64K   00x - default
  *   144K 48K   01x
