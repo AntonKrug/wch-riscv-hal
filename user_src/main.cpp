@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
     constexpr auto timerFrequencySetting = 20_ns_to_hz;
     auto something = Soc::Usart::Channel1Mapping0.device;
 
-    constexpr auto uartAddr = Peripheral::Usart::MakeBaseAddress(0x40013808);
+    constexpr auto uartAddr = Peripheral::Usart::MakeBaseAddress<0x40013800>();
 //    constexpr Peripheral::Gpio::BaseAddress  gpioAddr(0x40013800);
     Peripheral::Usart::Device<SoC::PeripheralAddreses::usart1> device2;
     Peripheral::Usart::Device<uartAddr> device3;
