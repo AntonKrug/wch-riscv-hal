@@ -14,14 +14,29 @@
 #define SYSTEM_WCH_CHIP_ROM_SIZE 16k // Flash size of the chip
 #define SYSTEM_WCH_CHIP_RAM_SIZE 2k  // RAM so small that GP's 12-bit (4k) can fully cover it to offer relaxation optimizations
 
+//#define SYSTEM_WCH_CHIP_EEPROM_SIZE 480k
+//#define SYSTEM_WCH_CHIP_EEPROM_SIZE 224k
+
+// CH32V303xCxx, CH32V307xCxx, CH32V317xCxx, CH32V203RBT6 and CH32V208xBxx .
+
 /* TODO: for larger SoCs
- *   Devices with 256k flash can their sizes tweaked
+ *   Devices with 256k (CH32V303xCxx, CH32V307xCxx, CH32V317xCxx) flash can their sizes tweaked
  *   ROM  RAM   SRAM_CODE_MODE
  *   288K 32K   111
- *   256K 64K   10x  - default
+ *   256K 64K   10x  - default for 305/307 (but not 317)
  *   224K 96K   01x
  *   192K 128K  00x
- *   128K 192K  110
+ *   128K 192K  110  - Not supported as datasheet (CH32V303_305_307) section 2.3 stating the 128K RAM is max
+ *                     for 305/307. While the coresponding reference manual (CH32FV2x_V3x) stating in
+ *                     section 32.4.6 that it's possible and software confirming that 317 has this option and
+ *                     for 317 it's default
+ *
+ *   Some devices with 128k flash can have their size tweaked too:
+ *   CH32V203RBT6 and CH32V208xBxx .
+ *   ROM  RAM   SRAM_CODE_MODE
+ *   128K 64K   00x - default
+ *   144K 48K   01x
+ *   160K 32K   1xx
  */
 
 #ifndef __PREPROCESSOR_RUN_FOR_LINKER_SCRIPT__
