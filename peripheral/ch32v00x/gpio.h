@@ -6,6 +6,7 @@
 
 #include <array>
 #include <cstdint>
+#include <type_traits>
 
 namespace Peripheral::Gpio{
 
@@ -44,9 +45,18 @@ namespace Peripheral::Gpio{
 
     #pragma region Declarations
 
+    using BaseAddress = std::uint32_t;
+
+
+    // Define a concept that restricts the parameter strictly to BaseAddress
+    // and accidental replacements with different addresses (like GPIO peripheral)
+    // or literal addresses are not possible
+    template<typename T>
+    concept IsBaseAddress = std::is_same_v<T, BaseAddress>;
+
 
     struct SequenceEntity {
-        const std::uint32_t portBaseAddress;
+        const BaseAddress portBaseAddress;
         const std::array<std::uint8_t, 8> pinNumbers;
         const ActuationType action;
         const int value;
@@ -54,7 +64,7 @@ namespace Peripheral::Gpio{
 
 
     struct Pins {
-        const std::uint32_t portBaseAddress;
+        const BaseAddress portBaseAddress;
         const std::array<std::uint8_t, 8> pinNumbers;
 
         auto operator=(int value) const -> const Pins &; // NOLINT(*-unconventional-assign-operator)
@@ -76,10 +86,10 @@ namespace Peripheral::Gpio{
     };
 
 
-    template<std::uint32_t TplBaseAddress>
+    template<BaseAddress TplBaseAddress>
     struct Port {
     private:
-        template<std::uint32_t TplRegisterBase>
+        template<BaseAddress TplRegisterBase>
         struct RegistersType {
             constexpr static std::uint32_t configuration     = TplRegisterBase;         // CFGLR, sometimes CFGHR
             constexpr static std::uint32_t inputData         = TplRegisterBase + 0x08;  // INDR
@@ -90,7 +100,7 @@ namespace Peripheral::Gpio{
         };
 
     public:
-        constexpr static std::uint32_t baseAddress = TplBaseAddress;
+        constexpr static BaseAddress baseAddress = TplBaseAddress;
 
         struct RegistersType<TplBaseAddress> Registers = {};
 
@@ -127,19 +137,19 @@ namespace Peripheral::Gpio{
     #pragma region Definition - Port
 
 
-    template<std::uint32_t TplBaseAddress>
+    template<BaseAddress TplBaseAddress>
     constexpr Port<TplBaseAddress>::operator std::uint32_t() const { // NOLINT(*-explicit-constructor)
         return baseAddress;
     }
 
 
-    template<std::uint32_t TplBaseAddress>
+    template<BaseAddress TplBaseAddress>
     constexpr auto Port<TplBaseAddress>::GetPin(const std::uint8_t pin) -> Pins {
         return Pins{baseAddress, {pin}};
     }
 
 
-    template<std::uint32_t TplBaseAddress>
+    template<BaseAddress TplBaseAddress>
     constexpr auto Port<TplBaseAddress>::GetPin(const std::array<std::uint8_t, 8> &pins) -> Pins {
         return Pins{baseAddress, pins};
     }
