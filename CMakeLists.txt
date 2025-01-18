@@ -24,7 +24,8 @@ set (headers
         utils/literals/timer.h
         utils/literals/usart.h
         system/linker_utils.h
-        system/CH32V003xxxx/_private/peripheral_addresses.h
+        system/memory_map/peripheral_addresses.h
+        system/memory_map/concepts.h
 )
 
 set (sources
