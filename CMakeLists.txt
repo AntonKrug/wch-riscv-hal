@@ -24,6 +24,7 @@ set (headers
         utils/literals/timer.h
         utils/literals/usart.h
         system/linker_utils.h
+        system/CH32V003xxxx/_private/peripheral_addresses.h
 )
 
 set (sources
@@ -67,4 +68,4 @@ add_custom_command(
 
 add_custom_target(pre_processed_linker_script DEPENDS ${LINKER_SCRIPT_FINAL} user_src/system.h)
 add_dependencies(${PROJECT_NAME} pre_processed_linker_script)
-target_link_options(${PROJECT_NAME} PRIVATE -T ${LINKER_SCRIPT_FINAL})
+#target_link_options(${PROJECT_NAME} PRIVATE -T ${LINKER_SCRIPT_FINAL})
