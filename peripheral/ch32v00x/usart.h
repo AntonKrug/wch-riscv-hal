@@ -20,10 +20,13 @@ namespace Peripheral::Usart{
 
 
     // Use as safety trick to keep addresses types of different peripherals
-    // from mixing and enforce type sctrictness with this address type,
-    // alternative could be:
+    // from mixing and enforce type sctrictness with this address type.
+    // When created new type alias with `using`, it allowed implicit casting
+    // and various fixes were a lot of syntax sugar, while this is fairly
+    // small approach.
+    // Alternative could be to use a library dedicated for this purpose:
     // https://github.com/dbj-systems/nothingbut
-    enum class UsartBaseAddress : std::uint32_t;
+    enum class BaseAddress : std::uint32_t;
 
 
     enum class BaudRate: std::uint32_t {
@@ -84,10 +87,10 @@ namespace Peripheral::Usart{
     #pragma region Declarations
 
 
-    template<UsartBaseAddress TplBaseAddress>
+    template<BaseAddress TplBaseAddress>
     struct Device {
     private:
-        template<UsartBaseAddress TplRegisterBase>
+        template<BaseAddress TplRegisterBase>
         struct RegistersType {
             constexpr static std::uint32_t RegisterBaseUint32     = static_cast<std::uint32_t>(TplRegisterBase);
             constexpr static std::uint32_t status                 = RegisterBaseUint32;         // R32_USART_STATR
@@ -100,7 +103,7 @@ namespace Peripheral::Usart{
         };
 
     public:
-        constexpr static UsartBaseAddress              baseAddress       = TplBaseAddress;
+        constexpr static BaseAddress              baseAddress       = TplBaseAddress;
         constexpr static std::uint32_t                 baseAddressUint32 = static_cast<std::uint32_t>(baseAddress);
         struct           RegistersType<TplBaseAddress> registers         = {};
     };
@@ -114,8 +117,8 @@ namespace Peripheral::Usart{
 
     template<long long int address>
     requires ValidPeripheralBaseAddress<address>
-    constexpr static auto MakeBaseAddress() -> UsartBaseAddress {
-        return static_cast<UsartBaseAddress>(address);
+    constexpr static auto MakeBaseAddress() -> BaseAddress {
+        return static_cast<BaseAddress>(address);
     };
 
 

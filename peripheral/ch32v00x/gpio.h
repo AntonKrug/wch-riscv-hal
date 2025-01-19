@@ -15,10 +15,13 @@ namespace Peripheral::Gpio{
 
 
     // Use as safety trick to keep addresses types of different peripherals
-    // from mixing and enforce type sctrictness with this address type,
-    // alternative could be:
+    // from mixing and enforce type sctrictness with this address type.
+    // When created new type alias with `using`, it allowed implicit casting
+    // and various fixes were a lot of syntax sugar, while this is fairly
+    // small approach.
+    // Alternative could be to use a library dedicated for this purpose:
     // https://github.com/dbj-systems/nothingbut
-    enum class GpioBaseAddress : std::uint32_t;
+    enum class BaseAddress : std::uint32_t;
 
 
     enum class ActuationType: std::uint8_t {
@@ -54,7 +57,7 @@ namespace Peripheral::Gpio{
 
 
     struct SequenceEntity {
-        const GpioBaseAddress portBaseAddress;
+        const BaseAddress portBaseAddress;
         const std::array<std::uint8_t, 8> pinNumbers;
         const ActuationType action;
         const int value;
@@ -62,7 +65,7 @@ namespace Peripheral::Gpio{
 
 
     struct Pins {
-        const GpioBaseAddress portBaseAddress;
+        const BaseAddress portBaseAddress;
         const std::array<std::uint8_t, 8> pinNumbers;
 
         auto operator=(int value) const -> const Pins &; // NOLINT(*-unconventional-assign-operator)
@@ -84,10 +87,10 @@ namespace Peripheral::Gpio{
     };
 
 
-    template<GpioBaseAddress TplBaseAddress>
+    template<BaseAddress TplBaseAddress>
     struct Port {
     private:
-        template<GpioBaseAddress TplRegisterBase>
+        template<BaseAddress TplRegisterBase>
         struct RegistersType {
             constexpr static std::uint32_t RegisterBaseUint32 = static_cast<std::uint32_t>(TplRegisterBase);
             constexpr static std::uint32_t configuration      = RegisterBaseUint32;         // CFGLR, sometimes CFGHR
@@ -99,7 +102,7 @@ namespace Peripheral::Gpio{
         };
 
     public:
-        constexpr static GpioBaseAddress baseAddress       = TplBaseAddress;
+        constexpr static BaseAddress baseAddress       = TplBaseAddress;
         constexpr static std::uint32_t   baseAddressUint32 = static_cast<std::uint32_t>(TplBaseAddress);
 
         struct RegistersType<TplBaseAddress> Registers = {};
@@ -138,19 +141,19 @@ namespace Peripheral::Gpio{
     #pragma region Definition - Port
 
 
-    template<GpioBaseAddress TplBaseAddress>
+    template<BaseAddress TplBaseAddress>
     constexpr Port<TplBaseAddress>::operator std::uint32_t() const { // NOLINT(*-explicit-constructor)
         return static_cast<uint32_t>(baseAddress);
     }
 
 
-    template<GpioBaseAddress TplBaseAddress>
+    template<BaseAddress TplBaseAddress>
     constexpr auto Port<TplBaseAddress>::GetPin(const std::uint8_t pin) -> Pins {
         return Pins{baseAddress, {pin}};
     }
 
 
-    template<GpioBaseAddress TplBaseAddress>
+    template<BaseAddress TplBaseAddress>
     constexpr auto Port<TplBaseAddress>::GetPin(const std::array<std::uint8_t, 8> &pins) -> Pins {
         return Pins{baseAddress, pins};
     }
@@ -264,8 +267,8 @@ namespace Peripheral::Gpio{
 
     template<long long int address>
     requires ValidPeripheralBaseAddress<address>
-    constexpr static auto MakeBaseAddress() -> GpioBaseAddress {
-        return static_cast<GpioBaseAddress>(address);
+    constexpr static auto MakeBaseAddress() -> BaseAddress {
+        return static_cast<BaseAddress>(address);
     };
 
 
