@@ -10,6 +10,7 @@
 #include "firmware_build_info.h"
 #include "system/soc_types.h"
 #include "peripheral/ch32v00x/usart.h"
+#include "system/startup/soc_init.h"
 
 using namespace Peripheral;
 
@@ -19,8 +20,12 @@ using namespace Peripheral;
 
 // NOLINTBEGIN(readability-static-accessed-through-instance)
 int main(int argc, char *argv[]) {
+
+    prepare_system_for_main();
+
     // Firmware build info
     std::cout << "Version: " << firmwareBuildInfo::version << " date: " << firmwareBuildInfo::date << " time: " << firmwareBuildInfo::time << std::endl;
+    std::cout << "Versiondssdds: " << firmwareBuildInfo::version << " date:dsdsdsds " << firmwareBuildInfo::date << " time: " << firmwareBuildInfo::time << std::endl;
 
     // Custom literals
     using namespace Literals::Delay;
