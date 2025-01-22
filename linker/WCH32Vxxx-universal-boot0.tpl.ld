@@ -1,5 +1,6 @@
 /* Chip: CH32Vxxx */
 /* References:
+    https://mcyoung.xyz/2021/06/01/linker-script/
     https://mcuoneclipse.com/2013/04/14/text-data-and-bss-code-and-data-size-explained/
     https://www.sifive.com/blog/all-aboard-part-3-linker-relaxation-in-riscv-toolchain
     https://uw.cs.cs350.narkive.com/2CEqIPGX/bss-and-sbss
@@ -86,7 +87,7 @@ SECTIONS
 #endif /* SYSTEM_WCH_LINKER_GP_INSIDE_ROM */
 #ifndef SYSTEM_WCH_LINKER_SMALL_RO_DATA_IN_RAM
     /* small read-only data placed in ROM together with other ROM content */
-    PROVIDE( _small_ro_data_in_ROM_begin = .);
+    PROVIDE( __small_ro_data_in_ROM_begin = .);
     . = ALIGN(4)
     *(.srodata.cst4)  /*  4-byte constants 32-bit */
     . = ALIGN(2)
@@ -97,7 +98,7 @@ SECTIONS
     *(.srodata.cst8)  /*  8-bit  constants 1 byte */
     . = ALIGN(4)
     *(.srodata*)      /* eveyrthing else */
-    PROVIDE( _small_ro_data_in_ROM_end = .);
+    PROVIDE( __small_ro_data_in_ROM_end = .);
 #endif /* end SYSTEM_WCH_LINKER_SMALL_RO_DATA_IN_RAM */
     . = ALIGN(SYSTEM_WCH_LINKER_LARGEST_TYPE_ALIGNMENT); /* see system.h for details in case rodata contains 64-bit variables */
     *(.rodata*)            /* read only data (constant global/static variables) */
@@ -165,7 +166,7 @@ SECTIONS
 
   .data_runtime_location : ALIGN(4)
   {
-    PROVIDE(_data_ram_start = .); /* for startup code - where to write into when ROM -> RAM values initialization */
+    PROVIDE(__data_ram_start = .); /* for startup code - where to write into when ROM -> RAM values initialization */
   } >RAM AT>ROM   /* Place the this section in RAM but load it from ROM */
                   /* syntax is as following:                         */
                   /* > PLACE_IT         AT> LOAD_IT_FROM             */
@@ -175,7 +176,7 @@ SECTIONS
 
   .data_boot_location : ALIGN(4)
   {
-    PROVIDE(_data_rom_start = .); /* for startup code - where to copy from when doing ROM -> RAM values initialization */
+    PROVIDE(__data_rom_start = .); /* for startup code - where to copy from when doing ROM -> RAM values initialization */
   } >ROM
 
 
@@ -190,38 +191,41 @@ SECTIONS
     PROVIDE( __global_pointer = . + SYSTEM_WCH_LINKER_GP_OFFSET); /* see system.h for details */
 #endif /* SYSTEM_WCH_LINKER_GP_INSIDE_ROM */
 
-    PROVIDE( _small_rw_data_begin = .);
+    PROVIDE( __small_rw_data_begin = .);
     *(.sdata*)
-    PROVIDE( _small_rw_data_end = .);
+    PROVIDE( __small_rw_data_end = .);
 /*    *(.gnu.linkonce.s.*) */ /* to merge special section - platform specific data, metadata, debuging section, runtime configuration data */
 #ifdef SYSTEM_WCH_LINKER_SMALL_RO_DATA_IN_RAM
     /* small read-only data wasting RAM just to be close to GP*/
-    PROVIDE( _small_ro_data_in_RAM_begin = .);
+    PROVIDE( __small_ro_data_in_RAM_begin = .);
     *(.srodata.cst4)  /*  4-byte constants 32-bit */
     *(.srodata.cst2)  /*  2-byte constants (similar to cst16) */
     *(.srodata.cst16) /* 16-bit  constants 2 byte */
     *(.srodata.cst8)  /*  8-bit  constants 1 byte */
     *(.srodata*)      /* eveyrthing else */
-    PROVIDE( _small_ro_data_in_RAM_end = .);
+    PROVIDE( __small_ro_data_in_RAM_end = .);
 #endif /* end SYSTEM_WCH_LINKER_SMALL_RO_DATA_IN_RAM */
 
     . = ALIGN(4);
-    PROVIDE( _data_ram_end = .); /* For startup code - where to stop when copying values when doing ROM -> RAM values initialization */
-  } >RAM AT>ROM                  /* Loaded from ROM and placed to RAM */
+    PROVIDE( __data_ram_end = .); /* For startup code - where to stop when copying values when doing ROM -> RAM values initialization */
+  } >RAM AT>ROM                   /* Loaded from ROM and placed to RAM */
+
+  PROVIDE(__data_size    = __data_ram_end - __data_ram_start)
+  PROVIDE(__data_rom_end = __data_rom_start + (__data_ram_end - __data_ram_start));
 
 
   /* uninitialized data - global/static variables which just need to be zeroized, do not need to be loaded */
   .bss : ALIGN(4)
   {
-    PROVIDE(_block_started_by_symbol = .);     /* For startup code - where to start when zeroing values */
-    *(.sbss*)                                  /* Small unitizlized (to be zeroized) variables */
-    *(.gnu.linkonce.sb.*)                      /* To merge duplicate static unintialized (to be zeroized) variables, */
-                                               /* special case of *.gnu.linkonce.b. needing aditional handling */
-    *(.bss*)                                   /* the main block of unitialized (to be zeroized) static/global variables */
-    *(.gnu.linkonce.b.*)                       /* to merge duplicate static or global unintialized (to be zeroized) variables */
-    *(COMMON*)                                 /* common extern declared, but not defined symbols */
-    . = ALIGN(4);                              /* align the stop below to whole multiples of 4 so the for loop can work on word size all the time */
-    PROVIDE(_block_started_by_symbol_end = .); /* for startup code - where to stop zeroing */
+    PROVIDE(__block_started_by_symbol = .);     /* For startup code - where to start when zeroing values */
+    *(.sbss*)                                   /* Small unitizlized (to be zeroized) variables */
+    *(.gnu.linkonce.sb.*)                       /* To merge duplicate static unintialized (to be zeroized) variables, */
+                                                /* special case of *.gnu.linkonce.b. needing aditional handling */
+    *(.bss*)                                    /* the main block of unitialized (to be zeroized) static/global variables */
+    *(.gnu.linkonce.b.*)                        /* to merge duplicate static or global unintialized (to be zeroized) variables */
+    *(COMMON*)                                  /* common extern declared, but not defined symbols */
+    . = ALIGN(4);                               /* align the stop below to whole multiples of 4 so the for loop can work on word size all the time */
+    PROVIDE(__block_started_by_symbol_end = .); /* for startup code - where to stop zeroing */
   } >RAM AT>ROM
 
 
@@ -232,7 +236,7 @@ SECTIONS
     . += HEAP_SIZE;
     __heap_end = .;
     . = ALIGN(SYSTEM_WCH_LINKER_LARGEST_TYPE_ALIGNMENT); /* see system.h for details */
-    PROVIDE(_heap_end = __heap_end);
+    PROVIDE(__heap_end = __heap_end);
   } >RAM
 
 
@@ -240,9 +244,9 @@ SECTIONS
   /* temporary values etc... */
 	.stack ORIGIN(RAM) + LENGTH(RAM) - SYSTEM_WCH_LINKER_STACK_SIZE : ALIGN(4)
 	{
-	    PROVIDE(_stack_start = . );
+	    PROVIDE(__stack_start = . );
 	    . = . + SYSTEM_WCH_LINKER_STACK_SIZE;
-	    PROVIDE(_stack_end = .);
+	    PROVIDE(__stack_end = .);
 	} >RAM
 
 
