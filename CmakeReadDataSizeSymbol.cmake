@@ -1,0 +1,15 @@
+# read_file.cmake
+file(READ "${CMAKE_BINARY_DIR}/first_pass_symbols_data.txt" file_contents)
+#read_file_into_variable("${CMAKE_BINARY_DIR}/first_pass_symbols_data.txt" FILE_CONTENTS)
+message(STATUS "File contents111: ${file_contents}")
+#set(FILE_CONTENTS "${file_contents}" PARENT_SCOPE)
+set(FILE_CONTENTS "${file_contents}")
+set(DL_FRAMEWORK CAFFE CACHE STRING "Select Deep Learning Framework.")
+set_property(CACHE DL_FRAMEWORK PROPERTY STRINGS CAFFE NV_CAFFE)
+set(FILE_CONTENTS "${file_contents}" CACHE STRING "Contents of the file" FORCE)
+set(CRYPTOBACKEND "some_value" CACHE STRING "Description of the crypto backend" FORCE)
+#set_property(CACHE FILE_CONTENTS DESCRIPTION "Updated description of the cache variable")
+set_property(CACHE CRYPTOBACKEND PROPERTY STRINGS "aaaaaaa" FORCE)
+
+#set(VARIABLE_NAME VALUE CACHE TYPE DESCRIPTION [FORCE])
+#set_property(GLOBAL PROPERTY FILE_CONTENTS "${file_contents}")
