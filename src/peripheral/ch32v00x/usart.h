@@ -46,11 +46,16 @@ namespace Peripheral::Usart{
     namespace {
         // https://medium.com/@mane.tako/understanding-unnamed-namespaces-in-c-7d41d367fd47
 
+        template<typename TYPE>
+        constexpr auto abs_constexpr(TYPE const value) -> TYPE {
+            return (value < 0) ? -value : value;
+        }
+
         template<std::uint32_t expectedBaudRate, std::uint32_t actualBaudRate, double errorThreshold>
         constexpr void checkBaudRateError() {
             // https://ccsinfo.com/forum/viewtopic.php?t=51587
             constexpr double baudError =
-                fabs(100.0 *
+                abs_constexpr(100.0 *
                      ((static_cast<double>(expectedBaudRate) - actualBaudRate) / expectedBaudRate));
             static_assert(baudError < errorThreshold, "Bauderror of USARTDIV is over the threashold");
         }
