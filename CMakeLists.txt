@@ -1,6 +1,68 @@
 cmake_minimum_required(VERSION 3.28)
-project(wch-riscv-hal-second)
-add_subdirectory(src)
+
+#set(SHARED_NAME wch-riscv-hal)
+#set(FIRST_PASS_BINARY ${SHARED_NAME}-first-pass)
+#set(SECOND_PASS_BINARY ${SHARED_NAME}-second-pass)
+project(wch-riscv-hal-second-pass)
+
+set(CMAKE_CXX_STANDARD 23)
+set(BUSYBOX_LOCATION "c:/progs/busybox.exe")
+
+
+set(LINKER_SCRIPT_TEMPLATE ${CMAKE_SOURCE_DIR}/linker/WCH32Vxxx-universal-boot0.tpl.ld)
+set(LINKER_SCRIPT_FINAL ${CMAKE_BINARY_DIR}/linker/WCH32Vxxx-for-current-soc-boot0.ld)
+
+
+set (headers
+        ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/gpio.h
+        ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/rcc.h
+        ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/timer.h
+        ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/usart.h
+        ${CMAKE_SOURCE_DIR}/src/system/CH32V003xxxx/soc_template.h
+        ${CMAKE_SOURCE_DIR}/src/system/soc_types.h
+        ${CMAKE_SOURCE_DIR}/src/user_src/firmware_build_info.h
+        ${CMAKE_SOURCE_DIR}/src/user_src/system.h
+        ${CMAKE_SOURCE_DIR}/src/utils/delay.h
+        ${CMAKE_SOURCE_DIR}/src/utils/firmware_build_info.h
+        ${CMAKE_SOURCE_DIR}/src/utils/literals/all.h
+        ${CMAKE_SOURCE_DIR}/src/utils/literals/delay.h
+        ${CMAKE_SOURCE_DIR}/src/utils/literals/helper_templates.h
+        ${CMAKE_SOURCE_DIR}/src/utils/literals/timer.h
+        ${CMAKE_SOURCE_DIR}/src/utils/literals/usart.h
+        ${CMAKE_SOURCE_DIR}/src/system/linker_utils.h
+        ${CMAKE_SOURCE_DIR}/src/system/memory_map/peripheral_addresses.h
+        ${CMAKE_SOURCE_DIR}/src/system/memory_map/concepts.h
+        ${CMAKE_SOURCE_DIR}/src/system/startup/soc_init.h
+)
+
+
+set (sources
+        ${CMAKE_SOURCE_DIR}/src/user_src/main.cpp
+)
+
+
+#add_subdirectory(./src)
+
+
+execute_process(
+        COMMAND ${CMAKE_COMMAND} -E echo "hiiiiiiiiiiiiiiiiiffffffffffffffffffffffffffffff"
+)
+
+
+#file(READ "${CMAKE_BINARY_DIR}/first_pass_symbols_data.txt" FIRST_PASS_DATA_SIZE)
+#message("FIRST_PASS_DATA_SIZE: ${FIRST_PASS_DATA_SIZE}")
+#
+#file(READ "${CMAKE_BINARY_DIR}/first_pass_symbols_bss.txt" FIRST_PASS_BSS_SIZE)
+#message("FIRST_PASS_BSS_SIZE: ${FIRST_PASS_BSS_SIZE}")
+
+include_directories(./src)
+
+#target_include_directories(${PROJECT_NAME} PRIVATE ./src)
+
+add_executable(${PROJECT_NAME} ${sources} ${headers})
+
+#add_dependencies(${PROJECT_NAME} wch-riscv-hal-first-pass)
+
 
 #add_executable(main_app src/main.cpp)
 #add_dependencies(main_app wch-riscv-hal-first-pass)
@@ -8,33 +70,7 @@ add_subdirectory(src)
 
 #SET(OUTPUT_BINARY wch-riscv-hal-first-pass)
 #
-#include_directories(./)
 #
-#set (headers
-#        peripheral/ch32v00x/gpio.h
-#        peripheral/ch32v00x/rcc.h
-#        peripheral/ch32v00x/timer.h
-#        peripheral/ch32v00x/usart.h
-#        system/CH32V003xxxx/soc_template.h
-#        system/soc_types.h
-#        user_src/firmware_build_info.h
-#        user_src/system.h
-#        utils/delay.h
-#        utils/firmware_build_info.h
-#        utils/literals/all.h
-#        utils/literals/delay.h
-#        utils/literals/helper_templates.h
-#        utils/literals/timer.h
-#        utils/literals/usart.h
-#        system/linker_utils.h
-#        system/memory_map/peripheral_addresses.h
-#        system/memory_map/concepts.h
-#        system/startup/soc_init.h
-#)
-#
-#set (sources
-#        user_src/main.cpp
-#)
 #
 ## Force to rebuild this file on each compilation, making sure the date and time info in the file are always up to date
 #set_source_files_properties(${PROJECT_SOURCE_DIR}/utils/firmware_build_info.h PROPERTIES COMPILE_FLAGS "-DFORCE_REBUILD")

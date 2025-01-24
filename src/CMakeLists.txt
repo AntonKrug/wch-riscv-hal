@@ -2,36 +2,8 @@
 # https://stackoverflow.com/questions/2410976/how-can-i-define-a-string-literal-on-the-gcc-command-line
 
 cmake_minimum_required(VERSION 3.28)
-set(CMAKE_CXX_STANDARD 23)
 project(wch-riscv-hal-first-pass)
-
-include_directories(./)
-
-set (headers
-        peripheral/ch32v00x/gpio.h
-        peripheral/ch32v00x/rcc.h
-        peripheral/ch32v00x/timer.h
-        peripheral/ch32v00x/usart.h
-        system/CH32V003xxxx/soc_template.h
-        system/soc_types.h
-        user_src/firmware_build_info.h
-        user_src/system.h
-        utils/delay.h
-        utils/firmware_build_info.h
-        utils/literals/all.h
-        utils/literals/delay.h
-        utils/literals/helper_templates.h
-        utils/literals/timer.h
-        utils/literals/usart.h
-        system/linker_utils.h
-        system/memory_map/peripheral_addresses.h
-        system/memory_map/concepts.h
-        system/startup/soc_init.h
-)
-
-set (sources
-        user_src/main.cpp
-)
+#include_directories(./)
 
 
 # Force to rebuild this file on each compilation, making sure the date and time info in the file are always up to date
@@ -41,7 +13,7 @@ set_source_files_properties(${PROJECT_SOURCE_DIR}/utils/firmware_build_info.h PR
 # Generate list file output for each source file
 # https://stackoverflow.com/questions/6666805/what-does-each-column-of-objdumps-symbol-table-mean
 foreach(source_file IN LISTS sources)
-    set_source_files_properties(${source_file} PROPERTIES COMPILE_OPTIONS "-Wa,-adhln=${CMAKE_CURRENT_SOURCE_DIR}/${source_file}.lst")
+    set_source_files_properties(${source_file} PROPERTIES COMPILE_OPTIONS "-Wa,-adhln=${source_file}.lst")
 endforeach()
 
 
@@ -55,8 +27,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/)
 
 # Generate custom linker script on each built by running C pre-processor on a template
 # file and then use its result linker script to link the binary with
-set(LINKER_SCRIPT_TEMPLATE ${CMAKE_SOURCE_DIR}/linker/WCH32Vxxx-universal-boot0.tpl.ld)
-set(LINKER_SCRIPT_FINAL ${CMAKE_SOURCE_DIR}/linker/WCH32Vxxx-for-current-soc-boot0.ld)
 
 add_custom_command(
         OUTPUT ${LINKER_SCRIPT_FINAL}
@@ -87,24 +57,27 @@ if(NOT DEFINED ${SKIP_SECOND_PASS_PREPARATION})
             COMMAND ${CMAKE_COMMAND} -E echo "First pass binary finished, getting symbols from it"
     )
 
+    if(WIN32)
+        set(CMAKE_EXECUTABLE_SUFFIX ".exe")
+    elseif(UNIX)
+        set(CMAKE_EXECUTABLE_SUFFIX "")
+    endif()
+
     add_custom_command(
             TARGET ${PROJECT_NAME} POST_BUILD
-            # TODO fix the binary, make it portable
-            COMMAND ${NM_TOOL} ${PROJECT_NAME}.exe -C > ${CMAKE_BINARY_DIR}/first_pass_symbols.txt
+            COMMAND ${NM_TOOL} ${FIRST_PASS_BINARY}${CMAKE_EXECUTABLE_SUFFIX} -C > ${CMAKE_BINARY_DIR}/first_pass_symbols.txt
             COMMENT "Getting all symbols"
     )
 
     add_custom_command(
             TARGET ${PROJECT_NAME} POST_BUILD
-            # TODO fix the binary, make it portable
-            COMMAND "c:/progs/busybox.exe" awk \"$$3==\\"__data_end__\\" {print $$1}\" ${CMAKE_BINARY_DIR}/first_pass_symbols.txt > ${CMAKE_BINARY_DIR}/first_pass_symbols_data.txt
+            COMMAND ${BUSYBOX_LOCATION} awk \"$$3==\\"__data_end__\\" {print $$1}\" ${CMAKE_BINARY_DIR}/first_pass_symbols.txt > ${CMAKE_BINARY_DIR}/first_pass_symbols_data.txt
             COMMENT "Parsing out symbol __data_size__"
     )
 
     add_custom_command(
             TARGET ${PROJECT_NAME} POST_BUILD
-            # TODO fix the binary, make it portable
-            COMMAND "c:/progs/busybox.exe" awk \"$$3==\\"__bss_end__\\" {print $$1}\" ${CMAKE_BINARY_DIR}/first_pass_symbols.txt > ${CMAKE_BINARY_DIR}/first_pass_symbols_bss.txt
+            COMMAND ${BUSYBOX_LOCATION} awk \"$$3==\\"__bss_end__\\" {print $$1}\" ${CMAKE_BINARY_DIR}/first_pass_symbols.txt > ${CMAKE_BINARY_DIR}/first_pass_symbols_bss.txt
             COMMENT "Parsing out symbol __bss_size__"
     )
 
