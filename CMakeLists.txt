@@ -1,9 +1,62 @@
 cmake_minimum_required(VERSION 3.28)
 
+SET(CMAKE_C_COMPILER_WORKS 1)
+SET(CMAKE_CXX_COMPILER_WORKS 1)
+
 #set(SHARED_NAME wch-riscv-hal)
 #set(FIRST_PASS_BINARY ${SHARED_NAME}-first-pass)
 #set(SECOND_PASS_BINARY ${SHARED_NAME}-second-pass)
-project(wch-riscv-hal-second-pass)
+project(wch-riscv-hal)
+
+if(WIN32)
+    set(CMAKE_EXECUTABLE_SUFFIX ".exe")
+elseif(UNIX)
+    set(CMAKE_EXECUTABLE_SUFFIX "")
+endif()
+
+
+set(CMAKE_C_COMPILER_WORKS)
+set(CMAKE_C_ABI_COMPILED)
+set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
+
+set(CMAKE_SYSTEM_NAME Linux)
+set(CMAKE_SYSTEM_PROCESSOR riscv)
+
+#set(TOOLCHAIN C:/progs/xpack-riscv-none-elf-gcc-14.2.0-3/bin)
+#set(MY_CROSS_PREFIX "riscv-none-elf-")
+
+#set(CMAKE_C_COMPILER ${TOOLCHAIN}/${MY_CROSS_PREFIX}gcc${CMAKE_EXECUTABLE_SUFFIX})
+#set(CMAKE_CXX_COMPILER ${TOOLCHAIN}/${MY_CROSS_PREFIX}g++${CMAKE_EXECUTABLE_SUFFIX})
+#SET(CMAKE_LINKER ${TOOLCHAIN}/${MY_CROSS_PREFIX}ld${CMAKE_EXECUTABLE_SUFFIX})
+#set(CMAKE_AR ${TOOLCHAIN}/${MY_CROSS_PREFIX}ar${CMAKE_EXECUTABLE_SUFFIX})
+
+#set(CMAKE_C_COMPILER_ABI_INFO 1)
+#set(CMAKE_CXX_COMPILER_ABI_INFO 1)
+
+
+set(CMAKE_C_FLAGS "-march=rv32i -mabi=ilp32")
+set(CMAKE_CXX_FLAGS "-march=rv32i -mabi=ilp32")
+
+#TARGET_C_FLAGS="-O3 -march=rv32g -g"
+
+set(CMAKE_EXE_LINKER_FLAGS "-march=rv32i -mabi=ilp32")
+
+
+## Set the ABI and target architecture (for 32-bit RISC-V)
+#set(CMAKE_C_FLAGS "-m32 -march=rv32imaf -mabi=ilp32")
+#set(CMAKE_CXX_FLAGS "-m32 -march=rv32imaf -mabi=ilp32")
+#
+##TARGET_C_FLAGS="-O3 -march=rv32g -g"
+#
+#set(CMAKE_EXE_LINKER_FLAGS "")
+#set(CMAKE_EXE_LINKER_FLAGS "-march=rv32imaf -mabi=ilp32")
+
+
+
+# Optionally, set other toolchain flags depending on your requirements
+# E.g., where the cross-compiling tools are located
+#set(CMAKE_FIND_ROOT_PATH /path/to/riscv32-toolchain)
+
 
 set(CMAKE_CXX_STANDARD 23)
 set(BUSYBOX_LOCATION "c:/progs/busybox.exe")
@@ -33,6 +86,7 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/system/memory_map/peripheral_addresses.h
         ${CMAKE_SOURCE_DIR}/src/system/memory_map/concepts.h
         ${CMAKE_SOURCE_DIR}/src/system/startup/soc_init.h
+        ${CMAKE_SOURCE_DIR}/src/system/startup/startup_configuration.h
 )
 
 
@@ -40,8 +94,9 @@ set (sources
         ${CMAKE_SOURCE_DIR}/src/user_src/main.cpp
 )
 
+include_directories(${CMAKE_SOURCE_DIR}/src/)
 
-#add_subdirectory(./src)
+add_subdirectory(./src)
 
 
 execute_process(
@@ -55,13 +110,13 @@ execute_process(
 #file(READ "${CMAKE_BINARY_DIR}/first_pass_symbols_bss.txt" FIRST_PASS_BSS_SIZE)
 #message("FIRST_PASS_BSS_SIZE: ${FIRST_PASS_BSS_SIZE}")
 
-include_directories(./src)
 
 #target_include_directories(${PROJECT_NAME} PRIVATE ./src)
 
-add_executable(${PROJECT_NAME} ${sources} ${headers})
+add_executable(${PROJECT_NAME}-second-pass ${sources} ${headers})
 
-#add_dependencies(${PROJECT_NAME} wch-riscv-hal-first-pass)
+add_dependencies(${PROJECT_NAME}-second-pass ${PROJECT_NAME}-first-pass)
+#add_dependencies(${PROJECT_NAME}-second-pass "${CMAKE_BINARY_DIR}/first_pass_symbols_data.txt")
 
 
 #add_executable(main_app src/main.cpp)

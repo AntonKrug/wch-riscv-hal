@@ -2,9 +2,8 @@
 # https://stackoverflow.com/questions/2410976/how-can-i-define-a-string-literal-on-the-gcc-command-line
 
 cmake_minimum_required(VERSION 3.28)
-project(wch-riscv-hal-first-pass)
+project(wch-riscv-hal)
 #include_directories(./)
-
 
 # Force to rebuild this file on each compilation, making sure the date and time info in the file are always up to date
 set_source_files_properties(${PROJECT_SOURCE_DIR}/utils/firmware_build_info.h PROPERTIES COMPILE_FLAGS "-DFORCE_REBUILD")
@@ -18,11 +17,11 @@ endforeach()
 
 
 # Stating what binary will be produced
-add_executable(${PROJECT_NAME} ${sources} ${headers})
+add_executable(${PROJECT_NAME}-first-pass ${sources} ${headers})
 
 
 # Bind the include headers
-target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/)
+target_include_directories(${PROJECT_NAME}-first-pass PRIVATE ${PROJECT_SOURCE_DIR}/)
 
 
 # Generate custom linker script on each built by running C pre-processor on a template
@@ -45,38 +44,45 @@ add_custom_command(
 )
 
 add_custom_target(pre_processed_linker_script DEPENDS ${LINKER_SCRIPT_FINAL} user_src/system.h)
-add_dependencies(${PROJECT_NAME} pre_processed_linker_script)
-
+add_dependencies(${PROJECT_NAME}-first-pass pre_processed_linker_script)
+target_link_options(${PROJECT_NAME}-first-pass PRIVATE -T ${LINKER_SCRIPT_FINAL})
+target_compile_options(${PROJECT_NAME}-first-pass PRIVATE -Wno-packed-bitfield-compat)
 
 # Getting __data_size__ and __bss_size__ from the binary
+add_custom_command(
+        OUTPUT ${CMAKE_SOURCE_DIR}/src/system/startup/startup_configuration.h
+        COMMAND ${CMAKE_COMMAND} -E echo "#pragma once\n#define WCH_STARTUP_DATA_SECTION_COPY" > ${CMAKE_SOURCE_DIR}/src/system/startup/startup_configuration.h
+)
+target_sources(${PROJECT_NAME}-first-pass PRIVATE ${CMAKE_SOURCE_DIR}/src/system/startup/startup_configuration.h)
+
+set_source_files_properties(${CMAKE_SOURCE_DIR}/src/system/startup/startup_configuration.h PROPERTIES GENERATED TRUE)
+
+add_custom_target(bar DEPENDS ${CMAKE_SOURCE_DIR}/src/system/startup/startup_configuration.h)
+
+add_dependencies(${PROJECT_NAME}-first-pass bar)
+
 if(NOT DEFINED ${SKIP_SECOND_PASS_PREPARATION})
     find_program(NM_TOOL nm)
 
     add_custom_command(
-            TARGET ${PROJECT_NAME} POST_BUILD
+            TARGET ${PROJECT_NAME}-first-pass POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E echo "First pass binary finished, getting symbols from it"
     )
 
-    if(WIN32)
-        set(CMAKE_EXECUTABLE_SUFFIX ".exe")
-    elseif(UNIX)
-        set(CMAKE_EXECUTABLE_SUFFIX "")
-    endif()
-
     add_custom_command(
-            TARGET ${PROJECT_NAME} POST_BUILD
-            COMMAND ${NM_TOOL} ${FIRST_PASS_BINARY}${CMAKE_EXECUTABLE_SUFFIX} -C > ${CMAKE_BINARY_DIR}/first_pass_symbols.txt
+            TARGET ${PROJECT_NAME}-first-pass POST_BUILD
+            COMMAND ${NM_TOOL} ${PROJECT_NAME}-first-pass${CMAKE_EXECUTABLE_SUFFIX} -C > ${CMAKE_BINARY_DIR}/first_pass_symbols.txt
             COMMENT "Getting all symbols"
     )
 
     add_custom_command(
-            TARGET ${PROJECT_NAME} POST_BUILD
+            TARGET ${PROJECT_NAME}-first-pass POST_BUILD
             COMMAND ${BUSYBOX_LOCATION} awk \"$$3==\\"__data_end__\\" {print $$1}\" ${CMAKE_BINARY_DIR}/first_pass_symbols.txt > ${CMAKE_BINARY_DIR}/first_pass_symbols_data.txt
             COMMENT "Parsing out symbol __data_size__"
     )
 
     add_custom_command(
-            TARGET ${PROJECT_NAME} POST_BUILD
+            TARGET ${PROJECT_NAME}-first-pass POST_BUILD
             COMMAND ${BUSYBOX_LOCATION} awk \"$$3==\\"__bss_end__\\" {print $$1}\" ${CMAKE_BINARY_DIR}/first_pass_symbols.txt > ${CMAKE_BINARY_DIR}/first_pass_symbols_bss.txt
             COMMENT "Parsing out symbol __bss_size__"
     )
