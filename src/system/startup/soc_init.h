@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "startup_configuration.h"
+
 extern unsigned int __data_rom_start;
 extern unsigned int __data_rom_end;
 extern unsigned int __data_ram_start;
@@ -11,11 +13,12 @@ extern unsigned int __data_ram_end;
 
 __attribute__ ((optimize("-Os"))) void prepare_system_for_main(void) {
 
-#if __data_size > 0
-    const unsigned int* rom_end = &_data_rom_end;
-    const unsigned int* ram_end = &_data_ram_end;
-    unsigned int*       rom_ptr = &_data_rom_start;
-    unsigned int*       ram_ptr = &_data_ram_start;
+#ifdef WCH_STARTUP_DATA_SECTION_COPY
+    // Get the address locations from the linker script
+    //const unsigned int* rom_end = &__data_rom_end;
+    const unsigned int* ram_end = &__data_ram_end;
+    const unsigned int* rom_ptr = &__data_rom_start;
+    unsigned int*       ram_ptr = &__data_ram_start;
 
     // Copy data from ROM to RAM, word (4 bytes) at a time
     do {
