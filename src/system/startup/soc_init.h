@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "startup_configuration.h"
+#include "generated_startup_configuration.h"
 
 extern unsigned int __data_rom_start;
 extern unsigned int __data_rom_end;

@@ -52,15 +52,15 @@ target_compile_options(${PROJECT_NAME}-first-pass PRIVATE -Wno-packed-bitfield-c
 
 # Getting __data_size__ and __bss_size__ from the binary
 #add_custom_command(
-#        OUTPUT ${CMAKE_SOURCE_DIR}/src/system/startup/startup_configuration.h
-#        COMMAND ${CMAKE_COMMAND} -E echo "#define WCH_STARTUP_DATA_SECTION_COPY" > ${CMAKE_SOURCE_DIR}/src/system/startup/startup_configuration.h
+#        OUTPUT ${CMAKE_SOURCE_DIR}/src/system/startup/generated_startup_configuration.h
+#        COMMAND ${CMAKE_COMMAND} -E echo "#define WCH_STARTUP_DATA_SECTION_COPY" > ${CMAKE_SOURCE_DIR}/src/system/startup/generated_startup_configuration.h
 #)
 
-#target_sources(${PROJECT_NAME}-first-pass PRIVATE ${CMAKE_SOURCE_DIR}/src/system/startup/startup_configuration.h)
+#target_sources(${PROJECT_NAME}-first-pass PRIVATE ${CMAKE_SOURCE_DIR}/src/system/startup/generated_startup_configuration.h)
 
-#set_source_files_properties(${CMAKE_SOURCE_DIR}/src/system/startup/startup_configuration.h PROPERTIES GENERATED TRUE)
+#set_source_files_properties(${CMAKE_SOURCE_DIR}/src/system/startup/generated_startup_configuration.h PROPERTIES GENERATED TRUE)
 
-#add_custom_target(bar DEPENDS ${CMAKE_SOURCE_DIR}/src/system/startup/startup_configuration.h)
+#add_custom_target(bar DEPENDS ${CMAKE_SOURCE_DIR}/src/system/startup/generated_startup_configuration.h)
 #
 #add_dependencies(${PROJECT_NAME}-first-pass bar)
 
