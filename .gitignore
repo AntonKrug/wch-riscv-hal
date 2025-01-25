@@ -1,4 +1,5 @@
 /cmake-build-*
+/src/cmake-build-*
 /.idea
 *.lst
 /linker/WCH32Vxxx-for-current-soc*.ld
