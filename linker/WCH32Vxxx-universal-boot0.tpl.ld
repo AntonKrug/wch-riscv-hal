@@ -210,8 +210,8 @@ SECTIONS
     PROVIDE( __data_ram_end = .); /* For startup code - where to stop when copying values when doing ROM -> RAM values initialization */
   } >RAM AT>ROM                   /* Loaded from ROM and placed to RAM */
 
-  PROVIDE(__data_size    = __data_ram_end - __data_ram_start)
-  PROVIDE(__data_rom_end = __data_rom_start + (__data_ram_end - __data_ram_start));
+  PROVIDE(__data_size    = __data_ram_end - __data_ram_start);
+  PROVIDE(__data_rom_end = __data_rom_start + __data_size);
 
 
   /* uninitialized data - global/static variables which just need to be zeroized, do not need to be loaded */
@@ -233,7 +233,7 @@ SECTIONS
   .heap : ALIGN(SYSTEM_WCH_LINKER_LARGEST_TYPE_ALIGNMENT) /* see system.h for details */
   {
     PROVIDE(__heap_start = .);
-    . += HEAP_SIZE;
+    . += SYSTEM_WCH_LINKER_HEAP_SIZE;
     __heap_end = .;
     . = ALIGN(SYSTEM_WCH_LINKER_LARGEST_TYPE_ALIGNMENT); /* see system.h for details */
     PROVIDE(__heap_end = __heap_end);

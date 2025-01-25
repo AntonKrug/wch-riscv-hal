@@ -20,7 +20,7 @@
 
 /* RAM_SIZE > STACK_SIZE + HEAP_SIZE:
  * https://stackoverflow.com/questions/6387614/how-to-determine-maximum-stack-usage-in-embedded-system-with-gcc */
-#define SYSTEM_WCH_LINKER_STACK_SIZE 256
+#define SYSTEM_WCH_LINKER_STACK_SIZE 256k
 
 /* preferably avoid heap is you can */
 #define SYSTEM_WCH_LINKER_HEAP_SIZE 0

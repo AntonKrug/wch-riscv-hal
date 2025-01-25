@@ -11,8 +11,8 @@
 /* keep them as defines, even when they could be changed to consexpr, because
  * this file will be used from linker script when doing linker-pre-processing
  * hack to support many platforms with one script */
-#define SYSTEM_WCH_CHIP_ROM_SIZE 16k // Flash size of the chip
-#define SYSTEM_WCH_CHIP_RAM_SIZE 2k  // RAM so small that GP's 12-bit (4k) can fully cover it to offer relaxation optimizations
+#define SYSTEM_WCH_CHIP_ROM_SIZE 16m // Flash size of the chip
+#define SYSTEM_WCH_CHIP_RAM_SIZE 2m  // RAM so small that GP's 12-bit (4k) can fully cover it to offer relaxation optimizations
 
 //#define SYSTEM_WCH_CHIP_EEPROM_SIZE 480k
 //#define SYSTEM_WCH_CHIP_EEPROM_SIZE 224k

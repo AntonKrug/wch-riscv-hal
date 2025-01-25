@@ -24,8 +24,8 @@ int main(int argc, char *argv[]) {
     prepare_system_for_main();
 
     // Firmware build info
-    std::cout << "Version: " << firmwareBuildInfo::version << " date: " << firmwareBuildInfo::date << " time: " << firmwareBuildInfo::time << std::endl;
-    std::cout << "Versiondssdds: " << firmwareBuildInfo::version << " date:dsdsdsds " << firmwareBuildInfo::date << " time: " << firmwareBuildInfo::time << std::endl;
+    // std::cout << "Version: " << firmwareBuildInfo::version << " date: " << firmwareBuildInfo::date << " time: " << firmwareBuildInfo::time << std::endl;
+    // std::cout << "Versiondssdds: " << firmwareBuildInfo::version << " date:dsdsdsds " << firmwareBuildInfo::date << " time: " << firmwareBuildInfo::time << std::endl;
 
     // Custom literals
     using namespace Literals::Delay;
@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
     constexpr auto div = Usart::calculateUsartDivCT<11.0592_mhz_to_hz, 9.6_kbaud>();
 
     Peripheral::Usart::Device<SoC::PeripheralAddreses::usart1> device2;
-    std::cout << "Uart base address " << device2.baseAddressUint32 << std::endl;
+    // std::cout << "Uart base address " << device2.baseAddressUint32 << std::endl;
 
     Rcc::PeripheralBus2Reset a {
         .ioAuxiliary = Rcc::Reset::reset,

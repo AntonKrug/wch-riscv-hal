@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.28)
 
-SET(CMAKE_C_COMPILER_WORKS 1)
-SET(CMAKE_CXX_COMPILER_WORKS 1)
+set(CMAKE_C_COMPILER_WORKS 1)
+set(CMAKE_CXX_COMPILER_WORKS 1)
+set(CMAKE_SYSTEM_NAME Generic)
+set(CMAKE_SYSTEM_PROCESSOR riscv)
 
 #set(SHARED_NAME wch-riscv-hal)
 #set(FIRST_PASS_BINARY ${SHARED_NAME}-first-pass)
@@ -15,15 +17,15 @@ elseif(UNIX)
 endif()
 
 
-set(CMAKE_C_COMPILER_WORKS)
-set(CMAKE_C_ABI_COMPILED)
-set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
+#set(CMAKE_C_COMPILER_WORKS)
+#set(CMAKE_C_ABI_COMPILED)
+#set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 
-set(CMAKE_SYSTEM_NAME Linux)
-set(CMAKE_SYSTEM_PROCESSOR riscv)
+#set(CMAKE_SYSTEM_NAME Linux)
 
-#set(TOOLCHAIN C:/progs/xpack-riscv-none-elf-gcc-14.2.0-3/bin)
-#set(MY_CROSS_PREFIX "riscv-none-elf-")
+set(TOOLCHAIN C:/progs/xpack-riscv-none-elf-gcc-14.2.0-3/bin)
+set(MY_CROSS_PREFIX "riscv-none-elf-")
+set(CMAKE_NM ${TOOLCHAIN}/${MY_CROSS_PREFIX}nm${CMAKE_EXECUTABLE_SUFFIX})
 
 #set(CMAKE_C_COMPILER ${TOOLCHAIN}/${MY_CROSS_PREFIX}gcc${CMAKE_EXECUTABLE_SUFFIX})
 #set(CMAKE_CXX_COMPILER ${TOOLCHAIN}/${MY_CROSS_PREFIX}g++${CMAKE_EXECUTABLE_SUFFIX})
@@ -34,12 +36,17 @@ set(CMAKE_SYSTEM_PROCESSOR riscv)
 #set(CMAKE_CXX_COMPILER_ABI_INFO 1)
 
 
-set(CMAKE_C_FLAGS "-march=rv32i -mabi=ilp32")
-set(CMAKE_CXX_FLAGS "-march=rv32i -mabi=ilp32")
+#set(CMAKE_C_FLAGS "-march=rv32i -mabi=ilp32 -v -msave-restore -fno-common -fdata-sections -ffunction-sections -fsigned-char -fmessage-length=0")
+#set(CMAKE_CXX_FLAGS "-march=rv32i -mabi=ilp32 -v -msave-restore -fno-common -fdata-sections -ffunction-sections -fsigned-char -fmessage-length=0 -fno-exceptions -fno-threadsafe-statics -fno-use-cxa-atexit -fno-rtti")
+#_GLIBCXX_USE_CXX11_ABI=1 or _GLIBCXX_USE_CXX11_ABI=2
+
+set(CMAKE_C_FLAGS "-march=rv32i -mabi=ilp32 -msave-restore -fno-common -fdata-sections -ffunction-sections -fsigned-char -fmessage-length=0")
+set(CMAKE_CXX_FLAGS "-march=rv32i -mabi=ilp32 -msave-restore -Wabi-tag -D_GLIBCXX_USE_CXX11_ABI=1 -fno-common -fdata-sections -ffunction-sections -fsigned-char -fmessage-length=0 -fno-exceptions -fno-threadsafe-statics -fno-use-cxa-atexit -fno-rtti")
 
 #TARGET_C_FLAGS="-O3 -march=rv32g -g"
 
-set(CMAKE_EXE_LINKER_FLAGS "-march=rv32i -mabi=ilp32")
+#set(CMAKE_EXE_LINKER_FLAGS "-march=rv32i -mabi=ilp32 -nostartfiles -Xlinker --gc-sections --specs=nano.specs --specs=nosys.specs")
+set(CMAKE_EXE_LINKER_FLAGS "-march=rv32i -mabi=ilp32 -nostartfiles -nostdlib -Xlinker --gc-sections --specs=nano.specs")
 
 
 ## Set the ABI and target architecture (for 32-bit RISC-V)

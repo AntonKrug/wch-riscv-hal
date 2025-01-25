@@ -2,6 +2,7 @@
 # https://stackoverflow.com/questions/2410976/how-can-i-define-a-string-literal-on-the-gcc-command-line
 
 cmake_minimum_required(VERSION 3.28)
+set(CMAKE_SYSTEM_NAME Generic)
 project(wch-riscv-hal)
 #include_directories(./)
 
@@ -12,6 +13,7 @@ set_source_files_properties(${PROJECT_SOURCE_DIR}/utils/firmware_build_info.h PR
 # Generate list file output for each source file
 # https://stackoverflow.com/questions/6666805/what-does-each-column-of-objdumps-symbol-table-mean
 foreach(source_file IN LISTS sources)
+#    set_source_files_properties(${source_file} PROPERTIES COMPILE_OPTIONS "-Wa, -x -C -adhln=${source_file}.lst")
     set_source_files_properties(${source_file} PROPERTIES COMPILE_OPTIONS "-Wa,-adhln=${source_file}.lst")
 endforeach()
 
@@ -49,20 +51,21 @@ target_link_options(${PROJECT_NAME}-first-pass PRIVATE -T ${LINKER_SCRIPT_FINAL}
 target_compile_options(${PROJECT_NAME}-first-pass PRIVATE -Wno-packed-bitfield-compat)
 
 # Getting __data_size__ and __bss_size__ from the binary
-add_custom_command(
-        OUTPUT ${CMAKE_SOURCE_DIR}/src/system/startup/startup_configuration.h
-        COMMAND ${CMAKE_COMMAND} -E echo "#pragma once\n#define WCH_STARTUP_DATA_SECTION_COPY" > ${CMAKE_SOURCE_DIR}/src/system/startup/startup_configuration.h
-)
-target_sources(${PROJECT_NAME}-first-pass PRIVATE ${CMAKE_SOURCE_DIR}/src/system/startup/startup_configuration.h)
+#add_custom_command(
+#        OUTPUT ${CMAKE_SOURCE_DIR}/src/system/startup/startup_configuration.h
+#        COMMAND ${CMAKE_COMMAND} -E echo "#define WCH_STARTUP_DATA_SECTION_COPY" > ${CMAKE_SOURCE_DIR}/src/system/startup/startup_configuration.h
+#)
 
-set_source_files_properties(${CMAKE_SOURCE_DIR}/src/system/startup/startup_configuration.h PROPERTIES GENERATED TRUE)
+#target_sources(${PROJECT_NAME}-first-pass PRIVATE ${CMAKE_SOURCE_DIR}/src/system/startup/startup_configuration.h)
 
-add_custom_target(bar DEPENDS ${CMAKE_SOURCE_DIR}/src/system/startup/startup_configuration.h)
+#set_source_files_properties(${CMAKE_SOURCE_DIR}/src/system/startup/startup_configuration.h PROPERTIES GENERATED TRUE)
 
-add_dependencies(${PROJECT_NAME}-first-pass bar)
+#add_custom_target(bar DEPENDS ${CMAKE_SOURCE_DIR}/src/system/startup/startup_configuration.h)
+#
+#add_dependencies(${PROJECT_NAME}-first-pass bar)
 
 if(NOT DEFINED ${SKIP_SECOND_PASS_PREPARATION})
-    find_program(NM_TOOL nm)
+    #find_program(NM_TOOL nm)
 
     add_custom_command(
             TARGET ${PROJECT_NAME}-first-pass POST_BUILD
@@ -71,7 +74,7 @@ if(NOT DEFINED ${SKIP_SECOND_PASS_PREPARATION})
 
     add_custom_command(
             TARGET ${PROJECT_NAME}-first-pass POST_BUILD
-            COMMAND ${NM_TOOL} ${PROJECT_NAME}-first-pass${CMAKE_EXECUTABLE_SUFFIX} -C > ${CMAKE_BINARY_DIR}/first_pass_symbols.txt
+            COMMAND ${CMAKE_NM} ${PROJECT_NAME}-first-pass${CMAKE_EXECUTABLE_SUFFIX} -C > ${CMAKE_BINARY_DIR}/first_pass_symbols.txt
             COMMENT "Getting all symbols"
     )
 
