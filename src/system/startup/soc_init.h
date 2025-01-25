@@ -13,7 +13,7 @@ extern unsigned int __data_ram_end;
 
 __attribute__ ((optimize("-Os"))) void prepare_system_for_main(void) {
 
-#ifdef WCH_STARTUP_DATA_SECTION_COPY
+#ifndef WCH_STARTUP_SKIP_DATA_SECTION_COPY
     // Get the address locations from the linker script
     //const unsigned int* rom_end = &__data_rom_end;
     const unsigned int* ram_end = &__data_ram_end;
