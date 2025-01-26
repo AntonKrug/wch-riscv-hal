@@ -8,6 +8,8 @@
 #include <cstdint>
 #include "system/memory_map/concepts.h"
 
+#define WCH_OPTIMIZE_GPIO __attribute__ ((optimize("-Os")))
+
 namespace Peripheral::Gpio{
 
 
@@ -142,19 +144,19 @@ namespace Peripheral::Gpio{
 
 
     template<BaseAddress TplBaseAddress>
-    constexpr Port<TplBaseAddress>::operator std::uint32_t() const { // NOLINT(*-explicit-constructor)
+    WCH_OPTIMIZE_GPIO constexpr Port<TplBaseAddress>::operator std::uint32_t() const { // NOLINT(*-explicit-constructor)
         return static_cast<uint32_t>(baseAddress);
     }
 
 
     template<BaseAddress TplBaseAddress>
-    constexpr auto Port<TplBaseAddress>::GetPin(const std::uint8_t pin) -> Pins {
+    WCH_OPTIMIZE_GPIO constexpr auto Port<TplBaseAddress>::GetPin(const std::uint8_t pin) -> Pins {
         return Pins{baseAddress, {pin}};
     }
 
 
     template<BaseAddress TplBaseAddress>
-    constexpr auto Port<TplBaseAddress>::GetPin(const std::array<std::uint8_t, 8> &pins) -> Pins {
+    WCH_OPTIMIZE_GPIO constexpr auto Port<TplBaseAddress>::GetPin(const std::array<std::uint8_t, 8> &pins) -> Pins {
         return Pins{baseAddress, pins};
     }
 
@@ -167,7 +169,7 @@ namespace Peripheral::Gpio{
 
     template<SequenceEntity... TplEntities>
     template<Pins TplPins>
-    constexpr auto Sequence<TplEntities...>::on() const {
+    WCH_OPTIMIZE_GPIO constexpr auto Sequence<TplEntities...>::on() const {
         constexpr SequenceEntity newEntity{TplPins.portBaseAddress, TplPins.pinNumbers, ActuationType::set, 1};
         constexpr Sequence<newEntity, TplEntities ...> ans;
         return ans;
@@ -176,7 +178,7 @@ namespace Peripheral::Gpio{
 
     template<SequenceEntity... TplEntities>
     template<Pins TplPins> // TODO support variadic
-    constexpr auto Sequence<TplEntities...>::off() const {
+    WCH_OPTIMIZE_GPIO constexpr auto Sequence<TplEntities...>::off() const {
         constexpr SequenceEntity newEntity{TplPins.portBaseAddress, TplPins.pinNumbers, ActuationType::set, 0};
         constexpr Sequence<newEntity, TplEntities ...> ans;
         return ans;
@@ -185,7 +187,7 @@ namespace Peripheral::Gpio{
 
     template<SequenceEntity... TplEntities>
     template<Pins TplPins, PinMode TplPinMode>
-    constexpr auto Sequence<TplEntities...>::mode() const {
+    WCH_OPTIMIZE_GPIO constexpr auto Sequence<TplEntities...>::mode() const {
         constexpr SequenceEntity newEntity{
             TplPins.portBaseAddress,
             TplPins.pinNumbers,
@@ -198,7 +200,7 @@ namespace Peripheral::Gpio{
 
 
     template<SequenceEntity... TplEntities>
-    constexpr int Sequence<TplEntities...>::executeExact() const {
+    WCH_OPTIMIZE_GPIO constexpr int Sequence<TplEntities...>::executeExact() const {
         int sum = 0;
         for (auto action : actuations) {
             sum += action.pinNumbers[0];
@@ -214,28 +216,28 @@ namespace Peripheral::Gpio{
     #pragma region Definition - Pins
 
 
-    inline auto Pins::operator=(const int value) const -> const Pins & { // NOLINT(*-unconventional-assign-operator)
+    WCH_OPTIMIZE_GPIO inline auto Pins::operator=(const int value) const -> const Pins & { // NOLINT(*-unconventional-assign-operator)
         auto *ptr = reinterpret_cast<std::uint8_t *>(portBaseAddress);
         *ptr = value;
         return *this;
     }
 
 
-    inline auto Pins::SetOutputValue(const int value) const -> void {
+    WCH_OPTIMIZE_GPIO inline auto Pins::SetOutputValue(const int value) const -> void {
         auto *ptr = reinterpret_cast<std::uint8_t *>(portBaseAddress);
         *ptr = value;
     }
 
 
     // ReSharper disable once CppMemberFunctionMayBeStatic
-    constexpr auto Pins::sequence() const { // NOLINT(*-convert-member-functions-to-static)
+    WCH_OPTIMIZE_GPIO constexpr auto Pins::sequence() const { // NOLINT(*-convert-member-functions-to-static)
         constexpr Sequence<> ans;
         return ans;
     }
 
 
     template<PinMode TplPinMode>
-    constexpr auto Pins::mode() const {
+    WCH_OPTIMIZE_GPIO constexpr auto Pins::mode() const {
         constexpr SequenceEntity newEntity{
             portBaseAddress,
             pinNumbers,
@@ -254,7 +256,7 @@ namespace Peripheral::Gpio{
 
 
     template<Pins... TplEntities>
-    auto PinsSet<TplEntities...>::operator=(int) const -> const PinsSet &  {
+    WCH_OPTIMIZE_GPIO auto PinsSet<TplEntities...>::operator=(int) const -> const PinsSet &  {
         return *this;
     }
 
@@ -267,7 +269,7 @@ namespace Peripheral::Gpio{
 
     template<long long int address>
     requires ValidPeripheralBaseAddress<address>
-    constexpr static auto MakeBaseAddress() -> BaseAddress {
+    WCH_OPTIMIZE_GPIO constexpr static auto MakeBaseAddress() -> BaseAddress {
         return static_cast<BaseAddress>(address);
     };
 
