@@ -31,8 +31,8 @@ endif()
 
 #set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 
-#set(TOOLCHAIN_PATH "C:/MounRiver/MounRiver_Studio2/resources/app/resources/win32/components/WCH/Toolchain/RISC-V\ Embedded\ GCC")
-set(TOOLCHAIN_PATH "C:/MounRiver/MounRiver_Studio2/resources/app/resources/win32/components/WCH/Toolchain/RISC-V\ Embedded\ GCC12")
+#set(TOOLCHAIN_PATH "C:/progs/wch-gcc-8")
+set(TOOLCHAIN_PATH "C:/progs/wch-gcc-12")
 #set(TOOLCHAIN_PATH "C:/progs/xpack-riscv-none-elf-gcc-14.2.0-3")
 #set(TOOLCHAIN_PATH "C:/progs/xpack-riscv-none-elf-gcc-13.3.0-2")
 
@@ -160,9 +160,9 @@ include_directories(${CMAKE_SOURCE_DIR}/src/)
 add_subdirectory(./src)
 
 
-execute_process(
-        COMMAND ${CMAKE_COMMAND} -E echo "hiiiiiiiiiiiiiiiiiffffffffffffffffffffffffffffff"
-)
+#execute_process(
+#        COMMAND ${CMAKE_COMMAND} -E echo "hifffffffffff"
+#)
 
 
 #file(READ "${CMAKE_BINARY_DIR}/first_pass_symbols_data.txt" FIRST_PASS_DATA_SIZE)
