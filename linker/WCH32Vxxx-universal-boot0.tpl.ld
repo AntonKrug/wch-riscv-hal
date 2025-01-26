@@ -78,7 +78,13 @@ SECTIONS
   /* most (if not all) of the application code, and other constants*/
   .text : ALIGN(4)
   {
-    *(.text.handle_reset) /* part of the HAL's init, setting up clock, gp, intializing (with zeros and values) variables */
+    *(.text.handle_reset) /* part of the HAL's init, setting up clock, gp, intializing
+                           * (with zeros and values) variables. Make sure this section
+                           * is at begining of the section so it the first entry instruction
+                           * jump can be done with a short relative jump and will not
+                           * require many instructions (which could affect vector table
+                           * as they might be overlapping and we have only 4 bytes spare
+                           * in the table to fit the the jump instruction) */
     *(.text*)             /* "gcc -ffunction-sections" */
 #ifdef SYSTEM_WCH_LINKER_GP_INSIDE_ROM
     . = ALIGN(SYSTEM_WCH_LINKER_LARGEST_TYPE_ALIGNMENT);          /* see system.h for details */
