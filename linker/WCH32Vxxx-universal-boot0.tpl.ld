@@ -89,7 +89,10 @@ SECTIONS
 #ifdef SYSTEM_WCH_LINKER_GP_INSIDE_ROM
     . = ALIGN(SYSTEM_WCH_LINKER_LARGEST_TYPE_ALIGNMENT);          /* see system.h for details */
     PROVIDE( __global_pointer_without_offset = .);
-    PROVIDE( __global_pointer = . + SYSTEM_WCH_LINKER_GP_OFFSET); /* see system.h for details */
+    /*https://five-embeddev.com/quickref/global_pointer.html*/
+    /* if i do not use this exact symbol name for GP, it looks like the linker will not pick it up
+       for the relaxation optimizations */
+    PROVIDE( __global_pointer$ = . + SYSTEM_WCH_LINKER_GP_OFFSET); /* see system.h for details */
 #endif /* SYSTEM_WCH_LINKER_GP_INSIDE_ROM */
 #ifndef SYSTEM_WCH_LINKER_SMALL_RO_DATA_IN_RAM
     /* small read-only data placed in ROM together with other ROM content */
@@ -194,7 +197,10 @@ SECTIONS
 #ifndef SYSTEM_WCH_LINKER_GP_INSIDE_ROM
     . = ALIGN(SYSTEM_WCH_LINKER_LARGEST_TYPE_ALIGNMENT);          /* see system.h for details */
     PROVIDE( __global_pointer_without_offset = .);
-    PROVIDE( __global_pointer = . + SYSTEM_WCH_LINKER_GP_OFFSET); /* see system.h for details */
+    /*https://five-embeddev.com/quickref/global_pointer.html*/
+    /* if i do not use this exact symbol name for GP, it looks like the linker will not pick it up
+       for the relaxation optimizations */
+    PROVIDE( __global_pointer$ = . + SYSTEM_WCH_LINKER_GP_OFFSET); /* see system.h for details */
 #endif /* SYSTEM_WCH_LINKER_GP_INSIDE_ROM */
 
     PROVIDE( __small_rw_data_begin = .);
