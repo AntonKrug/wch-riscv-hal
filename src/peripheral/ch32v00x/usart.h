@@ -6,7 +6,7 @@
 
 // #include <array>
 #include <cstdint>
-#include <cmath>
+//#include <cmath>
 #include <utility>
 
 #include "system/memory_map/concepts.h"
@@ -47,15 +47,20 @@ namespace Peripheral::Usart{
         // https://medium.com/@mane.tako/understanding-unnamed-namespaces-in-c-7d41d367fd47
 
         template<typename TYPE>
-        constexpr auto abs_constexpr(TYPE const value) -> TYPE {
+        constexpr auto absoluteValueCt(TYPE const value) -> TYPE {
             return (value < 0) ? -value : value;
+        }
+
+        template<typename TYPE>
+        constexpr auto roundCt(TYPE const value) -> TYPE {
+            return static_cast<TYPE>(static_cast<int>(value + 0.5f));
         }
 
         template<std::uint32_t expectedBaudRate, std::uint32_t actualBaudRate, double errorThreshold>
         constexpr void checkBaudRateError() {
             // https://ccsinfo.com/forum/viewtopic.php?t=51587
             constexpr double baudError =
-                abs_constexpr(100.0 *
+                absoluteValueCt(100.0 *
                      ((static_cast<double>(expectedBaudRate) - actualBaudRate) / expectedBaudRate));
             static_assert(baudError < errorThreshold, "Bauderror of USARTDIV is over the threashold");
         }
@@ -69,7 +74,7 @@ namespace Peripheral::Usart{
         static_assert((1<<12) > expectedDivider, "USARTDIV's 12bit mantisa would overflow with these hclk and baudRate values");
         constexpr std::uint16_t mantisa = static_cast<std::uint16_t>(expectedDivider);
 
-        constexpr double leftOver = std::round(expectedDivider - mantisa);
+        constexpr double leftOver = roundCt(expectedDivider - mantisa);
         constexpr std::uint8_t fraction = static_cast<std::uint8_t>(leftOver * 16);
 
         static_assert(fraction > 0 || mantisa >0, "Expected baud rate needs to be 16x slower than HCLK or it would result a zero USARTDIV");
@@ -108,7 +113,7 @@ namespace Peripheral::Usart{
         };
 
     public:
-        constexpr static BaseAddress              baseAddress       = TplBaseAddress;
+        constexpr static BaseAddress                   baseAddress       = TplBaseAddress;
         constexpr static std::uint32_t                 baseAddressUint32 = static_cast<std::uint32_t>(baseAddress);
         struct           RegistersType<TplBaseAddress> registers         = {};
     };
