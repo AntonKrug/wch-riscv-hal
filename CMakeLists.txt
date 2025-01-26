@@ -72,16 +72,21 @@ set(CMAKE_OBJDUMP      "${TOOLCHAIN_PATH_BIN}/${MY_TOOLCHAIN_CROSS_PREFIX}objdum
 #set(CMAKE_C_COMPILER_ABI_INFO 1)
 #set(CMAKE_CXX_COMPILER_ABI_INFO 1)
 
+set(TARGET_ARCH_AND_ABI "-march=rv32ic -mabi=ilp32")
+#For WCH toolchain and CHV32V003
+#set(TARGET_ARCH_AND_ABI "-march=rv32ecxw -mabi=ilp32e")
+
 
 #set(CMAKE_C_FLAGS "-march=rv32i -mabi=ilp32 -v -msave-restore -fno-common -fdata-sections -ffunction-sections -fsigned-char -fmessage-length=0")
 #set(CMAKE_CXX_FLAGS "-march=rv32i -mabi=ilp32 -v -msave-restore -fno-common -fdata-sections -ffunction-sections -fsigned-char -fmessage-length=0 -fno-exceptions -fno-threadsafe-statics -fno-use-cxa-atexit -fno-rtti")
 #_GLIBCXX_USE_CXX11_ABI=1 or _GLIBCXX_USE_CXX11_ABI=2
 
+set(MY_COMPILER_FLAGS_COMMON "-Wunused -Wuninitialized -msave-restore -msmall-data-limit=0 -fmax-errors=10 -fno-common -fdata-sections -ffunction-sections -fsigned-char -fmessage-length=0")
+set(MY_COMPILER_FLAGS_CPP    "-fno-exceptions -fno-threadsafe-statics -fno-use-cxa-atexit -fno-rtti -Wabi-tag -D_GLIBCXX_USE_CXX11_ABI=2")
+set(MY_LINKER_FLAGS          "-nostartfiles -flto -mrelax -nostdlib -fno-builtin-memcpy -Xlinker --gc-sections --specs=nano.specs --specs=nosys.specs")
 
-#-g -T "c:/Users/anton/mounriver-studio-projects/CH32V003F4P6-2/Ld/WCH32Vxxx-universal.tpl.ld" -nostartfiles -Xlinker --gc-sections -Wl,-Map,"CH32V003F4P6-2.map" --specs=nano.specs --specs=nosys.specs -o "CH32V003F4P6-2.elf" $
-
-set(CMAKE_C_FLAGS   "-march=rv32ic -mabi=ilp32 -Wunused -Wuninitialized -msave-restore -msmall-data-limit=0 -fmax-errors=10 -fno-builtin -fno-common -fdata-sections -ffunction-sections -fsigned-char -fmessage-length=0")
-set(CMAKE_CXX_FLAGS "-march=rv32ic -mabi=ilp32 -Wunused -Wuninitialized -msave-restore -msmall-data-limit=0 -fmax-errors=10 -fno-builtin -fno-common -fdata-sections -ffunction-sections -fsigned-char -fmessage-length=0 -fno-exceptions -fno-threadsafe-statics -fno-use-cxa-atexit -fno-rtti -Wabi-tag -D_GLIBCXX_USE_CXX11_ABI=1")
+set(CMAKE_C_FLAGS   "${TARGET_ARCH_AND_ABI} ${MY_COMPILER_FLAGS_COMMON} -mrelax -flto -fno-builtin -fno-builtin-memcpy -ffreestanding") # C compiler used only for soc_init.c disabling builtin so memcpy is not used
+set(CMAKE_CXX_FLAGS "${TARGET_ARCH_AND_ABI} ${MY_COMPILER_FLAGS_COMMON} ${MY_COMPILER_FLAGS_CPP}")
 
 
 #@	riscv-none-embed-objcopy -O ihex "CH32V003F4P6-2.elf" "CH32V003F4P6-2.hex"
@@ -95,7 +100,7 @@ set(CMAKE_CXX_FLAGS "-march=rv32ic -mabi=ilp32 -Wunused -Wuninitialized -msave-r
 #https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html
 #set(CMAKE_EXE_LINKER_FLAGS "-march=rv32i -mabi=ilp32 -nostartfiles -Xlinker --gc-sections --specs=nano.specs --specs=nosys.specs")
 #set(CMAKE_EXE_LINKER_FLAGS "-march=rv32ic -mabi=ilp32 -nostartfiles -nostdlib -Xlinker --gc-sections --specs=nano.specs --specs=nosys.specs")
-set(CMAKE_EXE_LINKER_FLAGS "-march=rv32ic -mabi=ilp32 -nostartfiles -nostdlib -Xlinker --gc-sections --specs=nano.specs --specs=nosys.specs")
+set(CMAKE_EXE_LINKER_FLAGS "${TARGET_ARCH_AND_ABI} ${MY_LINKER_FLAGS}")
 
 
 ## Set the ABI and target architecture (for 32-bit RISC-V)
