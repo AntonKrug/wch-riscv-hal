@@ -4,16 +4,6 @@
 
 #include "soc_init.h"
 #include "generated_startup_configuration.h"
-// #include <stddef.h>
-
-// void* memcpy(void* dest, const void* src, size_t n) {
-//     unsigned char* d = (unsigned char*)dest;
-//     const unsigned char* s = (const unsigned char*)src;
-//     for (size_t i = 0; i < n; ++i) {
-//         d[i] = s[i];
-//     }
-//     return dest;
-// }
 
 extern unsigned int __data_rom_start;
 extern unsigned int __data_rom_end;
@@ -22,10 +12,10 @@ extern unsigned int __data_ram_end;
 
 // https://gcc.gnu.org/onlinedocs/gcc-4.0.1/gcc/Optimize-Options.html
 
-// inline
+inline
 void
 __attribute__ ((
-    // always_inline,
+    always_inline,
     optimize("-O1"),
     optimize("-fno-strict-aliasing"),
     optimize("-fomit-frame-pointer"),
@@ -68,7 +58,7 @@ __attribute__((
     // always_inline,
     section(".text.handle_reset"),
     naked,
-    optimize("-O0"))) handle_reset() {
+    optimize("-O1"))) handle_reset() {
     asm volatile (
         ".option norelax\n"           // Disable relaxation for the next instruction
         "la gp, __global_pointer$\n"  // Load the address of the global pointer
