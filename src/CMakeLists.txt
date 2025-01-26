@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.28)
 set(CMAKE_SYSTEM_NAME Generic)
 project(wch-riscv-hal C CXX ASM)
-set(BINARY_FIRST_PASS ${PROJECT_NAME}-pass-1.elf)
+#set(BINARY_FIRST_PASS ${PROJECT_NAME}-pass-1.elf)
 set(BINARY_FIRST_PASS_HEX ${PROJECT_NAME}-pass-1.hex)
 set(BINARY_FIRST_PASS_LST ${PROJECT_NAME}-pass-1.lst)
 #include_directories(./)

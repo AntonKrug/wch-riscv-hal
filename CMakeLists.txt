@@ -11,6 +11,9 @@ set(CMAKE_SYSTEM_PROCESSOR riscv)
 #set(FIRST_PASS_BINARY ${SHARED_NAME}-first-pass)
 #set(SECOND_PASS_BINARY ${SHARED_NAME}-second-pass)
 project(wch-riscv-hal C CXX ASM)
+set(BINARY_FIRST_PASS  ${PROJECT_NAME}-pass-1.elf)
+set(BINARY_SECOND_PASS ${PROJECT_NAME}-pass-2.elf)
+
 
 if(WIN32)
     set(CMAKE_EXECUTABLE_SUFFIX ".exe")
@@ -138,9 +141,9 @@ execute_process(
 
 #target_include_directories(${PROJECT_NAME} PRIVATE ./src)
 
-add_executable(${PROJECT_NAME}-second-pass ${sources} ${headers})
+add_executable(${BINARY_SECOND_PASS} ${sources} ${headers})
 
-add_dependencies(${PROJECT_NAME}-second-pass ${PROJECT_NAME}-pass-1.elf)
+add_dependencies(${BINARY_SECOND_PASS} ${BINARY_FIRST_PASS})
 #add_dependencies(${PROJECT_NAME}-second-pass "${CMAKE_BINARY_DIR}/first_pass_symbols_data.txt")
 
 
