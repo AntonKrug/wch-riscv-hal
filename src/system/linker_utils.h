@@ -17,4 +17,4 @@
 // When GP is RAM and we moved small RO data to RAM too, but might not be
 // reachable due lots of small RW data taking all space, offset GP in such
 // way that small RO data will get priority
-#define GP_LINKER_OFFSET_INCLUDE_SMALL_RO_DATA_IN_RAM ((_small_ro_data_in_RAM_end - __global_pointer_without_offset) - 1<<12)
+#define GP_LINKER_OFFSET_INCLUDE_SMALL_RO_DATA_IN_RAM ((__small_ro_data_in_RAM_end - __global_pointer_without_offset) - 1<<12)
