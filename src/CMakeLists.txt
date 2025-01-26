@@ -23,7 +23,7 @@ set_source_files_properties(${PROJECT_SOURCE_DIR}/utils/firmware_build_info.h PR
 
 
 
-# Add assemblies
+# Add assemblies to be compiled
 foreach(asm_file IN LISTS assemblies)
     # https://developer.arm.com/documentation/101754/0623/armclang-Reference/armclang-Integrated-Assembler/Section-directives
     # https://stackoverflow.com/questions/15132185/mixing-c-and-assembly-sources-and-build-with-cmake
@@ -35,9 +35,15 @@ endforeach()
 
 # The first startup function copy memory and prepare the stacks and register,
 # these can't get optimized away with builtin functions like memcpy, so for this
-# file the built-ins are disables
+# file the built-ins are disables,
+# HOWEVER it doesn't work the way i want, so i had to disable it for the whole C compiler
+# but this is the only C file anyway and rest is C++
+# it is applied in the command line when i run cmake with -DCMAKE_VERBOSE_MAKEFILE=ON but with
+# higher optimizations like -O2 it's ignored, i can do -O1 and manually add optimizations
 #set_source_files_properties(${CMAKE_SOURCE_DIR}/src/system/startup/soc_init.c PROPERTIES COMPILE_FLAGS "-fno-builtin -ffreestanding")
-set_source_files_properties(${CMAKE_SOURCE_DIR}/src/system/startup/soc_init.c PROPERTIES COMPILE_FLAGS "-fno-builtin")
+# https://stackoverflow.com/questions/54281780/what-exactly-is-fno-builtin-doing-here
+# https://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html
+set_source_files_properties(${CMAKE_SOURCE_DIR}/src/system/startup/soc_init.c PROPERTIES COMPILE_FLAGS "-fno-builtin -ffreestanding -fno-builtin-memcpy")
 
 
 # Stating what binary will be produced
@@ -105,12 +111,20 @@ add_custom_command(
 )
 
 
-# Disassemble from final binary to a listing file
+# Disassemble from soc_init object to a listing file
 add_custom_command(
     TARGET ${BINARY_FIRST_PASS} POST_BUILD
     # https://man7.org/linux/man-pages/man1/objdump.1.html
     # https://forums.sifive.com/t/16-bit-instructions-from-objdump/979/2
-    COMMAND ${CMAKE_OBJDUMP} --disassemble --demangle --all-headers "${BINARY_FIRST_PASS}" > "${BINARY_FIRST_PASS_LST}"
+    COMMAND ${CMAKE_OBJDUMP} --disassemble --demangle --all-headers "${CMAKE_BINARY_DIR}/src/CmakeFiles/${BINARY_FIRST_PASS}.dir/system/startup/soc_init.c.obj" > "${CMAKE_BINARY_DIR}/soc_init.lst"
+)
+
+# Disassemble from final binary to a listing file
+add_custom_command(
+        TARGET ${BINARY_FIRST_PASS} POST_BUILD
+        # https://man7.org/linux/man-pages/man1/objdump.1.html
+        # https://forums.sifive.com/t/16-bit-instructions-from-objdump/979/2
+        COMMAND ${CMAKE_OBJDUMP} --disassemble --demangle --all-headers "${BINARY_FIRST_PASS}" > "${BINARY_FIRST_PASS_LST}"
 )
 
 
