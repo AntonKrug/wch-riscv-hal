@@ -20,7 +20,7 @@
 
 /* RAM_SIZE > STACK_SIZE + HEAP_SIZE:
  * https://stackoverflow.com/questions/6387614/how-to-determine-maximum-stack-usage-in-embedded-system-with-gcc */
-#define SYSTEM_WCH_LINKER_STACK_SIZE 256k
+#define SYSTEM_WCH_LINKER_STACK_SIZE 256
 
 /* preferably avoid heap is you can */
 #define SYSTEM_WCH_LINKER_HEAP_SIZE 0
@@ -36,7 +36,7 @@
  * When set to `GP_LINKER_OFFSET_UNIDIRECTIONAL` will offset the 12-bit GP that it will mark just the
  * begining of GP's range. And GP optimized code will be able to reach 4k of data
  * after this location. Also feel free to use any other useful values outside these defines */
-#define SYSTEM_WCH_LINKER_GP_OFFSET GP_LINKER_OFFSET_INCLUDE_SMALL_RO_DATA_IN_RAM
+#define SYSTEM_WCH_LINKER_GP_OFFSET GP_LINKER_OFFSET_SYMETRIC
 
 /* Depending on GP's location, the small read-only (RO) data might lose GP's
  * relaxation optimization benefits if put into ROM and GP placed in RAM. One
