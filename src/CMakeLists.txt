@@ -115,7 +115,6 @@ add_custom_command(
 
 
 if(NOT DEFINED ${SKIP_SECOND_PASS_PREPARATION})
-    #find_program(NM_TOOL nm)
 
     add_custom_command(
             TARGET ${BINARY_FIRST_PASS} POST_BUILD

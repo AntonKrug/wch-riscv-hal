@@ -14,27 +14,55 @@ project(wch-riscv-hal C CXX ASM)
 set(BINARY_FIRST_PASS  ${PROJECT_NAME}-pass-1.elf)
 set(BINARY_SECOND_PASS ${PROJECT_NAME}-pass-2.elf)
 
-
-if(WIN32)
-    set(CMAKE_EXECUTABLE_SUFFIX ".exe")
-elseif(UNIX)
-    set(CMAKE_EXECUTABLE_SUFFIX "")
+if (CMAKE_HOST_WIN32)
+    # detect the host win32 and not the target win32:
+    # https://stackoverflow.com/a/70382484/4535300
+    # the variable CMAKE_EXECUTABLE_SUFFIX will get
+    # overriden when calling project, so use the
+    # CMAKE_HOST_EXECUTABLE_SUFFIX instead
+    set(CMAKE_HOST_EXECUTABLE_SUFFIX ".exe")
+else()
+    set(CMAKE_HOST_EXECUTABLE_SUFFIX "")
 endif()
 
+#message(FATAL_ERROR "suffix:${CMAKE_HOST_EXECUTABLE_SUFFIX}")
 
-#set(CMAKE_C_COMPILER_WORKS)
-#set(CMAKE_C_ABI_COMPILED)
+
+
 #set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 
-#set(CMAKE_SYSTEM_NAME Linux)
+#set(TOOLCHAIN_PATH "C:/MounRiver/MounRiver_Studio2/resources/app/resources/win32/components/WCH/Toolchain/RISC-V\ Embedded\ GCC")
+set(TOOLCHAIN_PATH "C:/MounRiver/MounRiver_Studio2/resources/app/resources/win32/components/WCH/Toolchain/RISC-V\ Embedded\ GCC12")
+#set(TOOLCHAIN_PATH "C:/progs/xpack-riscv-none-elf-gcc-14.2.0-3")
+#set(TOOLCHAIN_PATH "C:/progs/xpack-riscv-none-elf-gcc-13.3.0-2")
 
-set(TOOLCHAIN C:/progs/xpack-riscv-none-elf-gcc-14.2.0-3/bin)
-set(MY_CROSS_PREFIX "riscv-none-elf-")
-set(CMAKE_NM ${TOOLCHAIN}/${MY_CROSS_PREFIX}nm${CMAKE_EXECUTABLE_SUFFIX})
-set(CMAKE_SIZE ${TOOLCHAIN}/${MY_CROSS_PREFIX}size${CMAKE_EXECUTABLE_SUFFIX})
-set(CMAKE_OBJCOPY ${TOOLCHAIN}/${MY_CROSS_PREFIX}objcopy${CMAKE_EXECUTABLE_SUFFIX})
-set(CMAKE_OBJDUMP ${TOOLCHAIN}/${MY_CROSS_PREFIX}objdump${CMAKE_EXECUTABLE_SUFFIX})
+#message(FATAL_ERROR "suffix:${CMAKE_HOST_EXECUTABLE_SUFFIX}")
 
+
+#https://cmake.org/cmake/help/latest/variable/CMAKE_PROGRAM_PATH.html
+#https://gitlab.kitware.com/cmake/cmake/-/issues/21736
+set(TOOLCHAIN_PATH_BIN "${TOOLCHAIN_PATH}/bin")
+#set(CMAKE_PROGRAM_PATH "${TOOLCHAIN_PATH_BIN}" "${CMAKE_PROGRAM_PATH}")
+#set(MY_TOOLCHAIN_CROSS_PREFIX "riscv-none-elf-")
+#set(MY_TOOLCHAIN_CROSS_PREFIX "riscv-none-embed-")
+set(MY_TOOLCHAIN_CROSS_PREFIX "riscv-wch-elf-")
+set(CMAKE_C_COMPILER   "${TOOLCHAIN_PATH_BIN}/${MY_TOOLCHAIN_CROSS_PREFIX}gcc${CMAKE_HOST_EXECUTABLE_SUFFIX}")
+set(CMAKE_CXX_COMPILER "${TOOLCHAIN_PATH_BIN}/${MY_TOOLCHAIN_CROSS_PREFIX}g++${CMAKE_HOST_EXECUTABLE_SUFFIX}")
+set(CMAKE_SIZE         "${TOOLCHAIN_PATH_BIN}/${MY_TOOLCHAIN_CROSS_PREFIX}size${CMAKE_HOST_EXECUTABLE_SUFFIX}")
+set(CMAKE_OBJCOPY      "${TOOLCHAIN_PATH_BIN}/${MY_TOOLCHAIN_CROSS_PREFIX}objcopy${CMAKE_HOST_EXECUTABLE_SUFFIX}")
+set(CMAKE_OBJDUMP      "${TOOLCHAIN_PATH_BIN}/${MY_TOOLCHAIN_CROSS_PREFIX}objdump${CMAKE_HOST_EXECUTABLE_SUFFIX}")
+
+#https://cmake.org/cmake/help/latest/command/find_program.html
+#find_program(CMAKE_SIZE    size    PATHS "${TOOLCHAIN_PATH_BIN}" NO_CACHE NO_DEFAULT_PATH)
+#find_program(CMAKE_OBJCOPY objcopy PATHS "${TOOLCHAIN_PATH_BIN}" NO_CACHE NO_DEFAULT_PATH)
+#find_program(CMAKE_OBJDUMP objdump PATHS "${TOOLCHAIN_PATH_BIN}" NO_CACHE NO_DEFAULT_PATH)
+#find_program(CMAKE_NM      nm      PATHS "${TOOLCHAIN_PATH_BIN}" NO_CACHE NO_DEFAULT_PATH)
+##find_program(CMAKE_NM ${MY_TOOLCHAIN_CROSS_PREFIX}size${CMAKE_HOST_EXECUTABLE_SUFFIX})
+#message(FATAL_ERROR "suffix:${CMAKE_HOST_EXECUTABLE_SUFFIX} ${CMAKE_PROGRAM_PATH} ${CMAKE_SIZE} ${CMAKE_OBJCOPY} ${CMAKE_OBJDUMP} ${CMAKE_NM}")
+#
+#if(NOT CMAKE_NM)
+#    message(FATAL_ERROR "nm not found!")
+#endif()
 
 #set(CMAKE_C_COMPILER ${TOOLCHAIN}/${MY_CROSS_PREFIX}gcc${CMAKE_EXECUTABLE_SUFFIX})
 #set(CMAKE_CXX_COMPILER ${TOOLCHAIN}/${MY_CROSS_PREFIX}g++${CMAKE_EXECUTABLE_SUFFIX})
@@ -49,8 +77,11 @@ set(CMAKE_OBJDUMP ${TOOLCHAIN}/${MY_CROSS_PREFIX}objdump${CMAKE_EXECUTABLE_SUFFI
 #set(CMAKE_CXX_FLAGS "-march=rv32i -mabi=ilp32 -v -msave-restore -fno-common -fdata-sections -ffunction-sections -fsigned-char -fmessage-length=0 -fno-exceptions -fno-threadsafe-statics -fno-use-cxa-atexit -fno-rtti")
 #_GLIBCXX_USE_CXX11_ABI=1 or _GLIBCXX_USE_CXX11_ABI=2
 
-set(CMAKE_C_FLAGS   "-march=rv32ic -mabi=ilp32 -Wunused -Wuninitialized -msave-restore -msmall-data-limit=0 -fmax-errors=20 -fno-builtin -fno-common -fdata-sections -ffunction-sections -fsigned-char -fmessage-length=0")
-set(CMAKE_CXX_FLAGS "-march=rv32ic -mabi=ilp32 -Wunused -Wuninitialized -msave-restore -msmall-data-limit=0 -fmax-errors=20 -fno-builtin -fno-common -fdata-sections -ffunction-sections -fsigned-char -fmessage-length=0 -fno-exceptions -fno-threadsafe-statics -fno-use-cxa-atexit -fno-rtti -Wabi-tag -D_GLIBCXX_USE_CXX11_ABI=1")
+
+#-g -T "c:/Users/anton/mounriver-studio-projects/CH32V003F4P6-2/Ld/WCH32Vxxx-universal.tpl.ld" -nostartfiles -Xlinker --gc-sections -Wl,-Map,"CH32V003F4P6-2.map" --specs=nano.specs --specs=nosys.specs -o "CH32V003F4P6-2.elf" $
+
+set(CMAKE_C_FLAGS   "-march=rv32ic -mabi=ilp32 -Wunused -Wuninitialized -msave-restore -msmall-data-limit=0 -fmax-errors=10 -fno-builtin -fno-common -fdata-sections -ffunction-sections -fsigned-char -fmessage-length=0")
+set(CMAKE_CXX_FLAGS "-march=rv32ic -mabi=ilp32 -Wunused -Wuninitialized -msave-restore -msmall-data-limit=0 -fmax-errors=10 -fno-builtin -fno-common -fdata-sections -ffunction-sections -fsigned-char -fmessage-length=0 -fno-exceptions -fno-threadsafe-statics -fno-use-cxa-atexit -fno-rtti -Wabi-tag -D_GLIBCXX_USE_CXX11_ABI=1")
 
 
 #@	riscv-none-embed-objcopy -O ihex "CH32V003F4P6-2.elf" "CH32V003F4P6-2.hex"
@@ -61,7 +92,9 @@ set(CMAKE_CXX_FLAGS "-march=rv32ic -mabi=ilp32 -Wunused -Wuninitialized -msave-r
 
 #TARGET_C_FLAGS="-O3 -march=rv32g -g"
 
+#https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html
 #set(CMAKE_EXE_LINKER_FLAGS "-march=rv32i -mabi=ilp32 -nostartfiles -Xlinker --gc-sections --specs=nano.specs --specs=nosys.specs")
+#set(CMAKE_EXE_LINKER_FLAGS "-march=rv32ic -mabi=ilp32 -nostartfiles -nostdlib -Xlinker --gc-sections --specs=nano.specs --specs=nosys.specs")
 set(CMAKE_EXE_LINKER_FLAGS "-march=rv32ic -mabi=ilp32 -nostartfiles -nostdlib -Xlinker --gc-sections --specs=nano.specs --specs=nosys.specs")
 
 
