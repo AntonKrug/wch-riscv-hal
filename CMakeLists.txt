@@ -1,3 +1,5 @@
+# https://developer.arm.com/documentation/100066/0611/assembling-assembly-code/preprocessing-assembly-code
+
 cmake_minimum_required(VERSION 3.28)
 
 set(CMAKE_C_COMPILER_WORKS 1)
@@ -8,7 +10,7 @@ set(CMAKE_SYSTEM_PROCESSOR riscv)
 #set(SHARED_NAME wch-riscv-hal)
 #set(FIRST_PASS_BINARY ${SHARED_NAME}-first-pass)
 #set(SECOND_PASS_BINARY ${SHARED_NAME}-second-pass)
-project(wch-riscv-hal)
+project(wch-riscv-hal C CXX ASM)
 
 if(WIN32)
     set(CMAKE_EXECUTABLE_SUFFIX ".exe")
@@ -26,6 +28,10 @@ endif()
 set(TOOLCHAIN C:/progs/xpack-riscv-none-elf-gcc-14.2.0-3/bin)
 set(MY_CROSS_PREFIX "riscv-none-elf-")
 set(CMAKE_NM ${TOOLCHAIN}/${MY_CROSS_PREFIX}nm${CMAKE_EXECUTABLE_SUFFIX})
+set(CMAKE_SIZE ${TOOLCHAIN}/${MY_CROSS_PREFIX}size${CMAKE_EXECUTABLE_SUFFIX})
+set(CMAKE_OBJCOPY ${TOOLCHAIN}/${MY_CROSS_PREFIX}objcopy${CMAKE_EXECUTABLE_SUFFIX})
+set(CMAKE_OBJDUMP ${TOOLCHAIN}/${MY_CROSS_PREFIX}objdump${CMAKE_EXECUTABLE_SUFFIX})
+
 
 #set(CMAKE_C_COMPILER ${TOOLCHAIN}/${MY_CROSS_PREFIX}gcc${CMAKE_EXECUTABLE_SUFFIX})
 #set(CMAKE_CXX_COMPILER ${TOOLCHAIN}/${MY_CROSS_PREFIX}g++${CMAKE_EXECUTABLE_SUFFIX})
@@ -40,13 +46,20 @@ set(CMAKE_NM ${TOOLCHAIN}/${MY_CROSS_PREFIX}nm${CMAKE_EXECUTABLE_SUFFIX})
 #set(CMAKE_CXX_FLAGS "-march=rv32i -mabi=ilp32 -v -msave-restore -fno-common -fdata-sections -ffunction-sections -fsigned-char -fmessage-length=0 -fno-exceptions -fno-threadsafe-statics -fno-use-cxa-atexit -fno-rtti")
 #_GLIBCXX_USE_CXX11_ABI=1 or _GLIBCXX_USE_CXX11_ABI=2
 
-set(CMAKE_C_FLAGS "-march=rv32i -mabi=ilp32 -msave-restore -fno-common -fdata-sections -ffunction-sections -fsigned-char -fmessage-length=0")
-set(CMAKE_CXX_FLAGS "-march=rv32i -mabi=ilp32 -msave-restore -Wabi-tag -D_GLIBCXX_USE_CXX11_ABI=1 -fno-common -fdata-sections -ffunction-sections -fsigned-char -fmessage-length=0 -fno-exceptions -fno-threadsafe-statics -fno-use-cxa-atexit -fno-rtti")
+set(CMAKE_C_FLAGS   "-march=rv32ic -mabi=ilp32 -Wunused -Wuninitialized -msave-restore -msmall-data-limit=0 -fmax-errors=20 -fno-builtin -fno-common -fdata-sections -ffunction-sections -fsigned-char -fmessage-length=0")
+set(CMAKE_CXX_FLAGS "-march=rv32ic -mabi=ilp32 -Wunused -Wuninitialized -msave-restore -msmall-data-limit=0 -fmax-errors=20 -fno-builtin -fno-common -fdata-sections -ffunction-sections -fsigned-char -fmessage-length=0 -fno-exceptions -fno-threadsafe-statics -fno-use-cxa-atexit -fno-rtti -Wabi-tag -D_GLIBCXX_USE_CXX11_ABI=1")
+
+
+#@	riscv-none-embed-objcopy -O ihex "CH32V003F4P6-2.elf" "CH32V003F4P6-2.hex"
+#CH32V003F4P6-2.lst: CH32V003F4P6-2.elf
+#@	riscv-none-embed-objdump --all-headers --demangle --disassemble -M xw "CH32V003F4P6-2.elf" > "CH32V003F4P6-2.lst"
+#CH32V003F4P6-2.siz: CH32V003F4P6-2.elf
+#riscv-none-embed-size --format=sysv --totals "CH32V003F4P6-2.elf"
 
 #TARGET_C_FLAGS="-O3 -march=rv32g -g"
 
 #set(CMAKE_EXE_LINKER_FLAGS "-march=rv32i -mabi=ilp32 -nostartfiles -Xlinker --gc-sections --specs=nano.specs --specs=nosys.specs")
-set(CMAKE_EXE_LINKER_FLAGS "-march=rv32i -mabi=ilp32 -nostartfiles -nostdlib -Xlinker --gc-sections --specs=nano.specs")
+set(CMAKE_EXE_LINKER_FLAGS "-march=rv32ic -mabi=ilp32 -nostartfiles -nostdlib -Xlinker --gc-sections --specs=nano.specs --specs=nosys.specs")
 
 
 ## Set the ABI and target architecture (for 32-bit RISC-V)
@@ -80,6 +93,7 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/usart.h
         ${CMAKE_SOURCE_DIR}/src/system/CH32V003xxxx/soc_template.h
         ${CMAKE_SOURCE_DIR}/src/system/soc_types.h
+        ${CMAKE_SOURCE_DIR}/src/system/startup/soc_init.h
         ${CMAKE_SOURCE_DIR}/src/user_src/firmware_build_info.h
         ${CMAKE_SOURCE_DIR}/src/user_src/system.h
         ${CMAKE_SOURCE_DIR}/src/utils/delay.h
@@ -92,13 +106,17 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/system/linker_utils.h
         ${CMAKE_SOURCE_DIR}/src/system/memory_map/peripheral_addresses.h
         ${CMAKE_SOURCE_DIR}/src/system/memory_map/concepts.h
-        ${CMAKE_SOURCE_DIR}/src/system/startup/soc_init.h
-        ${CMAKE_SOURCE_DIR}/src/system/startup/startup_configuration.h
+        ${CMAKE_SOURCE_DIR}/src/system/startup/generated_startup_configuration.h
 )
 
 
 set (sources
         ${CMAKE_SOURCE_DIR}/src/user_src/main.cpp
+        ${CMAKE_SOURCE_DIR}/src/system/startup/soc_init.c
+)
+
+set (assemblies
+        ${CMAKE_SOURCE_DIR}/src/system/startup/entry_after_power_up.s
 )
 
 include_directories(${CMAKE_SOURCE_DIR}/src/)
@@ -122,7 +140,7 @@ execute_process(
 
 add_executable(${PROJECT_NAME}-second-pass ${sources} ${headers})
 
-add_dependencies(${PROJECT_NAME}-second-pass ${PROJECT_NAME}-first-pass)
+add_dependencies(${PROJECT_NAME}-second-pass ${PROJECT_NAME}-pass-1.elf)
 #add_dependencies(${PROJECT_NAME}-second-pass "${CMAKE_BINARY_DIR}/first_pass_symbols_data.txt")
 
 
