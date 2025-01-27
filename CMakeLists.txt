@@ -51,6 +51,7 @@ set(CMAKE_CXX_COMPILER "${TOOLCHAIN_PATH_BIN}/${MY_TOOLCHAIN_CROSS_PREFIX}g++${C
 set(CMAKE_SIZE         "${TOOLCHAIN_PATH_BIN}/${MY_TOOLCHAIN_CROSS_PREFIX}size${CMAKE_HOST_EXECUTABLE_SUFFIX}")
 set(CMAKE_OBJCOPY      "${TOOLCHAIN_PATH_BIN}/${MY_TOOLCHAIN_CROSS_PREFIX}objcopy${CMAKE_HOST_EXECUTABLE_SUFFIX}")
 set(CMAKE_OBJDUMP      "${TOOLCHAIN_PATH_BIN}/${MY_TOOLCHAIN_CROSS_PREFIX}objdump${CMAKE_HOST_EXECUTABLE_SUFFIX}")
+set(CMAKE_STRIP        "${TOOLCHAIN_PATH_BIN}/${MY_TOOLCHAIN_CROSS_PREFIX}strip${CMAKE_HOST_EXECUTABLE_SUFFIX}")
 
 #https://cmake.org/cmake/help/latest/command/find_program.html
 #find_program(CMAKE_SIZE    size    PATHS "${TOOLCHAIN_PATH_BIN}" NO_CACHE NO_DEFAULT_PATH)
@@ -120,6 +121,7 @@ set(CMAKE_EXE_LINKER_FLAGS "${TARGET_ARCH_AND_ABI} ${MY_LINKER_FLAGS}")
 
 
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED YES)
 set(BUSYBOX_LOCATION "c:/progs/busybox.exe")
 
 
@@ -133,7 +135,15 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/timer.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/usart.h
         ${CMAKE_SOURCE_DIR}/src/system/CH32V003xxxx/soc_template.h
+        ${CMAKE_SOURCE_DIR}/src/system/linker_utils.h
+        ${CMAKE_SOURCE_DIR}/src/system/memory_map/concepts.h
+        ${CMAKE_SOURCE_DIR}/src/system/memory_map/peripheral_addresses.h
+        ${CMAKE_SOURCE_DIR}/src/system/riscv/concepts.h
+        ${CMAKE_SOURCE_DIR}/src/system/riscv/csr.h
+        ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access.h
+        ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access_c.h
         ${CMAKE_SOURCE_DIR}/src/system/soc_types.h
+        ${CMAKE_SOURCE_DIR}/src/system/startup/generated_startup_configuration.h
         ${CMAKE_SOURCE_DIR}/src/system/startup/soc_init.h
         ${CMAKE_SOURCE_DIR}/src/user_src/firmware_build_info.h
         ${CMAKE_SOURCE_DIR}/src/user_src/system.h
@@ -144,15 +154,12 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/utils/literals/helper_templates.h
         ${CMAKE_SOURCE_DIR}/src/utils/literals/timer.h
         ${CMAKE_SOURCE_DIR}/src/utils/literals/usart.h
-        ${CMAKE_SOURCE_DIR}/src/system/linker_utils.h
-        ${CMAKE_SOURCE_DIR}/src/system/memory_map/peripheral_addresses.h
-        ${CMAKE_SOURCE_DIR}/src/system/memory_map/concepts.h
-        ${CMAKE_SOURCE_DIR}/src/system/startup/generated_startup_configuration.h
 )
 
 
 set (sources
         ${CMAKE_SOURCE_DIR}/src/user_src/main.cpp
+        ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access_extern_c.cpp
         ${CMAKE_SOURCE_DIR}/src/system/startup/soc_init.c
 )
 
