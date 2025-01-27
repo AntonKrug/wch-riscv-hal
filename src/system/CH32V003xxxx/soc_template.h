@@ -7,6 +7,7 @@
 #define SYSTEM_WCH
 #define SYSTEM_WCH_CH32V00x
 #define SYSTEM_WCH_CH32V003
+#define SYSTEM_WCH_QingKeV2
 
 /* keep them as defines, even when they could be changed to consexpr, because
  * this file will be used from linker script when doing linker-pre-processing
