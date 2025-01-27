@@ -4,9 +4,7 @@
 
 #pragma once
 
-// #include <array>
 #include <cstdint>
-//#include <cmath>
 #include <utility>
 
 #include "system/memory_map/concepts.h"
@@ -126,7 +124,7 @@ namespace Peripheral::Usart{
 
 
     template<long long int address>
-    requires ValidPeripheralBaseAddress<address>
+    requires SoC::MemoryConcepts::IsValidPeripheralBaseAddress<address>
     constexpr static auto MakeBaseAddress() -> BaseAddress {
         return static_cast<BaseAddress>(address);
     };
