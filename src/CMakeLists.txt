@@ -94,12 +94,25 @@ target_compile_options(${BINARY_FIRST_PASS} PRIVATE -Wno-packed-bitfield-compat)
 #
 #add_dependencies(${PROJECT_NAME}-first-pass bar)
 
+# Copy so we can strip debug symbols
+add_custom_command(
+        TARGET ${BINARY_FIRST_PASS} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy ${BINARY_FIRST_PASS} ${BINARY_FIRST_PASS}-stripped
+)
+
+
+# Strip debug symbols so then the display size will not confuse us with debug info
+add_custom_command(
+        TARGET ${BINARY_FIRST_PASS} POST_BUILD
+        COMMAND ${CMAKE_STRIP} ${BINARY_FIRST_PASS}-stripped
+)
+
 
 # Display sizes
 add_custom_command(
     TARGET ${BINARY_FIRST_PASS} POST_BUILD
     # https://sourceware.org/binutils/docs/binutils/size.html
-    COMMAND ${CMAKE_SIZE} --format=sysv -x --totals "${BINARY_FIRST_PASS}"
+    COMMAND ${CMAKE_SIZE} --format=sysv -x --totals "${BINARY_FIRST_PASS}-stripped"
 )
 
 
