@@ -20,7 +20,8 @@ using namespace Peripheral;
 
 // NOLINTBEGIN(readability-static-accessed-through-instance)
 int main(int argc, char *argv[]) {
-
+    char a[3] ="hi";
+    a[0] = a[0] + 1;
     // prepare_system_for_main();
 
     // Firmware build info
