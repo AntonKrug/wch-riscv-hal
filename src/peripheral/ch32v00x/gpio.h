@@ -6,6 +6,7 @@
 
 #include <array>
 #include <cstdint>
+
 #include "system/memory_map/concepts.h"
 
 #define WCH_OPTIMIZE_GPIO __attribute__ ((optimize("-Os")))
@@ -268,7 +269,7 @@ namespace Peripheral::Gpio{
 
 
     template<long long int address>
-    requires ValidPeripheralBaseAddress<address>
+    requires SoC::MemoryConcepts::IsValidPeripheralBaseAddress<address>
     WCH_OPTIMIZE_GPIO constexpr static auto MakeBaseAddress() -> BaseAddress {
         return static_cast<BaseAddress>(address);
     };
