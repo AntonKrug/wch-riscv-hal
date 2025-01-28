@@ -47,7 +47,8 @@ set_source_files_properties(${CMAKE_SOURCE_DIR}/src/system/startup/soc_init.c PR
 
 
 # Stating what binary will be produced
-add_executable(${BINARY_FIRST_PASS} ${assemblies} ${sources} ${headers})
+add_executable(${BINARY_FIRST_PASS} ${assemblies} ${sources} ${headers}
+        system/startup/soc_init_extern_c.cpp)
 
 #target_link_libraries(${PROJECT_NAME}-first-pass m)  # For math library or others
 

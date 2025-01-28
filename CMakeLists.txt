@@ -141,10 +141,10 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/system/riscv/concepts.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access.h
-        ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access_c.h
+        ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access_for_c.h
         ${CMAKE_SOURCE_DIR}/src/system/soc_types.h
         ${CMAKE_SOURCE_DIR}/src/system/startup/generated_startup_configuration.h
-        ${CMAKE_SOURCE_DIR}/src/system/startup/soc_init.h
+        ${CMAKE_SOURCE_DIR}/src/system/startup/soc_init_for_c.h
         ${CMAKE_SOURCE_DIR}/src/user_src/firmware_build_info.h
         ${CMAKE_SOURCE_DIR}/src/user_src/system.h
         ${CMAKE_SOURCE_DIR}/src/utils/delay.h
@@ -154,11 +154,13 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/utils/literals/helper_templates.h
         ${CMAKE_SOURCE_DIR}/src/utils/literals/timer.h
         ${CMAKE_SOURCE_DIR}/src/utils/literals/usart.h
+        ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_register/csr_intsyscr.h
 )
 
 
 set (sources
         ${CMAKE_SOURCE_DIR}/src/user_src/main.cpp
+        ${CMAKE_SOURCE_DIR}/src/system/startup/soc_init_extern_c.cpp
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access_extern_c.cpp
         ${CMAKE_SOURCE_DIR}/src/system/startup/soc_init.c
 )
