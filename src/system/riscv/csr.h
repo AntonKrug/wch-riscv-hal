@@ -13,8 +13,8 @@ namespace Riscv::Csr {
     // 9:8   bits => 00=unpriviledged 01=supervisor 10=hypervisor 11=machine
 
 
-    constexpr std::uint16_t readWriteMask  = 0b11'00'0000'0000;
-    constexpr std::uint16_t priviledgeMask = 0b00'11'0000'0000;
+    constexpr std::uint16_t maskReadWrite  = 0b11'00'0000'0000;
+    constexpr std::uint16_t maskPriviledge = 0b00'11'0000'0000;
 
 
     enum class ReadWrite: std::uint16_t {
@@ -33,85 +33,51 @@ namespace Riscv::Csr {
     };
 
 
-    enum class CsrStandard: std::uint16_t {
-
-        // Machine information
-        marchid      = 0b11'11'0001'0010, // MRO architecture ID
-        mimpid       = 0b11'11'0001'0011, // MRO implementation ID
-
-        // Machine trap setup
-        mstatus      = 0b00'11'0000'0000, // MRW machine status (low)
-        misa         = 0b00'11'0000'0001, // MRW ISA and extension
-//        medeleg      = 0b00'11'0000'0010, // NOT IN WCH - machine execution delegation
-//        mideleg      = 0b00'11'0000'0011, // NOT IN WCH - machine interupt delegation
-//        mie          = 0b00'11'0000'0100, // NOT IN WCH - machine interupt enable
-        mtvec        = 0b00'11'0000'0101, // MRW machine trap-handler base address
-//        mcounteren   = 0b00'11'0000'0110, // NOT IN WCH - machine counter enable
-//        mstatush     = 0b00'11'0001'0000, // NOT IN WCH - machine status (high)
-
-        // Machine trap handling
-        mscratch     = 0b00'11'0100'0000, // MRW machine scratch register for the handler
-        mepc         = 0b00'11'0100'0001, // MRW machine exception PC (where the trap happened)
-        mcause       = 0b00'11'0100'0010, // MRW machine trap cause
-        mtval        = 0b00'11'0100'0010, // MRW machine bad address or instruction
-//        mip          = 0b00'11'0100'0010, // NOT IN WCH machine interupt pending
-//        mtinst       = 0b00'11'0100'0010, // NOT IN WCH machine trap instruction (transformed)
-//        mtval2       = 0b00'11'0100'0010, // NOT IN WCH machine bad guest physical addresss
-
-        // Debug mode
-        dcsr         = 0b01'11'1011'0000, // DRW debug control and status
-        dpc          = 0b01'11'1011'0001, // DRW debug PC
-        dscratch0    = 0b01'11'1011'0010, // DRW debug scratch register 0
-        dscratch1    = 0b01'11'1011'0010, // DRW debug scratch register 1
-    };
-
-
     // WCH QingKe V2 - https://www.wch-ic.com/downloads/QingKeV2_Processor_Manual_PDF.html
-    enum class CsrQingKeV2: std::uint16_t {
+    enum class QingKeV2: std::uint16_t {
         // Machine information
-        marchid      = 0b11'11'0001'0010, // MRO architecture ID
-        mimpid       = 0b11'11'0001'0011, // MRO implementation ID
+        marchid      = 0b11'11'0001'0010, // 0xF12 MRO architecture ID
+        mimpid       = 0b11'11'0001'0011, // 0xF13 MRO implementation ID
 
         // Machine trap setup
-        mstatus      = 0b00'11'0000'0000, // MRW machine status (low)
-        misa         = 0b00'11'0000'0001, // MRW ISA and extension
-        mtvec        = 0b00'11'0000'0101, // MRW machine trap-handler base address
+        mstatus      = 0b00'11'0000'0000, // 0x300 MRW machine status (low)
+        misa         = 0b00'11'0000'0001, // 0x301 MRW ISA and extension
+        mtvec        = 0b00'11'0000'0101, // 0x305 MRW machine trap-handler base address
 
         // Machine trap handling
-        mscratch     = 0b00'11'0100'0000, // MRW machine scratch register for the handler
-        mepc         = 0b00'11'0100'0001, // MRW machine exception PC (where the trap happened)
-        mcause       = 0b00'11'0100'0010, // MRW machine trap cause
-        mtval        = 0b00'11'0100'0010, // MRW machine bad address or instruction
+        mscratch     = 0b00'11'0100'0000, // 0x340 MRW machine scratch register for the handler
+        mepc         = 0b00'11'0100'0001, // 0x341 MRW machine exception PC (where the trap happened)
+        mcause       = 0b00'11'0100'0010, // 0x342 MRW machine trap cause
 
         // Debug (supervisor) mode
-        dcsr         = 0b01'11'1011'0000, // DRW debug control and status
-        dpc          = 0b01'11'1011'0001, // DRW debug PC
-        dscratch0    = 0b01'11'1011'0010, // DRW debug scratch register 0
-        dscratch1    = 0b01'11'1011'0010, // DRW debug scratch register 1
+        dcsr         = 0b01'11'1011'0000, // 0x7B0 DRW debug control and status
+        dpc          = 0b01'11'1011'0001, // 0x7B1 DRW debug PC
+        dscratch0    = 0b01'11'1011'0010, // 0x7B2 DRW debug scratch register 0
+        dscratch1    = 0b01'11'1011'0010, // 0x7B2 DRW debug scratch register 1
 
-        // Unpriviledged - WCH vendor exclusive
-        intsyscr     = 0b10'00'0000'0100, // URW interupt system control
+        // Unprivileged - WCH vendor exclusive
+        intsyscr     = 0b10'00'0000'0100, // 0x804 URW interrupt system control
     };
 
 
     // WCH QingKe V3 - https://www.wch-ic.com/downloads/QingKeV3_Processor_Manual_PDF.html
-    enum class CsrQingKeV3: std::uint16_t {
+    enum class QingKeV3: std::uint16_t {
         // Machine information
-        marchid      = 0b11'11'0001'0010, // MRO architecture ID
-        mimpid       = 0b11'11'0001'0011, // MRO implementation ID
+        marchid      = 0b11'11'0001'0010, // 0xF12 MRO architecture ID
+        mimpid       = 0b11'11'0001'0011, // 0xF13 MRO implementation ID
 
         // Machine trap setup
-        mstatus      = 0b00'11'0000'0000, // MRW machine status (low)
-        misa         = 0b00'11'0000'0001, // MRW ISA and extension
-        mtvec        = 0b00'11'0000'0101, // MRW machine trap-handler base address
+        mstatus      = 0b00'11'0000'0000, // 0x300 MRW machine status (low)
+        misa         = 0b00'11'0000'0001, // 0x301 MRW ISA and extension
+        mtvec        = 0b00'11'0000'0101, // 0x305 MRW machine trap-handler base address
 
         // Machine trap handling
-        mscratch     = 0b00'11'0100'0000, // MRW machine scratch register for the handler
-        mepc         = 0b00'11'0100'0001, // MRW machine exception PC (where the trap happened)
-        mcause       = 0b00'11'0100'0010, // MRW machine trap cause
-        mtval        = 0b00'11'0100'0010, // MRW machine bad address or instruction
+        mscratch     = 0b00'11'0100'0000, // 0x340 MRW machine scratch register for the handler
+        mepc         = 0b00'11'0100'0001, // 0x341 MRW machine exception PC (where the trap happened)
+        mcause       = 0b00'11'0100'0010, // 0x342 MRW machine trap cause
+        mtval        = 0b00'11'0100'0011, // 0x343 MRW machine bad address or instruction
 
-        // Machine memory protection - MRW Physical memory protection configuration
+        // Machine memory protection - 0x3A0-0x3AF MRW Physical memory protection configuration
         pmpcfg0      = 0b00'11'1010'0000 +  0,
         pmpcfg1      = 0b00'11'1010'0000 +  1,
         pmpcfg2      = 0b00'11'1010'0000 +  2,
@@ -129,7 +95,7 @@ namespace Riscv::Csr {
         pmpcfg14     = 0b00'11'1010'0000 + 14,
         pmpcfg15     = 0b00'11'1010'0000 + 15,
 
-        // Machine memory protection - MRW Physical memory protection address
+        // Machine memory protection - 0x3B0-0x3BF MRW Physical memory protection address
         pmpaddr0     = 0b00'11'1011'0000 +  0,
         pmpaddr1     = 0b00'11'1011'0000 +  1,
         pmpaddr2     = 0b00'11'1011'0000 +  2,
@@ -148,44 +114,44 @@ namespace Riscv::Csr {
         pmpaddr15    = 0b00'11'1011'0000 + 15,
 
         // Machine debug/trace
-        tselect      = 0b01'11'1010'0000, // MRW debug/trace trigger
-        tdata1       = 0b01'11'1010'0001, // MRW first debug/trace data
-        tdata2       = 0b01'11'1010'0010, // MRW second debug/trace data
+        tselect      = 0b01'11'1010'0000, // 0x7A0 MRW debug/trace trigger
+        tdata1       = 0b01'11'1010'0001, // 0x7A1 MRW first debug/trace data
+        tdata2       = 0b01'11'1010'0010, // 0x7A2 MRW second debug/trace data
 
         // Supervisor debug
-        dcsr         = 0b01'11'1011'0000, // DRW debug control and status
-        dpc          = 0b01'11'1011'0001, // DRW debug PC
-        dscratch0    = 0b01'11'1011'0010, // DRW debug scratch register 0
-        dscratch1    = 0b01'11'1011'0010, // DRW debug scratch register 1
+        dcsr         = 0b01'11'1011'0000, // 0x7B0 DRW debug control and status
+        dpc          = 0b01'11'1011'0001, // 0x7B1 DRW debug PC
+        dscratch0    = 0b01'11'1011'0010, // 0x7B2 DRW debug scratch register 0
+        dscratch1    = 0b01'11'1011'0011, // 0x7B3 DRW debug scratch register 1
 
         // Unpriviledged - WCH vendor exclusive
-        gintenr      = 0b10'00'0000'0000, // URW global interupt enable
-        intsyscr     = 0b10'00'0000'0100, // URW interupt system control
+        gintenr      = 0b10'00'0000'0000, // 0x800 URW global interupt enable
+        intsyscr     = 0b10'00'0000'0100, // 0x804 URW interupt system control
 
         // Machine - WCH vendor exclusive
-        corecfgr     = 0b10'11'0000'0000,  // MRW microprocessor configuration
-        inestcr      = 0b10'11'0000'0001,  // MRW interupt nested control
+        corecfgr     = 0b10'11'0000'0000, // 0xBC0 MRW microprocessor configuration
+        inestcr      = 0b10'11'0000'0001, // 0xBC1 MRW interupt nested control
     };
 
 
     // WCH QingKe V4 - https://www.wch-ic.com/downloads/QingKeV4_Processor_Manual_PDF.html
-    enum class CsrQingKeV4: std::uint16_t {
+    enum class QingKeV4: std::uint16_t {
         // Machine information
-        marchid      = 0b11'11'0001'0010, // MRO architecture ID
-        mimpid       = 0b11'11'0001'0011, // MRO implementation ID
+        marchid      = 0b11'11'0001'0010, // 0xF12 MRO architecture ID
+        mimpid       = 0b11'11'0001'0011, // 0xF13 MRO implementation ID
 
         // Machine trap setup
-        mstatus      = 0b00'11'0000'0000, // MRW machine status (low)
-        misa         = 0b00'11'0000'0001, // MRW ISA and extension
-        mtvec        = 0b00'11'0000'0101, // MRW machine trap-handler base address
+        mstatus      = 0b00'11'0000'0000, // 0x300 MRW machine status (low)
+        misa         = 0b00'11'0000'0001, // 0x301 MRW ISA and extension
+        mtvec        = 0b00'11'0000'0101, // 0x305 MRW machine trap-handler base address
 
         // Machine trap handling
-        mscratch     = 0b00'11'0100'0000, // MRW machine scratch register for the handler
-        mepc         = 0b00'11'0100'0001, // MRW machine exception PC (where the trap happened)
-        mcause       = 0b00'11'0100'0010, // MRW machine trap cause
-        mtval        = 0b00'11'0100'0010, // MRW machine bad address or instruction
+        mscratch     = 0b00'11'0100'0000, // 0x340 MRW machine scratch register for the handler
+        mepc         = 0b00'11'0100'0001, // 0x341 MRW machine exception PC (where the trap happened)
+        mcause       = 0b00'11'0100'0010, // 0x342 MRW machine trap cause
+        mtval        = 0b00'11'0100'0011, // 0x343 MRW machine bad address or instruction
 
-        // Machine memory protection - MRW Physical memory protection configuration
+        // Machine memory protection - 0x3A0-0x3AF MRW Physical memory protection configuration
         pmpcfg0      = 0b00'11'1010'0000 +  0,
         pmpcfg1      = 0b00'11'1010'0000 +  1,
         pmpcfg2      = 0b00'11'1010'0000 +  2,
@@ -203,7 +169,7 @@ namespace Riscv::Csr {
         pmpcfg14     = 0b00'11'1010'0000 + 14,
         pmpcfg15     = 0b00'11'1010'0000 + 15,
 
-        // Machine memory protection - MRW Physical memory protection address
+        // Machine memory protection - 0x3B0-0x3BF MRW Physical memory protection address
         pmpaddr0     = 0b00'11'1011'0000 +  0,
         pmpaddr1     = 0b00'11'1011'0000 +  1,
         pmpaddr2     = 0b00'11'1011'0000 +  2,
@@ -227,21 +193,21 @@ namespace Riscv::Csr {
         fcsr         = 0b00'00'0000'0011, // URW floating point control + status (frm + fflags)
 
         // Supervisor debug
-        dcsr         = 0b01'11'1011'0000, // DRW debug control and status
-        dpc          = 0b01'11'1011'0001, // DRW debug PC
-        dscratch0    = 0b01'11'1011'0010, // DRW debug scratch register 0
-        dscratch1    = 0b01'11'1011'0010, // DRW debug scratch register 1
+        dcsr         = 0b01'11'1011'0000, // 0x7B0 DRW debug control and status
+        dpc          = 0b01'11'1011'0001, // 0x7B1 DRW debug PC
+        dscratch0    = 0b01'11'1011'0010, // 0x7B2 DRW debug scratch register 0
+        dscratch1    = 0b01'11'1011'0011, // 0x7B3 DRW debug scratch register 1
 
         // Unpriviledged - WCH vendor exclusive
-        gintenr      = 0b10'00'0000'0000, // URW global interupt enable
-        intsyscr     = 0b10'00'0000'0100, // URW interupt system control
+        gintenr      = 0b10'00'0000'0000, // 0x800 URW global interupt enable
+        intsyscr     = 0b10'00'0000'0100, // 0x804 URW interupt system control
 
         // Machine - WCH vendor exclusive
-        corecfgr     = 0b10'11'0000'0000, // MRW microprocessor configuration
-        cstrcr       = 0b10'11'0000'0010, // MRW cache policy configuration
-        cpmpocr      = 0b10'11'0000'0011, // MRW cache policy overrrides PMP control
-        cmcr         = 0b10'11'1101'0000, // MWO cache operation control
-        cinfor       = 0b11'11'1100'0000, // MRO cache information
+        corecfgr     = 0b10'11'0000'0000, // 0xBC0 MRW microprocessor configuration
+        cstrcr       = 0b10'11'0000'0010, // 0xBC2 MRW cache policy configuration
+        cpmpocr      = 0b10'11'0000'0011, // 0xBC3 MRW cache policy overrrides PMP control
+        cmcr         = 0b10'11'1101'0000, // 0xBD0 MWO cache operation control
+        cinfor       = 0b11'11'1100'0000, // 0xFC0 MRO cache information
     };
 
 }
