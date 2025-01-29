@@ -43,12 +43,11 @@ endforeach()
 #set_source_files_properties(${CMAKE_SOURCE_DIR}/src/system/startup/soc_init.c PROPERTIES COMPILE_FLAGS "-fno-builtin -ffreestanding")
 # https://stackoverflow.com/questions/54281780/what-exactly-is-fno-builtin-doing-here
 # https://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html
-set_source_files_properties(${CMAKE_SOURCE_DIR}/src/system/startup/soc_init.c PROPERTIES COMPILE_FLAGS "-fno-builtin -ffreestanding -fno-builtin-memcpy")
+#set_source_files_properties(${CMAKE_SOURCE_DIR}/src/system/startup/soc_init.c PROPERTIES COMPILE_FLAGS "-fno-builtin -ffreestanding -fno-builtin-memcpy")
 
 
 # Stating what binary will be produced
-add_executable(${BINARY_FIRST_PASS} ${assemblies} ${sources} ${headers}
-        system/startup/soc_init_extern_c.cpp)
+add_executable(${BINARY_FIRST_PASS} ${assemblies} ${sources} ${headers})
 
 #target_link_libraries(${PROJECT_NAME}-first-pass m)  # For math library or others
 
@@ -124,14 +123,6 @@ add_custom_command(
     COMMAND ${CMAKE_OBJCOPY} -O ihex "${BINARY_FIRST_PASS}" "${BINARY_FIRST_PASS_HEX}"
 )
 
-
-# Disassemble from soc_init object to a listing file
-add_custom_command(
-    TARGET ${BINARY_FIRST_PASS} POST_BUILD
-    # https://man7.org/linux/man-pages/man1/objdump.1.html
-    # https://forums.sifive.com/t/16-bit-instructions-from-objdump/979/2
-    COMMAND ${CMAKE_OBJDUMP} --disassemble --demangle --all-headers "${CMAKE_BINARY_DIR}/src/CmakeFiles/${BINARY_FIRST_PASS}.dir/system/startup/soc_init.c.obj" > "${CMAKE_BINARY_DIR}/soc_init.lst"
-)
 
 # Disassemble from final binary to a listing file
 add_custom_command(

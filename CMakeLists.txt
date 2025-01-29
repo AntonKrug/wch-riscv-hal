@@ -145,7 +145,6 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csrs_qingke.h
         ${CMAKE_SOURCE_DIR}/src/system/soc_types.h
         ${CMAKE_SOURCE_DIR}/src/system/startup/generated_startup_configuration.h
-        ${CMAKE_SOURCE_DIR}/src/system/startup/soc_init_for_c.h
         ${CMAKE_SOURCE_DIR}/src/user_src/firmware_build_info.h
         ${CMAKE_SOURCE_DIR}/src/user_src/system.h
         ${CMAKE_SOURCE_DIR}/src/utils/delay.h
