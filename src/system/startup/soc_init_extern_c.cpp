@@ -3,21 +3,20 @@
 //
 
 #include "generated_startup_configuration.h"
-//#include "soc_init_for_c.h"
 #include "system/riscv/csr_access.h"
 #include "system/riscv/csr_register/intsyscr.h"
 
 extern "C" {
     // DATA section
-    extern unsigned int __data_rom_start;
-    extern unsigned int __data_rom_end;
-    extern unsigned int __data_ram_start;
-    extern unsigned int __data_ram_end;
+    extern unsigned int __data_rom_start; // NOLINT(*-reserved-identifier)
+    extern unsigned int __data_rom_end;   // NOLINT(*-reserved-identifier)
+    extern unsigned int __data_ram_start; // NOLINT(*-reserved-identifier)
+    extern unsigned int __data_ram_end;   // NOLINT(*-reserved-identifier)
 
 
     // BSS section
-    extern unsigned int __block_started_by_symbol;
-    extern unsigned int __block_started_by_symbol_end;
+    extern unsigned int __block_started_by_symbol;     // NOLINT(*-reserved-identifier)
+    extern unsigned int __block_started_by_symbol_end; // NOLINT(*-reserved-identifier)
 
 
     // https://gcc.gnu.org/onlinedocs/gcc-4.0.1/gcc/Optimize-Options.html
