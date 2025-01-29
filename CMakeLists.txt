@@ -162,7 +162,6 @@ set (sources
         ${CMAKE_SOURCE_DIR}/src/user_src/main.cpp
         ${CMAKE_SOURCE_DIR}/src/system/startup/soc_init_extern_c.cpp
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access_extern_c.cpp
-        ${CMAKE_SOURCE_DIR}/src/system/startup/soc_init.c
 )
 
 set (assemblies

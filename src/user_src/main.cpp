@@ -10,7 +10,6 @@
 #include "firmware_build_info.h"
 #include "system/soc_types.h"
 #include "peripheral/ch32v00x/usart.h"
-#include "system/startup/soc_init.c"
 
 using namespace Peripheral;
 
