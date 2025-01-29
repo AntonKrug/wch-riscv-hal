@@ -80,12 +80,12 @@ extern "C" {
         // constexpr auto sss = Csr::getMaskFromFieldEnumValues<Intsyscr::Eabien::eabiDisable>();
 
         // writeCsr<QingKeV2::intsyscr, interuptSettings>();
-        writeCsr<QingKeV2::intsyscr, 31>();
+        //writeCsr<QingKeV2::intsyscr, 31>();
 
         // writeCsr<QingKeV2::intsyscr, Intsyscr::Hwstken::hpeEnable, Intsyscr::Eabien::eabiEnable>();
         // writeCsr<QingKeV2::dcsr, A::B::b, A::A::a>();
         //writeCsr<QingKeV2::dcsr, A::B::b, A::A::a, Intsyscr::Hwstken::hpeEnable>();
-        //setCsrWithAutoClear<QingKeV2::intsyscr, Intsyscr::Hwstken::hpeEnable>();
+        setCsrWithAutoClear<QingKeV2::intsyscr, Intsyscr::Hwstken::hpeEnable, Intsyscr::Inesten::interuptNestingEnable>();
         // riscv_qingke2_write_intsyscr(0x10);
         // Riscv::Csr::readCSR<>()
     }
