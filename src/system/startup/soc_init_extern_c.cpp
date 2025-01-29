@@ -65,17 +65,27 @@ extern "C" {
             } while (zero_ram_ptr < zero_ram_end);
         #endif
 
-        Riscv::Csr::readCsr<Riscv::Csr::QingKeV2::intsyscr>();
-        Riscv::Csr::writeCsr<Riscv::Csr::QingKeV2::intsyscr, 0>();
-        Riscv::Csr::writeCsr<Riscv::Csr::QingKeV2::intsyscr, 0x20000000>();
-        Riscv::Csr::writeCsr<Riscv::Csr::QingKeV2::intsyscr, 0xffffff>();
+        using namespace Riscv::Csr;
 
-        constexpr auto interuptSettings = Riscv::Csr::Intsyscr::combine(
-            Riscv::Csr::Intsyscr::Hwstken::hpeEnable,
-            Riscv::Csr::Intsyscr::Inesten::interuptNestingEnable,
-            Riscv::Csr::Intsyscr::Eabien::eabiDisable);
+        // readCsr<QingKeV2::intsyscr>();
+        // writeCsr<QingKeV2::intsyscr, 0>();
+        // writeCsr<QingKeV2::intsyscr, 0x20000000>();
+        // writeCsr<QingKeV2::intsyscr, 0xffffff>();
 
-        Riscv::Csr::writeCsr<Riscv::Csr::QingKeV2::intsyscr, interuptSettings>();
+        // constexpr auto interuptSettings = combine<
+        //     Intsyscr::Hwstken::hpeEnable,
+        //     Intsyscr::Inesten::interuptNestingEnable,
+        //     Intsyscr::Eabien::eabiDisable>();
+
+        // constexpr auto sss = Csr::getMaskFromFieldEnumValues<Intsyscr::Eabien::eabiDisable>();
+
+        // writeCsr<QingKeV2::intsyscr, interuptSettings>();
+        writeCsr<QingKeV2::intsyscr, 31>();
+
+        // writeCsr<QingKeV2::intsyscr, Intsyscr::Hwstken::hpeEnable, Intsyscr::Eabien::eabiEnable>();
+        // writeCsr<QingKeV2::dcsr, A::B::b, A::A::a>();
+        //writeCsr<QingKeV2::dcsr, A::B::b, A::A::a, Intsyscr::Hwstken::hpeEnable>();
+        //setExclusivelyCsr<QingKeV2::intsyscr, Intsyscr::Hwstken::hpeEnable>();
         // riscv_qingke2_write_intsyscr(0x10);
         // Riscv::Csr::readCSR<>()
     }
