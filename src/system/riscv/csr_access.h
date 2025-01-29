@@ -7,15 +7,18 @@
 //https://gcc.gnu.org/onlinedocs/gcc-12.4.0/gcc/Extended-Asm.html
 //https://gcc.gnu.org/onlinedocs/gcc-12.4.0/gcc/Simple-Constraints.html
 //https://gcc.gnu.org/onlinedocs/gcc-12.4.0/gcc/Machine-Constraints.html
+//https://msyksphinz-self.github.io/riscv-isadoc/html/rvi.html#csrrwi
+//https://uim.fei.stuba.sk/wp-content/uploads/2018/02/riscv-spec-2022.pdf
 
 #pragma once
 
 #include <cstdint>
 
 #include "concepts.h"
-// #include "csrs_qingke.h"
+
 
 namespace Riscv::Csr {
+
 
     using namespace Riscv;
 
@@ -69,21 +72,6 @@ namespace Riscv::Csr {
         return result;
     }
 
-    // // All the writes for various types
-    // template <auto Csr, Riscv::Concepts::SameCsrFieldEnum... Values>
-    // requires Riscv::Concepts::IsCsrEnumValid<Csr>
-    // inline
-    // constexpr auto
-    // __attribute__ ((always_inline))
-    // writeCsrExp() -> void {
-    //     constexpr std::uint32_t value = (static_cast<std::uint32_t>(Values::value) | ...);
-    //     __asm__ volatile(
-    //         "csrw %0, %1"
-    //         : // no output
-    //         : "i"(static_cast<std::uint16_t>(Csr)), "r"(value)
-    //     );
-    // }
-
 
     template <auto Csr, auto Clear, auto Set>
     requires Concepts::IsCsrEnumValid<Csr> &&
@@ -93,8 +81,10 @@ namespace Riscv::Csr {
     constexpr auto
     __attribute__ ((always_inline))
     clearAndSetCsr() -> void {
+        // ReSharper disable CppTooWideScopeInitStatement
         constexpr bool isSmallClear = Clear < (1u<<5);
         constexpr bool isSmallSet   = Set   < (1u<<5);
+        // ReSharper restore CppTooWideScopeInitStatement
 
         // For all possible combinations use the smallest instructions
         if (isSmallClear && isSmallSet) {
@@ -106,7 +96,7 @@ namespace Riscv::Csr {
                   "K"(Clear),
                   "K"(Set)
             );
-        } else if (isSmallClear && !isSmallSet) {
+        } else if (isSmallClear) {
             __asm__ volatile(
                 "csrci %0, %1\n"
                 "csrs  %0, %2"
@@ -115,7 +105,7 @@ namespace Riscv::Csr {
                   "K"(Clear),
                   "i"(Set)
             );
-        } else if (!isSmallClear && isSmallSet) {
+        } else if (isSmallSet) {
             __asm__ volatile(
                 "csrc  %0, %1\n"
                 "csrsi %0, %2"
@@ -278,59 +268,6 @@ namespace Riscv::Csr {
         }
     }
 
-
-
-    // template <auto Csr, auto Value>
-    // requires Riscv::Concepts::IsCsrEnumValid<Csr>
-    // inline
-    // constexpr auto
-    // __attribute__ ((always_inline))
-    // writeCsr() -> void {
-    //     __asm__ volatile(
-    //         "csrw %0, %1"
-    //         : // no output
-    //         : "i"(static_cast<std::uint16_t>(Csr)), "r"(Value)
-    //     );
-    // }
-    //
-    // template <auto Csr>
-    // requires Riscv::Concepts::IsCsrEnumValid<Csr>
-    // inline
-    // constexpr auto
-    // __attribute__ ((always_inline))
-    // writeCsr(const unsigned int Value) -> void {
-    //     __asm__ volatile(
-    //         "csrw %0, %1"
-    //         : // no output
-    //         : "i"(static_cast<std::uint16_t>(Csr)), "r"(Value)
-    //     );
-    // }
-    //
-    // template <auto Csr>
-    // requires Riscv::Concepts::IsCsrEnumValid<Csr>
-    // inline
-    // constexpr auto
-    // __attribute__ ((always_inline))
-    // writeCsr(const std::uint32_t Value) -> void {
-    //     __asm__ volatile(
-    //         "csrw %0, %1"
-    //         : // no output
-    //         : "i"(static_cast<std::uint16_t>(Csr)), "r"(Value)
-    //     );
-    // }
-
-    template <auto Csr>
-    requires Concepts::IsCsrEnumValid<Csr>
-    inline
-    constexpr auto
-    __attribute__ ((always_inline))
-    writeCsr(const std::uint16_t value) -> void {
-        __asm__ volatile(
-            "csrw %0, %1"
-            : // no output
-            : "i"(static_cast<std::uint16_t>(Csr)), "r"(value)
-        );
-    }
 
 }
 

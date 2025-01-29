@@ -19,24 +19,13 @@ extern "C" {
     extern unsigned int __block_started_by_symbol_end; // NOLINT(*-reserved-identifier)
 
 
-    // https://gcc.gnu.org/onlinedocs/gcc-4.0.1/gcc/Optimize-Options.html
+    // https://gcc.gnu.org/onlinedocs/gcc-14.2.0/gcc/Optimize-Options.html
     inline
     void
     __attribute__ ((
         always_inline,
         optimize("-Os"),
-        optimize("-fno-strict-aliasing"),
-        optimize("-fomit-frame-pointer"),
-        optimize("-fexpensive-optimizations"),
-        optimize("-fdefer-pop"),
-        optimize("-fdelete-null-pointer-checks"),
-        optimize("-fcaller-saves"),
-        optimize("-finline-functions"),
-        optimize("-fpeephole"),
-        optimize("-fpeephole2"),
-        optimize("-fschedule-insns"),
-        optimize("-fschedule-insns2")
-        ))
+    ))
     prepare_system_for_main(void) {
         // Data ROM -> RAM copy
         #ifndef WCH_STARTUP_SKIP_DATA_SECTION_COPY
@@ -66,6 +55,11 @@ extern "C" {
 
         using namespace Riscv::Csr;
 
+        writeCsr<
+            QingKeV2::intsyscr,
+            Intsyscr::Hwstken::hpeEnable,                //HW preamble and epilogue
+            Intsyscr::Inesten::interuptNestingEnable>();
+
         // readCsr<QingKeV2::intsyscr>();
         // writeCsr<QingKeV2::intsyscr, 0>();
         // writeCsr<QingKeV2::intsyscr, 0x20000000>();
@@ -84,15 +78,12 @@ extern "C" {
         // writeCsr<QingKeV2::intsyscr, Intsyscr::Hwstken::hpeEnable, Intsyscr::Eabien::eabiEnable>();
         // writeCsr<QingKeV2::dcsr, A::B::b, A::A::a>();
         //writeCsr<QingKeV2::dcsr, A::B::b, A::A::a, Intsyscr::Hwstken::hpeEnable>();
-        setCsrWithAutoClear<QingKeV2::intsyscr, Intsyscr::Hwstken::hpeEnable, Intsyscr::Inesten::interuptNestingEnable>();
         // riscv_qingke2_write_intsyscr(0x10);
         // Riscv::Csr::readCSR<>()
     }
 
     void
-    // inline
     __attribute__((
-        // always_inline,
         section(".text.handle_reset"),
         naked,
         optimize("-O1"))) handle_reset() {
