@@ -139,9 +139,10 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/system/memory_map/concepts.h
         ${CMAKE_SOURCE_DIR}/src/system/memory_map/peripheral_addresses.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/concepts.h
-        ${CMAKE_SOURCE_DIR}/src/system/riscv/csr.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access_for_c.h
+        ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_register/intsyscr.h
+        ${CMAKE_SOURCE_DIR}/src/system/riscv/csrs_qingke.h
         ${CMAKE_SOURCE_DIR}/src/system/soc_types.h
         ${CMAKE_SOURCE_DIR}/src/system/startup/generated_startup_configuration.h
         ${CMAKE_SOURCE_DIR}/src/system/startup/soc_init_for_c.h
@@ -154,7 +155,6 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/utils/literals/helper_templates.h
         ${CMAKE_SOURCE_DIR}/src/utils/literals/timer.h
         ${CMAKE_SOURCE_DIR}/src/utils/literals/usart.h
-        ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_register/csr_intsyscr.h
 )
 
 

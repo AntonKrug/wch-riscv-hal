@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <type_traits>
 
-#include "csr.h"
+#include "csrs_qingke.h"
 #include "csr_register/intsyscr.h"
 
 namespace Riscv::Concepts {
@@ -44,11 +44,6 @@ namespace Riscv::Concepts {
         std::is_same_v<decltype(CsrValueType), std::uint32_t>      ||
         std::is_same_v<decltype(CsrValueType), std::uint16_t>      ||
         std::is_same_v<decltype(CsrValueType), std::uint8_t>;
-
-
-    // Any type which can be equaled to zero
-    template<auto CsrValueType>
-    concept IsCsrValueZero = CsrValueType == 0u;
 
 
     // Confirm the CSR's address is within the 12-bit range

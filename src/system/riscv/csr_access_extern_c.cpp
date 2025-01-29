@@ -6,7 +6,7 @@
 
 // #include "csr_access_for_c.h"
 #include "csr_access.h"
-#include "csr.h"
+#include "csrs_qingke.h"
 
 // template auto Riscv::Csr::readCsr<Riscv::Csr::QingKeV2::intsyscr>() -> std::uint32_t;
 // template auto Riscv::Csr::writeCsr<Riscv::Csr::QingKeV2::intsyscr>(std::uint32_t value) -> void;

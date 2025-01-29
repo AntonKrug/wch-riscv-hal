@@ -11,10 +11,9 @@
 #pragma once
 
 #include <cstdint>
-#include <tuple>
 
 #include "concepts.h"
-#include "csr.h"
+// #include "csrs_qingke.h"
 
 namespace Riscv::Csr {
 
@@ -94,14 +93,47 @@ namespace Riscv::Csr {
     constexpr auto
     __attribute__ ((always_inline))
     clearAndSetCsr() -> void {
-        __asm__ volatile(
-            "csrc %0, %1\n"
-            "csrs %0, %2"
-            : // no output
-            : "i"(static_cast<std::uint16_t>(Csr)),
-              "i"(Clear),
-              "i"(Set)
-        );
+        constexpr bool smallClear = Clear < (1u<<5);
+        constexpr bool smallSet   = Set   < (1u<<5);
+
+        // For all possible combinations use the smallest instructions
+        if (smallClear && smallSet) {
+            __asm__ volatile(
+                "csrci %0, %1\n"
+                "csrsi %0, %2"
+                : // no output
+                : "i"(static_cast<std::uint16_t>(Csr)),
+                  "K"(Clear),
+                  "K"(Set)
+            );
+        } else if (smallClear && !smallSet) {
+            __asm__ volatile(
+                "csrci %0, %1\n"
+                "csrs  %0, %2"
+                : // no output
+                : "i"(static_cast<std::uint16_t>(Csr)),
+                  "K"(Clear),
+                  "i"(Set)
+            );
+        } else if (!smallClear && smallSet) {
+            __asm__ volatile(
+                "csrc  %0, %1\n"
+                "csrsi %0, %2"
+                : // no output
+                : "i"(static_cast<std::uint16_t>(Csr)),
+                  "i"(Clear),
+                  "K"(Set)
+            );
+        } else {
+            __asm__ volatile(
+                "csrc %0, %1\n"
+                "csrs %0, %2"
+                : // no output
+                : "i"(static_cast<std::uint16_t>(Csr)),
+                  "i"(Clear),
+                  "i"(Set)
+            );
+        }
     }
 
 
@@ -115,7 +147,8 @@ namespace Riscv::Csr {
         __asm__ volatile(
             "csrc %0, %1"
             : // no output
-            : "i"(static_cast<std::uint16_t>(Csr)), "r"(Value)
+            : "i"(static_cast<std::uint16_t>(Csr)),
+              "r"(Value)
         );
     }
 
@@ -149,21 +182,21 @@ namespace Riscv::Csr {
         if (Value == 0) {
             // if writtin zero we can use r0 aka x0 register
             __asm__ volatile(
-                "csrw %0, x0"
+                "csrw %0, x0"  // r0 register
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr))
             );
-        } else if (Value<32) {
+        } else if (Value<(1u<<5)) {
             // csrwI instruction can take 5-bit imediate value
             __asm__ volatile(
-                "csrwi %0, %1"
+                "csrwi %0, %1" // 5-bit immediate values only
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr)),
-                  "K"(Value) //5-bit immediate values only
+                  "K"(Value)
             );
         } else {
             __asm__ volatile(
-                "csrw %0, %1"
+                "csrw %0, %1" // value from a register
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr)),
                   "r"(Value)
@@ -185,21 +218,21 @@ namespace Riscv::Csr {
     }
 
 
-    // All the writes for various types
+    // When only specific fields needs to be updated (it will for various types
     template <auto Csr, auto... Values>
     requires Concepts::IsCsrEnumValid<Csr> &&
              Concepts::CsrFieldEnumMatchingCsr<false, Csr, Values...>
     inline
     constexpr auto
     __attribute__ ((always_inline))
-    setExclusivelyCsr() -> void {
+    setCsrWithAutoClear() -> void {
         constexpr std::uint32_t clear = Csr::getMaskFromFieldEnumValues<Values...>();
         constexpr std::uint32_t set   = (static_cast<std::uint32_t>(Values) | ...);
 
         constexpr bool clearHasValue = clear != 0;
         constexpr bool setHasValue   = set   != 0;
 
-        // simplify the instructions depending if the set and clear are empty or if they are the same value
+        // simplify the operation depending if the set and clear are empty or if they are the same value
         if (clearHasValue) {
             // Mask is not empty
 
@@ -225,21 +258,6 @@ namespace Riscv::Csr {
     }
 
 
-    // For zeroing writes
-    template <auto Csr, auto value>
-    requires Concepts::IsCsrEnumValid<Csr> &&
-             Concepts::IsCsrValueCorrectRegisterType<value> &&
-             Concepts::IsCsrValueZero<value>
-    inline
-    constexpr auto
-    __attribute__ ((always_inline))
-    writeCsr() -> void {
-        __asm__ volatile(
-            "csrw %0, x0"
-            : // no output
-            : "i"(static_cast<std::uint16_t>(Csr))
-        );
-    }
 
     // template <auto Csr, auto Value>
     // requires Riscv::Concepts::IsCsrEnumValid<Csr>

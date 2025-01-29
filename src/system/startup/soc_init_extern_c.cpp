@@ -85,7 +85,7 @@ extern "C" {
         // writeCsr<QingKeV2::intsyscr, Intsyscr::Hwstken::hpeEnable, Intsyscr::Eabien::eabiEnable>();
         // writeCsr<QingKeV2::dcsr, A::B::b, A::A::a>();
         //writeCsr<QingKeV2::dcsr, A::B::b, A::A::a, Intsyscr::Hwstken::hpeEnable>();
-        //setExclusivelyCsr<QingKeV2::intsyscr, Intsyscr::Hwstken::hpeEnable>();
+        //setCsrWithAutoClear<QingKeV2::intsyscr, Intsyscr::Hwstken::hpeEnable>();
         // riscv_qingke2_write_intsyscr(0x10);
         // Riscv::Csr::readCSR<>()
     }
