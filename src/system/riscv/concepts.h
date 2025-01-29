@@ -8,24 +8,37 @@
 #include <type_traits>
 
 #include "csr.h"
+#include "csr_register/intsyscr.h"
 
 namespace Riscv::Concepts {
 
+    using namespace Riscv;
+
+
+    // If any of the masking enum is used
     template<auto Mask>
     concept IsCsrMaskedEnums =
-        std::is_same_v<decltype(Mask), Riscv::Csr::Priviledge> ||
-        std::is_same_v<decltype(Mask), Riscv::Csr::ReadWrite>;
+        std::is_same_v<decltype(Mask), Csr::Priviledge> ||
+        std::is_same_v<decltype(Mask), Csr::ReadWrite>;
 
 
+    // A type which is all QingKeV2, QingKeV3 and QingKeV4 at the same time
+    template<typename CsrType>
+    concept QingKeCsrEnumType =
+        std::is_same_v<CsrType, Csr::QingKeV2> ||
+        std::is_same_v<CsrType, Csr::QingKeV3> ||
+        std::is_same_v<CsrType, Csr::QingKeV4>;
+
+
+    // To confirm the CSR enum value belongs to one of the QingKe enum types
     template<auto CsrEnum>
-    concept IsCsrEnumType =
-        std::is_same_v<decltype(CsrEnum), Riscv::Csr::QingKeV2> ||
-        std::is_same_v<decltype(CsrEnum), Riscv::Csr::QingKeV3> ||
-        std::is_same_v<decltype(CsrEnum), Riscv::Csr::QingKeV4>;
+    concept IsQingKeCsrEnum =
+        QingKeCsrEnumType<decltype(CsrEnum)>;
 
 
+    // For writting a CSR value many literal number types can be used
     template<auto CsrValueType>
-    concept IsCsrValueCorrectType =
+    concept IsCsrValueCorrectRegisterType =
         std::is_same_v<decltype(CsrValueType), int>                ||
         std::is_same_v<decltype(CsrValueType), unsigned int>       ||
         std::is_same_v<decltype(CsrValueType), std::uint32_t>      ||
@@ -33,40 +46,79 @@ namespace Riscv::Concepts {
         std::is_same_v<decltype(CsrValueType), std::uint8_t>;
 
 
+    // Any type which can be equaled to zero
     template<auto CsrValueType>
     concept IsCsrValueZero = CsrValueType == 0u;
 
 
+    // Confirm the CSR's address is within the 12-bit range
     template<auto csrAddress>
     concept IsCsrValidAddressRange = (csrAddress >= 0 && csrAddress < (1u<<12));
 
 
+    // Confirm one of the QingKe CSRs was used and it's address
+    // is withing correct range
     template<auto Csr>
     concept IsCsrEnumValid =
-        IsCsrEnumType<Csr> &&
+        IsQingKeCsrEnum<Csr> &&
         IsCsrValidAddressRange<static_cast<std::uint16_t>(Csr)>;
 
 
     template<auto CsrAddress>
     concept IsCsrWritableAddress = (
-        (CsrAddress  & Riscv::Csr::maskReadWrite) != static_cast<std::uint16_t>(Riscv::Csr::ReadWrite::readOnly) );
+        (CsrAddress & Csr::maskReadWrite) != static_cast<std::uint16_t>(Csr::ReadWrite::readOnly) );
 
 
     template<auto Csr>
     concept IsCsrWritable =
-        IsCsrEnumType<Csr> &&
+        IsQingKeCsrEnum<Csr> &&
         IsCsrWritableAddress<static_cast<std::uint16_t>(Csr)>;
 
 
     template<auto CsrAddress>
     concept IsCsrMachinePriviledgeAddress = (
-        (CsrAddress  & Riscv::Csr::maskPriviledge) == static_cast<std::uint16_t>(Riscv::Csr::Priviledge::machine) );
+        (CsrAddress & Csr::maskPriviledge) == static_cast<std::uint16_t>(Csr::Priviledge::machine) );
 
 
     template<auto Csr>
     concept IsCsrMachinePriviledge =
-        IsCsrEnumType<Csr> &&
+        IsQingKeCsrEnum<Csr> &&
         IsCsrMachinePriviledgeAddress<static_cast<std::uint16_t>(Csr)>;
 
 
-}
+    template<typename CsrField>
+    concept EnumWithMask = requires
+        { { CsrField::fieldBitMask }; };
+
+    // template<typename CsrField>
+    // concept EnumWithMask = requires
+    // { { CsrField::fieldBitMask }; } &&
+    // std::is_same_v<typename std::underlying_type_t<CsrField>, decltype(CsrField::fieldBitMask)>;
+
+
+    // The CSRs can come different enums, but must resolve to the same enum value
+    // CheckSameCsrValue<QingKeV2::intsyscr, QingKeV4::intsyscr> true
+    template<bool OmmitCheck, auto Left, auto Right>
+    concept CheckSameCsrValue =
+        (OmmitCheck || static_cast<uint16_t>(Left)==static_cast<uint16_t>(Right));
+
+
+    // The CsrField enums need to belong to the same CSR, and when OmmitCheck is false
+    // then also the Parent is check if the CsrField enums belong to the parent CSR enum
+    template<bool OmmitCheck, auto Parent, auto... CsrField>
+    concept CsrFieldEnumMatchingCsr =
+        ( CheckSameCsrValue<OmmitCheck, Parent, Csr::QingKeV2::intsyscr> && (Csr::Intsyscr::IsAnyField<decltype(CsrField)> && ...) ) ||
+        ( CheckSameCsrValue<OmmitCheck, Parent, Csr::QingKeV2::dcsr>     && (Csr::A::IsAnyField<decltype(CsrField)>        && ...) );
+
+
+    // Omit check and provide any CSR as it will be omitted anyway, this
+    // makes sure the fields belong to one specidic CSR only, but we
+    // do not care which exact CSR it is
+    template<auto... CsrField>
+    concept SameCsrFieldEnum =
+        CsrFieldEnumMatchingCsr<true, Csr::QingKeV2::intsyscr, CsrField...>;
+        // (Riscv::Csr::Intsyscr::IsAnyField<decltype(CsrField)> && ...) ||
+        // (Riscv::Csr::A::IsAnyField<decltype(CsrField)> && ...);
+
+
+};
