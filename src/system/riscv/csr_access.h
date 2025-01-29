@@ -93,11 +93,11 @@ namespace Riscv::Csr {
     constexpr auto
     __attribute__ ((always_inline))
     clearAndSetCsr() -> void {
-        constexpr bool smallClear = Clear < (1u<<5);
-        constexpr bool smallSet   = Set   < (1u<<5);
+        constexpr bool isSmallClear = Clear < (1u<<5);
+        constexpr bool isSmallSet   = Set   < (1u<<5);
 
         // For all possible combinations use the smallest instructions
-        if (smallClear && smallSet) {
+        if (isSmallClear && isSmallSet) {
             __asm__ volatile(
                 "csrci %0, %1\n"
                 "csrsi %0, %2"
@@ -106,7 +106,7 @@ namespace Riscv::Csr {
                   "K"(Clear),
                   "K"(Set)
             );
-        } else if (smallClear && !smallSet) {
+        } else if (isSmallClear && !isSmallSet) {
             __asm__ volatile(
                 "csrci %0, %1\n"
                 "csrs  %0, %2"
@@ -115,7 +115,7 @@ namespace Riscv::Csr {
                   "K"(Clear),
                   "i"(Set)
             );
-        } else if (!smallClear && smallSet) {
+        } else if (!isSmallClear && isSmallSet) {
             __asm__ volatile(
                 "csrc  %0, %1\n"
                 "csrsi %0, %2"
@@ -137,35 +137,56 @@ namespace Riscv::Csr {
     }
 
 
-    template <auto Csr, auto Value>
+    template <auto Csr, auto ClearValue>
     requires Concepts::IsCsrEnumValid<Csr> &&
-             Concepts::IsCsrValueCorrectRegisterType<Value>
+             Concepts::IsCsrValueCorrectRegisterType<ClearValue>
     inline
     constexpr auto
     __attribute__ ((always_inline))
     clearCsr() -> void {
-        __asm__ volatile(
-            "csrc %0, %1"
-            : // no output
-            : "i"(static_cast<std::uint16_t>(Csr)),
-              "r"(Value)
-        );
+        if (ClearValue < (1u<<5)) {
+            // is small enough, use the 5-bit immediate instruction instead
+            __asm__ volatile(
+                "csrci %0, %1"
+                : // no output
+                : "i"(static_cast<std::uint16_t>(Csr)),
+                  "K"(ClearValue)
+            );
+        } else {
+            __asm__ volatile(
+                "csrc %0, %1"
+                : // no output
+                : "i"(static_cast<std::uint16_t>(Csr)),
+                  "r"(ClearValue)
+            );
+        }
     }
 
 
-    // All the writes for various types
-    template <auto Csr, auto Value>
+    // All the Sets for various types
+    template <auto Csr, auto SetValue>
     requires Concepts::IsCsrEnumValid<Csr> &&
-             Concepts::IsCsrValueCorrectRegisterType<Value>
+             Concepts::IsCsrValueCorrectRegisterType<SetValue>
     inline
     constexpr auto
     __attribute__ ((always_inline))
     setCsr() -> void {
-        __asm__ volatile(
-            "csrs %0, %1"
-            : // no output
-            : "i"(static_cast<std::uint16_t>(Csr)), "r"(Value)
-        );
+        if (SetValue < (1u<<5)) {
+            // is small enough, use the 5-bit imediate instruction instead
+            __asm__ volatile(
+                "csrsi %0, %1"
+                : // no output
+                : "i"(static_cast<std::uint16_t>(Csr)),
+                  "K"(SetValue)
+            );
+        } else {
+            __asm__ volatile(
+                "csrs %0, %1"
+                : // no output
+                : "i"(static_cast<std::uint16_t>(Csr)),
+                  "r"(SetValue)
+            );
+        }
     }
 
 
