@@ -17,6 +17,8 @@
 #include "concepts.h"
 #include "csr_utils.h"
 
+//TODO: runtime versions, IRQ safe versions
+
 
 namespace Riscv::Csr::Access {
 
