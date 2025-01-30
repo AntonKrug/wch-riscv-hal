@@ -10,12 +10,14 @@
 namespace Riscv::Csr::A {
     enum class A: std::uint32_t {
         fieldBitMask = 0b1,
+        fieldOffset  = 0,
         a = 0,
     };
 
 
     enum class B: std::uint32_t {
         fieldBitMask = 0b1'0,
+        fieldOffset  = 1,
         b = 0,
     };
 
@@ -36,6 +38,8 @@ namespace Riscv::Csr::Intsyscr {
         // but doesn't improve performance, on higher-end device it has shadow registers
         // and improves performance as well.
         fieldBitMask = 0b1,
+        fieldOffset  = 0,
+        fieldSize    = 1,
         hpeEnable    = 0b1,
         hpeDisable   = 0b0
     };
@@ -43,6 +47,8 @@ namespace Riscv::Csr::Intsyscr {
 
     enum class Inesten: std::uint32_t {
         fieldBitMask           = 0b1'0,
+        fieldOffset            = 1,
+        fieldSize              = 1,
         interuptNestingEnable  = 0b1'0,
         interuptNestingDisable = 0b0'0,
     };
@@ -50,6 +56,8 @@ namespace Riscv::Csr::Intsyscr {
 
     enum class Eabien: std::uint32_t {
         fieldBitMask = 0b1'00,
+        fieldOffset  = 2,
+        fieldSize    = 1,
         eabiEnable   = 0b1'00,
         eabiDisable  = 0b0'00
     };
@@ -61,17 +69,5 @@ namespace Riscv::Csr::Intsyscr {
         std::is_same_v<Field, Inesten> ||
         std::is_same_v<Field, Eabien>;
 
-
-    // Accept any above enums, but only them (not mixing enums from different csrs)
-    template<IsAnyField... Args>
-    constexpr auto combine(const Args... args) -> std::uint32_t {
-        return (static_cast<std::uint32_t>(args) | ...);
-    }
-
-
-    template<auto Field>
-    auto setOnlyMask() -> std::uint32_t requires IsAnyField<decltype(Field)> {
-        return static_cast<std::uint32_t>(decltype(Field)::bitMask);
-    }
 
 }
