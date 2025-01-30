@@ -2,35 +2,17 @@
 // Created by anton on 28/01/2025.
 //
 
+// https://www.wch-ic.com/downloads/QingKeV2_Processor_Manual_PDF.html
+// https://www.reddit.com/r/RISCV/comments/126262j/notes_on_wch_fast_interrupts/
+// https://www.eevblog.com/forum/microcontrollers/ch32v003-fast-interrupt-(pfic)-features/
+
 #pragma once
 
 #include <cstdint>
 #include <type_traits>
 
-namespace Riscv::Csr::A {
-    enum class A: std::uint32_t {
-        fieldBitMask = 0b1,
-        fieldOffset  = 0,
-        a = 0,
-    };
-
-
-    enum class B: std::uint32_t {
-        fieldBitMask = 0b1'0,
-        fieldOffset  = 1,
-        b = 0,
-    };
-
-    template<typename Field>
-    concept IsAnyField =
-        std::is_same_v<Field, A> ||
-        std::is_same_v<Field, B>;
-
-}
 
 namespace Riscv::Csr::Intsyscr {
-    // https://www.reddit.com/r/RISCV/comments/126262j/notes_on_wch_fast_interrupts/
-    // https://www.eevblog.com/forum/microcontrollers/ch32v003-fast-interrupt-(pfic)-features/
 
 
     enum class Hwstken: std::uint32_t {
@@ -51,6 +33,7 @@ namespace Riscv::Csr::Intsyscr {
 
 
     enum class Eabien: std::uint32_t {
+        // WCH noted that this shouldn't be touched, and left in the disabled state
         fieldBitMask = 0b1'00,
         eabiEnable   = 0b1'00,
         eabiDisable  = 0b0'00
