@@ -140,8 +140,8 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/system/memory_map/peripheral_addresses.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/concepts.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access.h
-        ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access_for_c.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_register/intsyscr.h
+        ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_register/mtvec.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csrs_qingke.h
         ${CMAKE_SOURCE_DIR}/src/system/soc_types.h
         ${CMAKE_SOURCE_DIR}/src/system/startup/generated_startup_configuration.h
