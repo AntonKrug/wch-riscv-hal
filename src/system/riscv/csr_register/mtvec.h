@@ -2,7 +2,7 @@
 // Created by anton
 //
 
-//https://www.wch-ic.com/downloads/QingKeV2_Processor_Manual_PDF.html
+// https://www.wch-ic.com/downloads/QingKeV2_Processor_Manual_PDF.html
 // NOTE: the WCH implemetion differs tiny bit from the standard spec
 
 #pragma once

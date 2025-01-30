@@ -9,6 +9,7 @@
 
 #include "csrs_qingke.h"
 #include "csr_register/intsyscr.h"
+#include "csr_register/mtvec.h"
 
 namespace Riscv::Concepts {
 
@@ -103,17 +104,16 @@ namespace Riscv::Concepts {
     template<bool OmmitCheck, auto Parent, auto... CsrField>
     concept CsrFieldEnumMatchingCsr =
         ( CheckSameCsrValue<OmmitCheck, Parent, Csr::QingKeV2::intsyscr> && (Csr::Intsyscr::IsAnyField<decltype(CsrField)> && ...) ) ||
-        ( CheckSameCsrValue<OmmitCheck, Parent, Csr::QingKeV2::dcsr>     && (Csr::A::IsAnyField<decltype(CsrField)>        && ...) );
+        ( CheckSameCsrValue<OmmitCheck, Parent, Csr::QingKeV2::mtvec>    && (Csr::Mtvec::IsAnyField<decltype(CsrField)>    && ...) );
 
 
     // Omit check and provide any CSR as it will be omitted anyway, this
     // makes sure the fields belong to one specidic CSR only, but we
     // do not care which exact CSR it is
+    // Note: intsyscr was entered as arbitary CSR, as the OmmitCheck is set to true
     template<auto... CsrField>
     concept SameCsrFieldEnum =
         CsrFieldEnumMatchingCsr<true, Csr::QingKeV2::intsyscr, CsrField...>;
-        // (Riscv::Csr::Intsyscr::IsAnyField<decltype(CsrField)> && ...) ||
-        // (Riscv::Csr::A::IsAnyField<decltype(CsrField)> && ...);
 
 
 };
