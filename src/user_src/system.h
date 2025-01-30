@@ -10,6 +10,20 @@
 // up to date. This allows single project serve multiple different SoCs without having
 // need for many different (but very similar) linker scripts.
 
+// The base where the all the vector pointers are offset by 4bytes in linkerscript as it allows at
+// address 0 to overlap with the entry jump instructions (and the first vector table entry
+// is not implemented for this purpose). Therefore in this HAL the base address is shifted by
+// 4 bytes with the linker script for the table, but the table has the first entry unimplemented.
+// This way we can have this "overlap" at the begining of the table while not freaking out
+// the linkerscript and still allow all the options to position the table at different locations
+// while at the same time having the vector table implemented nicely in C++ instead of
+// handcrafted and hardcoded assembly.
+// TLDR; We omit the first unused 4 bytes from the vector table away, so then linker script
+//       base address can add back these 4bytes into offset. This in effect gives us biggest
+//       freedom while still being safe. But best results might be by leaving it at 0 as any
+//       other values might induce extra processing and latency to calculate the address
+#define SYSTEM_WCH_VECTOR_TABLE_ADDRESS 0x0
+
 /* Larger devices with 256k ROM can have their ROM/RAM sizes tweaked, see SRAM_CODE_MODE in
  * their datasheet. For other devices this setting is ignored. Note: this needs to be defined
  * before including the system's soc header, as it's ROM/RAM size settings depend on this define */

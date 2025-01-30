@@ -71,8 +71,8 @@ SECTIONS
       to later stage of initialization */
   .init.irq_vector_table_plus_one : ALIGN(4)
   {
-    KEEP(*.init.irq_vector_table_plus_one);
-  } > ROM = 0x4 /* table at 0x0 but forcing the offset PLUS ONE vector by 4 bytes */
+    KEEP (*(.init.irq_vector_table_plus_one))
+  } > ROM = (SYSTEM_WCH_VECTOR_TABLE_ADDRESS + 0x4) /* if table is 0x0 but forcing the offset PLUS ONE vector by 4 bytes */
 
 
   /* most (if not all) of the application code, and other constants*/
