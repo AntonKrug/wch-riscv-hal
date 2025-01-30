@@ -17,7 +17,7 @@ namespace Riscv::Csr::Mtvec {
     enum class Mode0: std::uint32_t {
         // Interrupt or exception entry address mode selection
         fieldBitMask             = 0b1,
-        singleUnifiedTrapHandler = 0b0, // all interupts handled by the same code
+        singleUnifiedTrapHandler = 0,   // all interupts handled by the same code
         vectorizedInterupts      = 0b1, // jump to addr => BASEADDR + IRQ * 4
     };
 
@@ -25,7 +25,7 @@ namespace Riscv::Csr::Mtvec {
     enum class Mode1: std::uint32_t {
         // Vectorized table behaviour
         fieldBitMask          = 0b1'0,
-        executeInstructions   = 0b0'0, // small relative jump instructions fit into the table, other instructions will be executed too
+        executeInstructions   = 0,     // small relative jump instructions fit into the table, other instructions will be executed too
         absoluteJumpAddresses = 0b1'0, // always jumping, but able to able to address any location
     };
 

@@ -42,7 +42,7 @@ namespace Riscv::Csr::Intsyscr {
         // HPE or not. Because blindly enabling the HPE might negatively impact the application.
         fieldBitMask = 0b1,
         hpeEnable    = 0b1,
-        hpeDisable   = 0b0
+        hpeDisable   = 0
     };
 
 
@@ -51,7 +51,7 @@ namespace Riscv::Csr::Intsyscr {
         // priorities and dictating order of execution.
         fieldBitMask           = 0b1'0,
         interuptNestingEnable  = 0b1'0,
-        interuptNestingDisable = 0b0'0,
+        interuptNestingDisable = 0,
     };
 
 
@@ -59,7 +59,7 @@ namespace Riscv::Csr::Intsyscr {
         // WCH noted that this shouldn't be touched, and left in the default disabled state
         fieldBitMask = 0b1'00,
         eabiEnable   = 0b1'00,
-        eabiDisable  = 0b0'00
+        eabiDisable  = 0
     };
 
 
