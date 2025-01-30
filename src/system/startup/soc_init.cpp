@@ -5,6 +5,7 @@
 #include "generated_startup_configuration.h"
 #include "system/riscv/csr_access.h"
 #include "system/riscv/csr_register/intsyscr.h"
+#include "user_src/system.h"
 
 extern "C" {
     // DATA section
@@ -55,10 +56,19 @@ extern "C" {
 
         using namespace Riscv::Csr;
 
-        writeCsr<
+        Access::write<
             QingKeV2::intsyscr,
-            Intsyscr::Hwstken::hpeEnable,                //HW preamble and epilogue
+            Intsyscr::Hwstken::hpeEnable,                  //HW preamble and epilogue
             Intsyscr::Inesten::interuptNestingEnable>();
+
+        constexpr std::uint32_t irqVectorTableAddressSanitized =
+            Mtvec::CheckVectorBaseAddressAlignment<SYSTEM_WCH_VECTOR_TABLE_ADDRESS>();
+
+        constexpr auto mtvecValue =
+            combine<Mtvec::Mode0::vectorizedInterupts,Mtvec::Mode1::absoluteJumpAddresses>() +
+            irqVectorTableAddressSanitized;
+
+        Access::write<QingKeV2::mtvec, mtvecValue>();
 
         // readCsr<QingKeV2::intsyscr>();
         // writeCsr<QingKeV2::intsyscr, 0>();

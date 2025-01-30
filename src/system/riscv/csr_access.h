@@ -15,45 +15,13 @@
 #include <cstdint>
 
 #include "concepts.h"
+#include "csr_utils.h"
 
 
-namespace Riscv::Csr {
+namespace Riscv::Csr::Access {
 
 
     using namespace Riscv;
-
-
-    template<auto Csr>
-    constexpr auto toAddress() -> std::uint16_t requires Concepts::IsQingKeCsrEnum<Csr> {
-        return static_cast<std::uint16_t>(Csr);
-    }
-
-
-    template<auto Enum>
-    constexpr auto toValue() -> std::uint16_t requires Concepts::IsCsrMaskedEnums<Enum> {
-        return static_cast<std::uint16_t>(Enum);
-    }
-
-
-    // Accept any field enums that belong to the same CSR, but do not allow
-    // field enums from different CSR to be mixed into them
-    template<auto... Args>
-    constexpr auto combine() -> std::uint32_t requires Concepts::SameCsrFieldEnum<Args...> {
-        return (static_cast<std::uint32_t>(Args) | ...);
-    }
-
-
-    template <Concepts::EnumWithMask EnumType>
-    constexpr auto getSingleMaskValue() -> std::uint32_t {
-        return static_cast<std::uint32_t>(EnumType::fieldBitMask);
-    }
-
-
-    template <auto... EnumTypeValue>
-    constexpr auto getMaskFromFieldEnumValues() -> std::uint32_t {
-        return ( getSingleMaskValue<decltype(EnumTypeValue)>() | ...);
-    }
-
 
 
     template <auto Csr>
@@ -61,7 +29,7 @@ namespace Riscv::Csr {
     inline
     constexpr auto
     __attribute__ ((always_inline))
-    readCsr() -> std::uint32_t {
+    read() -> std::uint32_t {
         std::uint32_t result;
 
         __asm__ volatile(
@@ -80,7 +48,7 @@ namespace Riscv::Csr {
     inline
     constexpr auto
     __attribute__ ((always_inline))
-    clearAndSetCsr() -> void {
+    clearAndSet() -> void {
         // ReSharper disable CppTooWideScopeInitStatement
         constexpr bool isSmallClear = Clear < (1u<<5);
         constexpr bool isSmallSet   = Set   < (1u<<5);
@@ -133,7 +101,7 @@ namespace Riscv::Csr {
     inline
     constexpr auto
     __attribute__ ((always_inline))
-    clearCsr() -> void {
+    clear() -> void {
         if (ClearValue < (1u<<5)) {
             // is small enough, use the 5-bit immediate instruction instead
             __asm__ volatile(
@@ -160,7 +128,7 @@ namespace Riscv::Csr {
     inline
     constexpr auto
     __attribute__ ((always_inline))
-    setCsr() -> void {
+    set() -> void {
         if (SetValue < (1u<<5)) {
             // is small enough, use the 5-bit imediate instruction instead
             __asm__ volatile(
@@ -187,13 +155,13 @@ namespace Riscv::Csr {
     inline
     constexpr auto
     __attribute__ ((always_inline))
-    writeCsr() -> void {
+    write() -> void {
         // https://gcc.gnu.org/onlinedocs/gcc/Machine-Constraints.html
 
         if (Value == 0) {
             // if writtin zero we can use r0 aka x0 register
             __asm__ volatile(
-                "csrw %0, x0"  // r0 register
+                "csrw %0, x0"  // x0(zero) register
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr))
             );
@@ -223,9 +191,9 @@ namespace Riscv::Csr {
     inline
     constexpr auto
     __attribute__ ((always_inline))
-    writeCsr() -> void {
+    write() -> void {
         constexpr std::uint32_t value = (static_cast<std::uint32_t>(Values) | ...);
-        writeCsr<Csr, value>();
+        write<Csr, value>();
     }
 
 
@@ -236,32 +204,32 @@ namespace Riscv::Csr {
     inline
     constexpr auto
     __attribute__ ((always_inline))
-    setCsrWithAutoClear() -> void {
-        constexpr std::uint32_t clear = Csr::getMaskFromFieldEnumValues<Values...>();
-        constexpr std::uint32_t set   = (static_cast<std::uint32_t>(Values) | ...);
+    setWithAutoClear() -> void {
+        constexpr std::uint32_t clearValue = Csr::getMaskFromFieldEnumValues<Values...>();
+        constexpr std::uint32_t setValue   = (static_cast<std::uint32_t>(Values) | ...);
 
-        constexpr bool clearHasValue = clear != 0;
-        constexpr bool setHasValue   = set   != 0;
+        constexpr bool clearHasValue = clearValue != 0;
+        constexpr bool setHasValue   = setValue   != 0;
 
         // simplify the operation depending if the set and clear are empty or if they are the same value
         if (clearHasValue) {
             // Mask is not empty
 
             if (setHasValue) {
-                if (clear==set) {
+                if (clearValue==setValue) {
                     // if clearning and setting is the same, simplify just to setting
-                    setCsr<Csr, set>();
+                    set<Csr, setValue>();
                 } else {
-                    clearAndSetCsr<Csr, clear, set>();
+                    clearAndSet<Csr, clearValue, setValue>();
                 }
             } else {
-                clearCsr<Csr, clear>();
+                clear<Csr, clearValue>();
             }
         } else {
             // Mask empty
 
             if (setHasValue) {
-                setCsr<Csr, set>();
+                set<Csr, setValue>();
             } else {
                 // mask and value empty, do nothing
             }
