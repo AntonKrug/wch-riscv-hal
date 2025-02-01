@@ -57,7 +57,7 @@ extern "C" {
 
         using namespace Riscv::Csr;
 
-        Access::write<
+        AccessCt::write<
             QingKeV2::intsyscr,
             Intsyscr::Hwstken::hpeEnable,                  //HW preamble and epilogue
             Intsyscr::Inesten::interuptNestingEnable>();
@@ -69,11 +69,11 @@ extern "C" {
             combine<Mtvec::Mode0::vectorizedInterupts,Mtvec::Mode1::absoluteJumpAddresses>() +
             irqVectorTableAddressSanitized;
 
-        Access::write<QingKeV2::mtvec, mtvecValue>();
+        AccessCt::write<QingKeV2::mtvec, mtvecValue>();
 
         // constexpr auto a = Riscv::Csr::getCsrFromField(Mtvec::Mode0::vectorizedInterupts, Mtvec::Mode1::executeInstructions);
         constexpr auto a = Riscv::Csr::getCsrFromField(Mtvec::Mode0::singleUnifiedTrapHandler);
-        Access::write<a, mtvecValue>();
+        AccessCt::write<a, mtvecValue>();
 
         // readCsr<QingKeV2::intsyscr>();
         // writeCsr<QingKeV2::intsyscr, 0>();

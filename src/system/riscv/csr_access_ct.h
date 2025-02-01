@@ -20,7 +20,7 @@
 //TODO: runtime versions, IRQ safe versions
 
 
-namespace Riscv::Csr::Access {
+namespace Riscv::Csr::AccessCt {
 
 
     using namespace Riscv;
