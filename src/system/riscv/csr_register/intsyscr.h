@@ -40,26 +40,25 @@ namespace Riscv::Csr::Intsyscr {
         // only applied to the handlers of these IRQs. On some applications might
         // worth investigating how the footprint and runtime behavior changes between using
         // HPE or not. Because blindly enabling the HPE might negatively impact the application.
-        fieldBitMask = 0b1,
-        hpeEnable    = 0b1,
-        hpeDisable   = 0
+        fieldBitMask = 0b1, // THIS IS INTERNAL, don't use it
+        hpeEnable    = 0b1, // enable HW prologoue and epiloge (see intsyscr.h for more details)
+        hpeDisable   = 0    // disable HW prologue and epilogue (see intsyscr.h for more details)
     };
 
 
     enum class Inesten: std::uint32_t {
         // Enable nesting of intreupts together with PFIC settings the IRQs can get different
         // priorities and dictating order of execution.
-        fieldBitMask           = 0b1'0,
+        fieldBitMask           = 0b1'0, // THIS IS INTERNAL, don't use it
         interuptNestingEnable  = 0b1'0,
         interuptNestingDisable = 0,
     };
 
 
     enum class Eabien: std::uint32_t {
-        // WCH noted that this shouldn't be touched, and left in the default disabled state
-        fieldBitMask = 0b1'00,
-        eabiEnable   = 0b1'00,
-        eabiDisable  = 0
+        fieldBitMask = 0b1'00, // THIS IS INTERNAL, don't use it
+        eabiEnable   = 0b1'00, // WCH noted that this shouldn't be enabled, and left in the default disabled state
+        eabiDisable  = 0       // Keeping EABI disabled, the way WCH recomends
     };
 
 

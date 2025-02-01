@@ -17,33 +17,33 @@ namespace Riscv::Csr::Mstatus {
 
 
     enum class Mie: std::uint32_t {
-        fieldBitMask      = 0b1'00,
+        fieldBitMask      = 0b1'00, // THIS IS INTERNAL, don't use it
         machineIrqDisable = 0,
-        machineIrqEnable  = 0b1'00,  // Enable machine level IRQs globally
+        machineIrqEnable  = 0b1'00, // Enable machine level IRQs globally
     };
 
 
     enum class Mpie: std::uint32_t {
-        fieldBitMask              = 0b1'000'0'00,
+        fieldBitMask              = 0b1'000'0'00, // THIS IS INTERNAL, don't use it
         machinePreviousIrqDisable = 0,
-        machinePreviousIrqEnable  = 0b1'000'0'00,  // Capture value of MIE when an exception happens, mret will restore it back
+        machinePreviousIrqEnable  = 0b1'000'0'00, // Capture value of MIE when an exception happens, mret will restore it back
     };
 
 
     enum class Mpp: std::uint32_t {
-        fieldBitMask          = 0b11'000'000'0'00,
+        fieldBitMask          = 0b11'000'000'0'00, // THIS IS INTERNAL, don't use it
         machineModeIrqDisable = 0,
     };
 
 
     enum class Mpop: std::uint32_t {
-        fieldBitMask          = 0b1'0000000000'00'000'000'0'00,
+        fieldBitMask          = 0b1'0000000000'00'000'000'0'00, // THIS IS INTERNAL, don't use it
         machineModeIrqDisable = 0,
     };
 
 
     enum class Mppop: std::uint32_t {
-        fieldBitMask          = 0b1'0'0000000000'00'000'000'0'00,
+        fieldBitMask          = 0b1'0'0000000000'00'000'000'0'00, // THIS IS INTERNAL, don't use it
         machineModeIrqDisable = 0,
     };
 
