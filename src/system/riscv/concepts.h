@@ -10,6 +10,7 @@
 #include "csrs_qingke.h"
 #include "csr_register/intsyscr.h"
 #include "csr_register/mtvec.h"
+#include "csr_register/mstatus.h"
 
 namespace Riscv::Concepts {
 
@@ -117,3 +118,29 @@ namespace Riscv::Concepts {
 
 
 };
+
+
+namespace Riscv::Csr {
+
+    template<Riscv::Csr::Intsyscr::IsAnyField Field>
+    constexpr Riscv::Csr::QingKeV2 getCsrFromField(Field field) {
+        return QingKeV2::intsyscr;
+    }
+
+    template<Riscv::Csr::Mtvec::IsAnyField Field>
+    constexpr Riscv::Csr::QingKeV2 getCsrFromField(Field field) {
+        return QingKeV2::mstatus;
+    }
+
+    template<Riscv::Csr::Mtvec::IsAnyField... Field>
+    constexpr Riscv::Csr::QingKeV2 getCsrFromField(Field... field) {
+        return QingKeV2::mstatus;
+    }
+
+    template<typename T>
+    constexpr Riscv::Csr::QingKeV2 getCsrFromField(T) {
+        static_assert(sizeof(T) == 0, "This type doesn't have associated parent CSR, did you used a CSR's field type?");
+        return QingKeV2::intsyscr; // unreachable
+    }
+
+}
