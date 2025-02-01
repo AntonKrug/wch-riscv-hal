@@ -3,7 +3,7 @@
 //
 
 #include "generated_startup_configuration.h"
-#include "system/riscv/csr_access.h"
+#include "system/riscv/csr_access_ct.h"
 #include "system/riscv/csr_register/intsyscr.h"
 #include "user_src/system.h"
 #include "system/riscv/concepts.h"
@@ -72,7 +72,7 @@ extern "C" {
         Access::write<QingKeV2::mtvec, mtvecValue>();
 
         // constexpr auto a = Riscv::Csr::getCsrFromField(Mtvec::Mode0::vectorizedInterupts, Mtvec::Mode1::executeInstructions);
-        constexpr auto a = Riscv::Csr::getCsrFromField(Mtvec::Mode0::vectorizedInterupts);
+        constexpr auto a = Riscv::Csr::getCsrFromField(Mtvec::Mode0::singleUnifiedTrapHandler);
         Access::write<a, mtvecValue>();
 
         // readCsr<QingKeV2::intsyscr>();
