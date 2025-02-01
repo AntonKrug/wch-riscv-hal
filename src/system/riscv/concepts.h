@@ -127,20 +127,10 @@ namespace Riscv::Csr {
         return QingKeV2::intsyscr;
     }
 
-    template<Riscv::Csr::Mtvec::IsAnyField Field>
-    constexpr Riscv::Csr::QingKeV2 getCsrFromField(Field field) {
-        return QingKeV2::mstatus;
-    }
-
     template<Riscv::Csr::Mtvec::IsAnyField... Field>
     constexpr Riscv::Csr::QingKeV2 getCsrFromField(Field... field) {
-        return QingKeV2::mstatus;
+        return QingKeV2::mtvec;
     }
 
-    template<typename T>
-    constexpr Riscv::Csr::QingKeV2 getCsrFromField(T) {
-        static_assert(sizeof(T) == 0, "This type doesn't have associated parent CSR, did you used a CSR's field type?");
-        return QingKeV2::intsyscr; // unreachable
-    }
 
 }
