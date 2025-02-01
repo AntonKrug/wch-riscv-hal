@@ -123,12 +123,12 @@ namespace Riscv::Concepts {
 namespace Riscv::Csr {
 
     template<Riscv::Csr::Intsyscr::IsAnyField Field>
-    constexpr Riscv::Csr::QingKeV2 getCsrFromField(Field field) {
+    constexpr auto getCsrFromField(Field field) {
         return QingKeV2::intsyscr;
     }
 
     template<Riscv::Csr::Mtvec::IsAnyField... Field>
-    constexpr Riscv::Csr::QingKeV2 getCsrFromField(Field... field) {
+    constexpr auto getCsrFromField(Field... field) {
         return QingKeV2::mtvec;
     }
 
