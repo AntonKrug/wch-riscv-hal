@@ -6,6 +6,7 @@
 #include "system/riscv/csr_access.h"
 #include "system/riscv/csr_register/intsyscr.h"
 #include "user_src/system.h"
+#include "system/riscv/concepts.h"
 
 extern "C" {
     // DATA section
@@ -69,6 +70,10 @@ extern "C" {
             irqVectorTableAddressSanitized;
 
         Access::write<QingKeV2::mtvec, mtvecValue>();
+
+        // constexpr auto a = Riscv::Csr::getCsrFromField(Mtvec::Mode0::vectorizedInterupts, Mtvec::Mode1::executeInstructions);
+        constexpr auto a = Riscv::Csr::getCsrFromField(Mtvec::Mode0::vectorizedInterupts);
+        Access::write<a, mtvecValue>();
 
         // readCsr<QingKeV2::intsyscr>();
         // writeCsr<QingKeV2::intsyscr, 0>();
