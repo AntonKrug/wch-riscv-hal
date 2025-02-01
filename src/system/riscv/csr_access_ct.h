@@ -215,25 +215,27 @@ namespace Riscv::Csr::Access {
 
         // simplify the operation depending if the set and clear are empty or if they are the same value
         if (clearHasValue) {
-            // Mask is not empty
+            // mask has something to be cleared
 
             if (setHasValue) {
                 if (clearValue==setValue) {
                     // if clearning and setting is the same, simplify just to setting
                     set<Csr, setValue>();
                 } else {
+                    // both clearning and setting needed
                     clearAndSet<Csr, clearValue, setValue>();
                 }
             } else {
+                // if there is nothing to set, then just clear it
                 clear<Csr, clearValue>();
             }
         } else {
-            // Mask empty
-
+            // mask is empty (has nothing to be cleared) ...
             if (setHasValue) {
+                // and if there is some value to set, then just set blindly...
                 set<Csr, setValue>();
             } else {
-                // mask and value empty, do nothing
+                // but mask and value are both empty, nothing to clear or set, do nothing
             }
         }
     }
