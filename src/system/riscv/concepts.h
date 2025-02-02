@@ -14,22 +14,20 @@
 
 namespace Riscv::Concepts {
 
-    using namespace Riscv;
-
 
     // If any of the masking enum is used
     template<auto Mask>
     concept IsCsrMaskedEnums =
-        std::is_same_v<decltype(Mask), Csr::Priviledge> ||
-        std::is_same_v<decltype(Mask), Csr::ReadWrite>;
+        std::is_same_v<decltype(Mask), Riscv::Csr::Priviledge> ||
+        std::is_same_v<decltype(Mask), Riscv::Csr::ReadWrite>;
 
 
     // A type which is all QingKeV2, QingKeV3 and QingKeV4 at the same time
     template<typename CsrType>
     concept QingKeCsrEnumType =
-        std::is_same_v<CsrType, Csr::QingKeV2> ||
-        std::is_same_v<CsrType, Csr::QingKeV3> ||
-        std::is_same_v<CsrType, Csr::QingKeV4>;
+        std::is_same_v<CsrType, Riscv::Csr::QingKeV2> ||
+        std::is_same_v<CsrType, Riscv::Csr::QingKeV3> ||
+        std::is_same_v<CsrType, Riscv::Csr::QingKeV4>;
 
 
     // To confirm the CSR enum value belongs to one of the QingKe enum types
@@ -50,38 +48,38 @@ namespace Riscv::Concepts {
 
 
     // Confirm the CSR's address is within the 12-bit range
-    template<auto csrAddress>
-    concept IsCsrValidAddressRange = (csrAddress >= 0 && csrAddress < (1u<<12));
+    template<auto CsrAddress>
+    concept IsCsrValidAddressRange = (CsrAddress >= 0 && CsrAddress < (1u<<12));
 
 
     // Confirm one of the QingKe CSRs was used and it's address
     // is withing correct range
-    template<auto Csr>
+    template<auto CsrValue>
     concept IsCsrEnumValid =
-        IsQingKeCsrEnum<Csr> &&
-        IsCsrValidAddressRange<static_cast<std::uint16_t>(Csr)>;
+        IsQingKeCsrEnum<CsrValue> &&
+        IsCsrValidAddressRange<static_cast<std::uint16_t>(CsrValue)>;
 
 
     template<auto CsrAddress>
     concept IsCsrWritableAddress = (
-        (CsrAddress & Csr::maskReadWrite) != static_cast<std::uint16_t>(Csr::ReadWrite::readOnly) );
+        (CsrAddress & Riscv::Csr::maskReadWrite) != static_cast<std::uint16_t>(Riscv::Csr::ReadWrite::readOnly) );
 
 
-    template<auto Csr>
+    template<auto CsrValue>
     concept IsCsrWritable =
-        IsQingKeCsrEnum<Csr> &&
-        IsCsrWritableAddress<static_cast<std::uint16_t>(Csr)>;
+        IsQingKeCsrEnum<CsrValue> &&
+        IsCsrWritableAddress<static_cast<std::uint16_t>(CsrValue)>;
 
 
     template<auto CsrAddress>
     concept IsCsrMachinePriviledgeAddress = (
-        (CsrAddress & Csr::maskPriviledge) == static_cast<std::uint16_t>(Csr::Priviledge::machine) );
+        (CsrAddress & Riscv::Csr::maskPriviledge) == static_cast<std::uint16_t>(Riscv::Csr::Priviledge::machine) );
 
 
-    template<auto Csr>
+    template<auto CsrValue>
     concept IsCsrMachinePriviledge =
-        IsQingKeCsrEnum<Csr> &&
-        IsCsrMachinePriviledgeAddress<static_cast<std::uint16_t>(Csr)>;
+        IsQingKeCsrEnum<CsrValue> &&
+        IsCsrMachinePriviledgeAddress<static_cast<std::uint16_t>(CsrValue)>;
 
 
     template<typename CsrField>
@@ -93,9 +91,9 @@ namespace Riscv::Concepts {
 
         // The CSRs can come different enums, but must resolve to the same enum value
         // CheckSameCsrValue<QingKeV2::intsyscr, QingKeV4::intsyscr> true
-        template<bool OmmitCheck, auto Left, auto Right>
+        template<bool OmmitCheck, auto LeftValue, auto RightValue>
         concept CheckSameCsrValue =
-            (OmmitCheck || static_cast<uint16_t>(Left)==static_cast<uint16_t>(Right));
+            (OmmitCheck || static_cast<uint16_t>(LeftValue)==static_cast<uint16_t>(RightValue));
 
 
         // Internal more generic concept to cover both cases below
@@ -103,9 +101,9 @@ namespace Riscv::Concepts {
         // then also the Parent is check if the CsrField enums belong to the parent CSR enum
         template<bool OmmitCheck, auto ParentCsr, auto... CsrFields>
         concept CsrFieldEnumMatchingCsrGeneric =
-            ( CheckSameCsrValue<OmmitCheck, ParentCsr, Csr::QingKeV2::intsyscr> && (Csr::Intsyscr::IsAnyField<decltype(CsrFields)> && ...) ) ||
-            ( CheckSameCsrValue<OmmitCheck, ParentCsr, Csr::QingKeV2::mtvec>    && (Csr::Mtvec::IsAnyField<   decltype(CsrFields)> && ...) ) ||
-            ( CheckSameCsrValue<OmmitCheck, ParentCsr, Csr::QingKeV2::mstatus>  && (Csr::Mstatus::IsAnyField< decltype(CsrFields)> && ...) );
+            ( CheckSameCsrValue<OmmitCheck, ParentCsr, Riscv::Csr::QingKeV2::intsyscr> && (Riscv::Csr::Intsyscr::IsAnyField<decltype(CsrFields)> && ...) ) ||
+            ( CheckSameCsrValue<OmmitCheck, ParentCsr, Riscv::Csr::QingKeV2::mtvec>    && (Riscv::Csr::Mtvec::IsAnyField<   decltype(CsrFields)> && ...) ) ||
+            ( CheckSameCsrValue<OmmitCheck, ParentCsr, Riscv::Csr::QingKeV2::mstatus>  && (Riscv::Csr::Mstatus::IsAnyField< decltype(CsrFields)> && ...) );
 
     }
 
@@ -122,12 +120,7 @@ namespace Riscv::Concepts {
     // Note: intsyscr was entered as arbitary CSR, as the OmmitCheck is set to true
     template<auto... CsrFields>
     concept SameCsrFieldEnums =
-        CsrFieldEnumMatchingCsrGeneric<true, Csr::QingKeV2::intsyscr, CsrFields...>;
+        CsrFieldEnumMatchingCsrGeneric<true, Riscv::Csr::QingKeV2::intsyscr, CsrFields...>;
 
 
 };
-
-
-namespace Riscv::Csr {
-
-}
