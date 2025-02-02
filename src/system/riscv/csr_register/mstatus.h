@@ -13,6 +13,8 @@
 #include <type_traits>
 
 
+//TODO: unpriviledged vs user
+
 namespace Riscv::Csr::Mstatus {
 
 
@@ -31,11 +33,11 @@ namespace Riscv::Csr::Mstatus {
 
 
     enum class MppMachinePreviousPriviledge: std::uint32_t {
-        fieldBitMask  = 0b11'000'0'000'0'000, // THIS IS INTERNAL, don't use it
-        unprivileged  = 0b00'000'0'000'0'000, // 00 unprivileged mode was set prior handling interupt as machine mode, mret will restore it (bit 12-11)
-        supervisor    = 0b01'000'0'000'0'000, // 01 supervisor mode was set prior handling interupt as machine mode, mret will restore it (bit 12-11)
-        hypervisor    = 0b10'000'0'000'0'000, // 10 hypervisor mode was set prior handling interupt as machine mode, mret will restore it (bit 12-11)
-        machine       = 0b11'000'0'000'0'000, // 11 machine mode was set prior handling interupt as machine mode, mret will restore it (bit 12-11)
+        fieldBitMask = 0b11'000'0'000'0'000, // THIS IS INTERNAL, don't use it
+        user         = 0b00'000'0'000'0'000, // 00 user was prior interupt, mret will restore it (bit 12-11). Unsupported by QingKeV2
+    //  supervisor   = 0b01'000'0'000'0'000, // 01 supervisor was prior interupt, mret will restore it (bit 12-11). Unsupported by QingKeV2/V3/V4
+    //  hypervisor   = 0b10'000'0'000'0'000, // 10 hypervisor was prior interupt, mret will restore it (bit 12-11). Unsupported by QingKeV2/V3/V4
+        machine      = 0b11'000'0'000'0'000, // 11 machine was prior interupt, mret will restore it (bit 12-11)
     };
 
 
