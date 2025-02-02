@@ -115,6 +115,16 @@ namespace Riscv::Csr::AccessCt {
 
     #pragma region ClearSetWriteWithParentCsrAutodetection
 
+    template <auto... SetFields>
+    requires Concepts::SameCsrFieldEnums<SetFields...>
+    inline
+    constexpr auto
+    __attribute__ ((always_inline))
+    clear() -> void {
+        constexpr auto parentCsr = getCsrFromField(SetFields...);
+        clear<parentCsr, SetFields...>();
+    }
+
 
     // All the Sets for various types
     template <auto... SetFields>
