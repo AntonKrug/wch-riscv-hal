@@ -4,6 +4,7 @@
 
 // TODO: unify singular and plural accesses into one, hide the parent convertors, cleanAndSet call subsets when needed,
 //       setWithAutoClear should be using clear and set instead
+//       getBits from the enums, offsets, sizes...
 
 //https://developer.arm.com/documentation/100748/0623/Using-Assembly-and-Intrinsics-in-C-or-C---Code/Writing-inline-assembly-code?lang=en
 //https://developer.arm.com/documentation/102284/6-16-2LTS/armclang-Reference/armclang-Inline-Assembler/Inline-assembly-statements-within-a-function
