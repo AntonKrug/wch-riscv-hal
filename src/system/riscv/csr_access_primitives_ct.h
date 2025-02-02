@@ -192,7 +192,7 @@ namespace Riscv::Csr::AccessCt {
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr)),
                   "K"(ClearValueUint32),
-                  "i"(SetValueUint32)
+                  "r"(SetValueUint32)
             );
         } else if (isSetSmall) {
             __asm__ volatile(
@@ -200,7 +200,7 @@ namespace Riscv::Csr::AccessCt {
                 "csrsi %0, %2"
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr)),
-                  "i"(ClearValueUint32),
+                  "r"(ClearValueUint32),
                   "K"(SetValueUint32)
             );
         } else {
@@ -209,8 +209,8 @@ namespace Riscv::Csr::AccessCt {
                 "csrs %0, %2"
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr)),
-                  "i"(ClearValueUint32),
-                  "i"(SetValueUint32)
+                  "r"(ClearValueUint32),
+                  "r"(SetValueUint32)
             );
         }
     }
