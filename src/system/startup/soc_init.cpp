@@ -31,10 +31,12 @@ extern "C" {
     prepare_system_for_main(void) {
         using namespace Riscv;
 
-        // In case we are in soft-reset, disable (probably) existing global interupt, and prepare CSR fields
-        // so when "return from interupt" (which will do forcefully at end of this method by
-        // invoking mret), then it will restore expected priviledge mode and expected MIE state
+        // In case we are in soft-reset, disable (probably) pre-existing global interupt,
+        // and prepare CSR fields so when "return from interupt" (which will do forcefully
+        // at end of this method by invoking mret), then it will restore expected priviledge
+        // mode and expected MIE state
         Csr::AccessCt::write<
+            Csr::Mstatus::Mie::machineIrqDisable,
             Csr::Mstatus::Mpp::machinePreviousPriviledgeIsMachine,
             Csr::Mstatus::Mpie::machinePreviousIrqEnable>();
 
