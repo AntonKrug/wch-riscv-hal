@@ -4,15 +4,8 @@
 
 // TODO: unify singular and plural accesses into one, hide the parent convertors, cleanAndSet call subsets when needed,
 //       setWithAutoClear should be using clear and set instead
-//       getBits from the enums, offsets, sizes...
+//       getBits from the enums, offsets, sizes... , when clear is 0xff you can do write instead
 
-//https://developer.arm.com/documentation/100748/0623/Using-Assembly-and-Intrinsics-in-C-or-C---Code/Writing-inline-assembly-code?lang=en
-//https://developer.arm.com/documentation/102284/6-16-2LTS/armclang-Reference/armclang-Inline-Assembler/Inline-assembly-statements-within-a-function
-//https://gcc.gnu.org/onlinedocs/gcc-12.4.0/gcc/Extended-Asm.html
-//https://gcc.gnu.org/onlinedocs/gcc-12.4.0/gcc/Simple-Constraints.html
-//https://gcc.gnu.org/onlinedocs/gcc-12.4.0/gcc/Machine-Constraints.html
-//https://msyksphinz-self.github.io/riscv-isadoc/html/rvi.html#csrrwi
-//https://uim.fei.stuba.sk/wp-content/uploads/2018/02/riscv-spec-2022.pdf
 
 #pragma once
 
@@ -20,8 +13,7 @@
 
 #include "concepts.h"
 #include "csr_utils.h"
-
-//TODO: runtime versions, IRQ safe versions
+#include "csr_access_primitives_ct.h"
 
 
 namespace Riscv::Csr::AccessCt {
@@ -54,232 +46,53 @@ namespace Riscv::Csr::AccessCt {
     #pragma endregion
 
 
-    #pragma region ReadClearSetWrite
+    #pragma region ClearSetWriteAbstracted
 
-    
-    template <auto Csr>
-    requires Concepts::IsCsrEnumValid<Csr>
-    inline
-    constexpr auto
-    __attribute__ ((always_inline))
-    read() -> std::uint32_t {
-        std::uint32_t result;
-
-        __asm__ volatile(
-            "csrr %0, %1"
-            : "=r"(result)
-            : "i"(static_cast<std::uint16_t>(Csr)));
-
-        return result;
-    }
-
-
-    template <auto Csr, auto Clear, auto Set>
+    template <auto Csr, auto... ClearField>
     requires Concepts::IsCsrEnumValid<Csr> &&
-             Concepts::IsCsrValueCorrectRegisterType<Clear> &&
-             Concepts::IsCsrValueCorrectRegisterType<Set>
-    inline
-    constexpr auto
-    __attribute__ ((always_inline))
-    clearAndSet() -> void {
-        // ReSharper disable CppTooWideScopeInitStatement
-        constexpr bool isSmallClear = Clear < (1u<<5);
-        constexpr bool isSmallSet   = Set   < (1u<<5);
-        // ReSharper restore CppTooWideScopeInitStatement
-
-        // For all possible combinations use the smallest instructions
-        if (isSmallClear && isSmallSet) {
-            __asm__ volatile(
-                "csrci %0, %1\n"
-                "csrsi %0, %2"
-                : // no output
-                : "i"(static_cast<std::uint16_t>(Csr)),
-                  "K"(Clear),
-                  "K"(Set)
-            );
-        } else if (isSmallClear) {
-            __asm__ volatile(
-                "csrci %0, %1\n"
-                "csrs  %0, %2"
-                : // no output
-                : "i"(static_cast<std::uint16_t>(Csr)),
-                  "K"(Clear),
-                  "i"(Set)
-            );
-        } else if (isSmallSet) {
-            __asm__ volatile(
-                "csrc  %0, %1\n"
-                "csrsi %0, %2"
-                : // no output
-                : "i"(static_cast<std::uint16_t>(Csr)),
-                  "i"(Clear),
-                  "K"(Set)
-            );
-        } else {
-            __asm__ volatile(
-                "csrc %0, %1\n"
-                "csrs %0, %2"
-                : // no output
-                : "i"(static_cast<std::uint16_t>(Csr)),
-                  "i"(Clear),
-                  "i"(Set)
-            );
-        }
-    }
-
-
-    template <auto Csr, auto ClearValue>
-    requires Concepts::IsCsrEnumValid<Csr> &&
-             Concepts::IsCsrValueCorrectRegisterType<ClearValue>
+             Concepts::CsrFieldEnumMatchingCsrGeneric<false, Csr, ClearField...>
     inline
     constexpr auto
     __attribute__ ((always_inline))
     clear() -> void {
-        if (ClearValue < (1u<<5)) {
-            // is small enough, use the 5-bit immediate instruction instead
-            __asm__ volatile(
-                "csrci %0, %1"
-                : // no output
-                : "i"(static_cast<std::uint16_t>(Csr)),
-                  "K"(ClearValue)
-            );
-        } else {
-            __asm__ volatile(
-                "csrc %0, %1"
-                : // no output
-                : "i"(static_cast<std::uint16_t>(Csr)),
-                  "r"(ClearValue)
-            );
-        }
     }
-
-
-    // All the Sets for various types
-    template <auto Csr, auto SetValue>
-    requires Concepts::IsCsrEnumValid<Csr> &&
-             Concepts::IsCsrValueCorrectRegisterType<SetValue>
-    inline
-    constexpr auto
-    __attribute__ ((always_inline))
-    set() -> void {
-        if (SetValue < (1u<<5)) {
-            // is small enough, use the 5-bit imediate instruction instead
-            __asm__ volatile(
-                "csrsi %0, %1"
-                : // no output
-                : "i"(static_cast<std::uint16_t>(Csr)),
-                  "K"(SetValue)
-            );
-        } else {
-            __asm__ volatile(
-                "csrs %0, %1"
-                : // no output
-                : "i"(static_cast<std::uint16_t>(Csr)),
-                  "r"(SetValue)
-            );
-        }
-    }
-
 
     // All the writes for various types
-    template <auto Csr, auto Value>
+    template <auto Csr, auto... WriteField>
     requires Concepts::IsCsrEnumValid<Csr> &&
-             Concepts::IsCsrValueCorrectRegisterType<Value>
+             Concepts::CsrFieldEnumMatchingCsrGeneric<false, Csr, WriteField...>
     inline
     constexpr auto
     __attribute__ ((always_inline))
     write() -> void {
-        // https://gcc.gnu.org/onlinedocs/gcc/Machine-Constraints.html
-
-        if (Value == 0) {
-            // if writtin zero we can use r0 aka x0 register
-            __asm__ volatile(
-                "csrw %0, x0"  // x0(zero) register
-                : // no output
-                : "i"(static_cast<std::uint16_t>(Csr))
-            );
-        } else if (Value<(1u<<5)) {
-            // csrwI instruction can take 5-bit imediate value
-            __asm__ volatile(
-                "csrwi %0, %1" // 5-bit immediate values only
-                : // no output
-                : "i"(static_cast<std::uint16_t>(Csr)),
-                  "K"(Value)
-            );
-        } else {
-            __asm__ volatile(
-                "csrw %0, %1" // value from a register
-                : // no output
-                : "i"(static_cast<std::uint16_t>(Csr)),
-                  "r"(Value)
-            );
-        }
-    }
-
-
-    // All the writes for various types
-    template <auto Csr, auto... Values>
-    requires Concepts::IsCsrEnumValid<Csr> &&
-             Concepts::CsrFieldEnumMatchingCsr<false, Csr, Values...>
-    inline
-    constexpr auto
-    __attribute__ ((always_inline))
-    write() -> void {
-        constexpr std::uint32_t value = (static_cast<std::uint32_t>(Values) | ...);
-        write<Csr, value>();
+        constexpr std::uint32_t value = (static_cast<std::uint32_t>(WriteField) | ...);
+        writeUin32<Csr, value>();
     }
 
 
     // When only specific fields needs to be updated (it will for various types of updates to the minimum of instructions)
     template <auto Csr, auto... Values>
     requires Concepts::IsCsrEnumValid<Csr> &&
-             Concepts::CsrFieldEnumMatchingCsr<false, Csr, Values...>
+             Concepts::CsrFieldEnumMatchingCsrGeneric<false, Csr, Values...>
     inline
     constexpr auto
     __attribute__ ((always_inline))
     setWithAutoClear() -> void {
-        constexpr std::uint32_t clearValue = Csr::getMaskFromFieldEnumValues<Values...>();
-        constexpr std::uint32_t setValue   = (static_cast<std::uint32_t>(Values) | ...);
+        constexpr std::uint32_t clearValueUin32 = Csr::getMaskFromFieldEnumValues<Values...>();
+        constexpr std::uint32_t setValueUin32   = (static_cast<std::uint32_t>(Values) | ...);
 
-        constexpr bool clearHasValue = clearValue != 0;
-        constexpr bool setHasValue   = setValue   != 0;
-
-        // simplify the operation depending if the set and clear are empty or if they are the same value
-        if (clearHasValue) {
-            // mask has something to be cleared
-
-            if (setHasValue) {
-                if (clearValue==setValue) {
-                    // if clearning and setting is the same, simplify just to setting
-                    set<Csr, setValue>();
-                } else {
-                    // both clearning and setting needed
-                    clearAndSet<Csr, clearValue, setValue>();
-                }
-            } else {
-                // if there is nothing to set, then just clear it
-                clear<Csr, clearValue>();
-            }
-        } else {
-            // mask is empty (has nothing to be cleared) ...
-            if (setHasValue) {
-                // and if there is some value to set, then just set blindly...
-                set<Csr, setValue>();
-            } else {
-                // but mask and value are both empty, nothing to clear or set, do nothing
-            }
-        }
+        clearAndSetUin32<Csr, clearValueUin32, setValueUin32>();
     }
 
     #pragma endregion
 
 
-    #pragma region ReadClearSetWriteWithParentCsrAutodetection
+    #pragma region ClearSetWriteWithParentCsrAutodetection
 
 
     // All the Sets for various types
     template <auto... SetField>
-    requires Concepts::SameCsrFieldEnum<SetField...>
+    requires Concepts::SameCsrFieldEnums<SetField...>
     inline
     constexpr auto
     __attribute__ ((always_inline))
@@ -291,7 +104,7 @@ namespace Riscv::Csr::AccessCt {
 
     // All the writes for various types
     template <auto... WriteField>
-    requires Concepts::SameCsrFieldEnum<WriteField...>
+    requires Concepts::SameCsrFieldEnums<WriteField...>
     inline
     constexpr auto
     __attribute__ ((always_inline))
@@ -303,7 +116,7 @@ namespace Riscv::Csr::AccessCt {
 
     // When only specific fields needs to be updated, it will detect what parent CSR it belongs, clear and set correct bits
     template <auto... SetWithClearField>
-    requires Concepts::SameCsrFieldEnum<SetWithClearField...>
+    requires Concepts::SameCsrFieldEnums<SetWithClearField...>
     inline
     constexpr auto
     __attribute__ ((always_inline))
