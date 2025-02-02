@@ -56,34 +56,55 @@ namespace Riscv::Csr::AccessCt {
     constexpr auto
     __attribute__ ((always_inline))
     clear() -> void {
+        clearUint32<Csr, combineFieldsToUint32(ClearFields)>();
     }
 
 
-    // All the writes for various types
+    template <auto Csr, auto... SetFields>
+    requires Concepts::IsCsrEnumValid<Csr> &&
+             Concepts::SameCsrFieldEnumsAndMatchingParentCsr<Csr, SetFields...>
+    inline
+    constexpr auto
+    __attribute__ ((always_inline))
+    set() -> void {
+        setUint32<Csr, combineFieldsToUint32(SetFields)>();
+    }
+
     template <auto Csr, auto... WriteFields>
     requires Concepts::IsCsrEnumValid<Csr> &&
-             Concepts::CsrFieldEnumMatchingCsrGeneric<false, Csr, WriteFields...>
+             Concepts::SameCsrFieldEnumsAndMatchingParentCsr<Csr, WriteFields...>
     inline
     constexpr auto
     __attribute__ ((always_inline))
     write() -> void {
-        constexpr std::uint32_t value = (static_cast<std::uint32_t>(WriteFields) | ...);
-        writeUin32<Csr, value>();
+        writeUint32<Csr, combineFieldsToUint32(WriteFields)>();
+    }
+
+
+    template <auto Csr, auto... ClearFields, auto... SetFields>
+    requires Concepts::IsCsrEnumValid<Csr> &&
+             Concepts::SameCsrFieldEnumsAndMatchingParentCsr<Csr, ClearFields...> &&
+             Concepts::SameCsrFieldEnumsAndMatchingParentCsr<Csr, SetFields...>
+    inline
+    constexpr auto
+    __attribute__ ((always_inline))
+    clearSet() -> void {
+        clearAndSetUint32<Csr, combineFieldsToUint32(ClearFields), combineFieldsToUint32(SetFields)>();
     }
 
 
     // When only specific fields needs to be updated (it will for various types of updates to the minimum of instructions)
-    template <auto Csr, auto... Values>
+    template <auto Csr, auto... SetFields>
     requires Concepts::IsCsrEnumValid<Csr> &&
-             Concepts::CsrFieldEnumMatchingCsrGeneric<false, Csr, Values...>
+             Concepts::SameCsrFieldEnumsAndMatchingParentCsr<Csr, SetFields...>
     inline
     constexpr auto
     __attribute__ ((always_inline))
     setWithAutoClear() -> void {
-        constexpr std::uint32_t clearValueUin32 = Csr::getMaskFromFieldEnumValues<Values...>();
-        constexpr std::uint32_t setValueUin32   = (static_cast<std::uint32_t>(Values) | ...);
+        constexpr std::uint32_t clearValueUin32 = Csr::getMaskFromFieldEnumValues<SetFields...>();
+        constexpr std::uint32_t setValueUin32   = (static_cast<std::uint32_t>(SetFields) | ...);
 
-        clearAndSetUin32<Csr, clearValueUin32, setValueUin32>();
+        clearAndSetUint32<Csr, clearValueUin32, setValueUin32>();
     }
 
     #pragma endregion
