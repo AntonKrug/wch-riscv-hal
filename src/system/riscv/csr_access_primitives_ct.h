@@ -107,7 +107,7 @@ namespace Riscv::Csr::AccessCt {
     inline
     constexpr auto
     __attribute__ ((always_inline))
-    writeUin32() -> void {
+    writeUint32() -> void {
         if (ValueUint32 == 0) {
             // if writtin zero we can use r0 aka x0 register
             __asm__ volatile(
@@ -135,15 +135,19 @@ namespace Riscv::Csr::AccessCt {
     }
 
 
+    // TODO: at higher level detect if all the writable fields were used and inject
+    // the isClearFull to produce write instead
     template <auto Csr, std::uint32_t ClearValueUint32, std::uint32_t SetValueUint32>
     requires Riscv::Concepts::IsCsrEnumValid<Csr>
     inline
     constexpr auto
     __attribute__ ((always_inline))
-    clearAndSetUin32() -> void {
+    clearAndSetUint32() -> void {
         // ReSharper disable CppTooWideScopeInitStatement
         constexpr bool isClearSmall = ClearValueUint32 <  (1u<<5);
         constexpr bool isClearZero  = ClearValueUint32 == 0;
+        constexpr bool isClearFull  = ClearValueUint32 == 0xffffffff;
+
         constexpr bool isSetSmall   = SetValueUint32   <  (1u<<5);
         constexpr bool isSetZero    = SetValueUint32   == 0;
         // ReSharper restore CppTooWideScopeInitStatement
@@ -162,6 +166,12 @@ namespace Riscv::Csr::AccessCt {
         if (isSetZero) {
             // nothing to set, execute just the clear
             clearUint32<Csr, ClearValueUint32>();
+            return;
+        }
+
+        if (isClearFull) {
+            // no need to clear everything just to set it later, we can use write instead
+            writeUint32<Csr, SetValueUint32>();
             return;
         }
 
