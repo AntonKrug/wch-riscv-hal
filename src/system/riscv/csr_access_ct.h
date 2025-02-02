@@ -56,7 +56,7 @@ namespace Riscv::Csr::AccessCt {
     constexpr auto
     __attribute__ ((always_inline))
     clear() -> void {
-        clearUint32<Csr, combineFieldsToUint32(ClearFields)>();
+        clearUint32<Csr, combineFieldsToUint32<ClearFields...>()>();
     }
 
 
@@ -67,7 +67,7 @@ namespace Riscv::Csr::AccessCt {
     constexpr auto
     __attribute__ ((always_inline))
     set() -> void {
-        setUint32<Csr, combineFieldsToUint32(SetFields)>();
+        setUint32<Csr, combineFieldsToUint32<SetFields...>()>();
     }
 
     template <auto Csr, auto... WriteFields>
@@ -77,7 +77,7 @@ namespace Riscv::Csr::AccessCt {
     constexpr auto
     __attribute__ ((always_inline))
     write() -> void {
-        writeUint32<Csr, combineFieldsToUint32(WriteFields)>();
+        writeUint32<Csr, combineFieldsToUint32<WriteFields...>()>();
     }
 
 
@@ -89,7 +89,10 @@ namespace Riscv::Csr::AccessCt {
     constexpr auto
     __attribute__ ((always_inline))
     clearSet() -> void {
-        clearAndSetUint32<Csr, combineFieldsToUint32(ClearFields), combineFieldsToUint32(SetFields)>();
+        clearAndSetUint32<
+            Csr,
+            combineFieldsToUint32<ClearFields...>(),
+            combineFieldsToUint32<SetFields...>()>();
     }
 
 
