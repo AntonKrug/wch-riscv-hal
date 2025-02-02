@@ -29,21 +29,21 @@ namespace Riscv::Csr {
 
     // Accept any field enums that belong to the same CSR, but do not allow
     // field enums from different CSR to be mixed into them
-    template<auto... Args>
-    constexpr auto combine() -> std::uint32_t requires Concepts::SameCsrFieldEnum<Args...> {
-        return (static_cast<std::uint32_t>(Args) | ...);
+    template<auto... Fields>
+    constexpr auto combine() -> std::uint32_t requires Concepts::SameCsrFieldEnums<Fields...> {
+        return (static_cast<std::uint32_t>(Fields) | ...);
     }
 
 
     template <Concepts::EnumWithMask EnumType>
-    constexpr auto getSingleMaskValue() -> std::uint32_t {
+    constexpr auto getMaskFromSingleField() -> std::uint32_t {
         return static_cast<std::uint32_t>(EnumType::fieldBitMask);
     }
 
 
-    template <auto... EnumTypeValue>
+    template <auto... EnumTypeValues>
     constexpr auto getMaskFromFieldEnumValues() -> std::uint32_t {
-        return ( getSingleMaskValue<decltype(EnumTypeValue)>() | ...);
+        return ( getMaskFromSingleField<decltype(EnumTypeValues)>() | ...);
     }
 
 }

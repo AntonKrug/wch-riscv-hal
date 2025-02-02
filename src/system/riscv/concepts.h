@@ -39,6 +39,7 @@ namespace Riscv::Concepts {
 
 
     // For writting a CSR value many literal number types can be used
+    // TODO: will this be needed? check if can be removed
     template<auto CsrValueType>
     concept IsCsrValueCorrectRegisterType =
         std::is_same_v<decltype(CsrValueType), int>                ||
@@ -87,11 +88,6 @@ namespace Riscv::Concepts {
     concept EnumWithMask = requires
         { { CsrField::fieldBitMask }; };
 
-    // template<typename CsrField>
-    // concept EnumWithMask = requires
-    // { { CsrField::fieldBitMask }; } &&
-    // std::is_same_v<typename std::underlying_type_t<CsrField>, decltype(CsrField::fieldBitMask)>;
-
 
     // The CSRs can come different enums, but must resolve to the same enum value
     // CheckSameCsrValue<QingKeV2::intsyscr, QingKeV4::intsyscr> true
@@ -102,26 +98,26 @@ namespace Riscv::Concepts {
 
     // The CsrField enums need to belong to the same CSR, and when OmmitCheck is false
     // then also the Parent is check if the CsrField enums belong to the parent CSR enum
-    template<bool OmmitCheck, auto ParentCsr, auto... CsrField>
+    template<bool OmmitCheck, auto ParentCsr, auto... CsrFields>
     concept CsrFieldEnumMatchingCsrGeneric =
-        ( CheckSameCsrValue<OmmitCheck, ParentCsr, Csr::QingKeV2::intsyscr> && (Csr::Intsyscr::IsAnyField<decltype(CsrField)> && ...) ) ||
-        ( CheckSameCsrValue<OmmitCheck, ParentCsr, Csr::QingKeV2::mtvec>    && (Csr::Mtvec::IsAnyField<decltype(CsrField)>    && ...) ) ||
-        ( CheckSameCsrValue<OmmitCheck, ParentCsr, Csr::QingKeV2::mstatus>  && (Csr::Mstatus::IsAnyField<decltype(CsrField)>  && ...) );
+        ( CheckSameCsrValue<OmmitCheck, ParentCsr, Csr::QingKeV2::intsyscr> && (Csr::Intsyscr::IsAnyField<decltype(CsrFields)> && ...) ) ||
+        ( CheckSameCsrValue<OmmitCheck, ParentCsr, Csr::QingKeV2::mtvec>    && (Csr::Mtvec::IsAnyField<   decltype(CsrFields)> && ...) ) ||
+        ( CheckSameCsrValue<OmmitCheck, ParentCsr, Csr::QingKeV2::mstatus>  && (Csr::Mstatus::IsAnyField< decltype(CsrFields)> && ...) );
 
 
     // CsrField(s) need to belong to the same ParentCsr
-    template<auto ParentCsr, auto... CsrField>
+    template<auto ParentCsr, auto... CsrFields>
     concept SameCsrFieldEnumsAndMatchingParentCsr =
-        CsrFieldEnumMatchingCsrGeneric<false, ParentCsr, CsrField...>;
+        CsrFieldEnumMatchingCsrGeneric<false, ParentCsr, CsrFields...>;
 
 
     // Omit check and provide any CSR as it will be omitted anyway, this
     // makes sure the fields belong to one specidic CSR only, but we
     // do not care which exact CSR it is
     // Note: intsyscr was entered as arbitary CSR, as the OmmitCheck is set to true
-    template<auto... CsrField>
+    template<auto... CsrFields>
     concept SameCsrFieldEnums =
-        CsrFieldEnumMatchingCsrGeneric<true, Csr::QingKeV2::intsyscr, CsrField...>;
+        CsrFieldEnumMatchingCsrGeneric<true, Csr::QingKeV2::intsyscr, CsrFields...>;
 
 
 };
