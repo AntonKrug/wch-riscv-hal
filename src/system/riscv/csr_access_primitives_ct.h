@@ -24,11 +24,8 @@
 namespace Riscv::Csr::AccessCt {
 
 
-    using namespace Riscv;
-
-
     template <auto Csr>
-    requires Concepts::IsCsrEnumValid<Csr>
+    requires Riscv::Concepts::IsCsrEnumValid<Csr>
     inline
     constexpr auto
     __attribute__ ((always_inline))
@@ -46,7 +43,7 @@ namespace Riscv::Csr::AccessCt {
 
     // TODO: check if IsCsrValueCorrectRegisterType could be needed here, or can be avoided
     template <auto Csr, std::uint32_t ClearValueUint32>
-    requires Concepts::IsCsrEnumValid<Csr>
+    requires Riscv::Concepts::IsCsrEnumValid<Csr>
     inline
     constexpr auto
     __attribute__ ((always_inline))
@@ -76,7 +73,7 @@ namespace Riscv::Csr::AccessCt {
 
     // All the Sets for various types
     template <auto Csr, std::uint32_t SetValueUint32>
-    requires Concepts::IsCsrEnumValid<Csr>
+    requires Riscv::Concepts::IsCsrEnumValid<Csr>
     inline
     constexpr auto
     __attribute__ ((always_inline))
@@ -106,7 +103,7 @@ namespace Riscv::Csr::AccessCt {
 
     // All the writes for various types
     template <auto Csr, auto ValueUint32>
-    requires Concepts::IsCsrEnumValid<Csr>
+    requires Riscv::Concepts::IsCsrEnumValid<Csr>
     inline
     constexpr auto
     __attribute__ ((always_inline))
@@ -139,7 +136,7 @@ namespace Riscv::Csr::AccessCt {
 
 
     template <auto Csr, std::uint32_t ClearValueUint32, std::uint32_t SetValueUint32>
-    requires Concepts::IsCsrEnumValid<Csr>
+    requires Riscv::Concepts::IsCsrEnumValid<Csr>
     inline
     constexpr auto
     __attribute__ ((always_inline))
