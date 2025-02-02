@@ -2,6 +2,9 @@
 // Created by anton on 27/01/2025.
 //
 
+// TODO: unify singular and plural accesses into one, hide the parent convertors, cleanAndSet call subsets when needed,
+//       setWithAutoClear should be using clear and set instead
+
 //https://developer.arm.com/documentation/100748/0623/Using-Assembly-and-Intrinsics-in-C-or-C---Code/Writing-inline-assembly-code?lang=en
 //https://developer.arm.com/documentation/102284/6-16-2LTS/armclang-Reference/armclang-Inline-Assembler/Inline-assembly-statements-within-a-function
 //https://gcc.gnu.org/onlinedocs/gcc-12.4.0/gcc/Extended-Asm.html
@@ -26,6 +29,33 @@ namespace Riscv::Csr::AccessCt {
     using namespace Riscv;
 
 
+    #pragma region getCsrFromField
+
+
+    template<Riscv::Csr::Intsyscr::IsAnyField Field>
+    constexpr auto getCsrFromField(Field field) {
+        return QingKeV2::intsyscr;
+    }
+
+
+    template<Riscv::Csr::Mtvec::IsAnyField... Field>
+    constexpr auto getCsrFromField(Field... field) {
+        return QingKeV2::mtvec;
+    }
+
+
+    template<Riscv::Csr::Mstatus::IsAnyField... Field>
+    constexpr auto getCsrFromField(Field... field) {
+        return QingKeV2::mstatus;
+    }
+
+
+    #pragma endregion
+
+
+    #pragma region ReadClearSetWrite
+
+    
     template <auto Csr>
     requires Concepts::IsCsrEnumValid<Csr>
     inline
@@ -199,7 +229,7 @@ namespace Riscv::Csr::AccessCt {
     }
 
 
-    // When only specific fields needs to be updated (it will for various types
+    // When only specific fields needs to be updated (it will for various types of updates to the minimum of instructions)
     template <auto Csr, auto... Values>
     requires Concepts::IsCsrEnumValid<Csr> &&
              Concepts::CsrFieldEnumMatchingCsr<false, Csr, Values...>
@@ -239,6 +269,50 @@ namespace Riscv::Csr::AccessCt {
             }
         }
     }
+
+    #pragma endregion
+
+
+    #pragma region ReadClearSetWriteWithParentCsrAutodetection
+
+
+    // All the Sets for various types
+    template <auto... SetField>
+    requires Concepts::SameCsrFieldEnum<SetField...>
+    inline
+    constexpr auto
+    __attribute__ ((always_inline))
+    set() -> void {
+        constexpr auto parentCsr = getCsrFromField(SetField...);
+        set<parentCsr, SetField...>();
+    }
+
+
+    // All the writes for various types
+    template <auto... WriteField>
+    requires Concepts::SameCsrFieldEnum<WriteField...>
+    inline
+    constexpr auto
+    __attribute__ ((always_inline))
+    write() -> void {
+        constexpr auto parentCsr = getCsrFromField(WriteField...);
+        write<parentCsr, WriteField...>();
+    }
+
+
+    // When only specific fields needs to be updated, it will detect what parent CSR it belongs, clear and set correct bits
+    template <auto... SetWithClearField>
+    requires Concepts::SameCsrFieldEnum<SetWithClearField...>
+    inline
+    constexpr auto
+    __attribute__ ((always_inline))
+    setWithAutoClear() -> void {
+        constexpr auto parentCsr = getCsrFromField(SetWithClearField...);
+        setWithAutoClear<parentCsr,  SetWithClearField...>();
+    }
+
+
+    #pragma endregion
 
 
 }

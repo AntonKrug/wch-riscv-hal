@@ -105,8 +105,8 @@ namespace Riscv::Concepts {
     template<bool OmmitCheck, auto Parent, auto... CsrField>
     concept CsrFieldEnumMatchingCsr =
         ( CheckSameCsrValue<OmmitCheck, Parent, Csr::QingKeV2::intsyscr> && (Csr::Intsyscr::IsAnyField<decltype(CsrField)> && ...) ) ||
-        ( CheckSameCsrValue<OmmitCheck, Parent, Csr::QingKeV2::mtvec>    && (Csr::Mtvec::IsAnyField<decltype(CsrField)>    && ...) );
-
+        ( CheckSameCsrValue<OmmitCheck, Parent, Csr::QingKeV2::mtvec>    && (Csr::Mtvec::IsAnyField<decltype(CsrField)>    && ...) ) ||
+        ( CheckSameCsrValue<OmmitCheck, Parent, Csr::QingKeV2::mstatus>  && (Csr::Mstatus::IsAnyField<decltype(CsrField)>  && ...) );
 
     // Omit check and provide any CSR as it will be omitted anyway, this
     // makes sure the fields belong to one specidic CSR only, but we
@@ -121,16 +121,5 @@ namespace Riscv::Concepts {
 
 
 namespace Riscv::Csr {
-
-    template<Riscv::Csr::Intsyscr::IsAnyField Field>
-    constexpr auto getCsrFromField(Field field) {
-        return QingKeV2::intsyscr;
-    }
-
-    template<Riscv::Csr::Mtvec::IsAnyField... Field>
-    constexpr auto getCsrFromField(Field... field) {
-        return QingKeV2::mtvec;
-    }
-
 
 }
