@@ -96,13 +96,17 @@ namespace Riscv::Concepts {
         (OmmitCheck || static_cast<uint16_t>(Left)==static_cast<uint16_t>(Right));
 
 
-    // The CsrField enums need to belong to the same CSR, and when OmmitCheck is false
-    // then also the Parent is check if the CsrField enums belong to the parent CSR enum
-    template<bool OmmitCheck, auto ParentCsr, auto... CsrFields>
-    concept CsrFieldEnumMatchingCsrGeneric =
-        ( CheckSameCsrValue<OmmitCheck, ParentCsr, Csr::QingKeV2::intsyscr> && (Csr::Intsyscr::IsAnyField<decltype(CsrFields)> && ...) ) ||
-        ( CheckSameCsrValue<OmmitCheck, ParentCsr, Csr::QingKeV2::mtvec>    && (Csr::Mtvec::IsAnyField<   decltype(CsrFields)> && ...) ) ||
-        ( CheckSameCsrValue<OmmitCheck, ParentCsr, Csr::QingKeV2::mstatus>  && (Csr::Mstatus::IsAnyField< decltype(CsrFields)> && ...) );
+    namespace {
+        // Internal more generic concept to cover both cases below
+        // The CsrField enums need to belong to the same CSR, and when OmmitCheck is false
+        // then also the Parent is check if the CsrField enums belong to the parent CSR enum
+        template<bool OmmitCheck, auto ParentCsr, auto... CsrFields>
+        concept CsrFieldEnumMatchingCsrGeneric =
+            ( CheckSameCsrValue<OmmitCheck, ParentCsr, Csr::QingKeV2::intsyscr> && (Csr::Intsyscr::IsAnyField<decltype(CsrFields)> && ...) ) ||
+            ( CheckSameCsrValue<OmmitCheck, ParentCsr, Csr::QingKeV2::mtvec>    && (Csr::Mtvec::IsAnyField<   decltype(CsrFields)> && ...) ) ||
+            ( CheckSameCsrValue<OmmitCheck, ParentCsr, Csr::QingKeV2::mstatus>  && (Csr::Mstatus::IsAnyField< decltype(CsrFields)> && ...) );
+
+    }
 
 
     // CsrField(s) need to belong to the same ParentCsr
