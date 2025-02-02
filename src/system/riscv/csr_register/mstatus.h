@@ -17,33 +17,36 @@ namespace Riscv::Csr::Mstatus {
 
 
     enum class Mie: std::uint32_t {
-        fieldBitMask      = 0b1'00, // THIS IS INTERNAL, don't use it
-        machineIrqDisable = 0,
-        machineIrqEnable  = 0b1'00, // Enable machine level IRQs globally
+        fieldBitMask      = 0b1'000, // THIS IS INTERNAL, don't use it
+        machineIrqDisable = 0,      // Globally disable machine level IRQs (bit 3)
+        machineIrqEnable  = 0b1'000, // Globally enable machine level IRQs (bit 3)
     };
 
 
-    enum class Mpie: std::uint32_t {
-        fieldBitMask              = 0b1'000'0'00, // THIS IS INTERNAL, don't use it
-        machinePreviousIrqDisable = 0,
-        machinePreviousIrqEnable  = 0b1'000'0'00, // Capture value of MIE when an exception happens, mret will restore it back
+    enum class Mpie: std::uint32_t { // AAAAAAAAAAAAAAAAAAAAAAAAAaa
+        fieldBitMask              = 0b1'000'0'000, // THIS IS INTERNAL, don't use it
+        machinePreviousIrqDisable = 0,            // Captured value of MIE was "disabled" when an interupt happend, mret will restore it back (bit 7)
+        machinePreviousIrqEnable  = 0b1'000'0'000, // Captured value of MIE was "enabled" when an interupt happend, mret will restore it back (bit 7)
     };
 
 
     enum class Mpp: std::uint32_t {
-        fieldBitMask          = 0b11'000'000'0'00, // THIS IS INTERNAL, don't use it
-        machineModeIrqDisable = 0,
+        fieldBitMask                             = 0b11'000'0'000'0'000, // THIS IS INTERNAL, don't use it
+        machinePreviousPriviledgeIsUnpriviledged = 0b00'000'0'000'0'000, // 00 Unpriviledged mode was set prior handling interupt as machine mode, mret will restore it (bit 12-11)
+        machinePreviousPriviledgeIsSupervisor    = 0b01'000'0'000'0'000, // 01 Supervisor mode was set prior handling interupt as machine mode, mret will restore it (bit 12-11)
+        machinePreviousPriviledgeIsHypervisor    = 0b10'000'0'000'0'000, // 10 Hypervisor mode was set prior handling interupt as machine mode, mret will restore it (bit 12-11)
+        machinePreviousPriviledgeIsMachine       = 0b11'000'0'000'0'000, // 11 Machine mode was set prior handling interupt as machine mode, mret will restore it (bit 12-11)
     };
 
 
     enum class Mpop: std::uint32_t {
-        fieldBitMask          = 0b1'0000000000'00'000'000'0'00, // THIS IS INTERNAL, don't use it
+        fieldBitMask          = 0b1'0000000000'00'000'000'0'000, // THIS IS INTERNAL, don't use it
         machineModeIrqDisable = 0,
     };
 
 
     enum class Mppop: std::uint32_t {
-        fieldBitMask          = 0b1'0'0000000000'00'000'000'0'00, // THIS IS INTERNAL, don't use it
+        fieldBitMask          = 0b1'0'0000000000'00'000'000'0'000, // THIS IS INTERNAL, don't use it
         machineModeIrqDisable = 0,
     };
 
