@@ -29,6 +29,16 @@ extern "C" {
         optimize("-Os"),
     ))
     prepare_system_for_main(void) {
+        using namespace Riscv;
+
+        // In case we are in soft-reset, disable (probably) existing global interupt, and prepare CSR fields
+        // so when "return from interupt" (which will do forcefully at end of this method by
+        // invoking mret), then it will restore expected priviledge mode and expected MIE state
+        Csr::AccessCt::write<
+            Csr::Mstatus::Mpp::machinePreviousPriviledgeIsMachine,
+            Csr::Mstatus::Mpie::machinePreviousIrqEnable>();
+
+
         // Data ROM -> RAM copy
         #ifndef WCH_STARTUP_SKIP_DATA_SECTION_COPY
             // Get the address locations from the linker script
@@ -55,8 +65,6 @@ extern "C" {
             } while (zero_ram_ptr < zero_ram_end);
         #endif
 
-        using namespace Riscv::Csr;
-
         AccessCt::write<
             QingKeV2::intsyscr,
             Intsyscr::Hwstken::hpeEnable,                  //HW preamble and epilogue
@@ -72,8 +80,9 @@ extern "C" {
         AccessCt::write<QingKeV2::mtvec, mtvecValue>();
 
         // constexpr auto a = Riscv::Csr::getCsrFromField(Mtvec::Mode0::vectorizedInterupts, Mtvec::Mode1::executeInstructions);
-        constexpr auto a = Riscv::Csr::getCsrFromField(Mtvec::Mode0::singleUnifiedTrapHandler);
-        AccessCt::write<a, mtvecValue>();
+        constexpr auto a = Riscv::Csr::AccessCt::getCsrFromField(Mtvec::Mode0::singleUnifiedTrapHandler);
+        AccessCt::setWithAutoClear<Mstatus::Mie::machineIrqEnable, Mstatus::Mpie::machinePreviousIrqEnable>();
+        AccessCt::write<a, 0>();
 
         // readCsr<QingKeV2::intsyscr>();
         // writeCsr<QingKeV2::intsyscr, 0>();
