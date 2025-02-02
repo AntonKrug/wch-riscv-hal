@@ -48,24 +48,26 @@ namespace Riscv::Csr::AccessCt {
 
     #pragma region ClearSetWriteAbstracted
 
-    template <auto Csr, auto... ClearField>
+
+    template <auto Csr, auto... ClearFields>
     requires Concepts::IsCsrEnumValid<Csr> &&
-             Concepts::CsrFieldEnumMatchingCsrGeneric<false, Csr, ClearField...>
+             Concepts::SameCsrFieldEnumsAndMatchingParentCsr<Csr, ClearFields...>
     inline
     constexpr auto
     __attribute__ ((always_inline))
     clear() -> void {
     }
 
+
     // All the writes for various types
-    template <auto Csr, auto... WriteField>
+    template <auto Csr, auto... WriteFields>
     requires Concepts::IsCsrEnumValid<Csr> &&
-             Concepts::CsrFieldEnumMatchingCsrGeneric<false, Csr, WriteField...>
+             Concepts::CsrFieldEnumMatchingCsrGeneric<false, Csr, WriteFields...>
     inline
     constexpr auto
     __attribute__ ((always_inline))
     write() -> void {
-        constexpr std::uint32_t value = (static_cast<std::uint32_t>(WriteField) | ...);
+        constexpr std::uint32_t value = (static_cast<std::uint32_t>(WriteFields) | ...);
         writeUin32<Csr, value>();
     }
 
@@ -91,38 +93,38 @@ namespace Riscv::Csr::AccessCt {
 
 
     // All the Sets for various types
-    template <auto... SetField>
-    requires Concepts::SameCsrFieldEnums<SetField...>
+    template <auto... SetFields>
+    requires Concepts::SameCsrFieldEnums<SetFields...>
     inline
     constexpr auto
     __attribute__ ((always_inline))
     set() -> void {
-        constexpr auto parentCsr = getCsrFromField(SetField...);
-        set<parentCsr, SetField...>();
+        constexpr auto parentCsr = getCsrFromField(SetFields...);
+        set<parentCsr, SetFields...>();
     }
 
 
     // All the writes for various types
-    template <auto... WriteField>
-    requires Concepts::SameCsrFieldEnums<WriteField...>
+    template <auto... WriteFields>
+    requires Concepts::SameCsrFieldEnums<WriteFields...>
     inline
     constexpr auto
     __attribute__ ((always_inline))
     write() -> void {
-        constexpr auto parentCsr = getCsrFromField(WriteField...);
-        write<parentCsr, WriteField...>();
+        constexpr auto parentCsr = getCsrFromField(WriteFields...);
+        write<parentCsr, WriteFields...>();
     }
 
 
     // When only specific fields needs to be updated, it will detect what parent CSR it belongs, clear and set correct bits
-    template <auto... SetWithClearField>
-    requires Concepts::SameCsrFieldEnums<SetWithClearField...>
+    template <auto... SetWithClearFields>
+    requires Concepts::SameCsrFieldEnums<SetWithClearFields...>
     inline
     constexpr auto
     __attribute__ ((always_inline))
     setWithAutoClear() -> void {
-        constexpr auto parentCsr = getCsrFromField(SetWithClearField...);
-        setWithAutoClear<parentCsr,  SetWithClearField...>();
+        constexpr auto parentCsr = getCsrFromField(SetWithClearFields...);
+        setWithAutoClear<parentCsr,  SetWithClearFields...>();
     }
 
 
