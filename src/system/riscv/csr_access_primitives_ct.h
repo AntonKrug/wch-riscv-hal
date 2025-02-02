@@ -152,12 +152,14 @@ namespace Riscv::Csr::AccessCt {
     __attribute__ ((always_inline))
     clearAndSetUint32() -> void {
         // ReSharper disable CppTooWideScopeInitStatement
-        constexpr bool isClearSmall = ClearValueUint32 <  (1u<<5);
-        constexpr bool isClearZero  = ClearValueUint32 == 0;
-        constexpr bool isClearFull  = ClearValueUint32 == 0xffffffff;
+        constexpr bool isClearSmall   = ClearValueUint32 <  (1u<<5);
+        constexpr bool isClearZero    = ClearValueUint32 == 0;
+        constexpr bool isClearFull    = ClearValueUint32 == 0xffffffff;
 
-        constexpr bool isSetSmall   = SetValueUint32   <  (1u<<5);
-        constexpr bool isSetZero    = SetValueUint32   == 0;
+        constexpr bool isSetSmall     = SetValueUint32   <  (1u<<5);
+        constexpr bool isSetZero      = SetValueUint32   == 0;
+
+        constexpr bool isClearSetSame = ClearValueUint32 == SetValueUint32;
         // ReSharper restore CppTooWideScopeInitStatement
 
         if (isClearZero && isSetZero) {
@@ -165,8 +167,9 @@ namespace Riscv::Csr::AccessCt {
             return;
         }
 
-        if (isClearZero) {
-            // nothing to clear, execute just the set
+        if (isClearZero || isClearSetSame) {
+            // nothing to clear, or setting the same value after clearning it:
+            // then execute just the set
             setUint32<Csr, SetValueUint32>();
             return;
         }
