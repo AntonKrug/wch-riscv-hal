@@ -50,6 +50,14 @@ namespace Riscv::Csr::AccessCt {
     clearUint32() -> void {
         if (ClearValueUint32 == 0) {
             // nothing to clear, nothing has to be done here
+        } else if (ClearValueUint32 == 0xffffffff) {
+            // if the clear is full, meaning to clear whole register, it's
+            // faster to do a write with 0 instead
+            __asm__ volatile(
+                "csrw %0, x0"   // write 0 is the same as clear all
+                : // no output
+                : "i"(static_cast<std::uint16_t>(Csr))
+            );
         } else if (ClearValueUint32 < (1u<<5)) {
             // is small enough, use the 5-bit immediate instruction instead
             // https://gcc.gnu.org/onlinedocs/gcc/Machine-Constraints.html
@@ -164,7 +172,7 @@ namespace Riscv::Csr::AccessCt {
         }
 
         if (isSetZero) {
-            // nothing to set, execute just the clear
+            // nothing to set, execute just the clear part.
             clearUint32<Csr, ClearValueUint32>();
             return;
         }
