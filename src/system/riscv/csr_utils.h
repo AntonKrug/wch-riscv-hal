@@ -27,7 +27,7 @@ namespace Riscv::Csr {
     // Accept any field enums that belong to the same CSR, but do not allow
     // field enums from different CSR to be mixed into them
     template<auto... Fields>
-    constexpr auto combine() -> std::uint32_t requires Riscv::Concepts::SameCsrFieldEnums<Fields...> {
+    constexpr auto combineFieldsToUint32() -> std::uint32_t requires Riscv::Concepts::SameCsrFieldEnums<Fields...> {
         return (static_cast<std::uint32_t>(Fields) | ...);
     }
 
