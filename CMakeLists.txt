@@ -141,10 +141,11 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/system/riscv/concepts.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access_ct.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access_primitives_ct.h
-        ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_utils.h
+        ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_parent_from_field.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_register/intsyscr.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_register/mstatus.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_register/mtvec.h
+        ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_utils.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csrs_qingke.h
         ${CMAKE_SOURCE_DIR}/src/system/soc_types.h
         ${CMAKE_SOURCE_DIR}/src/system/startup/generated_startup_configuration.h

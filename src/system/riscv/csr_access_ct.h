@@ -14,36 +14,13 @@
 #include "concepts.h"
 #include "csr_utils.h"
 #include "csr_access_primitives_ct.h"
+#include "csr_parent_from_field.h"
 
 
 namespace Riscv::Csr::AccessCt {
 
 
     using namespace Riscv;
-
-
-    #pragma region getCsrFromField
-
-
-    template<Riscv::Csr::Intsyscr::IsAnyField Field>
-    constexpr auto getCsrFromField(Field field) {
-        return QingKeV2::intsyscr;
-    }
-
-
-    template<Riscv::Csr::Mtvec::IsAnyField... Field>
-    constexpr auto getCsrFromField(Field... field) {
-        return QingKeV2::mtvec;
-    }
-
-
-    template<Riscv::Csr::Mstatus::IsAnyField... Field>
-    constexpr auto getCsrFromField(Field... field) {
-        return QingKeV2::mstatus;
-    }
-
-
-    #pragma endregion
 
 
     #pragma region ClearSetWriteAbstracted
