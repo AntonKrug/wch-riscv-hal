@@ -79,8 +79,8 @@ extern "C" {
 
         constexpr auto mtvecValue =
             Csr::combineFieldsToUint32<
-                Csr::Mtvec::Mode0::vectorizedInterupts,
-                Csr::Mtvec::Mode1::absoluteJumpAddresses>() +
+                Csr::Mtvec::Mode0VectorizationEnable::vectorizedInterupts,
+                Csr::Mtvec::Mode1VectorizedBehaviour::absoluteJumpAddresses>() +
                 irqVectorTableAddressSanitized;
 
         Csr::AccessCt::writeUint32<Csr::QingKeV2::mtvec, mtvecValue>();

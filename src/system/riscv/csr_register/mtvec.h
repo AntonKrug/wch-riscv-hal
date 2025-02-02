@@ -14,7 +14,7 @@
 namespace Riscv::Csr::Mtvec {
 
 
-    enum class Mode0: std::uint32_t {
+    enum class Mode0VectorizationEnable: std::uint32_t {
         // Interrupt or exception entry address mode selection
         fieldBitMask             = 0b1, // THIS IS INTERNAL, don't use it
         singleUnifiedTrapHandler = 0,   // all interupts handled by only single handler
@@ -22,7 +22,7 @@ namespace Riscv::Csr::Mtvec {
     };
 
 
-    enum class Mode1: std::uint32_t {
+    enum class Mode1VectorizedBehaviour: std::uint32_t {
         // Vectorized table behaviour
         fieldBitMask          = 0b1'0, // THIS IS INTERNAL, don't use it
         executeInstructions   = 0,     // use table for instructions, small relative jump instructions fit into, other instructions can be used too
@@ -38,8 +38,8 @@ namespace Riscv::Csr::Mtvec {
 
     template<typename Field>
     concept IsAnyField =
-        std::is_same_v<Field, Mode0> ||
-        std::is_same_v<Field, Mode1> ||
+        std::is_same_v<Field, Mode0VectorizationEnable> ||
+        std::is_same_v<Field, Mode1VectorizedBehaviour> ||
         std::is_same_v<Field, BaseAddr>;
 
 
