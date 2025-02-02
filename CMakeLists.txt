@@ -139,7 +139,7 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/system/memory_map/concepts.h
         ${CMAKE_SOURCE_DIR}/src/system/memory_map/peripheral_addresses.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/concepts.h
-        ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access.h
+        ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access_ct.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access_primitives_ct.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_utils.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_register/intsyscr.h
