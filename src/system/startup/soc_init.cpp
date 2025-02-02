@@ -36,9 +36,9 @@ extern "C" {
         // at end of this method by invoking mret), then it will restore expected priviledge
         // mode and expected MIE state
         Csr::AccessCt::write<
-            Csr::Mstatus::Mie::machineIrqDisable,
-            Csr::Mstatus::Mpp::machinePreviousPriviledgeIsMachine,
-            Csr::Mstatus::Mpie::machinePreviousIrqEnable>();
+            Csr::Mstatus::MieMachineInteruptEnable::disable,
+            Csr::Mstatus::MppMachinePreviousPriviledge::machine,
+            Csr::Mstatus::MpieMachinePreviousInteruptEnabled::enabled>();
 
 
         // Data ROM -> RAM copy
