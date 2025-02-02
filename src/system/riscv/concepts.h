@@ -85,18 +85,19 @@ namespace Riscv::Concepts {
 
 
     template<typename CsrField>
-    concept EnumWithMask = requires
+    concept FieldEnumWhichContainsFieldBitMask = requires
         { { CsrField::fieldBitMask }; };
 
 
-    // The CSRs can come different enums, but must resolve to the same enum value
-    // CheckSameCsrValue<QingKeV2::intsyscr, QingKeV4::intsyscr> true
-    template<bool OmmitCheck, auto Left, auto Right>
-    concept CheckSameCsrValue =
-        (OmmitCheck || static_cast<uint16_t>(Left)==static_cast<uint16_t>(Right));
-
-
     namespace {
+
+        // The CSRs can come different enums, but must resolve to the same enum value
+        // CheckSameCsrValue<QingKeV2::intsyscr, QingKeV4::intsyscr> true
+        template<bool OmmitCheck, auto Left, auto Right>
+        concept CheckSameCsrValue =
+            (OmmitCheck || static_cast<uint16_t>(Left)==static_cast<uint16_t>(Right));
+
+
         // Internal more generic concept to cover both cases below
         // The CsrField enums need to belong to the same CSR, and when OmmitCheck is false
         // then also the Parent is check if the CsrField enums belong to the parent CSR enum
