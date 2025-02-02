@@ -67,24 +67,32 @@ extern "C" {
             } while (zero_ram_ptr < zero_ram_end);
         #endif
 
-        AccessCt::write<
-            QingKeV2::intsyscr,
-            Intsyscr::Hwstken::hpeEnable,                  //HW preamble and epilogue
-            Intsyscr::Inesten::interuptNestingEnable>();
+        // Configure CPU behaviour
+        Csr::AccessCt::write<
+            Csr::QingKeV2::intsyscr,
+            Csr::Intsyscr::HwstkenHardwarePrologueEpilogue::enable,                  //HW preamble and epilogue
+            Csr::Intsyscr::InestenInteruptNesting::enable>();
 
+        // Configure trap/interupt behaviour
         constexpr std::uint32_t irqVectorTableAddressSanitized =
-            Mtvec::CheckVectorBaseAddressAlignment<SYSTEM_WCH_VECTOR_TABLE_ADDRESS>();
+            Csr::Mtvec::CheckVectorBaseAddressAlignment<SYSTEM_WCH_VECTOR_TABLE_ADDRESS>();
 
         constexpr auto mtvecValue =
-            combine<Mtvec::Mode0::vectorizedInterupts,Mtvec::Mode1::absoluteJumpAddresses>() +
-            irqVectorTableAddressSanitized;
+            Csr::combineFieldsToUint32<
+                Csr::Mtvec::Mode0::vectorizedInterupts,
+                Csr::Mtvec::Mode1::absoluteJumpAddresses>() +
+                irqVectorTableAddressSanitized;
 
-        AccessCt::write<QingKeV2::mtvec, mtvecValue>();
+        Csr::AccessCt::writeUint32<Csr::QingKeV2::mtvec, mtvecValue>();
+
+
 
         // constexpr auto a = Riscv::Csr::getCsrFromField(Mtvec::Mode0::vectorizedInterupts, Mtvec::Mode1::executeInstructions);
-        constexpr auto a = Riscv::Csr::AccessCt::getCsrFromField(Mtvec::Mode0::singleUnifiedTrapHandler);
-        AccessCt::setWithAutoClear<Mstatus::Mie::machineIrqEnable, Mstatus::Mpie::machinePreviousIrqEnable>();
-        AccessCt::write<a, 0>();
+        // constexpr auto a = Riscv::Csr::AccessCt::getCsrFromField(Csr::Mtvec::Mode0::singleUnifiedTrapHandler);
+        // Csr::AccessCt::setWithAutoClear<
+        //     Csr::Mstatus::Mie::machineIrqEnable,
+        //     Csr::Mstatus::Mpie::machinePreviousIrqEnable>();
+        // Csr::AccessCt::writeUint32<a, 0>();
 
         // readCsr<QingKeV2::intsyscr>();
         // writeCsr<QingKeV2::intsyscr, 0>();

@@ -16,7 +16,7 @@
 namespace Riscv::Csr::Intsyscr {
 
 
-    enum class Hwstken: std::uint32_t {
+    enum class HwstkenHardwarePrologueEpilogue: std::uint32_t {
         // Hardware prologue and epilogue on IRQs, on low-end devices (QingKeV2 like CH32V003)
         // it saves footprint, but doesn't improve performance (or can make it worse) and might
         // waste more stack than necesary. On higher-end device it has shadow registers without
@@ -41,32 +41,32 @@ namespace Riscv::Csr::Intsyscr {
         // worth investigating how the footprint and runtime behavior changes between using
         // HPE or not. Because blindly enabling the HPE might negatively impact the application.
         fieldBitMask = 0b1, // THIS IS INTERNAL, don't use it
-        hpeEnable    = 0b1, // enable HW prologoue and epiloge (see intsyscr.h for more details)
-        hpeDisable   = 0    // disable HW prologue and epilogue (see intsyscr.h for more details)
+        enable       = 0b1, // enable HW prologoue and epiloge (see intsyscr.h for more details)
+        disable      = 0    // disable HW prologue and epilogue (see intsyscr.h for more details)
     };
 
 
-    enum class Inesten: std::uint32_t {
+    enum class InestenInteruptNesting: std::uint32_t {
         // Enable nesting of intreupts together with PFIC settings the IRQs can get different
         // priorities and dictating order of execution.
-        fieldBitMask           = 0b1'0, // THIS IS INTERNAL, don't use it
-        interuptNestingEnable  = 0b1'0,
-        interuptNestingDisable = 0,
+        fieldBitMask = 0b1'0, // THIS IS INTERNAL, don't use it
+        enable       = 0b1'0,
+        disable      = 0,
     };
 
 
-    enum class Eabien: std::uint32_t {
+    enum class EabienEmbeddedAbi: std::uint32_t {
         fieldBitMask = 0b1'00, // THIS IS INTERNAL, don't use it
-        eabiEnable   = 0b1'00, // WCH noted that this shouldn't be enabled, and left in the default disabled state
-        eabiDisable  = 0       // Keeping EABI disabled, the way WCH recomends
+        enable       = 0b1'00, // WCH noted that this shouldn't be enabled, and left in the default disabled state
+        disble       = 0       // Keeping EABI disabled, the way WCH recomends
     };
 
 
     template<typename Field>
     concept IsAnyField =
-        std::is_same_v<Field, Hwstken> ||
-        std::is_same_v<Field, Inesten> ||
-        std::is_same_v<Field, Eabien>;
+        std::is_same_v<Field, HwstkenHardwarePrologueEpilogue> ||
+        std::is_same_v<Field, InestenInteruptNesting> ||
+        std::is_same_v<Field, EabienEmbeddedAbi>;
 
 
 }
