@@ -40,7 +40,6 @@ extern "C" {
             Csr::Mstatus::MppMachinePreviousPriviledge::machine,
             Csr::Mstatus::MpieMachinePreviousInteruptEnabled::enabled>();
 
-
         // Data ROM -> RAM copy
         #ifndef WCH_STARTUP_SKIP_DATA_SECTION_COPY
             // Get the address locations from the linker script
