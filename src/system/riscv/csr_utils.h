@@ -12,17 +12,14 @@
 namespace Riscv::Csr {
 
 
-    using namespace Riscv;
-
-
     template<auto Csr>
-    constexpr auto toAddress() -> std::uint16_t requires Concepts::IsQingKeCsrEnum<Csr> {
+    constexpr auto toAddress() -> std::uint16_t requires Riscv::Concepts::IsQingKeCsrEnum<Csr> {
         return static_cast<std::uint16_t>(Csr);
     }
 
 
     template<auto Enum>
-    constexpr auto toValue() -> std::uint16_t requires Concepts::IsCsrMaskedEnums<Enum> {
+    constexpr auto toValue() -> std::uint16_t requires Riscv::Concepts::IsCsrMaskedEnums<Enum> {
         return static_cast<std::uint16_t>(Enum);
     }
 
@@ -30,12 +27,12 @@ namespace Riscv::Csr {
     // Accept any field enums that belong to the same CSR, but do not allow
     // field enums from different CSR to be mixed into them
     template<auto... Fields>
-    constexpr auto combine() -> std::uint32_t requires Concepts::SameCsrFieldEnums<Fields...> {
+    constexpr auto combine() -> std::uint32_t requires Riscv::Concepts::SameCsrFieldEnums<Fields...> {
         return (static_cast<std::uint32_t>(Fields) | ...);
     }
 
 
-    template <Concepts::EnumWithMask EnumType>
+    template <Riscv::Concepts::EnumWithMask EnumType>
     constexpr auto getMaskFromSingleField() -> std::uint32_t {
         return static_cast<std::uint32_t>(EnumType::fieldBitMask);
     }
@@ -45,5 +42,6 @@ namespace Riscv::Csr {
     constexpr auto getMaskFromFieldEnumValues() -> std::uint32_t {
         return ( getMaskFromSingleField<decltype(EnumTypeValues)>() | ...);
     }
+
 
 }
