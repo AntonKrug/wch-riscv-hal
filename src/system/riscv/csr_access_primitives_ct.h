@@ -48,9 +48,9 @@ namespace Riscv::Csr::AccessCt {
     constexpr auto
     __attribute__ ((always_inline))
     clearUint32() -> void {
-        if (ClearValueUint32 == 0) {
+        if constexpr (ClearValueUint32 == 0u) {
             // nothing to clear, nothing has to be done here
-        } else if (ClearValueUint32 == 0xffffffff) {
+        } else if constexpr (ClearValueUint32 == 0xffffffff) {
             // if the clear is full, meaning to clear whole register, it's
             // faster to do a write with 0 instead
             __asm__ volatile(
@@ -58,7 +58,7 @@ namespace Riscv::Csr::AccessCt {
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr))
             );
-        } else if (ClearValueUint32 < (1u<<5)) {
+        } else if constexpr (ClearValueUint32 < (1u<<5)) {
             // is small enough, use the 5-bit immediate instruction instead
             // https://gcc.gnu.org/onlinedocs/gcc/Machine-Constraints.html
             __asm__ volatile(
@@ -86,9 +86,9 @@ namespace Riscv::Csr::AccessCt {
     constexpr auto
     __attribute__ ((always_inline))
     setUint32() -> void {
-        if (SetValueUint32 == 0) {
+        if constexpr (SetValueUint32 == 0u) {
             // nothing to set, nothing has to be done here
-        } else if (SetValueUint32 < (1u<<5)) {
+        } else if constexpr (SetValueUint32 < (1u<<5)) {
             // is small enough, use the 5-bit immediate instruction instead
             // https://gcc.gnu.org/onlinedocs/gcc/Machine-Constraints.html
             __asm__ volatile(
@@ -116,14 +116,14 @@ namespace Riscv::Csr::AccessCt {
     constexpr auto
     __attribute__ ((always_inline))
     writeUint32() -> void {
-        if (ValueUint32 == 0) {
+        if constexpr (ValueUint32 == 0) {
             // if writtin zero we can use r0 aka x0 register
             __asm__ volatile(
                 "csrw %0, x0"  // x0(zero) register
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr))
             );
-        } else if (ValueUint32<(1u<<5)) {
+        } else if constexpr (ValueUint32<(1u<<5)) {
             // csrwI instruction can take 5-bit imediate value
             // https://gcc.gnu.org/onlinedocs/gcc/Machine-Constraints.html
             __asm__ volatile(
@@ -162,32 +162,32 @@ namespace Riscv::Csr::AccessCt {
         constexpr bool isClearSetSame = ClearValueUint32 == SetValueUint32;
         // ReSharper restore CppTooWideScopeInitStatement
 
-        if (isClearZero && isSetZero) {
+        if constexpr (isClearZero && isSetZero) {
             // nothing to do, abort
             return;
         }
 
-        if (isClearZero || isClearSetSame) {
+        if constexpr (isClearZero || isClearSetSame) {
             // nothing to clear, or setting the same value after clearning it:
             // then execute just the set
             setUint32<Csr, SetValueUint32>();
             return;
         }
 
-        if (isSetZero) {
+        if constexpr (isSetZero) {
             // nothing to set, execute just the clear part.
             clearUint32<Csr, ClearValueUint32>();
             return;
         }
 
-        if (isClearFull) {
+        if constexpr (isClearFull) {
             // no need to clear everything just to set it later, we can use write instead
             writeUint32<Csr, SetValueUint32>();
             return;
         }
 
         // Both clearing and setting has to be done, but do the minimum amount of instructions
-        if (isClearSmall && isSetSmall) {
+        if constexpr (isClearSmall && isSetSmall) {
             __asm__ volatile(
                 "csrci %0, %1\n"
                 "csrsi %0, %2"
@@ -196,7 +196,7 @@ namespace Riscv::Csr::AccessCt {
                   "K"(ClearValueUint32),
                   "K"(SetValueUint32)
             );
-        } else if (isClearSmall) {
+        } else if constexpr (isClearSmall) {
             __asm__ volatile(
                 "csrci %0, %1\n"
                 "csrs  %0, %2"
@@ -205,7 +205,7 @@ namespace Riscv::Csr::AccessCt {
                   "K"(ClearValueUint32),
                   "r"(SetValueUint32)
             );
-        } else if (isSetSmall) {
+        } else if constexpr (isSetSmall) {
             __asm__ volatile(
                 "csrc  %0, %1\n"
                 "csrsi %0, %2"
