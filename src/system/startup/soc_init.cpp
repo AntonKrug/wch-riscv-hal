@@ -11,37 +11,20 @@
 extern "C" {
 
 
-    // DATA section
+    // DATA section symbols
     extern unsigned int __data_rom_start; // NOLINT(*-reserved-identifier)
     extern unsigned int __data_rom_end;   // NOLINT(*-reserved-identifier)
     extern unsigned int __data_ram_start; // NOLINT(*-reserved-identifier)
     extern unsigned int __data_ram_end;   // NOLINT(*-reserved-identifier)
 
 
-    // BSS section
-    extern unsigned int __block_started_by_symbol;     // NOLINT(*-reserved-identifier)
-    extern unsigned int __block_started_by_symbol_end; // NOLINT(*-reserved-identifier)
-
-
-    // https://gcc.gnu.org/onlinedocs/gcc-14.2.0/gcc/Optimize-Options.html
     inline
     void
     __attribute__ ((
         always_inline,
         optimize("-Os"),
     ))
-    prepare_system_for_main(void) {
-        using namespace Riscv;
-
-        // In case we are in soft-reset, disable (probably) pre-existing global interupt,
-        // and prepare CSR fields so when "return from interupt" (which will do forcefully
-        // at end of this method by invoking mret), then it will restore expected priviledge
-        // mode and expected MIE state
-        Csr::AccessCt::write<
-            Csr::Mstatus::MieMachineInteruptEnable::disable,
-            Csr::Mstatus::MppMachinePreviousPriviledge::machine,
-            Csr::Mstatus::MpieMachinePreviousInteruptEnabled::enabled>();
-
+    copyDataFromRomToRam() {
         // Data ROM -> RAM copy
         #ifndef WCH_STARTUP_SKIP_DATA_SECTION_COPY
             // Get the address locations from the linker script
@@ -55,7 +38,21 @@ extern "C" {
                 *data_ram_ptr++ = *data_rom_ptr++;
             } while (data_ram_ptr < data_ram_end);
         #endif
+    }
 
+
+    // BSS section symbols
+    extern unsigned int __block_started_by_symbol;     // NOLINT(*-reserved-identifier)
+    extern unsigned int __block_started_by_symbol_end; // NOLINT(*-reserved-identifier)
+
+
+    inline
+    void
+    __attribute__ ((
+        always_inline,
+        optimize("-Os"),
+    ))
+    zeroizeBss() {
         // BSS RAM zeroizing
         #ifndef WCH_STARTUP_SKIP_BSS_SECTION_ZEROIZING
             // Get the address locations from the linker script
@@ -67,6 +64,31 @@ extern "C" {
                 *zero_ram_ptr++ = 0;
             } while (zero_ram_ptr < zero_ram_end);
         #endif
+    }
+
+
+    // https://gcc.gnu.org/onlinedocs/gcc-14.2.0/gcc/Optimize-Options.html
+    inline
+    void
+    __attribute__ ((
+        always_inline,
+        optimize("-Os"),
+    ))
+    prepareSystemForMain() {
+        using namespace Riscv;
+
+        // In case we are in soft-reset, disable (probably) pre-existing global interupt,
+        // and prepare CSR fields so when "return from interupt" (which will do forcefully
+        // at end of this method by invoking mret), then it will restore expected priviledge
+        // mode and expected MIE state
+        Csr::AccessCt::write<
+            Csr::Mstatus::MieMachineInteruptEnable::disable,
+            Csr::Mstatus::MppMachinePreviousPriviledge::machine,
+            Csr::Mstatus::MpieMachinePreviousInteruptEnabled::enabled>();
+
+        // Initialize the bss and data sections
+        zeroizeBss();
+        copyDataFromRomToRam();
 
         // Configure CPU behaviour
         Csr::AccessCt::write<
@@ -98,7 +120,7 @@ extern "C" {
             ".option relax\n"             // Enable relaxation again
             "la sp, __stack_end\n"        // Load the address of the stack pointer
         );
-        prepare_system_for_main();
+        prepareSystemForMain();
     }
 }
 
