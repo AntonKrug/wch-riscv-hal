@@ -24,6 +24,7 @@
 namespace Riscv::Csr::AccessCt {
 
 
+    // TODO: replace with static assert that this function should be used from compile time section
     template <auto Csr>
     requires Riscv::Concepts::IsCsrEnumValid<Csr>
     inline
