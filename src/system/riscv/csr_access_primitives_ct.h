@@ -110,7 +110,7 @@ namespace Riscv::Csr::AccessCt {
 
 
     // All the writes for various types
-    template <auto Csr, auto ValueUint32>
+    template <auto Csr, std::uint32_t ValueUint32>
     requires Riscv::Concepts::IsCsrEnumValid<Csr>
     inline
     constexpr auto

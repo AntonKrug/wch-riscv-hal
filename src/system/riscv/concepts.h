@@ -36,17 +36,6 @@ namespace Riscv::Concepts {
         QingKeCsrEnumType<decltype(CsrEnum)>;
 
 
-    // For writting a CSR value many literal number types can be used
-    // TODO: will this be needed? check if can be removed
-    template<auto CsrValueType>
-    concept IsCsrValueCorrectRegisterType =
-        std::is_same_v<decltype(CsrValueType), int>                ||
-        std::is_same_v<decltype(CsrValueType), unsigned int>       ||
-        std::is_same_v<decltype(CsrValueType), std::uint32_t>      ||
-        std::is_same_v<decltype(CsrValueType), std::uint16_t>      ||
-        std::is_same_v<decltype(CsrValueType), std::uint8_t>;
-
-
     // Confirm the CSR's address is within the 12-bit range
     template<auto CsrAddress>
     concept IsCsrValidAddressRange = (CsrAddress >= 0 && CsrAddress < (1u<<12));
