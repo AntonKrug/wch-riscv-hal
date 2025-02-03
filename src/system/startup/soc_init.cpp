@@ -7,6 +7,8 @@
 #include "system/riscv/csr_register/intsyscr.h"
 #include "user_src/system.h"
 #include "system/riscv/concepts.h"
+#include "system/memory_mapped_register/register_utils.h"
+#include "peripheral/ch32v00x/rcc/ctlr.h"
 
 extern "C" {
 
@@ -76,6 +78,14 @@ extern "C" {
     ))
     prepareSystemForMain() {
         using namespace Riscv;
+        using namespace Peripheral;
+
+        while (SoC::MemMappedReg::rawToEnum<Rcc::HsirdyInternalHighSpeedClockStable>(
+                   Csr::AccessCt::readUint32<Csr::QingKeV2::misa>()) !=
+               Rcc::HsirdyInternalHighSpeedClockStable::isReadyAndStable) {
+        }
+
+
 
         // In case we are in soft-reset, disable (probably) pre-existing global interupt,
         // and prepare CSR fields so when "return from interupt" (which will do forcefully
