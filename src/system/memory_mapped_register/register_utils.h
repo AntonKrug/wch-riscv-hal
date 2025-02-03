@@ -43,7 +43,7 @@ namespace SoC::MemMappedReg {
     template<Concept::RegisterFieldEnumWhichContainsFieldBitMask RegisterFieldType>
     inline constexpr auto
     __attribute__ ((always_inline))
-    rawToEnum(std::uint32_t registerValue) {
+    rawToEnum(const std::uint32_t registerValue) {
         constexpr auto mask = static_cast<std::uint32_t>(RegisterFieldType::fieldBitMask);
         return static_cast<RegisterFieldType>(mask & registerValue);
     }
@@ -52,7 +52,7 @@ namespace SoC::MemMappedReg {
     template<Concept::RegisterFieldEnumWhichContainsFieldBitMask RegisterFieldType>
     inline constexpr auto
     __attribute__ ((always_inline))
-    rawToNormalized(std::uint32_t registerValue) -> std::uint32_t {
+    rawToNormalized(const std::uint32_t registerValue) -> std::uint32_t {
         constexpr auto mask = static_cast<std::uint32_t>(RegisterFieldType::fieldBitMask);
         constexpr auto offset = bitMaskOffsetCt<static_cast<std::uint32_t>(RegisterFieldType::fieldBitMask)>();
         return (registerValue & mask) >> offset;
