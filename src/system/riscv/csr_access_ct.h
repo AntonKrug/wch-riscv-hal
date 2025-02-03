@@ -108,7 +108,7 @@ namespace Riscv::Csr::AccessCt {
     constexpr auto
     __attribute__ ((always_inline))
     set() -> void {
-        constexpr auto parentCsr = getCsrFromField(SetFields...);
+        constexpr auto parentCsr = Riscv::Csr::AccessCt::getCsrFromField(SetFields...);
         set<parentCsr, SetFields...>();
     }
 
@@ -119,7 +119,7 @@ namespace Riscv::Csr::AccessCt {
     constexpr auto
     __attribute__ ((always_inline))
     write() -> void {
-        constexpr auto parentCsr = getCsrFromField(WriteFields...);
+        constexpr auto parentCsr = Riscv::Csr::AccessCt::getCsrFromField(WriteFields...);
         write<parentCsr, WriteFields...>();
     }
 
@@ -134,7 +134,7 @@ namespace Riscv::Csr::AccessCt {
     constexpr auto
     __attribute__ ((always_inline))
     setWithAutoClear() -> void {
-        constexpr auto parentCsr = getCsrFromField(SetWithClearFields...);
+        constexpr auto parentCsr = Riscv::Csr::AccessCt::getCsrFromField(SetWithClearFields...);
         setWithAutoClear<parentCsr,  SetWithClearFields...>();
     }
 
