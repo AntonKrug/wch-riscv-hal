@@ -40,8 +40,8 @@ namespace Riscv::Csr {
         mimpid       = 0b11'11'0001'0011, // 0xF13 MRO implementation ID
 
         // Machine trap setup
-        mstatus      = 0b00'11'0000'0000, // 0x300 MRW machine status (low)
-        misa         = 0b00'11'0000'0001, // 0x301 MRW ISA and extension
+        mstatus      = 0b00'11'0000'0000, // 0x300 MRW machine status
+        misa         = 0b00'11'0000'0001, // 0x301 MRO ISA and extension
         mtvec        = 0b00'11'0000'0101, // 0x305 MRW machine trap-handler base address
 
         // Machine trap handling
@@ -67,8 +67,8 @@ namespace Riscv::Csr {
         mimpid       = 0b11'11'0001'0011, // 0xF13 MRO implementation ID
 
         // Machine trap setup
-        mstatus      = 0b00'11'0000'0000, // 0x300 MRW machine status (low)
-        misa         = 0b00'11'0000'0001, // 0x301 MRW ISA and extension
+        mstatus      = 0b00'11'0000'0000, // 0x300 MRW machine status
+        misa         = 0b00'11'0000'0001, // 0x301 MRO ISA and extension
         mtvec        = 0b00'11'0000'0101, // 0x305 MRW machine trap-handler base address
 
         // Machine trap handling
@@ -141,8 +141,8 @@ namespace Riscv::Csr {
         mimpid       = 0b11'11'0001'0011, // 0xF13 MRO implementation ID
 
         // Machine trap setup
-        mstatus      = 0b00'11'0000'0000, // 0x300 MRW machine status (low)
-        misa         = 0b00'11'0000'0001, // 0x301 MRW ISA and extension
+        mstatus      = 0b00'11'0000'0000, // 0x300 MRW machine status
+        misa         = 0b00'11'0000'0001, // 0x301 MRO ISA and extension
         mtvec        = 0b00'11'0000'0101, // 0x305 MRW machine trap-handler base address
 
         // Machine trap handling
