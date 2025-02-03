@@ -269,7 +269,7 @@ namespace Peripheral::Gpio{
 
 
     template<long long int address>
-    requires SoC::MemoryConcepts::IsValidPeripheralBaseAddress<address>
+    requires SoC::MemConcept::IsValidPeripheralBaseAddress<address>
     WCH_OPTIMIZE_GPIO constexpr static auto MakeBaseAddress() -> BaseAddress {
         return static_cast<BaseAddress>(address);
     };

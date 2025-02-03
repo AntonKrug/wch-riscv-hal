@@ -7,7 +7,7 @@
 // https://en.cppreference.com/w/cpp/language/constraints
 #include <concepts>
 
-namespace SoC::MemoryConcepts {
+namespace SoC::MemConcept {
 
     template<long long int address>
     concept IsValidPeripheralBaseAddress = (
