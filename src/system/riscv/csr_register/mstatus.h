@@ -5,7 +5,10 @@
 // https://www.wch-ic.com/downloads/QingKeV2_Processor_Manual_PDF.html
 // https://five-embeddev.com/riscv-priv-isa-manual/Priv-v1.12/machine.html#machine-status-registers-mstatus-and-mstatush
 // https://docs.openhwgroup.org/projects/cv32e40s-user-manual/en/latest/control_status_registers.html#machine-status-mstatus
+// https://danielmangum.com/posts/risc-v-bytes-privilege-levels/
+//
 // NOTE: WCH implementation differs from standard, the MPRV is not implemented but added non-standard MPOP and MPPOP
+//       also doesn't support supervisor and hypervisor privilege modes
 
 #pragma once
 

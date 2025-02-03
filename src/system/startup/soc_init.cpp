@@ -9,6 +9,8 @@
 #include "system/riscv/concepts.h"
 
 extern "C" {
+
+
     // DATA section
     extern unsigned int __data_rom_start; // NOLINT(*-reserved-identifier)
     extern unsigned int __data_rom_end;   // NOLINT(*-reserved-identifier)
@@ -68,8 +70,7 @@ extern "C" {
 
         // Configure CPU behaviour
         Csr::AccessCt::write<
-            Csr::QingKeV2::intsyscr,
-            Csr::Intsyscr::HwstkenHardwarePrologueEpilogue::enable,                  //HW preamble and epilogue
+            Csr::Intsyscr::HwstkenHardwarePrologueEpilogue::enable, //HW preamble and epilogue
             Csr::Intsyscr::InestenInteruptNesting::enable>();
 
         // Configure trap/interupt behaviour
@@ -84,35 +85,6 @@ extern "C" {
 
         Csr::AccessCt::writeUint32<Csr::QingKeV2::mtvec, mtvecValue>();
 
-
-
-        // constexpr auto a = Riscv::Csr::getCsrFromField(Mtvec::Mode0::vectorizedInterupts, Mtvec::Mode1::executeInstructions);
-        // constexpr auto a = Riscv::Csr::AccessCt::getCsrFromField(Csr::Mtvec::Mode0::singleUnifiedTrapHandler);
-        // Csr::AccessCt::setWithAutoClear<
-        //     Csr::Mstatus::Mie::machineIrqEnable,
-        //     Csr::Mstatus::Mpie::machinePreviousIrqEnable>();
-        // Csr::AccessCt::writeUint32<a, 0>();
-
-        // readCsr<QingKeV2::intsyscr>();
-        // writeCsr<QingKeV2::intsyscr, 0>();
-        // writeCsr<QingKeV2::intsyscr, 0x20000000>();
-        // writeCsr<QingKeV2::intsyscr, 0xffffff>();
-
-        // constexpr auto interuptSettings = combine<
-        //     Intsyscr::Hwstken::hpeEnable,
-        //     Intsyscr::Inesten::interuptNestingEnable,
-        //     Intsyscr::Eabien::eabiDisable>();
-
-        // constexpr auto sss = Csr::getMaskFromFieldEnumValues<Intsyscr::Eabien::eabiDisable>();
-
-        // writeCsr<QingKeV2::intsyscr, interuptSettings>();
-        //writeCsr<QingKeV2::intsyscr, 31>();
-
-        // writeCsr<QingKeV2::intsyscr, Intsyscr::Hwstken::hpeEnable, Intsyscr::Eabien::eabiEnable>();
-        // writeCsr<QingKeV2::dcsr, A::B::b, A::A::a>();
-        //writeCsr<QingKeV2::dcsr, A::B::b, A::A::a, Intsyscr::Hwstken::hpeEnable>();
-        // riscv_qingke2_write_intsyscr(0x10);
-        // Riscv::Csr::readCSR<>()
     }
 
     void
