@@ -11,20 +11,20 @@
 namespace Riscv::Csr::AccessCt {
 
 
-    template<Riscv::Csr::Intsyscr::IsAnyField Field>
-    constexpr auto getCsrFromField(Field field) {
+    template<Riscv::Csr::Intsyscr::IsAnyField... CsrFields>
+    constexpr auto getCsrFromField(CsrFields... csrFields) {
         return Riscv::Csr::QingKeV2::intsyscr;
     }
 
 
-    template<Riscv::Csr::Mtvec::IsAnyField... Field>
-    constexpr auto getCsrFromField(Field... field) {
+    template<Riscv::Csr::Mtvec::IsAnyField... CsrFields>
+    constexpr auto getCsrFromField(CsrFields... csrFields) {
         return Riscv::Csr::QingKeV2::mtvec;
     }
 
 
-    template<Riscv::Csr::Mstatus::IsAnyField... Field>
-    constexpr auto getCsrFromField(Field... field) {
+    template<Riscv::Csr::Mstatus::IsAnyField... CsrFields>
+    constexpr auto getCsrFromField(CsrFields... csrFields) {
         return Riscv::Csr::QingKeV2::mstatus;
     }
 
