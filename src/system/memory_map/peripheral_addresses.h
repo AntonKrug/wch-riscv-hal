@@ -22,6 +22,7 @@ namespace SoC::PeripheralAddreses {
     constexpr static auto usart2 = Peripheral::Usart::MakeBaseAddress<0x4001'4400>();
     constexpr static auto usart3 = Peripheral::Usart::MakeBaseAddress<0x4001'4800>();
 
+
     // Universal Asynchronous Receiver Transmitter
     constexpr static auto uart4  = Peripheral::Usart::MakeBaseAddress<0x4001'4C00>();
     constexpr static auto uart5  = Peripheral::Usart::MakeBaseAddress<0x4000'5000>();
