@@ -4,7 +4,7 @@
 
 #pragma once
 
-namespace SoC::MemoryMappedRegister::Concepts {
+namespace SoC::MemMappedReg::Concept {
 
     template<typename RegisterField>
     concept RegisterFieldEnumWhichContainsFieldBitMask = requires
