@@ -27,7 +27,7 @@ namespace Riscv::Csr::AccessCt {
     template <auto Csr>
     requires Riscv::Concepts::IsCsrEnumValid<Csr>
     inline
-    constexpr auto
+    auto
     __attribute__ ((always_inline))
     readUint32() -> std::uint32_t {
         std::uint32_t resultUin32t;
