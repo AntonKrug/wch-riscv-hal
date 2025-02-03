@@ -40,7 +40,7 @@ namespace Riscv::Csr::Intsyscr {
         // only applied to the handlers of these IRQs. On some applications might
         // worth investigating how the footprint and runtime behavior changes between using
         // HPE or not. Because blindly enabling the HPE might negatively impact the application.
-        fieldBitMask = 0b1, // THIS IS INTERNAL, don't use it
+        fieldBitMask = 0b1, // not holding any settings or value, it's a bitmask for this specific field
         enable       = 0b1, // enable HW prologoue and epiloge (see intsyscr.h for more details)
         disable      = 0    // disable HW prologue and epilogue (see intsyscr.h for more details)
     };
@@ -49,24 +49,24 @@ namespace Riscv::Csr::Intsyscr {
     enum class InestenInteruptNesting: std::uint32_t {
         // Enable nesting of intreupts together with PFIC settings the IRQs can get different
         // priorities and dictating order of execution.
-        fieldBitMask = 0b1'0, // THIS IS INTERNAL, don't use it
+        fieldBitMask = 0b1'0, // not holding any settings or value, it's a bitmask for this specific field
         enable       = 0b1'0,
         disable      = 0,
     };
 
 
     enum class EabienEmbeddedAbi: std::uint32_t {
-        fieldBitMask = 0b1'00, // THIS IS INTERNAL, don't use it
+        fieldBitMask = 0b1'00, // not holding any settings or value, it's a bitmask for this specific field
         enable       = 0b1'00, // WCH noted that this shouldn't be enabled, and left in the default disabled state
         disble       = 0       // Keeping EABI disabled, the way WCH recomends
     };
 
 
-    template<typename Field>
+    template<typename CsrField>
     concept IsAnyField =
-        std::is_same_v<Field, HwstkenHardwarePrologueEpilogue> ||
-        std::is_same_v<Field, InestenInteruptNesting> ||
-        std::is_same_v<Field, EabienEmbeddedAbi>;
+        std::is_same_v<CsrField, HwstkenHardwarePrologueEpilogue> ||
+        std::is_same_v<CsrField, InestenInteruptNesting> ||
+        std::is_same_v<CsrField, EabienEmbeddedAbi>;
 
 
 }

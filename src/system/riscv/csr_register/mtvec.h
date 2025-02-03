@@ -15,24 +15,22 @@ namespace Riscv::Csr::Mtvec {
 
 
     enum class Mode0VectorizationEnable: std::uint32_t {
-        // Interrupt or exception entry address mode selection
-        fieldBitMask             = 0b1, // THIS IS INTERNAL, don't use it
+        fieldBitMask             = 0b1, // not holding any settings or value, it's a bitmask for this specific field
         singleUnifiedTrapHandler = 0,   // all interupts handled by only single handler
         vectorizedInterupts      = 0b1, // each interupt has dedicated memory location (BASEADDR + IRQ * 4) in the table, see Mode1
     };
 
 
     enum class Mode1VectorizedBehaviour: std::uint32_t {
-        // Vectorized table behaviour
-        fieldBitMask          = 0b1'0, // THIS IS INTERNAL, don't use it
+        fieldBitMask          = 0b1'0, // not holding any settings or value, it's a bitmask for this specific field
         executeInstructions   = 0,     // use table for instructions, small relative jump instructions fit into, other instructions can be used too
         absoluteJumpAddresses = 0b1'0, // use table for addresses, always jumping, but able to able to address any location
     };
 
 
     enum class BaseAddr: std::uint32_t {
-        // the value needs to be 1k aligned (0x400)
-        fieldBitMask = 0b111111111111111111111111111111'0'0, // THIS IS INTERNAL, don't use it
+        // the address value needs to be 1k aligned (0x400)
+        fieldBitMask = 0b111111111111111111111111111111'0'0, // not holding any settings or value, it's a bitmask for this specific field
     };
 
 
