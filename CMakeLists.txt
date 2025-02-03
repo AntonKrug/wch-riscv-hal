@@ -132,12 +132,15 @@ set(LINKER_SCRIPT_FINAL ${CMAKE_BINARY_DIR}/linker/WCH32Vxxx-for-current-soc-boo
 set (headers
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/gpio.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/rcc.h
+        ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/rcc/ctlr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/timer.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/usart.h
         ${CMAKE_SOURCE_DIR}/src/system/CH32V003xxxx/soc_template.h
         ${CMAKE_SOURCE_DIR}/src/system/linker_utils.h
         ${CMAKE_SOURCE_DIR}/src/system/memory_map/concepts.h
         ${CMAKE_SOURCE_DIR}/src/system/memory_map/peripheral_addresses.h
+        ${CMAKE_SOURCE_DIR}/src/system/memory_mapped_register/bitmask_utils.h
+        ${CMAKE_SOURCE_DIR}/src/system/memory_mapped_register/concepts.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/concepts.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access_ct.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access_primitives_ct.h
