@@ -33,14 +33,14 @@ namespace Riscv::Csr {
 
 
     template <Riscv::Concepts::FieldEnumWhichContainsFieldBitMask EnumType>
-    constexpr auto getMaskFromSingleField() -> std::uint32_t {
+    constexpr auto getMaskFromSingleFieldType() -> std::uint32_t {
         return static_cast<std::uint32_t>(EnumType::fieldBitMask);
     }
 
 
     template <auto... EnumTypeValues>
     constexpr auto getMaskFromFieldEnumValues() -> std::uint32_t {
-        return ( getMaskFromSingleField<decltype(EnumTypeValues)>() | ...);
+        return ( getMaskFromSingleFieldType<decltype(EnumTypeValues)>() | ...);
     }
 
 
