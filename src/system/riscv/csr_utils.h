@@ -18,12 +18,6 @@ namespace Riscv::Csr {
     }
 
 
-    template<auto Enum>
-    constexpr auto toValue() -> std::uint16_t requires Riscv::Concepts::IsCsrMaskedEnums<Enum> {
-        return static_cast<std::uint16_t>(Enum);
-    }
-
-
     // Accept any field enums that belong to the same CSR, but do not allow
     // field enums from different CSR to be mixed into them
     template<auto... Fields>

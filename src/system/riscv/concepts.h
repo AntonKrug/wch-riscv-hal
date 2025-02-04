@@ -15,13 +15,6 @@
 namespace Riscv::Concepts {
 
 
-    // If any of the masking enum is used
-    template<auto Mask>
-    concept IsCsrMaskedEnums =
-        std::is_same_v<decltype(Mask), Riscv::Csr::Priviledge> ||
-        std::is_same_v<decltype(Mask), Riscv::Csr::ReadWrite>;
-
-
     // A type which is all QingKeV2, QingKeV3 and QingKeV4 at the same time
     template<typename CsrType>
     concept QingKeCsrEnumType =
@@ -60,22 +53,12 @@ namespace Riscv::Concepts {
         IsCsrWritableAddress<static_cast<std::uint16_t>(CsrValue)>;
 
 
-    template<auto CsrAddress>
-    concept IsCsrMachinePriviledgeAddress = (
-        (CsrAddress & Riscv::Csr::maskPriviledge) == static_cast<std::uint16_t>(Riscv::Csr::Priviledge::machine) );
-
-
-    template<auto CsrValue>
-    concept IsCsrMachinePriviledge =
-        IsQingKeCsrEnum<CsrValue> &&
-        IsCsrMachinePriviledgeAddress<static_cast<std::uint16_t>(CsrValue)>;
-
-
     template<typename CsrField>
     concept FieldEnumWhichContainsFieldBitMask = requires
         { { CsrField::fieldBitMask }; };
 
 
+    // ReSharper disable once CppUnnamedNamespaceInHeaderFile
     namespace {
 
         // The CSRs can come different enums, but must resolve to the same enum value
