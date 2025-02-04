@@ -135,16 +135,18 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/rcc/ctlr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/timer.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/usart.h
+        ${CMAKE_SOURCE_DIR}/src/peripheral/concept.h
+        ${CMAKE_SOURCE_DIR}/src/peripheral/register_field_to_register.h
         ${CMAKE_SOURCE_DIR}/src/system/CH32V003xxxx/soc_template.h
         ${CMAKE_SOURCE_DIR}/src/system/linker_utils.h
         ${CMAKE_SOURCE_DIR}/src/system/memory_map/concepts.h
         ${CMAKE_SOURCE_DIR}/src/system/memory_map/peripheral_addresses.h
-        ${CMAKE_SOURCE_DIR}/src/system/memory_mapped_register/bitmask_utils.h
         ${CMAKE_SOURCE_DIR}/src/system/memory_mapped_register/concepts.h
+        ${CMAKE_SOURCE_DIR}/src/system/memory_mapped_register/register_utils.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/concepts.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access_ct.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access_primitives_ct.h
-        ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_parent_from_field.h
+        ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_field_to_csr.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_register/intsyscr.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_register/mstatus.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_register/mtvec.h
