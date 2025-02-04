@@ -9,6 +9,7 @@
 #include "system/riscv/concepts.h"
 #include "system/memory_mapped_register/register_utils.h"
 #include "peripheral/ch32v00x/rcc/ctlr.h"
+#include "peripheral/register_field_to_register.h"
 
 extern "C" {
 
@@ -69,6 +70,20 @@ extern "C" {
     }
 
 
+    inline
+    void
+    __attribute__ ((
+        always_inline,
+        optimize("-Os"),
+    ))
+    configureClocks() {
+        using namespace Peripheral;
+
+        // ReSharper disable once CppPossiblyErroneousEmptyStatements
+        while (!isRegFieldEnumSet<Rcc::Ctlr::HSIRDY_InternalHighSpeedClockStable::isStableAndReady>());
+    }
+
+
     // https://gcc.gnu.org/onlinedocs/gcc-14.2.0/gcc/Optimize-Options.html
     inline
     void
@@ -79,13 +94,6 @@ extern "C" {
     prepareSystemForMain() {
         using namespace Riscv;
         using namespace Peripheral;
-
-        while (SoC::MemMappedReg::rawToEnum<Rcc::HsirdyInternalHighSpeedClockStable>(
-                   Csr::AccessCt::readUint32<Csr::QingKeV2::misa>()) !=
-               Rcc::HsirdyInternalHighSpeedClockStable::isReadyAndStable) {
-        }
-
-
 
         // In case we are in soft-reset, disable (probably) pre-existing global interupt,
         // and prepare CSR fields so when "return from interupt" (which will do forcefully
@@ -117,6 +125,8 @@ extern "C" {
 
         Csr::AccessCt::writeUint32<Csr::QingKeV2::mtvec, mtvecValue>();
 
+        // System clock configuration
+        configureClocks();
     }
 
     void
