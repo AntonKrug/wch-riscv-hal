@@ -6,7 +6,25 @@
 
 #include <cstdint>
 
+#include "rcc/ctlr.h"s
+
 namespace Peripheral::Rcc {
+
+    constexpr std::uint32_t baseAddr = 0x4002'1000;
+
+    // make it work with relative addresses or multiple instances
+    enum class RegOffset: std::uint32_t {
+        Ctrlr     = 0x00,
+        Cfgr0     = 0x04,
+        Intr      = 0x08,
+        Apb2prstr = 0x0C,
+        Apb1prstr = 0x10,
+        Ahbpcenr  = 0x14,
+        Apb2pcenr = 0x18,
+        Apb1pcenr = 0x1C,
+        Rstsckr   = 0x24
+    };
+
 
     enum class Reset: std::uint8_t {
         nop   = 0,
@@ -43,5 +61,10 @@ namespace Peripheral::Rcc {
     //     std::uint8_t  reserved1:1;
     //     ModuleClock   ioAuxiliary:2;
     // }__attribute((packed));
+
+    template<typename Reg>
+    concept IsAnyRegField =
+        Peripheral::Rcc::Ctlr::IsAnyRegField<Reg>;
+
 }
 
