@@ -180,3 +180,29 @@ clearRegFieldEnum() -> void {
     constexpr auto baseAddr = regFieldToPeripheralBaseAddr<decltype(RegFieldMask)>();
     return clearRegFieldEnum<baseAddr, RegFieldMask>();
 }
+
+
+template<std::uint32_t baseAddress, auto RegFieldMask>
+inline auto
+__attribute__ ((
+    always_inline,
+    optimize("-Os"),
+))
+keepRegFieldEnum() -> void {
+    constexpr auto regOffset = regFieldTypeToRegMemOffset<decltype(RegFieldMask)>();
+    auto actualValue = socReadRegister<baseAddress + regOffset>();
+    actualValue &= 0xffffffff ^ static_cast<std::uint32_t>(RegFieldMask);
+    socWriteRegister<baseAddress + regOffset>(actualValue);
+}
+
+
+template<auto RegFieldMask>
+inline auto
+__attribute__ ((
+    always_inline,
+    optimize("-Os"),
+))
+keepRegFieldEnum() -> void {
+    constexpr auto baseAddr = regFieldToPeripheralBaseAddr<decltype(RegFieldMask)>();
+    return keepRegFieldEnum<baseAddr, RegFieldMask>();
+}
