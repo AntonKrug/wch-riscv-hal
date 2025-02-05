@@ -79,8 +79,14 @@ extern "C" {
     configureClocks() {
         using namespace Peripheral;
 
+        // TODO should we measure the typical startup values and use Write explicitly
+        setRegFieldEnum<Rcc::Ctlr::HSEON_RW_ExternalHighSpeedClockEnable::enable>();
+
+        // clear all except the reserved, might clear all completely?
+        writeRegFieldEnum<Rcc::Cfgr0::SW_RW_SystemClockSource::hsi>();
+
         // ReSharper disable once CppPossiblyErroneousEmptyStatements
-        while (!isRegFieldEnumSet<Rcc::Ctlr::HSIRDY_InternalHighSpeedClockStable::isStableAndReady>());
+        while (isRegFieldEnumSet<Rcc::Ctlr::HSIRDY_RO_InternalHighSpeedClockReady::notReady>());
     }
 
 
