@@ -77,13 +77,21 @@ extern "C" {
         optimize("-Os"),
     ))
     configureClocks() {
-        using namespace Peripheral;
+        // IMPORTANT - do not use any variables here, this is not fully safe C++,
+        //             the data and bss is not intialized yet
+        using namespace Peripheral::Rcc;
 
-        // TODO should we measure the typical startup values and use Write explicitly
-        setRegFieldEnum<Rcc::Ctlr::HSEON_RW_ExternalHighSpeedClockEnable::enable>();
+        // Enable internal clock on top of existing state -> it will need 6 clocks to apply
+        setRegFieldEnum<Ctlr::HSEON_RW_ExternalHighSpeedClockEnable::enable>();
 
-        // clear all except the reserved, might clear all completely?
-        writeRegFieldEnum<Rcc::Cfgr0::SW_RW_SystemClockSource::hsi>();
+        // Preserve PLLSRC, TODO: other SoCs might preserve more
+        keepRegFieldEnum<Cfgr0::PLLSRC_RW_InputClockSourceForPhaseLockedLoopGenerator::fieldBitMask>();
+
+        // Preserve PLLON, CSSON, HSEON
+        clearRegFieldEnum<
+            Ctlr::PLLON_RW_PhaseLockedLoopEnable::fieldBitMask,
+            Ctlr::CSSON_RW_ClockSafety::fieldBitMask,
+            Ctlr::HSEON_RW_ExternalHighSpeedClockEnable::fieldBitMask>();
 
         // ReSharper disable once CppPossiblyErroneousEmptyStatements
         while (isRegFieldEnumSet<Rcc::Ctlr::HSIRDY_RO_InternalHighSpeedClockReady::notReady>());

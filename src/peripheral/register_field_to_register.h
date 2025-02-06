@@ -7,11 +7,11 @@
 #include "concept.h"
 #include "ch32v00x/rcc.h"
 #include "ch32v00x/rcc/ctlr.h"
-
 #include "system/memory_mapped_register/concepts.h"
+#include "system/riscv/csr_utils.h"
 
 // TODO: own namespace, combine the CSR actions (registers are basic and CSR register on top)
-//       clearing, bulk registers, able to provide isntance instead of baseAddress
+//       able to provide isntance instead of baseAddress
 
 
 // RCC
@@ -118,15 +118,16 @@ auto writeRegFieldEnum() -> void {
 }
 
 
-template<auto RegFieldValue>
+template<auto... RegFieldValues>
 inline constexpr
 __attribute__ ((
     always_inline,
     optimize("-Os"),
 ))
 auto writeRegFieldEnum() -> void {
-    constexpr auto baseAddr = regFieldToPeripheralBaseAddr<decltype(RegFieldValue)>();
-    return writeRegFieldEnum<baseAddr, RegFieldValue>();
+    constexpr auto baseAddr = regFieldToPeripheralBaseAddr<decltype(RegFieldValues)>();
+    constexpr auto combinedValue = Riscv::Csr::combineFieldsToUint32<RegFieldValues>();
+    return writeRegFieldEnum<baseAddr, combinedValue>();
 }
 
 
@@ -144,15 +145,16 @@ setRegFieldEnum() -> void {
 }
 
 
-template<auto RegFieldValue>
+template<auto... RegFieldValues>
 inline auto
 __attribute__ ((
     always_inline,
     optimize("-Os"),
 ))
 setRegFieldEnum() -> void {
-    constexpr auto baseAddr = regFieldToPeripheralBaseAddr<decltype(RegFieldValue)>();
-    return setRegFieldEnum<baseAddr, RegFieldValue>();
+    constexpr auto baseAddr = regFieldToPeripheralBaseAddr<decltype(RegFieldValues)>();
+    constexpr auto combinedValue = Riscv::Csr::combineFieldsToUint32<RegFieldValues>();
+    return setRegFieldEnum<baseAddr, combinedValue>();
 }
 
 
@@ -170,15 +172,16 @@ clearRegFieldEnum() -> void {
 }
 
 
-template<auto RegFieldMask>
+template<auto... RegFieldMasks>
 inline auto
 __attribute__ ((
     always_inline,
     optimize("-Os"),
 ))
 clearRegFieldEnum() -> void {
-    constexpr auto baseAddr = regFieldToPeripheralBaseAddr<decltype(RegFieldMask)>();
-    return clearRegFieldEnum<baseAddr, RegFieldMask>();
+    constexpr auto baseAddr = regFieldToPeripheralBaseAddr<decltype(RegFieldMasks)>();
+    constexpr auto combinedValue = Riscv::Csr::combineFieldsToUint32<RegFieldMasks>();
+    return clearRegFieldEnum<baseAddr, combinedValue>();
 }
 
 
@@ -196,13 +199,14 @@ keepRegFieldEnum() -> void {
 }
 
 
-template<auto RegFieldMask>
+template<auto... RegFieldMasks>
 inline auto
 __attribute__ ((
     always_inline,
     optimize("-Os"),
 ))
 keepRegFieldEnum() -> void {
-    constexpr auto baseAddr = regFieldToPeripheralBaseAddr<decltype(RegFieldMask)>();
-    return keepRegFieldEnum<baseAddr, RegFieldMask>();
+    constexpr auto baseAddr = regFieldToPeripheralBaseAddr<decltype(RegFieldMasks)>();
+    constexpr auto combinedValue = Riscv::Csr::combineFieldsToUint32<RegFieldMasks>();
+    return keepRegFieldEnum<baseAddr, combinedValue>();
 }
