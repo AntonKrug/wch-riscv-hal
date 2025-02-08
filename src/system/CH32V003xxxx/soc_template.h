@@ -39,18 +39,12 @@
 
 #ifndef __PREPROCESSOR_RUN_FOR_LINKER_SCRIPT__
 
-#include <cstdint>
-
-#include "utils/literals/timer.h"
 #include "system/soc_types.h"
 #include "system/memory_map/peripheral_addresses.h"
 
 
 namespace Soc {
-    namespace Clocks {
-        using namespace Literals::Timer;
-        constexpr std::uint32_t HSI = 24_mhz_to_hz; // High speed internal RC oscilator v003=24Mhz, x033/x035=48Mhz others=8Mhz
-    }
+
 
 
     static constexpr Types::GpioACD<
