@@ -134,16 +134,20 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/rcc.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/rcc/cfgr0.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/rcc/ctlr.h
+        ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/rcc/intr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/timer.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/usart.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/concept.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/register_field_to_register.h
         ${CMAKE_SOURCE_DIR}/src/system/CH32V003xxxx/soc_template.h
+        ${CMAKE_SOURCE_DIR}/src/system/ch32v003/clocks.h
         ${CMAKE_SOURCE_DIR}/src/system/linker_utils.h
         ${CMAKE_SOURCE_DIR}/src/system/memory_map/concepts.h
         ${CMAKE_SOURCE_DIR}/src/system/memory_map/peripheral_addresses.h
         ${CMAKE_SOURCE_DIR}/src/system/memory_mapped_register/concepts.h
         ${CMAKE_SOURCE_DIR}/src/system/memory_mapped_register/register_utils.h
+        ${CMAKE_SOURCE_DIR}/src/system/register/concepts.h
+        ${CMAKE_SOURCE_DIR}/src/system/register/utils.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/concepts.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access_ct.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access_primitives_ct.h
@@ -157,6 +161,9 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/system/startup/generated_startup_configuration.h
         ${CMAKE_SOURCE_DIR}/src/user_src/firmware_build_info.h
         ${CMAKE_SOURCE_DIR}/src/user_src/system.h
+        ${CMAKE_SOURCE_DIR}/src/user_src/system_clock.h
+        ${CMAKE_SOURCE_DIR}/src/user_src/system_defines.h
+        ${CMAKE_SOURCE_DIR}/src/user_src/system_soc.h
         ${CMAKE_SOURCE_DIR}/src/utils/delay.h
         ${CMAKE_SOURCE_DIR}/src/utils/firmware_build_info.h
         ${CMAKE_SOURCE_DIR}/src/utils/literals/all.h
