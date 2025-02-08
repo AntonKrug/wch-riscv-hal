@@ -78,10 +78,10 @@ namespace Riscv::Csr::AccessCt {
     constexpr auto
     __attribute__ ((always_inline))
     setWithAutoClear() -> void {
-        constexpr std::uint32_t clearValueUin32 = Csr::getMaskFromFieldEnumValues<SetFields...>();
-        constexpr std::uint32_t setValueUin32   = (static_cast<std::uint32_t>(SetFields) | ...);
+        constexpr std::uint32_t clearValueUint32 = Csr::getMaskFromFieldEnumValues<SetFields...>();
+        constexpr std::uint32_t setValueUint32   = (static_cast<std::uint32_t>(SetFields) | ...);
 
-        clearAndSetUint32<Csr, clearValueUin32, setValueUin32>();
+        clearAndSetUint32<Csr, clearValueUint32, setValueUint32>();
     }
 
 
@@ -97,7 +97,7 @@ namespace Riscv::Csr::AccessCt {
     constexpr auto
     __attribute__ ((always_inline))
     clear() -> void {
-        constexpr auto parentCsr = getCsrFromField(SetFields...);
+        constexpr auto parentCsr = Riscv::Csr::AccessCt::getCsrFromField(SetFields...);
         clear<parentCsr, SetFields...>();
     }
 
