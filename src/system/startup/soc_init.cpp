@@ -6,13 +6,14 @@
 #include "system/riscv/csr_access_ct.h"
 #include "system/riscv/csr_register/intsyscr.h"
 #include "user_src/system.h"
+#include "user_src/system_clock.h"
 #include "system/riscv/concepts.h"
 #include "system/memory_mapped_register/register_utils.h"
-#include "peripheral/ch32v00x/rcc/ctlr.h"
+#include "peripheral/ch32v00x/rcc.h"
 #include "peripheral/register_field_to_register.h"
+#include "utils/literals/timer.h"
 
 extern "C" {
-
 
     // DATA section symbols
     extern unsigned int __data_rom_start; // NOLINT(*-reserved-identifier)
@@ -76,27 +77,54 @@ extern "C" {
         always_inline,
         optimize("-Os"),
     ))
-    configureClocks() {
-        // IMPORTANT - do not use any variables here, this is not fully safe C++,
-        //             the data and bss is not intialized yet
+    resetAndStabilizeClocks() {
         using namespace Peripheral::Rcc;
 
-        // Enable internal clock on top of existing state -> it will need 6 clocks to apply
-        setRegFieldEnum<Ctlr::HSEON_RW_ExternalHighSpeedClockEnable::enable>();
+        // Enable internal clock HSI on top of existing state -> it will need 6 clocks to apply
+        setRegFieldEnum<Ctlr::HSION_RW_InternalHighSpeedClockEnable::enable>();
 
-        // Preserve PLLSRC, TODO: other SoCs might preserve more
-        keepRegFieldEnum<Cfgr0::PLLSRC_RW_InputClockSourceForPhaseLockedLoopGenerator::fieldBitMask>();
+        // CLear everything, but preserve PLLSRC, so the SW_RW_SystemClockSource will get defaulted to HSI source
+        // TODO: other SoCs might preserve more
+        keepRegFieldMaskEnums<Cfgr0::PLLSRC_RW_InputClockSourceForPhaseLockedLoopGenerator::fieldBitMask>();
 
-        // Preserve PLLON, CSSON, HSEON
+        // Disabling clocks and settings in safe order in 3 separate steps
         clearRegFieldEnum<
             Ctlr::PLLON_RW_PhaseLockedLoopEnable::fieldBitMask,
             Ctlr::CSSON_RW_ClockSafety::fieldBitMask,
             Ctlr::HSEON_RW_ExternalHighSpeedClockEnable::fieldBitMask>();
 
+        clearRegFieldEnum<
+            Ctlr::HSEBYP_RW_ExternalHighSpeedClockBypass::bypassCeramicResonator>();
+
+        clearRegFieldEnum<
+            Cfgr0::PLLSRC_RW_InputClockSourceForPhaseLockedLoopGenerator::fieldBitMask>();
+
+        // Clear the possibly set ready flags
+        // TODO: possibly other SoCs clear bit 17 too or more
+        clearRegFieldEnum<
+            Intr::CSSC_WO_ExternalHighSpeedSecurityClear::clearFlag,
+            Intr::PLLRDYC_WO_PhaseLockedLoopReadyClear::clearFlag,
+            Intr::HSERDYC_WO_ExternalHighSpeedReadyClear::clearFlag,
+            Intr::HSIRDYC_WO_InternalHighSpeedReadyClear::clearFlag,
+            Intr::LSIRDYC_WO_InternalLowSpeedReadyClear::clearFlag>();
+
         // ReSharper disable once CppPossiblyErroneousEmptyStatements
-        while (isRegFieldEnumSet<Rcc::Ctlr::HSIRDY_RO_InternalHighSpeedClockReady::notReady>());
+        // while (isRegFieldEnumSet<Ctlr::HSIRDY_RO_InternalHighSpeedClockReady::notReady>());
     }
 
+    inline
+    void
+    __attribute__ ((
+        always_inline,
+        optimize("-Os"),
+    ))
+    configureNewClocks() {
+        using namespace Peripheral::Rcc;
+        using namespace Literals::Timer;
+
+        setRegFieldEnum<
+            Cfgr0::getHbPrescalerEnum<Soc::Clocks::Hsi, UserConfig::systemClock>()>();
+    }
 
     // https://gcc.gnu.org/onlinedocs/gcc-14.2.0/gcc/Optimize-Options.html
     inline
@@ -112,7 +140,8 @@ extern "C" {
         // In case we are in soft-reset, disable (probably) pre-existing global interupt,
         // and prepare CSR fields so when "return from interupt" (which will do forcefully
         // at end of this method by invoking mret), then it will restore expected priviledge
-        // mode and expected MIE state
+        // mode and expected MIE state. Also returning with mret will allow us to have
+        // shallower(less demanding on RAM) and cleaner callstack.
         Csr::AccessCt::write<
             Csr::Mstatus::MieMachineInteruptEnable::disable,
             Csr::Mstatus::MppMachinePreviousPriviledge::machine,
@@ -140,8 +169,10 @@ extern "C" {
         Csr::AccessCt::writeUint32<Csr::QingKeV2::mtvec, mtvecValue>();
 
         // System clock configuration
-        configureClocks();
+        resetAndStabilizeClocks();
+        configureNewClocks();
     }
+
 
     void
     __attribute__((
@@ -156,5 +187,7 @@ extern "C" {
         );
         prepareSystemForMain();
     }
+
+
 }
 
