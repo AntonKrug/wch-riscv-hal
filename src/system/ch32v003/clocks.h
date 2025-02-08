@@ -8,6 +8,8 @@
 
 #include "utils/literals/timer.h"
 
+//TODO: add define guards so including it with wrong cpu package will not be possible
+
 namespace Soc::Clocks {
     using namespace Literals::Timer;
     constexpr std::uint32_t Hsi = 24_mhz_to_hz;  // High speed internal RC oscilator v003=24Mhz, x033/x035=48Mhz others=8Mhz
