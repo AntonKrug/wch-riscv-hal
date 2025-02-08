@@ -8,6 +8,7 @@
 
 #include "rcc/ctlr.h"
 #include "rcc/cfgr0.h"
+#include "rcc/intr.h"
 
 namespace Peripheral::Rcc {
 
@@ -66,7 +67,8 @@ namespace Peripheral::Rcc {
     template<typename Reg>
     concept IsAnyRegField =
         Peripheral::Rcc::Ctlr::IsAnyRegField<Reg> ||
-        Peripheral::Rcc::Cfgr0::IsAnyRegField<Reg>;
+        Peripheral::Rcc::Cfgr0::IsAnyRegField<Reg> ||
+        Peripheral::Rcc::Intr::IsAnyRegField<Reg>;
 
 }
 
