@@ -24,7 +24,7 @@ namespace Riscv::Csr::Mstatus {
     using namespace Soc::Reg;
 
     enum class Mie_MRW_MachineInteruptEnable: std::uint32_t {
-        fieldBitMask = 0b1 << 3,     // not holding any settings or value, it's a bitmask for this specific field
+        fieldBitMask = 0b1u << 3,     // not holding any settings or value, it's a bitmask for this specific field
         fieldAccess  = FieldAccessRights::ReadWrite,
 
         disable      = 0,            // Globally disable machine level interupts (bit 3)
@@ -32,7 +32,7 @@ namespace Riscv::Csr::Mstatus {
     };
 
     enum class Mpie_MRW_MachinePreviousInteruptEnabled: std::uint32_t {
-        fieldBitMask = 0b1 << 7,      // not holding any settings or value, it's a bitmask for this specific field
+        fieldBitMask = 0b1u << 7,      // not holding any settings or value, it's a bitmask for this specific field
         fieldAccess  = FieldAccessRights::ReadWrite,
 
         disabled     = 0,             // Captured value of MIE was "disabled" prior interupt, mret to restore it (bit 7)
@@ -40,17 +40,17 @@ namespace Riscv::Csr::Mstatus {
     };
 
     enum class Mpp_MRW_MachinePreviousPriviledge: std::uint32_t {
-        fieldBitMask = 0b11 << 11, // not holding any settings or value, it's a bitmask for this specific field
+        fieldBitMask = 0b11u << 11, // not holding any settings or value, it's a bitmask for this specific field
         fieldAccess  = FieldAccessRights::ReadWrite,
 
-        user         = 0b00 << 11, // 00 user prior interupt, mret to restore it (bit 12-11). Unsupported by QingKeV2
-    //  supervisor   = 0b01 << 11, // 01 supervisor prior interupt, mret to restore it (bit 12-11). Unsupported by QingKeV2/V3/V4
-    //  hypervisor   = 0b10 << 11, // 10 hypervisor prior interupt, mret to restore it (bit 12-11). Unsupported by QingKeV2/V3/V4
-        machine      = 0b11 << 11, // 11 machine prior interupt, mret to restore it (bit 12-11)
+        user         = 0b00u << 11, // 00 user prior interupt, mret to restore it (bit 12-11). Unsupported by QingKeV2
+    //  supervisor   = 0b01u << 11, // 01 supervisor prior interupt, mret to restore it (bit 12-11). Unsupported by QingKeV2/V3/V4
+    //  hypervisor   = 0b10u << 11, // 10 hypervisor prior interupt, mret to restore it (bit 12-11). Unsupported by QingKeV2/V3/V4
+        machine      = 0b11u << 11, // 11 machine prior interupt, mret to restore it (bit 12-11)
     };
 
     enum class Mpop_MRW: std::uint32_t {
-        fieldBitMask = 0b1 << 23, // not holding any settings or value, it's a bitmask for this specific field
+        fieldBitMask = 0b1u << 23, // not holding any settings or value, it's a bitmask for this specific field
         fieldAccess  = FieldAccessRights::ReadWrite,
 
         disable      = 0,

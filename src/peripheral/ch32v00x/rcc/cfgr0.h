@@ -18,49 +18,50 @@ namespace Peripheral::Rcc::Cfgr0 {
     using namespace Soc::Reg; // so we can use FieldAccessRights::ReadOnly...
 
     enum class SW_RW_SystemClockSource: std::uint32_t {
-        fieldBitMask = 0b11, // not holding any settings or value, it's a bitmask for this specific field
+        fieldBitMask = 0b11u, // not holding any settings or value, it's a bitmask for this specific field
         fieldAccess  = FieldAccessRights::ReadWrite,
 
-        hsi          = 0b00, // default. internal high speed clock, is selected by HW when returning from standby and stop modes, or when HSE fails when CSSON is enabled
-        hse          = 0b01, // external high speed clock, HW might automatically switch to HSI in some scenarios, read HSI comment
-        pll          = 0b10, // phase locked loop generator
+        hsi          = 0b00u, // default. internal high speed clock, is selected by HW when returning from standby and stop modes, or when HSE fails when CSSON is enabled
+        hse          = 0b01u, // external high speed clock, HW might automatically switch to HSI in some scenarios, read HSI comment
+        pll          = 0b10u, // phase locked loop generator
 
-        reserved     = 0b11, // N/A do not use this value
+        reserved     = 0b11u, // N/A do not use this value
     };
 
     enum class SWS_RO_SystemClockSourceStatus: std::uint32_t {
-        fieldBitMask = 0b11 << 2, // not holding any settings or value, it's a bitmask for this specific field
+        fieldBitMask = 0b11u << 2, // not holding any settings or value, it's a bitmask for this specific field
         fieldAccess  = FieldAccessRights::ReadOnly,
 
-        usingHsi     = 0b00 << 2, // internal high speed clock used
-        usingHse     = 0b01 << 2, // external high speed clock used
-        usingPll     = 0b10 << 2, // phase locked loop generator used
+        usingHsi     = 0b00u << 2, // internal high speed clock used
+        usingHse     = 0b01u << 2, // external high speed clock used
+        usingPll     = 0b10u << 2, // phase locked loop generator used
 
-        reserved     = 0b11 << 2, // N/A do not use this value
+        reserved     = 0b11u << 2, // N/A do not use this value
     };
 
     //TODO: this register might change between SoCs
     enum class HPRE_RW_HbClockPrescaler: std::uint32_t { // To drive HCLK
-        fieldBitMask    = 0b1'111 << 4, // not holding any settings or value, it's a bitmask for this specific field
+        fieldBitMask    = 0b1'111u << 4, // not holding any settings or value, it's a bitmask for this specific field
         fieldAccess     = FieldAccessRights::ReadWrite,
 
-        divide2linearly = 0b0'001 << 4, // HCLK = SYSCLK / 2 (linear division of 2, prefetch buffer must be on)
-        divide3linearly = 0b0'010 << 4, // HCLK = SYSCLK / 3 (default linear division of 3, prefetch buffer must be on)
-        divide4linearly = 0b0'011 << 4, // HCLK = SYSCLK / 4 (linear division of 4, prefetch buffer must be on)
-        divide5linearly = 0b0'100 << 4, // HCLK = SYSCLK / 5 (linear division of 5, prefetch buffer must be on)
-        divide6linearly = 0b0'101 << 4, // HCLK = SYSCLK / 6 (linear division of 6, prefetch buffer must be on)
-        divide7linearly = 0b0'110 << 4, // HCLK = SYSCLK / 7 (linear division of 7, prefetch buffer must be on)
-        divide8linearly = 0b0'111 << 4, // HCLK = SYSCLK / 8 (linear division of 8, prefetch buffer must be on)
+        noPrescaler     = 0,             // HCLK = SYSCLK (prescaler is off)
 
-        divide2powers   = 0b1'000 << 4, // HCLK = SYSCLK / 2 (power by 2 division of 2, prefetch buffer must be on)
-        divide4powers   = 0b1'001 << 4, // HCLK = SYSCLK / 4 (power by 2 division of 4, prefetch buffer must be on)
-        divide8powers   = 0b1'010 << 4, // HCLK = SYSCLK / 8 (power by 2 division of 8, prefetch buffer must be on)
-        divide16powers  = 0b1'011 << 4, // HCLK = SYSCLK / 16 (power by 2 division of 16, prefetch buffer must be on)
-        divide32powers  = 0b1'100 << 4, // HCLK = SYSCLK / 32 (power by 2 division of 32, prefetch buffer must be on)
-        divide64powers  = 0b1'101 << 4, // HCLK = SYSCLK / 64 (power by 2 division of 64, prefetch buffer must be on)
-        divide128powers = 0b1'110 << 4, // HCLK = SYSCLK / 128 (power by 2 division of 128, prefetch buffer must be on)
-        divide256powers = 0b1'111 << 4, // HCLK = SYSCLK / 256 (power by 2 division of 256, prefetch buffer must be on)
-        noPrescaler     = 0,            // HCLK = SYSCLK (prescaler is off)
+        divide2linearly = 0b0'001u << 4, // HCLK = SYSCLK / 2 (linear division of 2, prefetch buffer must be on)
+        divide3linearly = 0b0'010u << 4, // HCLK = SYSCLK / 3 (default linear division of 3, prefetch buffer must be on)
+        divide4linearly = 0b0'011u << 4, // HCLK = SYSCLK / 4 (linear division of 4, prefetch buffer must be on)
+        divide5linearly = 0b0'100u << 4, // HCLK = SYSCLK / 5 (linear division of 5, prefetch buffer must be on)
+        divide6linearly = 0b0'101u << 4, // HCLK = SYSCLK / 6 (linear division of 6, prefetch buffer must be on)
+        divide7linearly = 0b0'110u << 4, // HCLK = SYSCLK / 7 (linear division of 7, prefetch buffer must be on)
+        divide8linearly = 0b0'111u << 4, // HCLK = SYSCLK / 8 (linear division of 8, prefetch buffer must be on)
+
+        divide2powers   = 0b1'000u << 4, // HCLK = SYSCLK / 2 (power by 2 division of 2, prefetch buffer must be on)
+        divide4powers   = 0b1'001u << 4, // HCLK = SYSCLK / 4 (power by 2 division of 4, prefetch buffer must be on)
+        divide8powers   = 0b1'010u << 4, // HCLK = SYSCLK / 8 (power by 2 division of 8, prefetch buffer must be on)
+        divide16powers  = 0b1'011u << 4, // HCLK = SYSCLK / 16 (power by 2 division of 16, prefetch buffer must be on)
+        divide32powers  = 0b1'100u << 4, // HCLK = SYSCLK / 32 (power by 2 division of 32, prefetch buffer must be on)
+        divide64powers  = 0b1'101u << 4, // HCLK = SYSCLK / 64 (power by 2 division of 64, prefetch buffer must be on)
+        divide128powers = 0b1'110u << 4, // HCLK = SYSCLK / 128 (power by 2 division of 128, prefetch buffer must be on)
+        divide256powers = 0b1'111u << 4, // HCLK = SYSCLK / 256 (power by 2 division of 256, prefetch buffer must be on)
     };
 
     constexpr std::uint8_t log2_int(std::uint32_t x) {
@@ -115,44 +116,44 @@ namespace Peripheral::Rcc::Cfgr0 {
 
     enum class ADCPRE_RW_AnalogDigitalConverterClockPrescaler: std::uint32_t {
         // see getAcdDividerFromPrescalerFieldValue() for equation, lower 3-bits are threated differently than higher 2-bits
-        fieldBitMask    = 0b11'111 << 11, // not holding any settings or value, it's a bitmask for this specific field
+        fieldBitMask    = 0b11'111u << 11, // not holding any settings or value, it's a bitmask for this specific field
         fieldAccess     = FieldAccessRights::ReadWrite,
 
-        divide2even     = 0b00'000 << 11, // default ADC = HB / 2 (must be less than 24MHz)
-        divide4odd      = 0b00'001 << 11, // ADC = HB / 4 (must be less than 24MHz)
-        divide4even     = 0b00'010 << 11, // ADC = HB / 4 (must be less than 24MHz)
-        divide8odd      = 0b00'011 << 11, // ADC = HB / 8 (must be less than 24MHz)
-        divideeven      = 0b00'100 << 11, // ADC = HB / 6 (must be less than 24MHz)
-        divide12odd     = 0b00'101 << 11, // ADC = HB / 12 (must be less than 24MHz)
-        divide8even     = 0b00'110 << 11, // ADC = HB / 8 (must be less than 24MHz)
-        divide16odd     = 0b00'111 << 11, // ADC = HB / 16 (must be less than 24MHz)
+        divide2even     = 0b00'000u << 11, // default ADC = HB / 2 (must be less than 24MHz)
+        divide4odd      = 0b00'001u << 11, // ADC = HB / 4 (must be less than 24MHz)
+        divide4even     = 0b00'010u << 11, // ADC = HB / 4 (must be less than 24MHz)
+        divide8odd      = 0b00'011u << 11, // ADC = HB / 8 (must be less than 24MHz)
+        divideeven      = 0b00'100u << 11, // ADC = HB / 6 (must be less than 24MHz)
+        divide12odd     = 0b00'101u << 11, // ADC = HB / 12 (must be less than 24MHz)
+        divide8even     = 0b00'110u << 11, // ADC = HB / 8 (must be less than 24MHz)
+        divide16odd     = 0b00'111u << 11, // ADC = HB / 16 (must be less than 24MHz)
 
-        divide2evenAlt1 = 0b01'000 << 11, // ADC = HB / 2 (must be less than 24MHz)
-        divide8oddAlt1  = 0b01'001 << 11, // ADC = HB / 8 (must be less than 24MHz)
-        divide4evenAlt1 = 0b01'010 << 11, // ADC = HB / 4 (must be less than 24MHz)
-        divide16oddAlt1 = 0b01'011 << 11, // ADC = HB / 16 (must be less than 24MHz)
-        divide5evenAlt1 = 0b01'100 << 11, // ADC = HB / 6 (must be less than 24MHz)
-        divide24odd     = 0b01'101 << 11, // ADC = HB / 24 (must be less than 24MHz)
-        divide8evenAlt1 = 0b01'110 << 11, // ADC = HB / 8 (must be less than 24MHz)
-        divide32odd     = 0b01'111 << 11, // ADC = HB / 32 (must be less than 24MHz)
+        divide2evenAlt1 = 0b01'000u << 11, // ADC = HB / 2 (must be less than 24MHz)
+        divide8oddAlt1  = 0b01'001u << 11, // ADC = HB / 8 (must be less than 24MHz)
+        divide4evenAlt1 = 0b01'010u << 11, // ADC = HB / 4 (must be less than 24MHz)
+        divide16oddAlt1 = 0b01'011u << 11, // ADC = HB / 16 (must be less than 24MHz)
+        divide5evenAlt1 = 0b01'100u << 11, // ADC = HB / 6 (must be less than 24MHz)
+        divide24odd     = 0b01'101u << 11, // ADC = HB / 24 (must be less than 24MHz)
+        divide8evenAlt1 = 0b01'110u << 11, // ADC = HB / 8 (must be less than 24MHz)
+        divide32odd     = 0b01'111u << 11, // ADC = HB / 32 (must be less than 24MHz)
 
-        divide2evenAlt2 = 0b10'000 << 11, // ADC = HB / 2 (must be less than 24MHz)
-        divide16oddAlt2 = 0b10'001 << 11, // ADC = HB / 16 (must be less than 24MHz)
-        divide4evenAlt2 = 0b10'010 << 11, // ADC = HB / 4 (must be less than 24MHz)
-        dvided32oddAlt1 = 0b10'011 << 11, // ADC = HB / 32 (must be less than 24MHz)
-        dvided6evenAlt2 = 0b10'100 << 11, // ADC = HB / 6 (must be less than 24MHz)
-        divide48odd     = 0b10'101 << 11, // ADC = HB / 48 (must be less than 24MHz)
-        divide8evenAlt2 = 0b10'110 << 11, // ADC = HB / 8 (must be less than 24MHz)
-        divide64odd     = 0b10'111 << 11, // ADC = HB / 64 (must be less than 24MHz)
+        divide2evenAlt2 = 0b10'000u << 11, // ADC = HB / 2 (must be less than 24MHz)
+        divide16oddAlt2 = 0b10'001u << 11, // ADC = HB / 16 (must be less than 24MHz)
+        divide4evenAlt2 = 0b10'010u << 11, // ADC = HB / 4 (must be less than 24MHz)
+        dvided32oddAlt1 = 0b10'011u << 11, // ADC = HB / 32 (must be less than 24MHz)
+        dvided6evenAlt2 = 0b10'100u << 11, // ADC = HB / 6 (must be less than 24MHz)
+        divide48odd     = 0b10'101u << 11, // ADC = HB / 48 (must be less than 24MHz)
+        divide8evenAlt2 = 0b10'110u << 11, // ADC = HB / 8 (must be less than 24MHz)
+        divide64odd     = 0b10'111u << 11, // ADC = HB / 64 (must be less than 24MHz)
 
-        divide2evenAlt3 = 0b11'000 << 11, // ADC = HB / 2 (must be less than 24MHz)
-        divide32oddAlt2 = 0b11'001 << 11, // ADC = HB / 32 (must be less than 24MHz)
-        divide4evenAlt3 = 0b11'010 << 11, // ADC = HB / 4 (must be less than 24MHz)
-        divide64oddAlt1 = 0b11'011 << 11, // ADC = HB / 64 (must be less than 24MHz)
-        divide6evenAlt3 = 0b11'100 << 11, // ADC = HB / 6 (must be less than 24MHz)
-        divide96odd     = 0b11'101 << 11, // ADC = HB / 96 (must be less than 24MHz)
-        divide8evenAlt3 = 0b11'110 << 11, // ADC = HB / 8 (must be less than 24MHz)
-        divide128odd    = 0b11'111 << 11, // ADC = HB / 128 (must be less than 24MHz)
+        divide2evenAlt3 = 0b11'000u << 11, // ADC = HB / 2 (must be less than 24MHz)
+        divide32oddAlt2 = 0b11'001u << 11, // ADC = HB / 32 (must be less than 24MHz)
+        divide4evenAlt3 = 0b11'010u << 11, // ADC = HB / 4 (must be less than 24MHz)
+        divide64oddAlt1 = 0b11'011u << 11, // ADC = HB / 64 (must be less than 24MHz)
+        divide6evenAlt3 = 0b11'100u << 11, // ADC = HB / 6 (must be less than 24MHz)
+        divide96odd     = 0b11'101u << 11, // ADC = HB / 96 (must be less than 24MHz)
+        divide8evenAlt3 = 0b11'110u << 11, // ADC = HB / 8 (must be less than 24MHz)
+        divide128odd    = 0b11'111u << 11, // ADC = HB / 128 (must be less than 24MHz)
     };
 
     //TODO: v2x/v3x has simpler ACDPRE, but also lower limit for maximal clock 14MHz
@@ -167,8 +168,8 @@ namespace Peripheral::Rcc::Cfgr0 {
         // lower=(divisor/(2(upper+1)))-1
         // if that is in lowers range and odd, then confirm our interated higher value matches
         // calculated higher = log2(divisor/(lower+1))−1
-        constexpr std::uint8_t lower3  = Value & 0b00'111;
-        constexpr std::uint8_t higher2 = Value & 0b11'000;
+        constexpr std::uint8_t lower3  = Value & 0b00'111u;
+        constexpr std::uint8_t higher2 = Value & 0b11'000u;
         if (lower3 % 2) {
             // Lower 3bits are even(0,2,4,6), ignore the higher 2bits and just produce 2+lower3 value (2,4,6,8)
             return lower3 + 2;
@@ -181,11 +182,11 @@ namespace Peripheral::Rcc::Cfgr0 {
     // TODO on other SoCs this is bigger register, might be worth making it bigger here
     enum class PLLSRC_RW_InputClockSourceForPhaseLockedLoopGenerator: std::uint32_t {
         // see getAcdPrescaler() for equation
-        fieldBitMask = 0b1 << 16, // not holding any settings or value, it's a bitmask for this specific field
+        fieldBitMask = 0b1u << 16,   // not holding any settings or value, it's a bitmask for this specific field
         fieldAccess  = FieldAccessRights::ReadWrite,
 
-        hse          = 0b1 << 16, // PLL = external high speed clock, configure before enabling PLL
-        hsi          = 0,         // PLL = internal high speed clock, default, configure before enabling PLL
+        hsi          = 0,            // PLL = internal high speed clock, default, configure before enabling PLL
+        hse          = fieldBitMask, // PLL = external high speed clock, configure before enabling PLL
     };
 
     //TODO: this register might change between SoCs
@@ -197,6 +198,7 @@ namespace Peripheral::Rcc::Cfgr0 {
         noOutputAlt1 = 0b0'01 << 24, // no clock is output
         noOutputAlt2 = 0b0'10 << 24, // no clock is output
         noOutputAlt3 = 0b0'11 << 24, // no clock is output
+
         sysclk       = 0b1'00 << 24, // sysclk is exposed on the pin output
         hsi          = 0b1'01 << 24, // hsi is exposed on the pin output
         hse          = 0b1'10 << 24, // hse is exposed on the pin output

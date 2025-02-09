@@ -42,29 +42,29 @@ namespace Riscv::Csr::Intsyscr {
         // only applied to the handlers of these IRQs. On some applications might
         // worth investigating how the footprint and runtime behavior changes between using
         // HPE or not. Because blindly enabling the HPE might negatively impact the application.
-        fieldBitMask = 0b1, // not holding any settings or value, it's a bitmask for this specific field
+        fieldBitMask = 0b1u, // not holding any settings or value, it's a bitmask for this specific field
         fieldAccess  = FieldAccessRights::ReadWrite,
 
+        disable      = 0,            // disable HW prologue and epilogue (see intsyscr.h for more details)
         enable       = fieldBitMask, // enable HW prologoue and epiloge (see intsyscr.h for more details)
-        disable      = 0             // disable HW prologue and epilogue (see intsyscr.h for more details)
     };
 
     enum class Inesten_MRW_InteruptNesting: std::uint32_t {
         // Enable nesting of intreupts together with PFIC settings the IRQs can get different
         // priorities and dictating order of execution.
-        fieldBitMask = 0b1 << 1, // not holding any settings or value, it's a bitmask for this specific field
+        fieldBitMask = 0b1u << 1, // not holding any settings or value, it's a bitmask for this specific field
         fieldAccess  = FieldAccessRights::ReadWrite,
 
-        enable       = fieldBitMask,
         disable      = 0,
+        enable       = fieldBitMask,
     };
 
     enum class Eabien_MRW_EmbeddedAbi: std::uint32_t {
-        fieldBitMask = 0b1 << 2,     // not holding any settings or value, it's a bitmask for this specific field
+        fieldBitMask = 0b1u << 2,     // not holding any settings or value, it's a bitmask for this specific field
         fieldAccess  = FieldAccessRights::ReadWrite,
 
+        disble       = 0,            // Keeping EABI disabled, the way WCH recomends
         enable       = fieldBitMask, // WCH noted that this shouldn't be enabled, and left in the default disabled state
-        disble       = 0             // Keeping EABI disabled, the way WCH recomends
     };
 
     template<typename CsrField>
