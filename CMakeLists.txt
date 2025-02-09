@@ -144,10 +144,10 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/system/linker_utils.h
         ${CMAKE_SOURCE_DIR}/src/system/memory_map/concepts.h
         ${CMAKE_SOURCE_DIR}/src/system/memory_map/peripheral_addresses.h
-        ${CMAKE_SOURCE_DIR}/src/system/memory_mapped_register/concepts.h
-        ${CMAKE_SOURCE_DIR}/src/system/memory_mapped_register/register_utils.h
-        ${CMAKE_SOURCE_DIR}/src/system/register/concepts.h
-        ${CMAKE_SOURCE_DIR}/src/system/register/utils.h
+        ${CMAKE_SOURCE_DIR}/src/system/memory_mapped_register/concept.h
+        ${CMAKE_SOURCE_DIR}/src/system/memory_mapped_register/register_util.h
+        ${CMAKE_SOURCE_DIR}/src/system/register/concept.h
+        ${CMAKE_SOURCE_DIR}/src/system/register/util.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/concepts.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access_ct.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access_primitives_ct.h
@@ -155,7 +155,7 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_register/intsyscr.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_register/mstatus.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_register/mtvec.h
-        ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_utils.h
+        ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_util.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csrs_qingke.h
         ${CMAKE_SOURCE_DIR}/src/system/soc_types.h
         ${CMAKE_SOURCE_DIR}/src/system/startup/generated_startup_configuration.h
