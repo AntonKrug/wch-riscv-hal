@@ -49,8 +49,8 @@ namespace Soc::Reg {
         return count;
     }
 
+    // TODO: add sameFieldEnums to registers like i could do on CSRs, but only on higher level functions not down here
     template<auto... Enums>
-    // TODO: add sameFieldEnums to registers
     constexpr auto combineEnumsToUint32() -> std::uint32_t {
         return (static_cast<std::uint32_t>(Enums) | ...);
     }

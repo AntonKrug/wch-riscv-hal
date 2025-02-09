@@ -107,27 +107,8 @@ __attribute__ ((
 socWriteRegister(const std::uint32_t Value) -> void {
     *(reinterpret_cast<volatile std::uint32_t *>(Addr))=Value;
 }
+
 #pragma endregion
-
-
-//TODO: improve safety and reduce duplication, can have two versions or 1 universal?
-template<auto... Fields>
-constexpr auto combineEnumValuesToUint32() -> std::uint32_t
-// requires Riscv::Concepts::SameCsrFieldEnums<Fields...>
-{
-    return (static_cast<std::uint32_t>(Fields) | ...);
-}
-
-
-//TODO: depend on fields which belong to same register
-template<auto... Fields>
-requires (Soc::Reg::Concept::FieldEnumWhithMaskAndAccess<decltype(Fields)> && ...)
-constexpr auto combineFieldMasksToUint32() -> std::uint32_t
-// requires Riscv::Concepts::SameCsrFieldEnums<Fields...>
-{
-    return (static_cast<std::uint32_t>(decltype(Fields)::fieldBitMask) | ...);
-}
-
 
 template<std::uint32_t BaseAddr, auto TestedRegField>
 requires Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(TestedRegField)>
@@ -164,7 +145,7 @@ __attribute__ ((
 ))
 auto writeRegFieldEnum() -> void {
     constexpr auto regOffset =  regFieldToRegMemOffset<RegFieldValues...>();
-    constexpr auto combinedValue = combineEnumValuesToUint32<RegFieldValues...>();
+    constexpr auto combinedValue = Soc::Reg::combineEnumsToUint32<RegFieldValues...>();
     socWriteRegister<BaseAddr + regOffset, combinedValue>();
 }
 
@@ -192,8 +173,8 @@ __attribute__ ((
 ))
 setRegFieldEnumBaseAddr() -> void {
     constexpr auto regOffset     = regFieldToRegMemOffset<RegFieldValues...>();
-    constexpr auto combinedValue = combineEnumValuesToUint32<RegFieldValues...>();
-    constexpr auto combinedMask  = combineFieldMasksToUint32<RegFieldValues...>();
+    constexpr auto combinedValue = Soc::Reg::combineEnumsToUint32<RegFieldValues...>();
+    constexpr auto combinedMask  = Soc::Reg::combineFieldMasksToUint32<RegFieldValues...>();
 
     // TODO: detect when full 0xffffffff mask and replace the clear with write,
     //       also detect the cases where all writable fields are already masked and
@@ -229,7 +210,7 @@ __attribute__ ((
 ))
 clearRegFieldEnumBaseAddr() -> void {
     constexpr auto regOffset = regFieldToRegMemOffset<RegFieldMasks...>();
-    constexpr auto combinedValue = combineEnumValuesToUint32<RegFieldMasks...>();
+    constexpr auto combinedValue = Soc::Reg::combineEnumsToUint32<RegFieldMasks...>();
     auto actualValue = socReadRegister<baseAddress + regOffset>();
     actualValue &= combinedValue;
     socWriteRegister<baseAddress + regOffset>(actualValue);
@@ -256,7 +237,7 @@ __attribute__ ((
 ))
 keepRegFieldMaskEnumsBaseAddr() -> void {
     constexpr auto regOffset = regFieldToRegMemOffset<RegFieldMasks...>();
-    constexpr auto combinedMask = combineEnumValuesToUint32<RegFieldMasks...>();
+    constexpr auto combinedMask = Soc::Reg::combineEnumsToUint32<RegFieldMasks...>();
     auto actualValue = socReadRegister<baseAddress + regOffset>();
     actualValue &= 0xffffffff ^ combinedMask;
     socWriteRegister<baseAddress + regOffset>(actualValue);
