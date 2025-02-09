@@ -61,6 +61,23 @@ namespace Soc::Reg {
         return (static_cast<std::uint32_t>(decltype(FieldValues)::fieldBitMask) | ...);
     }
 
+    template<Concept::FieldEnumWithFieldBitMask RegisterFieldType>
+    inline constexpr auto
+    __attribute__ ((always_inline))
+    rawValueToEnumValue(const std::uint32_t registerValue) {
+        constexpr auto mask = static_cast<std::uint32_t>(RegisterFieldType::fieldBitMask);
+        return static_cast<RegisterFieldType>(mask & registerValue);
+    }
+
+    template<Concept::FieldEnumWithFieldBitMask RegisterFieldType>
+    inline constexpr auto
+    __attribute__ ((always_inline))
+    rawValueToNormalizedValue(const std::uint32_t registerValue) -> std::uint32_t {
+        constexpr auto mask = static_cast<std::uint32_t>(RegisterFieldType::fieldBitMask);
+        constexpr auto offset = Soc::Reg::bitMaskOffsetCt<static_cast<std::uint32_t>(RegisterFieldType::fieldBitMask)>();
+        return (registerValue & mask) >> offset;
+    }
+
     enum class FieldAccessRightsEnum: std::uint32_t {
         ReadOnly,
         WriteOnly,

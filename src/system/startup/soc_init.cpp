@@ -8,7 +8,7 @@
 #include "user_src/system.h"
 #include "user_src/system_clock.h"
 #include "system/riscv/concepts.h"
-#include "system/memory_mapped_register/register_util.h"
+#include "system/register/util.h"
 #include "peripheral/ch32v00x/rcc.h"
 #include "peripheral/register_field_to_register.h"
 #include "utils/literals/timer.h"
