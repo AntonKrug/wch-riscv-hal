@@ -64,13 +64,13 @@ constexpr auto regFieldToRegMemOffset() -> std::uint32_t {
 
 
 // ReSharper disable once CppUnnamedNamespaceInHeaderFile
-namespace {
-    template<auto RegField>
-    requires SoC::MemMappedReg::Concept::RegisterFieldEnumWhichContainsFieldBitMask<decltype(RegField)>
-    constexpr auto regFieldMask() -> std::uint32_t {
-        return static_cast<std::uint32_t>(decltype(RegField)::fieldBitMask);
-    }
-}
+// namespace {
+//     template<auto RegField>
+//     requires Soc::MemMappedReg::Concept::RegisterFieldEnumWhichContainsFieldBitMask<decltype(RegField)>
+//     constexpr auto regFieldMask() -> std::uint32_t {
+//         return static_cast<std::uint32_t>(decltype(RegField)::fieldBitMask);
+//     }
+// }
 
 
 #pragma region Primitives
@@ -119,22 +119,24 @@ constexpr auto combineFieldValuesToUint32() -> std::uint32_t
 
 
 //TODO: depend on fields which belong to same register
-template<SoC::Reg::Concept::FieldEnumWhichContainsFieldBitMask... Fields>
+template<auto... Fields>
+requires Soc::Reg::Concept::FieldEnumWhichContainsFieldsBitMask<decltype(Fields)...>
 constexpr auto combineFieldMasksToUint32() -> std::uint32_t
 // requires Riscv::Concepts::SameCsrFieldEnums<Fields...>
 {
-    return (static_cast<std::uint32_t>(Fields::fieldBitMask) | ...);
+    return (static_cast<std::uint32_t>(decltype(Fields)::fieldBitMask) | ...);
 }
 
 
 template<std::uint32_t BaseAddr, auto TestedRegField>
+requires Soc::Reg::Concept::FieldEnumWhichContainsFieldsBitMask<decltype(TestedRegField)>
 inline auto
 __attribute__ ((
     always_inline,
     optimize("-Os"),
 ))
 isRegFieldEnumSet() -> bool {
-    constexpr auto regMask   =  regFieldMask<TestedRegField>();
+    constexpr auto regMask   =  static_cast<std::uint32_t>(decltype(TestedRegField)::fieldBitMask);
     constexpr auto regOffset =  regFieldToRegMemOffset<TestedRegField>();
     const auto actualValue   =  socReadRegister<BaseAddr + regOffset>();
     return ( regMask & actualValue)  == static_cast<std::uint32_t>(TestedRegField);
@@ -181,6 +183,7 @@ auto writeRegFieldEnum() -> void {
 template<
     std::uint32_t baseAddress,
     auto... RegFieldValues>
+requires Soc::Reg::Concept::FieldEnumWhichContainsFieldsBitMask<decltype(RegFieldValues)...>
 inline auto
 __attribute__ ((
     always_inline,
@@ -189,14 +192,14 @@ __attribute__ ((
 setRegFieldEnumBaseAddr() -> void {
     constexpr auto regOffset     = regFieldToRegMemOffset<RegFieldValues...>();
     constexpr auto combinedValue = combineFieldValuesToUint32<RegFieldValues...>();
-    // constexpr auto combinedMask  = combineFieldMasksToUint32<RegFieldValues...>();
+    constexpr auto combinedMask  = combineFieldMasksToUint32<RegFieldValues...>();
 
     // TODO: detect when full 0xffffffff mask and replace the clear with write,
     //       also detect the cases where all writable fields are already masked and
     //       act as the full clear and do write instead
 
     auto actualValue = socReadRegister<baseAddress + regOffset>();
-    // actualValue &= combinedMask;
+    actualValue &= combinedMask;
     if constexpr (combinedValue > 0) {
         actualValue |= combinedValue;
     }
@@ -205,6 +208,7 @@ setRegFieldEnumBaseAddr() -> void {
 
 
 template<auto... RegFieldValues>
+requires Soc::Reg::Concept::FieldEnumWhichContainsFieldsBitMask<decltype(RegFieldValues)...>
 inline auto
 __attribute__ ((
     always_inline,
