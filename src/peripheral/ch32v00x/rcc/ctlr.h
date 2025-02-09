@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <type_traits>
 
-#include "system/register/utils.h"
+#include "system/register/util.h"
 
 namespace Peripheral::Rcc::Ctlr {
     // Clock control

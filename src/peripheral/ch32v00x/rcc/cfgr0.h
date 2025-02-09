@@ -8,7 +8,7 @@
 #include <type_traits>
 #include <cmath>
 
-#include "system/register/utils.h"
+#include "system/register/util.h"
 
 // TODO: different SoC might have more registers
 
