@@ -49,11 +49,16 @@ namespace Soc::Reg {
         return count;
     }
 
-    template<auto... Fields>
+    template<auto... Enums>
     // TODO: add sameFieldEnums to registers
-    // requires Concept::SameCsrFieldEnums<Fields...>
-    constexpr auto combineFieldsToUint32() -> std::uint32_t {
-        return (static_cast<std::uint32_t>(Fields) | ...);
+    constexpr auto combineEnumsToUint32() -> std::uint32_t {
+        return (static_cast<std::uint32_t>(Enums) | ...);
+    }
+
+    template <auto... FieldValues>
+    requires (Concept::FieldEnumWithFieldBitMask<decltype(FieldValues)> && ...)
+    constexpr auto combineFieldMasksToUint32() -> std::uint32_t {
+        return (static_cast<std::uint32_t>(decltype(FieldValues)::fieldBitMask) | ...);
     }
 
     enum class FieldAccessRightsEnum: std::uint32_t {

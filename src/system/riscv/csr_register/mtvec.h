@@ -62,7 +62,7 @@ namespace Riscv::Csr::Mtvec {
             CheckVectorBaseAddressAlignment<IrqVector>();
 
         constexpr auto mtvecValue =
-            Soc::Reg::combineFieldsToUint32<Mode0, Mode1>() + irqVectorTableAddressSanitized;
+            Soc::Reg::combineEnumsToUint32<Mode0, Mode1>() + irqVectorTableAddressSanitized;
 
         return mtvecValue;
     }

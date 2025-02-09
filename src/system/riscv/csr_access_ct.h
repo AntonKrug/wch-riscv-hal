@@ -15,6 +15,7 @@
 #include "csr_util.h"
 #include "csr_access_primitives_ct.h"
 #include "csr_field_to_csr.h"
+#include "system/register/util.h"
 
 
 namespace Riscv::Csr::AccessCt {
@@ -29,7 +30,7 @@ namespace Riscv::Csr::AccessCt {
     constexpr auto
     __attribute__ ((always_inline))
     clear() -> void {
-        clearUint32<Csr, combineFieldsToUint32<ClearFields...>()>();
+        clearUint32<Csr, Soc::Reg::combineEnumsToUint32<ClearFields...>()>();
     }
 
 
@@ -40,7 +41,7 @@ namespace Riscv::Csr::AccessCt {
     constexpr auto
     __attribute__ ((always_inline))
     set() -> void {
-        setUint32<Csr, combineFieldsToUint32<SetFields...>()>();
+        setUint32<Csr, Soc::Reg::combineEnumsToUint32<SetFields...>()>();
     }
 
 
@@ -51,7 +52,7 @@ namespace Riscv::Csr::AccessCt {
     constexpr auto
     __attribute__ ((always_inline))
     write() -> void {
-        writeUint32<Csr, combineFieldsToUint32<WriteFields...>()>();
+        writeUint32<Csr, Soc::Reg::combineEnumsToUint32<WriteFields...>()>();
     }
 
 
@@ -65,8 +66,8 @@ namespace Riscv::Csr::AccessCt {
     clearSet() -> void {
         clearAndSetUint32<
             Csr,
-            combineFieldsToUint32<ClearFields...>(),
-            combineFieldsToUint32<SetFields...>()>();
+            Soc::Reg::combineEnumsToUint32<ClearFields...>(),
+            Soc::Reg::combineEnumsToUint32<SetFields...>()>();
     }
 
 
@@ -78,7 +79,7 @@ namespace Riscv::Csr::AccessCt {
     constexpr auto
     __attribute__ ((always_inline))
     setWithAutoClear() -> void {
-        constexpr std::uint32_t clearValueUint32 = Csr::getMaskFromFieldEnumValues<SetFields...>();
+        constexpr std::uint32_t clearValueUint32 = Soc::Reg::combineFieldMasksToUint32<SetFields...>();
         constexpr std::uint32_t setValueUint32   = (static_cast<std::uint32_t>(SetFields) | ...);
 
         clearAndSetUint32<Csr, clearValueUint32, setValueUint32>();

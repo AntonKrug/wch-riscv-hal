@@ -15,6 +15,7 @@
 
 // TODO: own namespace, combine the CSR actions (registers are basic and CSR register on top)
 //       able to provide isntance instead of baseAddress
+//       constrains on high level functions/public ones, not the lower access level ones
 
 
 // RCC
@@ -111,7 +112,7 @@ socWriteRegister(const std::uint32_t Value) -> void {
 
 //TODO: improve safety and reduce duplication, can have two versions or 1 universal?
 template<auto... Fields>
-constexpr auto combineFieldValuesToUint32() -> std::uint32_t
+constexpr auto combineEnumValuesToUint32() -> std::uint32_t
 // requires Riscv::Concepts::SameCsrFieldEnums<Fields...>
 {
     return (static_cast<std::uint32_t>(Fields) | ...);
@@ -163,7 +164,7 @@ __attribute__ ((
 ))
 auto writeRegFieldEnum() -> void {
     constexpr auto regOffset =  regFieldToRegMemOffset<RegFieldValues...>();
-    constexpr auto combinedValue = combineFieldValuesToUint32<RegFieldValues...>();
+    constexpr auto combinedValue = combineEnumValuesToUint32<RegFieldValues...>();
     socWriteRegister<BaseAddr + regOffset, combinedValue>();
 }
 
@@ -191,7 +192,7 @@ __attribute__ ((
 ))
 setRegFieldEnumBaseAddr() -> void {
     constexpr auto regOffset     = regFieldToRegMemOffset<RegFieldValues...>();
-    constexpr auto combinedValue = combineFieldValuesToUint32<RegFieldValues...>();
+    constexpr auto combinedValue = combineEnumValuesToUint32<RegFieldValues...>();
     constexpr auto combinedMask  = combineFieldMasksToUint32<RegFieldValues...>();
 
     // TODO: detect when full 0xffffffff mask and replace the clear with write,
@@ -228,7 +229,7 @@ __attribute__ ((
 ))
 clearRegFieldEnumBaseAddr() -> void {
     constexpr auto regOffset = regFieldToRegMemOffset<RegFieldMasks...>();
-    constexpr auto combinedValue = combineFieldValuesToUint32<RegFieldMasks...>();
+    constexpr auto combinedValue = combineEnumValuesToUint32<RegFieldMasks...>();
     auto actualValue = socReadRegister<baseAddress + regOffset>();
     actualValue &= combinedValue;
     socWriteRegister<baseAddress + regOffset>(actualValue);
@@ -255,7 +256,7 @@ __attribute__ ((
 ))
 keepRegFieldMaskEnumsBaseAddr() -> void {
     constexpr auto regOffset = regFieldToRegMemOffset<RegFieldMasks...>();
-    constexpr auto combinedMask = combineFieldValuesToUint32<RegFieldMasks...>();
+    constexpr auto combinedMask = combineEnumValuesToUint32<RegFieldMasks...>();
     auto actualValue = socReadRegister<baseAddress + regOffset>();
     actualValue &= 0xffffffff ^ combinedMask;
     socWriteRegister<baseAddress + regOffset>(actualValue);
