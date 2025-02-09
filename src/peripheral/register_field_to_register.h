@@ -120,7 +120,7 @@ constexpr auto combineFieldValuesToUint32() -> std::uint32_t
 
 //TODO: depend on fields which belong to same register
 template<auto... Fields>
-requires (Soc::Reg::Concept::FieldEnumWhichContainsFieldsBitMask<decltype(Fields)> && ...)
+requires (Soc::Reg::Concept::FieldEnumWhithMaskAndAccess<decltype(Fields)> && ...)
 constexpr auto combineFieldMasksToUint32() -> std::uint32_t
 // requires Riscv::Concepts::SameCsrFieldEnums<Fields...>
 {
@@ -129,7 +129,7 @@ constexpr auto combineFieldMasksToUint32() -> std::uint32_t
 
 
 template<std::uint32_t BaseAddr, auto TestedRegField>
-requires Soc::Reg::Concept::FieldEnumWhichContainsFieldsBitMask<decltype(TestedRegField)>
+requires Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(TestedRegField)>
 inline auto
 __attribute__ ((
     always_inline,
@@ -183,7 +183,7 @@ auto writeRegFieldEnum() -> void {
 template<
     std::uint32_t baseAddress,
     auto... RegFieldValues>
-requires (Soc::Reg::Concept::FieldEnumWhichContainsFieldsBitMask<decltype(RegFieldValues)> && ...)
+requires (Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(RegFieldValues)> && ...)
 inline auto
 __attribute__ ((
     always_inline,
@@ -208,7 +208,7 @@ setRegFieldEnumBaseAddr() -> void {
 
 
 template<auto... RegFieldValues>
-requires (Soc::Reg::Concept::FieldEnumWhichContainsFieldsBitMask<decltype(RegFieldValues)> && ...)
+requires (Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(RegFieldValues)> && ...)
 inline auto
 __attribute__ ((
     always_inline,

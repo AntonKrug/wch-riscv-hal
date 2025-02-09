@@ -21,12 +21,12 @@ namespace Soc::Reg {
         return count;
     }
 
-    template<Concept::FieldEnumWhichContainsFieldsBitMask EnumValue>
+    template<Concept::FieldEnumWithFieldBitMask EnumValue>
     constexpr auto enumBitMaskOffsetCt() -> std::uint8_t {
         return bitMaskOffsetCt<static_cast<std::uint32_t>(EnumValue::fieldBitMask)>();
     }
 
-    template<std::uint32_t RawValue, Concept::FieldEnumWhichContainsFieldsBitMask EnumValue>
+    template<std::uint32_t RawValue, Concept::FieldEnumWithFieldBitMask EnumValue>
     constexpr auto rawValueOffsetToEnumsOffsetCt() -> std::uint8_t {
         return RawValue << enumBitMaskOffsetCt<EnumValue>();
     }
