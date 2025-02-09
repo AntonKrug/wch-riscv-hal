@@ -10,8 +10,8 @@
 #include "ch32v00x/rcc/cfgr0.h"
 #include "ch32v00x/rcc/intr.h"
 #include "system/memory_mapped_register/concept.h"
-// #include "system/riscv/csr_utils.h"
-#include "system/register/concepts.h"
+// #include "system/riscv/csr_util.h"
+#include "system/register/concept.h"
 
 // TODO: own namespace, combine the CSR actions (registers are basic and CSR register on top)
 //       able to provide isntance instead of baseAddress
