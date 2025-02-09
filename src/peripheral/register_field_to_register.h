@@ -9,7 +9,7 @@
 #include "ch32v00x/rcc/ctlr.h"
 #include "ch32v00x/rcc/cfgr0.h"
 #include "ch32v00x/rcc/intr.h"
-#include "system/memory_mapped_register/concepts.h"
+#include "system/memory_mapped_register/concept.h"
 // #include "system/riscv/csr_utils.h"
 #include "system/register/concepts.h"
 

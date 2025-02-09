@@ -6,7 +6,7 @@
 
 #include <cstdint>
 
-#include "concepts.h"
+#include "concept.h"
 #include "system/register/util.h"
 
 namespace SoC::MemMappedReg {
