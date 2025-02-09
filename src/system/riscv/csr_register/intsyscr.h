@@ -12,11 +12,13 @@
 #include <cstdint>
 #include <type_traits>
 
+#include "system/register/util.h"
 
 namespace Riscv::Csr::Intsyscr {
 
+    using namespace Soc::Reg;
 
-    enum class HwstkenHardwarePrologueEpilogue: std::uint32_t {
+    enum class Hwstken_MRW_HardwarePrologueEpilogue: std::uint32_t {
         // Hardware prologue and epilogue on IRQs, on low-end devices (QingKeV2 like CH32V003)
         // it saves footprint, but doesn't improve performance (or can make it worse) and might
         // waste more stack than necesary. On higher-end device it has shadow registers without
@@ -41,32 +43,35 @@ namespace Riscv::Csr::Intsyscr {
         // worth investigating how the footprint and runtime behavior changes between using
         // HPE or not. Because blindly enabling the HPE might negatively impact the application.
         fieldBitMask = 0b1, // not holding any settings or value, it's a bitmask for this specific field
-        enable       = 0b1, // enable HW prologoue and epiloge (see intsyscr.h for more details)
-        disable      = 0    // disable HW prologue and epilogue (see intsyscr.h for more details)
+        fieldAccess  = FieldAccessRights::ReadWrite,
+
+        enable       = fieldBitMask, // enable HW prologoue and epiloge (see intsyscr.h for more details)
+        disable      = 0             // disable HW prologue and epilogue (see intsyscr.h for more details)
     };
 
-
-    enum class InestenInteruptNesting: std::uint32_t {
+    enum class Inesten_MRW_InteruptNesting: std::uint32_t {
         // Enable nesting of intreupts together with PFIC settings the IRQs can get different
         // priorities and dictating order of execution.
-        fieldBitMask = 0b1'0, // not holding any settings or value, it's a bitmask for this specific field
-        enable       = 0b1'0,
+        fieldBitMask = 0b1 << 1, // not holding any settings or value, it's a bitmask for this specific field
+        fieldAccess  = FieldAccessRights::ReadWrite,
+
+        enable       = fieldBitMask,
         disable      = 0,
     };
 
+    enum class Eabien_MRW_EmbeddedAbi: std::uint32_t {
+        fieldBitMask = 0b1 << 2,     // not holding any settings or value, it's a bitmask for this specific field
+        fieldAccess  = FieldAccessRights::ReadWrite,
 
-    enum class EabienEmbeddedAbi: std::uint32_t {
-        fieldBitMask = 0b1'00, // not holding any settings or value, it's a bitmask for this specific field
-        enable       = 0b1'00, // WCH noted that this shouldn't be enabled, and left in the default disabled state
-        disble       = 0       // Keeping EABI disabled, the way WCH recomends
+        enable       = fieldBitMask, // WCH noted that this shouldn't be enabled, and left in the default disabled state
+        disble       = 0             // Keeping EABI disabled, the way WCH recomends
     };
-
 
     template<typename CsrField>
     concept IsAnyField =
-        std::is_same_v<CsrField, HwstkenHardwarePrologueEpilogue> ||
-        std::is_same_v<CsrField, InestenInteruptNesting> ||
-        std::is_same_v<CsrField, EabienEmbeddedAbi>;
+        std::is_same_v<CsrField, Hwstken_MRW_HardwarePrologueEpilogue> ||
+        std::is_same_v<CsrField, Inesten_MRW_InteruptNesting> ||
+        std::is_same_v<CsrField, Eabien_MRW_EmbeddedAbi>;
 
 
 }

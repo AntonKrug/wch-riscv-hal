@@ -153,8 +153,8 @@ extern "C" {
 
         // Configure CPU behaviour
         Csr::AccessCt::write<
-            Csr::Intsyscr::HwstkenHardwarePrologueEpilogue::enable, //HW preamble and epilogue
-            Csr::Intsyscr::InestenInteruptNesting::enable>();
+            Csr::Intsyscr::Hwstken_MRW_HardwarePrologueEpilogue::enable, //HW preamble and epilogue
+            Csr::Intsyscr::Inesten_MRW_InteruptNesting::enable>();
 
         // Configure trap/interupt behaviour
         constexpr auto mtvecValue = Csr::Mtvec::CalculateMtvecRawValue<
