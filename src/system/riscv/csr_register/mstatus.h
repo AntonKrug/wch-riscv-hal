@@ -15,54 +15,61 @@
 #include <cstdint>
 #include <type_traits>
 
+#include "system/register/util.h"
 
 //TODO: unpriviledged vs user
 
 namespace Riscv::Csr::Mstatus {
 
+    using namespace Soc::Reg;
 
-    enum class MieMachineInteruptEnable: std::uint32_t {
-        fieldBitMask = 0b1'000, // not holding any settings or value, it's a bitmask for this specific field
-        disable      = 0,       // Globally disable machine level interupts (bit 3)
-        enable       = 0b1'000, // Globally enable machine level interupts (bit 3)
+    enum class Mie_MRW_MachineInteruptEnable: std::uint32_t {
+        fieldBitMask = 0b1 << 3,     // not holding any settings or value, it's a bitmask for this specific field
+        fieldAccess  = FieldAccessRights::ReadWrite,
+
+        disable      = 0,            // Globally disable machine level interupts (bit 3)
+        enable       = fieldBitMask, // Globally enable machine level interupts (bit 3)
     };
 
+    enum class Mpie_MRW_MachinePreviousInteruptEnabled: std::uint32_t {
+        fieldBitMask = 0b1 << 7,      // not holding any settings or value, it's a bitmask for this specific field
+        fieldAccess  = FieldAccessRights::ReadWrite,
 
-    enum class MpieMachinePreviousInteruptEnabled: std::uint32_t {
-        fieldBitMask = 0b1'000'0'000, // not holding any settings or value, it's a bitmask for this specific field
         disabled     = 0,             // Captured value of MIE was "disabled" prior interupt, mret to restore it (bit 7)
-        enabled      = 0b1'000'0'000, // Captured value of MIE was "enabled" prior interupt, mret to restore it (bit 7)
+        enabled      = fieldBitMask,  // Captured value of MIE was "enabled" prior interupt, mret to restore it (bit 7)
     };
 
+    enum class Mpp_MRW_MachinePreviousPriviledge: std::uint32_t {
+        fieldBitMask = 0b11 << 11, // not holding any settings or value, it's a bitmask for this specific field
+        fieldAccess  = FieldAccessRights::ReadWrite,
 
-    enum class MppMachinePreviousPriviledge: std::uint32_t {
-        fieldBitMask = 0b11'000'0'000'0'000, // not holding any settings or value, it's a bitmask for this specific field
-        user         = 0b00'000'0'000'0'000, // 00 user prior interupt, mret to restore it (bit 12-11). Unsupported by QingKeV2
-    //  supervisor   = 0b01'000'0'000'0'000, // 01 supervisor prior interupt, mret to restore it (bit 12-11). Unsupported by QingKeV2/V3/V4
-    //  hypervisor   = 0b10'000'0'000'0'000, // 10 hypervisor prior interupt, mret to restore it (bit 12-11). Unsupported by QingKeV2/V3/V4
-        machine      = 0b11'000'0'000'0'000, // 11 machine prior interupt, mret to restore it (bit 12-11)
+        user         = 0b00 << 11, // 00 user prior interupt, mret to restore it (bit 12-11). Unsupported by QingKeV2
+    //  supervisor   = 0b01 << 11, // 01 supervisor prior interupt, mret to restore it (bit 12-11). Unsupported by QingKeV2/V3/V4
+    //  hypervisor   = 0b10 << 11, // 10 hypervisor prior interupt, mret to restore it (bit 12-11). Unsupported by QingKeV2/V3/V4
+        machine      = 0b11 << 11, // 11 machine prior interupt, mret to restore it (bit 12-11)
     };
 
+    enum class Mpop_MRW: std::uint32_t {
+        fieldBitMask = 0b1 << 23, // not holding any settings or value, it's a bitmask for this specific field
+        fieldAccess  = FieldAccessRights::ReadWrite,
 
-    enum class Mpop: std::uint32_t {
-        fieldBitMask = 0b1'0000000000'00'000'000'0'000, // not holding any settings or value, it's a bitmask for this specific field
         disable      = 0,
     };
 
+    enum class Mppop_MRW: std::uint32_t {
+        fieldBitMask = 0b1 << 23, // not holding any settings or value, it's a bitmask for this specific field
+        fieldAccess  = FieldAccessRights::ReadWrite,
 
-    enum class Mppop: std::uint32_t {
-        fieldBitMask = 0b1'0'0000000000'00'000'000'0'000, // not holding any settings or value, it's a bitmask for this specific field
         disable      = 0,
     };
-
 
     template<typename Field>
     concept IsAnyField =
-        std::is_same_v<Field, MieMachineInteruptEnable>  ||
-        std::is_same_v<Field, MpieMachinePreviousInteruptEnabled> ||
-        std::is_same_v<Field, MppMachinePreviousPriviledge>  ||
-        std::is_same_v<Field, Mpop> ||
-        std::is_same_v<Field, Mppop>;
+        std::is_same_v<Field, Mie_MRW_MachineInteruptEnable>  ||
+        std::is_same_v<Field, Mpie_MRW_MachinePreviousInteruptEnabled> ||
+        std::is_same_v<Field, Mpp_MRW_MachinePreviousPriviledge>  ||
+        std::is_same_v<Field, Mpop_MRW> ||
+        std::is_same_v<Field, Mppop_MRW>;
 
 
 }

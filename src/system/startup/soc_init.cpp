@@ -143,9 +143,9 @@ extern "C" {
         // mode and expected MIE state. Also returning with mret will allow us to have
         // shallower(less demanding on RAM) and cleaner callstack.
         Csr::AccessCt::write<
-            Csr::Mstatus::MieMachineInteruptEnable::disable,
-            Csr::Mstatus::MppMachinePreviousPriviledge::machine,
-            Csr::Mstatus::MpieMachinePreviousInteruptEnabled::enabled>();
+            Csr::Mstatus::Mie_MRW_MachineInteruptEnable::disable,
+            Csr::Mstatus::Mpp_MRW_MachinePreviousPriviledge::machine,
+            Csr::Mstatus::Mpie_MRW_MachinePreviousInteruptEnabled::enabled>();
 
         // Initialize the bss and data sections
         zeroizeBss();
