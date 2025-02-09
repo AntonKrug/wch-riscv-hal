@@ -4,10 +4,13 @@
 
 #pragma once
 
-namespace SoC::Reg::Concept {
+namespace Soc::Reg::Concept {
 
-    template<typename CsrField>
-    concept FieldEnumWhichContainsFieldBitMask = requires
-        { { CsrField::fieldBitMask }; };
+    // template<typename CsrField>
+    // concept FieldEnumWhichContainsFieldBitMask = requires
+    //     { { CsrField::fieldBitMask }; };
 
+    template<typename... CsrFields>
+    concept FieldEnumWhichContainsFieldsBitMask =
+        (... | requires { { CsrFields::fieldBitMask }; });
 }
