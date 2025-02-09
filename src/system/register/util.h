@@ -21,12 +21,14 @@ namespace Soc::Reg {
         return count;
     }
 
-    template<Concept::FieldEnumWithFieldBitMask EnumValue>
+    template<Concept::FieldEnumWithFieldBitMask EnumType>
+    // requires Concept::FieldEnumWithFieldBitMask<decltype(EnumValue)>
     constexpr auto enumBitMaskOffsetCt() -> std::uint8_t {
-        return bitMaskOffsetCt<static_cast<std::uint32_t>(EnumValue::fieldBitMask)>();
+        return bitMaskOffsetCt<static_cast<std::uint32_t>(EnumType::fieldBitMask)>();
     }
 
     template<std::uint32_t RawValue, Concept::FieldEnumWithFieldBitMask EnumValue>
+    //requires Concept::FieldEnumWithFieldBitMask<decltype(EnumValue)>
     constexpr auto rawValueOffsetToEnumsOffsetCt() -> std::uint8_t {
         return RawValue << enumBitMaskOffsetCt<EnumValue>();
     }
@@ -45,6 +47,13 @@ namespace Soc::Reg {
             count++;
         }
         return count;
+    }
+
+    template<auto... Fields>
+    // TODO: add sameFieldEnums to registers
+    // requires Concept::SameCsrFieldEnums<Fields...>
+    constexpr auto combineFieldsToUint32() -> std::uint32_t {
+        return (static_cast<std::uint32_t>(Fields) | ...);
     }
 
     enum class FieldAccessRightsEnum: std::uint32_t {

@@ -157,14 +157,10 @@ extern "C" {
             Csr::Intsyscr::InestenInteruptNesting::enable>();
 
         // Configure trap/interupt behaviour
-        constexpr std::uint32_t irqVectorTableAddressSanitized =
-            Csr::Mtvec::CheckVectorBaseAddressAlignment<SYSTEM_WCH_VECTOR_TABLE_ADDRESS>();
-
-        constexpr auto mtvecValue =
-            Csr::combineFieldsToUint32<
-                Csr::Mtvec::Mode0VectorizationEnable::vectorizedInterupts,
-                Csr::Mtvec::Mode1VectorizedBehaviour::absoluteJumpAddresses>() +
-                irqVectorTableAddressSanitized;
+        constexpr auto mtvecValue = Csr::Mtvec::CalculateMtvecRawValue<
+            SYSTEM_WCH_VECTOR_TABLE_ADDRESS,
+            Csr::Mtvec::Mode0_RW_VectorizationEnable::vectorizedInterupts,
+            Csr::Mtvec::Mode1_RW_VectorizedBehaviour::absoluteJumpAddresses>();
 
         Csr::AccessCt::writeUint32<Csr::QingKeV2::mtvec, mtvecValue>();
 
