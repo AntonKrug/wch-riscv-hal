@@ -48,9 +48,9 @@ namespace Soc {
 
 
     static constexpr Types::GpioACD<
-        SoC::PeripheralAddreses::gpioA,
-        SoC::PeripheralAddreses::gpioC,
-        SoC::PeripheralAddreses::gpioD>
+        Soc::PeripheralAddreses::gpioA,
+        Soc::PeripheralAddreses::gpioC,
+        Soc::PeripheralAddreses::gpioD>
     Gpio = {};
 
 
@@ -59,7 +59,7 @@ namespace Soc {
 
 
         static constexpr Types::UartInstance<
-            SoC::PeripheralAddreses::usart1,
+            Soc::PeripheralAddreses::usart1,
             0b00,             // Pin mapping variant
             Gpio.D.GetPin(4), // D4 = Ck
             Gpio.D.GetPin(5), // D5 = Tx
@@ -70,7 +70,7 @@ namespace Soc {
 
 
         static constexpr Types::UartInstance<
-            SoC::PeripheralAddreses::usart1,
+            Soc::PeripheralAddreses::usart1,
             0b01,             // Pin mapping variant
             Gpio.D.GetPin(7), // D7 = Ck
             Gpio.D.GetPin(0), // D0 = Tx
@@ -81,7 +81,7 @@ namespace Soc {
 
 
         static constexpr Types::UartInstance<
-            SoC::PeripheralAddreses::usart1,
+            Soc::PeripheralAddreses::usart1,
             0b01,             // Pin mapping variant
             Gpio.D.GetPin(7), // D7 = Ck
             Gpio.D.GetPin(6), // D6 = Tx
@@ -92,7 +92,7 @@ namespace Soc {
 
 
         static constexpr Types::UartInstance<
-            SoC::PeripheralAddreses::usart1,
+            Soc::PeripheralAddreses::usart1,
             0b01,             // Pin mapping variant
             Gpio.C.GetPin(5), // C5 = Ck
             Gpio.C.GetPin(0), // C0 = Tx

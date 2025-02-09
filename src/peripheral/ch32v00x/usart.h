@@ -124,7 +124,7 @@ namespace Peripheral::Usart{
 
 
     template<long long int address>
-    requires SoC::MemConcept::IsValidPeripheralBaseAddress<address>
+    requires Soc::MemConcept::IsValidPeripheralBaseAddress<address>
     constexpr static auto MakeBaseAddress() -> BaseAddress {
         return static_cast<BaseAddress>(address);
     };

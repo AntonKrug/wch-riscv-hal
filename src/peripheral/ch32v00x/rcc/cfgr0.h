@@ -15,7 +15,7 @@
 namespace Peripheral::Rcc::Cfgr0 {
     // Clock configuration
 
-    using namespace SoC::Reg; // so we can use FieldAccessRights::ReadOnly...
+    using namespace Soc::Reg; // so we can use FieldAccessRights::ReadOnly...
 
     enum class SW_RW_SystemClockSource: std::uint32_t {
         fieldBitMask = 0b11, // not holding any settings or value, it's a bitmask for this specific field
@@ -103,7 +103,7 @@ namespace Peripheral::Rcc::Cfgr0 {
 
     template<std::uint32_t SysClock, std::uint32_t DesiredHbClock>
     constexpr auto getHbPrescalerWithOffset() -> std::uint32_t {
-        return SoC::Reg::rawValueOffsetToEnumsOffsetCt<
+        return Soc::Reg::rawValueOffsetToEnumsOffsetCt<
             getHbPrescaler<SysClock, DesiredHbClock>(),
             HPRE_RW_HbClockPrescaler>();
     }

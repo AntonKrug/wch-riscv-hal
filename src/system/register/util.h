@@ -8,7 +8,7 @@
 
 #include "concept.h"
 
-namespace SoC::Reg {
+namespace Soc::Reg {
 
     template<std::uint32_t BitMaskValue>
     constexpr auto bitMaskOffsetCt() -> std::uint8_t {
@@ -21,12 +21,12 @@ namespace SoC::Reg {
         return count;
     }
 
-    template<Concept::FieldEnumWhichContainsFieldBitMask EnumValue>
+    template<Concept::FieldEnumWhichContainsFieldsBitMask EnumValue>
     constexpr auto enumBitMaskOffsetCt() -> std::uint8_t {
         return bitMaskOffsetCt<static_cast<std::uint32_t>(EnumValue::fieldBitMask)>();
     }
 
-    template<std::uint32_t RawValue, Concept::FieldEnumWhichContainsFieldBitMask EnumValue>
+    template<std::uint32_t RawValue, Concept::FieldEnumWhichContainsFieldsBitMask EnumValue>
     constexpr auto rawValueOffsetToEnumsOffsetCt() -> std::uint8_t {
         return RawValue << enumBitMaskOffsetCt<EnumValue>();
     }
