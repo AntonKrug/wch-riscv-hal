@@ -83,7 +83,7 @@ extern "C" {
         // Enable internal clock HSI on top of existing state -> it will need 6 clocks to apply
         setRegFieldEnum<Ctlr::HSION_RW_InternalHighSpeedClockEnable::enable>();
 
-        // CLear everything, but preserve PLLSRC, so the SW_RW_SystemClockSource will get defaulted to HSI source
+        // CLear everything (the SW_RW_SystemClockSource will get defaulted to HSI source), but preserve PLLSRC
         // TODO: other SoCs might preserve more
         keepRegFieldMaskEnums<Cfgr0::PLLSRC_RW_InputClockSourceForPhaseLockedLoopGenerator::fieldBitMask>();
 
