@@ -71,46 +71,49 @@ extern "C" {
     }
 
 
+    // TODO: check if other SoCs might preserve more
+    // TODO: possibly other SoCs clear Intr bit 17 too (or maybe more), but on CH32V003 it would be unecesary
     inline
     void
     __attribute__ ((
         always_inline,
         optimize("-Os"),
     ))
-    resetAndStabilizeClocks() {
+    resetAndStabilizeClocksToGoodKnownState() {
         using namespace Peripheral::Rcc;
 
-        // Enable internal clock HSI on top of existing state -> it will need 6 clocks to apply
-        setRegFieldEnum<Ctlr::HSION_RW_InternalHighSpeedClockEnable::enable>();
+        // Enable internal clock HSI on top of existing state -> it will need 6 clock cycles to apply
+        setRegFieldEnums<
+            Ctlr::HSION_RW_InternalHighSpeedClockEnable::enable>();
 
-        // CLear everything (the SW_RW_SystemClockSource will get defaulted to HSI source), but preserve PLLSRC
-        // TODO: other SoCs might preserve more
-        keepRegFieldMaskEnums<Cfgr0::PLLSRC_RW_InputClockSourceForPhaseLockedLoopGenerator::fieldBitMask>();
+        // CLear everything, but preserve PLLSRC
+        // NOTE: The SW_RW_SystemClockSource will get defaulted to HSI source in this step as well
+        keepRegFieldTypes<
+            Cfgr0::PLLSRC_RW_InputClockSourceForPhaseLockedLoopGenerator>();
 
-        // Disabling clocks and settings in safe order in 3 separate steps
-        clearRegFieldEnum<
-            Ctlr::PLLON_RW_PhaseLockedLoopEnable::fieldBitMask,
-            Ctlr::CSSON_RW_ClockSafety::fieldBitMask,
-            Ctlr::HSEON_RW_ExternalHighSpeedClockEnable::fieldBitMask>();
+        // Disabling clocks and clearing settings in a safe order in a 3 separate steps
+        clearRegFieldTypes<
+            Ctlr::PLLON_RW_PhaseLockedLoopEnable,
+            Ctlr::CSSON_RW_ClockSafety,
+            Ctlr::HSEON_RW_ExternalHighSpeedClockEnable>();
 
-        clearRegFieldEnum<
-            Ctlr::HSEBYP_RW_ExternalHighSpeedClockBypass::bypassCeramicResonator>();
+        clearRegFieldTypes<
+            Ctlr::HSEBYP_RW_ExternalHighSpeedClockBypass>();
 
-        clearRegFieldEnum<
-            Cfgr0::PLLSRC_RW_InputClockSourceForPhaseLockedLoopGenerator::fieldBitMask>();
+        clearRegFieldTypes<
+            Cfgr0::PLLSRC_RW_InputClockSourceForPhaseLockedLoopGenerator>();
 
-        // Clear the possibly set ready flags
-        // TODO: possibly other SoCs clear bit 17 too or more
-        clearRegFieldEnum<
-            Intr::CSSC_WO_ExternalHighSpeedSecurityClear::clearFlag,
-            Intr::PLLRDYC_WO_PhaseLockedLoopReadyClear::clearFlag,
-            Intr::HSERDYC_WO_ExternalHighSpeedReadyClear::clearFlag,
-            Intr::HSIRDYC_WO_InternalHighSpeedReadyClear::clearFlag,
-            Intr::LSIRDYC_WO_InternalLowSpeedReadyClear::clearFlag>();
-
-        // ReSharper disable once CppPossiblyErroneousEmptyStatements
-        // while (isRegFieldEnumSet<Ctlr::HSIRDY_RO_InternalHighSpeedClockReady::notReady>());
+        // Clear the possibly-previously-set ready flags
+        clearRegFieldTypes<
+            Intr::CSSC_WO_ExternalHighSpeedSecurityClear,
+            Intr::PLLRDYC_WO_PhaseLockedLoopReadyClear,
+            Intr::HSERDYC_WO_ExternalHighSpeedReadyClear,
+            Intr::HSIRDYC_WO_InternalHighSpeedReadyClear,
+            Intr::LSIRDYC_WO_InternalLowSpeedReadyClear>();
     }
+
+    // ReSharper disable once CppPossiblyErroneousEmptyStatements
+    // while (isRegFieldEnumSet<Ctlr::HSIRDY_RO_InternalHighSpeedClockReady::notReady>());
 
     inline
     void
@@ -122,7 +125,7 @@ extern "C" {
         using namespace Peripheral::Rcc;
         using namespace Literals::Timer;
 
-        setRegFieldEnum<
+        setRegFieldEnums<
             Cfgr0::getHbPrescalerEnum<Soc::Clocks::Hsi, UserConfig::systemClock>()>();
     }
 
@@ -165,7 +168,7 @@ extern "C" {
         Csr::AccessCt::writeUint32<Csr::QingKeV2::mtvec, mtvecValue>();
 
         // System clock configuration
-        resetAndStabilizeClocks();
+        resetAndStabilizeClocksToGoodKnownState();
         configureNewClocks();
     }
 

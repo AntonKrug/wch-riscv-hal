@@ -32,9 +32,15 @@ constexpr auto regFieldTypeToPeripheralBaseAddr() -> std::uint32_t {
 }
 
 
+template<typename RegFieldHead, typename... RegFieldTails>
+constexpr auto regFieldTypesToPeripheralBaseAddr() -> std::uint32_t {
+    return regFieldTypeToPeripheralBaseAddr<RegFieldHead>();
+}
+
+
 template<auto RegFieldHead, auto... RegFieldTails>
 // requires HeadSameAsTail<decltype(RegFieldHead), decltype(RegFieldTails)...>
-constexpr auto regFieldToPeripheralBaseAddr() -> std::uint32_t {
+constexpr auto regFieldsToPeripheralBaseAddr() -> std::uint32_t {
     return regFieldTypeToPeripheralBaseAddr<decltype(RegFieldHead)>();
 }
 
@@ -61,6 +67,11 @@ constexpr auto regFieldToRegMemOffset() -> std::uint32_t {
     return regFieldTypeToRegMemOffset<decltype(RegFieldHead)>();
 }
 
+template<typename RegFieldTypeHead, typename... RegFieldTypeTails>
+// requires HeadSameAsTail<decltype(RegFieldHead), decltype(RegFieldTails)...>
+constexpr auto regFieldToRegMemOffset() -> std::uint32_t {
+    return regFieldTypeToRegMemOffset<RegFieldTypeHead>();
+}
 
 
 // ReSharper disable once CppUnnamedNamespaceInHeaderFile
@@ -131,7 +142,7 @@ __attribute__ ((
     optimize("-Os"),
 ))
 isRegFieldEnumSet() -> bool {
-    constexpr auto baseAddr = regFieldToPeripheralBaseAddr<ExpectedRegField>();
+    constexpr auto baseAddr = regFieldsToPeripheralBaseAddr<ExpectedRegField>();
     return isRegFieldEnumSet<baseAddr, ExpectedRegField>();
 }
 
@@ -156,7 +167,7 @@ __attribute__ ((
     optimize("-Os"),
 ))
 auto writeRegFieldEnum() -> void {
-    constexpr auto baseAddr = regFieldToPeripheralBaseAddr<RegFieldValues...>();
+    constexpr auto baseAddr = regFieldsToPeripheralBaseAddr<RegFieldValues...>();
     return writeRegFieldEnum<baseAddr, RegFieldValues...>();
 }
 
@@ -195,61 +206,63 @@ __attribute__ ((
     always_inline,
     optimize("-Os"),
 ))
-setRegFieldEnum() -> void {
-    constexpr auto baseAddr = regFieldToPeripheralBaseAddr<RegFieldValues...>();
+setRegFieldEnums() -> void {
+    constexpr auto baseAddr = regFieldsToPeripheralBaseAddr<RegFieldValues...>();
     return setRegFieldEnumBaseAddr<baseAddr, RegFieldValues...>();
 }
 
 
-template<std::uint32_t baseAddress, auto... RegFieldMasks>
+template<std::uint32_t baseAddress, typename... RegFieldTypes>
 inline auto
 __attribute__ ((
     always_inline,
     optimize("-Os"),
 ))
-clearRegFieldEnumBaseAddr() -> void {
-    constexpr auto regOffset = regFieldToRegMemOffset<RegFieldMasks...>();
-    constexpr auto combinedValue = Soc::Reg::combineEnumsToUint32<RegFieldMasks...>();
+clearRegFieldTypesWithBaseAddr() -> void {
+    constexpr auto regOffset = regFieldToRegMemOffset<RegFieldTypes...>();
+    constexpr auto combinedValue = Soc::Reg::combineFieldTypeMasksToUint32<RegFieldTypes ...>();
     auto actualValue = socReadRegister<baseAddress + regOffset>();
     actualValue &= combinedValue;
     socWriteRegister<baseAddress + regOffset>(actualValue);
 }
 
 
-template<auto... RegFieldMasks>
+template<typename... RegFields>
 inline auto
 __attribute__ ((
     always_inline,
     optimize("-Os"),
 ))
-clearRegFieldEnum() -> void {
-    constexpr auto baseAddr = regFieldToPeripheralBaseAddr<RegFieldMasks...>();
-    return clearRegFieldEnumBaseAddr<baseAddr, RegFieldMasks...>();
+clearRegFieldTypes() -> void {
+    constexpr auto baseAddr = regFieldTypesToPeripheralBaseAddr<RegFields...>();
+    return clearRegFieldTypesWithBaseAddr<baseAddr, RegFields...>();
 }
 
 
-template<std::uint32_t baseAddress, auto... RegFieldMasks>
+// TODO have head and tail on top function so we do not have to have multiple variants down here
+
+template<std::uint32_t baseAddress, typename... RegFieldTypes>
 inline auto
 __attribute__ ((
     always_inline,
     optimize("-Os"),
 ))
 keepRegFieldMaskEnumsBaseAddr() -> void {
-    constexpr auto regOffset = regFieldToRegMemOffset<RegFieldMasks...>();
-    constexpr auto combinedMask = Soc::Reg::combineEnumsToUint32<RegFieldMasks...>();
+    constexpr auto regOffset = regFieldToRegMemOffset<RegFieldTypes...>();
+    constexpr auto combinedMask = Soc::Reg::combineFieldTypeMasksToUint32<RegFieldTypes...>();
     auto actualValue = socReadRegister<baseAddress + regOffset>();
     actualValue &= 0xffffffff ^ combinedMask;
     socWriteRegister<baseAddress + regOffset>(actualValue);
 }
 
 
-template<auto... RegFieldMasks>
+template<typename... RegFieldMasks>
 inline auto
 __attribute__ ((
     always_inline,
     optimize("-Os"),
 ))
-keepRegFieldMaskEnums() -> void {
-    constexpr auto baseAddr = regFieldToPeripheralBaseAddr<RegFieldMasks...>();
+keepRegFieldTypes() -> void {
+    constexpr auto baseAddr = regFieldTypesToPeripheralBaseAddr<RegFieldMasks...>();
     return keepRegFieldMaskEnumsBaseAddr<baseAddr, RegFieldMasks...>();
 }
