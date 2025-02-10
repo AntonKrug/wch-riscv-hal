@@ -61,6 +61,12 @@ namespace Soc::Reg {
         return (static_cast<std::uint32_t>(decltype(FieldValues)::fieldBitMask) | ...);
     }
 
+    template <typename... FieldTypes>
+    requires (Concept::FieldEnumWithFieldBitMask<FieldTypes> && ...)
+    constexpr auto combineFieldTypeMasksToUint32() -> std::uint32_t {
+        return (static_cast<std::uint32_t>(FieldTypes::fieldBitMask) | ...);
+    }
+
     template<Concept::FieldEnumWithFieldBitMask RegisterFieldType>
     inline constexpr auto
     __attribute__ ((always_inline))
