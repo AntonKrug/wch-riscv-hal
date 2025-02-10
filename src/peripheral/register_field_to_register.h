@@ -25,53 +25,63 @@
 template <typename HeadType, typename... TailTypes>
 concept HeadSameAsTail = sizeof...(TailTypes) == 0 || (std::is_same_v<HeadType, TailTypes> && ...);
 
+namespace PeripheralBaseAddr {
 
-template<Peripheral::Rcc::IsAnyRegField RegFields>
-constexpr auto regFieldTypeToPeripheralBaseAddr() -> std::uint32_t {
-    return Peripheral::Rcc::baseAddr;
+    template<Peripheral::Rcc::IsAnyRegField RegFields>
+    constexpr auto fromRegFieldType() -> std::uint32_t {
+        return Peripheral::Rcc::baseAddr;
+    }
+
+    // template<typename RegFieldHead, typename... RegFieldTails>
+    // constexpr auto regFieldTypes() -> std::uint32_t {
+    //     return fromRegFieldType<RegFieldHead>();
+    // }
+
+    template<auto RegField>
+    // requires HeadSameAsTail<decltype(RegFieldHead), decltype(RegFieldTails)...>
+    constexpr auto fromRegFieldEnum() -> std::uint32_t {
+        return fromRegFieldType<decltype(RegField)>();
+    }
+
+    template<auto RegFieldHead, auto... RegFieldTails>
+    // requires HeadSameAsTail<decltype(RegFieldHead), decltype(RegFieldTails)...>
+    constexpr auto regFieldsToPeripheralBaseAddr() -> std::uint32_t {
+        return fromRegFieldType<decltype(RegFieldHead)>();
+    }
+
 }
 
+namespace RegMemOffset {
 
-template<typename RegFieldHead, typename... RegFieldTails>
-constexpr auto regFieldTypesToPeripheralBaseAddr() -> std::uint32_t {
-    return regFieldTypeToPeripheralBaseAddr<RegFieldHead>();
+    template<Peripheral::Rcc::Ctlr::IsAnyRegField RegField>
+    constexpr auto regFieldTypeToRegMemOffset() -> std::uint32_t {
+        return static_cast<std::uint32_t>(Peripheral::Rcc::RegOffset::Ctrlr);
+    }
+
+    template<Peripheral::Rcc::Cfgr0::IsAnyRegField RegField>
+    constexpr auto regFieldTypeToRegMemOffset() -> std::uint32_t {
+        return static_cast<std::uint32_t>(Peripheral::Rcc::RegOffset::Cfgr0);
+    }
+
+    template<Peripheral::Rcc::Intr::IsAnyRegField RegField>
+    constexpr auto regFieldTypeToRegMemOffset() -> std::uint32_t {
+        return static_cast<std::uint32_t>(Peripheral::Rcc::RegOffset::Intr);
+    }
+
+    template<auto RegFieldHead, auto... RegFieldTails>
+    // requires HeadSameAsTail<decltype(RegFieldHead), decltype(RegFieldTails)...>
+    constexpr auto regFieldEnumToRegMemOffset() -> std::uint32_t {
+        return regFieldTypeToRegMemOffset<decltype(RegFieldHead)>();
+    }
+
+    template<typename RegFieldTypeHead, typename... RegFieldTypeTails>
+    // requires HeadSameAsTail<decltype(RegFieldHead), decltype(RegFieldTails)...>
+    constexpr auto regFieldTypesToRegMemOffset() -> std::uint32_t {
+        return regFieldTypeToRegMemOffset<RegFieldTypeHead>();
+    }
+
 }
 
-
-template<auto RegFieldHead, auto... RegFieldTails>
-// requires HeadSameAsTail<decltype(RegFieldHead), decltype(RegFieldTails)...>
-constexpr auto regFieldsToPeripheralBaseAddr() -> std::uint32_t {
-    return regFieldTypeToPeripheralBaseAddr<decltype(RegFieldHead)>();
-}
-
-
-template<Peripheral::Rcc::Ctlr::IsAnyRegField RegField>
-constexpr auto regFieldTypeToRegMemOffset() -> std::uint32_t {
-    return static_cast<std::uint32_t>(Peripheral::Rcc::RegOffset::Ctrlr);
-}
-
-
-template<Peripheral::Rcc::Cfgr0::IsAnyRegField RegField>
-constexpr auto regFieldTypeToRegMemOffset() -> std::uint32_t {
-    return static_cast<std::uint32_t>(Peripheral::Rcc::RegOffset::Cfgr0);
-}
-
-template<Peripheral::Rcc::Intr::IsAnyRegField RegField>
-constexpr auto regFieldTypeToRegMemOffset() -> std::uint32_t {
-    return static_cast<std::uint32_t>(Peripheral::Rcc::RegOffset::Intr);
-}
-
-template<auto RegFieldHead, auto... RegFieldTails>
-// requires HeadSameAsTail<decltype(RegFieldHead), decltype(RegFieldTails)...>
-constexpr auto regFieldToRegMemOffset() -> std::uint32_t {
-    return regFieldTypeToRegMemOffset<decltype(RegFieldHead)>();
-}
-
-template<typename RegFieldTypeHead, typename... RegFieldTypeTails>
-// requires HeadSameAsTail<decltype(RegFieldHead), decltype(RegFieldTails)...>
-constexpr auto regFieldToRegMemOffset() -> std::uint32_t {
-    return regFieldTypeToRegMemOffset<RegFieldTypeHead>();
-}
 
 
 // ReSharper disable once CppUnnamedNamespaceInHeaderFile
@@ -120,71 +130,95 @@ socWriteRegister(const std::uint32_t Value) -> void {
 
 #pragma endregion
 
-template<std::uint32_t BaseAddr, auto TestedRegField>
-requires Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(TestedRegField)>
+#pragma region isReg
+
+template<std::uint32_t BaseAddr, auto TestedRegFieldHead, auto... TestedRegFieldTails>
+requires
+    Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(TestedRegFieldHead)> &&
+    (Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(TestedRegFieldTails)> && ...)
 inline auto
 __attribute__ ((
     always_inline,
     optimize("-Os"),
 ))
-isRegFieldEnumSet() -> bool {
-    constexpr auto regMask   =  static_cast<std::uint32_t>(decltype(TestedRegField)::fieldBitMask);
-    constexpr auto regOffset =  regFieldToRegMemOffset<TestedRegField>();
-    const auto actualValue   =  socReadRegister<BaseAddr + regOffset>();
-    return ( regMask & actualValue)  == static_cast<std::uint32_t>(TestedRegField);
+isRegFieldSetMip() -> bool {
+    constexpr auto combinedValue = Soc::Reg::combineEnumsToUint32<TestedRegFieldHead, TestedRegFieldTails...>();
+    constexpr auto combinedMask  = Soc::Reg::combineFieldMasksToUint32<TestedRegFieldHead, TestedRegFieldTails...>();
+    constexpr auto regOffset     = RegMemOffset::regFieldEnumToRegMemOffset<TestedRegFieldHead>();
+    const     auto actualValue   = socReadRegister<BaseAddr + regOffset>();
+
+    return (actualValue & combinedMask)  == combinedValue;
 }
 
 
-template<auto ExpectedRegField>
+template<auto TestedRegFieldHead, auto... TestedRegFieldTails>
+requires
+    Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(TestedRegFieldHead)> &&
+    (Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(TestedRegFieldTails)> && ...)
 inline auto
 __attribute__ ((
     always_inline,
     optimize("-Os"),
 ))
-isRegFieldEnumSet() -> bool {
-    constexpr auto baseAddr = regFieldsToPeripheralBaseAddr<ExpectedRegField>();
-    return isRegFieldEnumSet<baseAddr, ExpectedRegField>();
+isRegFieldSetSip() -> bool {
+    constexpr auto baseAddr = PeripheralBaseAddr::regFieldsToPeripheralBaseAddr<TestedRegFieldHead>();
+    return isRegFieldSetMip<baseAddr, TestedRegFieldHead, TestedRegFieldTails...>();
 }
 
+#pragma endregion
 
-template<std::uint32_t BaseAddr, auto... RegFieldValues>
+#pragma region writeReg
+
+template<std::uint32_t BaseAddr, auto RegFieldValueHead, auto... RegFieldValueTails>
+requires
+    Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(RegFieldValueHead)> &&
+    (Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(RegFieldValueTails)> && ...)
 inline constexpr
 __attribute__ ((
     always_inline,
     optimize("-Os"),
 ))
 auto writeRegFieldEnum() -> void {
-    constexpr auto regOffset =  regFieldToRegMemOffset<RegFieldValues...>();
-    constexpr auto combinedValue = Soc::Reg::combineEnumsToUint32<RegFieldValues...>();
+    constexpr auto regOffset =  RegMemOffset::regFieldEnumToRegMemOffset<RegFieldValueHead>();
+    constexpr auto combinedValue = Soc::Reg::combineEnumsToUint32<RegFieldValueHead, RegFieldValueTails...>();
     socWriteRegister<BaseAddr + regOffset, combinedValue>();
 }
 
 
-template<auto... RegFieldValues>
+template<auto RegFieldValueHead, auto... RegFieldValueTails>
+requires
+    Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(RegFieldValueHead)> &&
+    (Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(RegFieldValueTails)> && ...)
 inline constexpr
 __attribute__ ((
     always_inline,
     optimize("-Os"),
 ))
 auto writeRegFieldEnum() -> void {
-    constexpr auto baseAddr = regFieldsToPeripheralBaseAddr<RegFieldValues...>();
-    return writeRegFieldEnum<baseAddr, RegFieldValues...>();
+    constexpr auto baseAddr = PeripheralBaseAddr::fromRegFieldEnum<RegFieldValueHead>();
+    return writeRegFieldEnum<baseAddr, RegFieldValueHead, RegFieldValueTails...>();
 }
 
+#pragma endregion
+
+#pragma region setReg
 
 template<
     std::uint32_t baseAddress,
-    auto... RegFieldValues>
-requires (Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(RegFieldValues)> && ...)
+    auto RegFieldValueHead,
+    auto... RegFieldValueTails>
+requires
+    Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(RegFieldValueHead)> &&
+    (Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(RegFieldValueTails)> && ...)
 inline auto
 __attribute__ ((
     always_inline,
     optimize("-Os"),
 ))
-setRegFieldEnumBaseAddr() -> void {
-    constexpr auto regOffset     = regFieldToRegMemOffset<RegFieldValues...>();
-    constexpr auto combinedValue = Soc::Reg::combineEnumsToUint32<RegFieldValues...>();
-    constexpr auto combinedMask  = Soc::Reg::combineFieldMasksToUint32<RegFieldValues...>();
+setRegFieldEnumsMip() -> void {
+    constexpr auto regOffset     = RegMemOffset::regFieldEnumToRegMemOffset<RegFieldValueHead>();
+    constexpr auto combinedValue = Soc::Reg::combineEnumsToUint32<RegFieldValueHead, RegFieldValueTails...>();
+    constexpr auto combinedMask  = Soc::Reg::combineFieldMasksToUint32<RegFieldValueHead, RegFieldValueTails...>();
 
     // TODO: detect when full 0xffffffff mask and replace the clear with write,
     //       also detect the cases where all writable fields are already masked and
@@ -198,19 +232,23 @@ setRegFieldEnumBaseAddr() -> void {
     socWriteRegister<baseAddress + regOffset>(actualValue);
 }
 
-
-template<auto... RegFieldValues>
-requires (Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(RegFieldValues)> && ...)
+template<auto RegFieldValueHead, auto... RegFieldValueTails>
+requires
+    Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(RegFieldValueHead)> &&
+    (Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(RegFieldValueTails)> && ...)
 inline auto
 __attribute__ ((
     always_inline,
     optimize("-Os"),
 ))
-setRegFieldEnums() -> void {
-    constexpr auto baseAddr = regFieldsToPeripheralBaseAddr<RegFieldValues...>();
-    return setRegFieldEnumBaseAddr<baseAddr, RegFieldValues...>();
+setRegFieldEnumsSip() -> void {
+    constexpr auto baseAddr = PeripheralBaseAddr::fromRegFieldEnum<RegFieldValueHead>();
+    return setRegFieldEnumsMip<baseAddr, RegFieldValueHead, RegFieldValueTails...>();
 }
 
+#pragma endregion
+
+#pragma region ClearReg
 
 template<std::uint32_t baseAddress, typename RegFieldTypeHead, typename... RegFieldTypeTails>
 inline auto
@@ -219,11 +257,11 @@ __attribute__ ((
     optimize("-Os"),
 ))
 clearRegFieldTypesMip() -> void {
-    constexpr auto regOffset = regFieldTypeToRegMemOffset<RegFieldTypeHead>();
+    constexpr auto regOffset    = RegMemOffset::regFieldTypeToRegMemOffset<RegFieldTypeHead>();
     constexpr auto combinedMask = Soc::Reg::combineFieldTypeMasksToUint32<RegFieldTypeHead, RegFieldTypeTails...>();
-    auto actualValue = socReadRegister<baseAddress + regOffset>();
-    actualValue &= combinedMask;
-    socWriteRegister<baseAddress + regOffset>(actualValue);
+    const     auto actualValue  = socReadRegister<baseAddress + regOffset>();
+
+    socWriteRegister<baseAddress + regOffset>(actualValue & combinedMask);
 }
 
 
@@ -234,12 +272,13 @@ __attribute__ ((
     optimize("-Os"),
 ))
 clearRegFieldTypesSip() -> void {
-    constexpr auto baseAddr = regFieldTypeToPeripheralBaseAddr<RegFieldTypeHead>();
+    constexpr auto baseAddr = PeripheralBaseAddr::fromRegFieldType<RegFieldTypeHead>();
     return clearRegFieldTypesMip<baseAddr, RegFieldTypeHead, RegFieldTypeTails...>();
 }
 
+#pragma endregion
 
-// TODO have head and tail on top function so we do not have to have multiple variants down here
+#pragma region KeepReg
 
 template<std::uint32_t baseAddress, typename RegFieldTypeHead, typename... RegFieldTypeTails>
 inline auto
@@ -248,7 +287,7 @@ __attribute__ ((
     optimize("-Os"),
 ))
 keepRegFieldTypesMip() -> void {
-    constexpr auto regOffset = regFieldTypeToRegMemOffset<RegFieldTypeHead>();
+    constexpr auto regOffset = RegMemOffset::regFieldTypeToRegMemOffset<RegFieldTypeHead>();
     constexpr auto combinedMask = Soc::Reg::combineFieldTypeMasksToUint32<RegFieldTypeHead, RegFieldTypeTails...>();
     auto actualValue = socReadRegister<baseAddress + regOffset>();
     actualValue &= 0xffffffff ^ combinedMask;
@@ -263,6 +302,8 @@ __attribute__ ((
     optimize("-Os"),
 ))
 keepRegFieldTypesSip() -> void {
-    constexpr auto baseAddr = regFieldTypeToPeripheralBaseAddr<RegFieldTypeHead>();
+    constexpr auto baseAddr = PeripheralBaseAddr::fromRegFieldType<RegFieldTypeHead>();
     return keepRegFieldTypesMip<baseAddr, RegFieldTypeHead, RegFieldTypeTails...>();
 }
+
+#pragma endregion

@@ -83,7 +83,7 @@ extern "C" {
         using namespace Peripheral::Rcc;
 
         // Enable internal clock HSI on top of existing state -> it will need 6 clock cycles to apply
-        setRegFieldEnums<
+        setRegFieldEnumsSip<
             Ctlr::HSION_RW_InternalHighSpeedClockEnable::enable>();
 
         // CLear everything, but preserve PLLSRC
@@ -113,7 +113,7 @@ extern "C" {
     }
 
     // ReSharper disable once CppPossiblyErroneousEmptyStatements
-    // while (isRegFieldEnumSet<Ctlr::HSIRDY_RO_InternalHighSpeedClockReady::notReady>());
+    // while (isRegFieldSetSip<Ctlr::HSIRDY_RO_InternalHighSpeedClockReady::notReady>());
 
     inline
     void
@@ -125,7 +125,7 @@ extern "C" {
         using namespace Peripheral::Rcc;
         using namespace Literals::Timer;
 
-        setRegFieldEnums<
+        setRegFieldEnumsSip<
             Cfgr0::getHbPrescalerEnum<Soc::Clocks::Hsi, UserConfig::systemClock>()>();
     }
 
