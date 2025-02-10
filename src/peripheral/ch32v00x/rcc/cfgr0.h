@@ -191,18 +191,18 @@ namespace Peripheral::Rcc::Cfgr0 {
 
     //TODO: this register might change between SoCs
     enum class MCO_RW_MicrocontrolerClockPinOutput: std::uint32_t {
-        fieldBitMask = 0b111 << 24,  // not holding any settings or value, it's a bitmask for this specific field
+        fieldBitMask = 0b111u << 24,  // not holding any settings or value, it's a bitmask for this specific field
         fieldAccess  = FieldAccessRights::ReadWrite,
 
-        noOutput     = 0b0'00 << 24, // default, no clock is output
-        noOutputAlt1 = 0b0'01 << 24, // no clock is output
-        noOutputAlt2 = 0b0'10 << 24, // no clock is output
-        noOutputAlt3 = 0b0'11 << 24, // no clock is output
+        noOutput     = 0b0'00u << 24, // default, no clock is output
+        noOutputAlt1 = 0b0'01u << 24, // no clock is output
+        noOutputAlt2 = 0b0'10u << 24, // no clock is output
+        noOutputAlt3 = 0b0'11u << 24, // no clock is output
 
-        sysclk       = 0b1'00 << 24, // sysclk is exposed on the pin output
-        hsi          = 0b1'01 << 24, // hsi is exposed on the pin output
-        hse          = 0b1'10 << 24, // hse is exposed on the pin output
-        pll          = 0b1'11 << 24, // pll is exposed on the pin output
+        sysclk       = 0b1'00u << 24, // sysclk is exposed on the pin output
+        hsi          = 0b1'01u << 24, // hsi is exposed on the pin output
+        hse          = 0b1'10u << 24, // hse is exposed on the pin output
+        pll          = 0b1'11u << 24, // pll is exposed on the pin output
     };
 
     template<typename RegField>
