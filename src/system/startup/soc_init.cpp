@@ -88,23 +88,23 @@ extern "C" {
 
         // CLear everything, but preserve PLLSRC
         // NOTE: The SW_RW_SystemClockSource will get defaulted to HSI source in this step as well
-        keepRegFieldTypes<
+        keepRegFieldTypesSip<
             Cfgr0::PLLSRC_RW_InputClockSourceForPhaseLockedLoopGenerator>();
 
         // Disabling clocks and clearing settings in a safe order in a 3 separate steps
-        clearRegFieldTypes<
+        clearRegFieldTypesSip<
             Ctlr::PLLON_RW_PhaseLockedLoopEnable,
             Ctlr::CSSON_RW_ClockSafety,
             Ctlr::HSEON_RW_ExternalHighSpeedClockEnable>();
 
-        clearRegFieldTypes<
+        clearRegFieldTypesSip<
             Ctlr::HSEBYP_RW_ExternalHighSpeedClockBypass>();
 
-        clearRegFieldTypes<
+        clearRegFieldTypesSip<
             Cfgr0::PLLSRC_RW_InputClockSourceForPhaseLockedLoopGenerator>();
 
         // Clear the possibly-previously-set ready flags
-        clearRegFieldTypes<
+        clearRegFieldTypesSip<
             Intr::CSSC_WO_ExternalHighSpeedSecurityClear,
             Intr::PLLRDYC_WO_PhaseLockedLoopReadyClear,
             Intr::HSERDYC_WO_ExternalHighSpeedReadyClear,
