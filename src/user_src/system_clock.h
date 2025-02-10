@@ -10,6 +10,9 @@
 namespace UserConfig {
     using namespace Literals::Timer;
 
-    constexpr std::uint32_t systemClock = 3_mhz_to_hz;  // you can specify clock explicitly, but it might fail to meet clock constrains
+    // you can specify clock frequency explicitly, but it might fail to meet clock constrains,
+    // or describe it as fraction of the input clock which should more likely pass the constrains
+    // see Rcc::Cfgr0 to see the constrains
+    constexpr std::uint32_t systemClock = 3_mhz_to_hz;
     // constexpr std::uint32_t systemClock = Soc::Clocks::Hsi / 3;
 }
