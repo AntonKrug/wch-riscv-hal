@@ -200,13 +200,17 @@ setRegFieldsMipCt() -> void {
     // TODO: detect when full 0xffffffff mask and replace the clear with write,
     //       also detect the cases where all writable fields are already masked and
     //       act as the full clear and do write instead
-
-    auto actualValue = Soc::Reg::readCt<baseAddress + regOffset>();
-    actualValue &= combinedMask;
-    if constexpr (combinedValue > 0) {
-        actualValue |= combinedValue;
+    if constexpr (combinedMask == 0xffffffffu) {
+        Soc::Reg::writeCt<baseAddress + regOffset>(combinedValue);
     }
-    Soc::Reg::writeCt<baseAddress + regOffset>(actualValue);
+    else {
+        auto actualValue = Soc::Reg::readCt<baseAddress + regOffset>();
+        actualValue &= combinedMask;
+        if constexpr (combinedValue > 0) {
+            actualValue |= combinedValue;
+        }
+        Soc::Reg::writeCt<baseAddress + regOffset>(actualValue);
+    }
 }
 
 template<auto RegFieldHead, auto... RegFieldTails>
