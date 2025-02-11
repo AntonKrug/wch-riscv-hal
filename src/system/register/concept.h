@@ -6,17 +6,38 @@
 
 namespace Soc::Reg::Concept {
 
-    template<typename RegField>
-    concept FieldEnumWithFieldBitMask = requires
-        { { RegField::fieldBitMask }; };
+    #pragma region FieldType
 
-    template<typename RegField>
-    concept FieldEnumWhithFieldAccess = requires
-        { { RegField::fieldAccess }; };
+    template<typename RegFieldType>
+    concept FieldTypeWithFieldBitMask = requires
+        { { RegFieldType::fieldBitMask }; };
 
-    template<typename RegField>
-    concept FieldEnumWhithMaskAndAccess =
-        FieldEnumWithFieldBitMask<RegField> and FieldEnumWhithFieldAccess<RegField>;
+
+    template<typename RegFieldType>
+    concept FieldTypeWhithFieldAccess = requires
+        { { RegFieldType::fieldAccess }; };
+
+    template<typename RegFieldType>
+    concept FieldTypeWhithMaskAndAccess =
+        FieldTypeWithFieldBitMask<RegFieldType> and FieldTypeWhithFieldAccess<RegFieldType>;
+
+    #pragma endregion
+
+    #pragma region Field
+
+    template<auto RegField>
+    concept FieldWithFieldBitMask =
+    FieldTypeWithFieldBitMask<decltype(RegField)>;
+
+    template<auto RegField>
+    concept FieldWhithFieldAccess =
+        FieldTypeWhithFieldAccess<decltype(RegField)>;
+
+    template<auto RegField>
+    concept FieldWhithMaskAndAccess =
+        FieldWithFieldBitMask<RegField> and FieldWhithFieldAccess<RegField>;
+
+    #pragma endregion
 
     // template<typename... CsrFields>
     // concept FieldEnumWhichContainsFieldsBitMask =

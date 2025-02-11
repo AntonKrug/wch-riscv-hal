@@ -21,13 +21,13 @@ namespace Soc::Reg {
         return count;
     }
 
-    template<Concept::FieldEnumWithFieldBitMask EnumType>
+    template<Concept::FieldTypeWithFieldBitMask EnumType>
     // requires Concept::FieldEnumWithFieldBitMask<decltype(EnumValue)>
     constexpr auto enumBitMaskOffsetCt() -> std::uint8_t {
         return bitMaskOffsetCt<static_cast<std::uint32_t>(EnumType::fieldBitMask)>();
     }
 
-    template<std::uint32_t RawValue, Concept::FieldEnumWithFieldBitMask EnumValue>
+    template<std::uint32_t RawValue, Concept::FieldTypeWithFieldBitMask EnumValue>
     //requires Concept::FieldEnumWithFieldBitMask<decltype(EnumValue)>
     constexpr auto rawValueOffsetToEnumsOffsetCt() -> std::uint8_t {
         return RawValue << enumBitMaskOffsetCt<EnumValue>();
@@ -56,18 +56,18 @@ namespace Soc::Reg {
     }
 
     template <auto... FieldValues>
-    requires (Concept::FieldEnumWithFieldBitMask<decltype(FieldValues)> && ...)
+    requires (Concept::FieldWithFieldBitMask<FieldValues> && ...)
     constexpr auto combineFieldMasksToUint32() -> std::uint32_t {
         return (static_cast<std::uint32_t>(decltype(FieldValues)::fieldBitMask) | ...);
     }
 
     template <typename... FieldTypes>
-    requires (Concept::FieldEnumWithFieldBitMask<FieldTypes> && ...)
+    requires (Concept::FieldTypeWithFieldBitMask<FieldTypes> && ...)
     constexpr auto combineFieldTypeMasksToUint32() -> std::uint32_t {
         return (static_cast<std::uint32_t>(FieldTypes::fieldBitMask) | ...);
     }
 
-    template<Concept::FieldEnumWithFieldBitMask RegisterFieldType>
+    template<Concept::FieldTypeWithFieldBitMask RegisterFieldType>
     inline constexpr auto
     __attribute__ ((always_inline))
     rawValueToEnumValue(const std::uint32_t registerValue) {
@@ -75,7 +75,7 @@ namespace Soc::Reg {
         return static_cast<RegisterFieldType>(mask & registerValue);
     }
 
-    template<Concept::FieldEnumWithFieldBitMask RegisterFieldType>
+    template<Concept::FieldTypeWithFieldBitMask RegisterFieldType>
     inline constexpr auto
     __attribute__ ((always_inline))
     rawValueToNormalizedValue(const std::uint32_t registerValue) -> std::uint32_t {

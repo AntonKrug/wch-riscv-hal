@@ -115,8 +115,8 @@ socWriteRegister(const std::uint32_t Value) -> void {
 
 template<std::uint32_t BaseAddr, auto TestedRegFieldHead, auto... TestedRegFieldTails>
 requires
-    Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(TestedRegFieldHead)> &&
-    (Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(TestedRegFieldTails)> && ...)
+    Soc::Reg::Concept::FieldWithFieldBitMask<TestedRegFieldHead> &&
+    (Soc::Reg::Concept::FieldWithFieldBitMask<TestedRegFieldTails> && ...)
 inline auto
 __attribute__ ((
     always_inline,
@@ -134,8 +134,8 @@ isRegFieldSetMip() -> bool {
 
 template<auto TestedRegFieldHead, auto... TestedRegFieldTails>
 requires
-    Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(TestedRegFieldHead)> &&
-    (Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(TestedRegFieldTails)> && ...)
+    Soc::Reg::Concept::FieldWithFieldBitMask<TestedRegFieldHead> &&
+    (Soc::Reg::Concept::FieldWithFieldBitMask<TestedRegFieldTails> && ...)
 inline auto
 __attribute__ ((
     always_inline,
@@ -152,8 +152,8 @@ isRegFieldSetSip() -> bool {
 
 template<std::uint32_t BaseAddr, auto RegFieldValueHead, auto... RegFieldValueTails>
 requires
-    Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(RegFieldValueHead)> &&
-    (Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(RegFieldValueTails)> && ...)
+    Soc::Reg::Concept::FieldWithFieldBitMask<RegFieldValueHead> &&
+    (Soc::Reg::Concept::FieldWithFieldBitMask<RegFieldValueTails> && ...)
 inline constexpr
 __attribute__ ((
     always_inline,
@@ -168,8 +168,8 @@ auto writeRegFieldEnum() -> void {
 
 template<auto RegFieldValueHead, auto... RegFieldValueTails>
 requires
-    Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(RegFieldValueHead)> &&
-    (Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(RegFieldValueTails)> && ...)
+    Soc::Reg::Concept::FieldWithFieldBitMask<RegFieldValueHead> &&
+    (Soc::Reg::Concept::FieldWithFieldBitMask<RegFieldValueTails> && ...)
 inline constexpr
 __attribute__ ((
     always_inline,
@@ -189,8 +189,8 @@ template<
     auto RegFieldValueHead,
     auto... RegFieldValueTails>
 requires
-    Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(RegFieldValueHead)> &&
-    (Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(RegFieldValueTails)> && ...)
+    Soc::Reg::Concept::FieldWithFieldBitMask<RegFieldValueHead> &&
+    (Soc::Reg::Concept::FieldWithFieldBitMask<RegFieldValueTails> && ...)
 inline auto
 __attribute__ ((
     always_inline,
@@ -215,8 +215,8 @@ setRegFieldEnumsMip() -> void {
 
 template<auto RegFieldValueHead, auto... RegFieldValueTails>
 requires
-    Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(RegFieldValueHead)> &&
-    (Soc::Reg::Concept::FieldEnumWithFieldBitMask<decltype(RegFieldValueTails)> && ...)
+    Soc::Reg::Concept::FieldWithFieldBitMask<RegFieldValueHead> &&
+    (Soc::Reg::Concept::FieldWithFieldBitMask<RegFieldValueTails> && ...)
 inline auto
 __attribute__ ((
     always_inline,
