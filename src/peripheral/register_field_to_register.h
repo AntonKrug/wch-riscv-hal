@@ -77,36 +77,38 @@ namespace RegMemOffset {
 
 #pragma region Primitives
 
-template<std::uint32_t Addr>
-inline auto
-__attribute__ ((
-    always_inline,
-    optimize("-Os"),
-))
-socReadRegister() -> std::uint32_t {
-    return *reinterpret_cast<volatile std::uint32_t *>(Addr);
-}
+namespace Soc::Reg {
 
+    template<std::uint32_t Addr>
+    inline auto
+    __attribute__ ((
+        always_inline,
+        optimize("-Os"),
+    ))
+    readCt() -> std::uint32_t {
+        return *reinterpret_cast<volatile std::uint32_t *>(Addr);
+    }
 
-template<std::uint32_t Addr, std::uint32_t Value>
-inline auto
-__attribute__ ((
-    always_inline,
-    optimize("-Os"),
-))
-socWriteRegister() -> void {
-    *(reinterpret_cast<volatile std::uint32_t *>(Addr))=Value;
-}
+    template<std::uint32_t Addr, std::uint32_t Value>
+    inline auto
+    __attribute__ ((
+        always_inline,
+        optimize("-Os"),
+    ))
+    writeCt() -> void {
+        *(reinterpret_cast<volatile std::uint32_t *>(Addr))=Value;
+    }
 
+    template<std::uint32_t Addr>
+    inline auto
+    __attribute__ ((
+        always_inline,
+        optimize("-Os"),
+    ))
+    writeCt(const std::uint32_t Value) -> void {
+        *(reinterpret_cast<volatile std::uint32_t *>(Addr))=Value;
+    }
 
-template<std::uint32_t Addr>
-inline auto
-__attribute__ ((
-    always_inline,
-    optimize("-Os"),
-))
-socWriteRegister(const std::uint32_t Value) -> void {
-    *(reinterpret_cast<volatile std::uint32_t *>(Addr))=Value;
 }
 
 #pragma endregion
@@ -126,7 +128,7 @@ isRegFieldSetMip() -> bool {
     constexpr auto combinedValue = Soc::Reg::combineEnumsToUint32<TestedRegFieldHead, TestedRegFieldTails...>();
     constexpr auto combinedMask  = Soc::Reg::combineFieldMasksToUint32<TestedRegFieldHead, TestedRegFieldTails...>();
     constexpr auto regOffset     = RegMemOffset::fromRegField<TestedRegFieldHead>();
-    const     auto actualValue   = socReadRegister<BaseAddr + regOffset>();
+    const     auto actualValue   = Soc::Reg::readCt<BaseAddr + regOffset>();
 
     return (actualValue & combinedMask)  == combinedValue;
 }
@@ -162,7 +164,7 @@ __attribute__ ((
 auto writeRegFieldEnum() -> void {
     constexpr auto regOffset =  RegMemOffset::fromRegField<RegFieldValueHead>();
     constexpr auto combinedValue = Soc::Reg::combineEnumsToUint32<RegFieldValueHead, RegFieldValueTails...>();
-    socWriteRegister<BaseAddr + regOffset, combinedValue>();
+    Soc::Reg::writeCt<BaseAddr + regOffset, combinedValue>();
 }
 
 
@@ -205,12 +207,12 @@ setRegFieldEnumsMip() -> void {
     //       also detect the cases where all writable fields are already masked and
     //       act as the full clear and do write instead
 
-    auto actualValue = socReadRegister<baseAddress + regOffset>();
+    auto actualValue = Soc::Reg::readCt<baseAddress + regOffset>();
     actualValue &= combinedMask;
     if constexpr (combinedValue > 0) {
         actualValue |= combinedValue;
     }
-    socWriteRegister<baseAddress + regOffset>(actualValue);
+    Soc::Reg::writeCt<baseAddress + regOffset>(actualValue);
 }
 
 template<auto RegFieldValueHead, auto... RegFieldValueTails>
@@ -240,9 +242,9 @@ __attribute__ ((
 clearRegFieldTypesMip() -> void {
     constexpr auto regOffset    = RegMemOffset::fromRegFieldType<RegFieldTypeHead>();
     constexpr auto combinedMask = Soc::Reg::combineFieldTypeMasksToUint32<RegFieldTypeHead, RegFieldTypeTails...>();
-    const     auto actualValue  = socReadRegister<baseAddress + regOffset>();
+    const     auto actualValue  = Soc::Reg::readCt<baseAddress + regOffset>();
 
-    socWriteRegister<baseAddress + regOffset>(actualValue & combinedMask);
+    Soc::Reg::writeCt<baseAddress + regOffset>(actualValue & combinedMask);
 }
 
 
@@ -268,11 +270,11 @@ __attribute__ ((
     optimize("-Os"),
 ))
 keepRegFieldTypesMip() -> void {
-    constexpr auto regOffset = RegMemOffset::fromRegFieldType<RegFieldTypeHead>();
+    constexpr auto regOffset    = RegMemOffset::fromRegFieldType<RegFieldTypeHead>();
     constexpr auto combinedMask = Soc::Reg::combineFieldTypeMasksToUint32<RegFieldTypeHead, RegFieldTypeTails...>();
-    auto actualValue = socReadRegister<baseAddress + regOffset>();
-    actualValue &= 0xffffffff ^ combinedMask;
-    socWriteRegister<baseAddress + regOffset>(actualValue);
+    const     auto actualValue  = Soc::Reg::readCt<baseAddress + regOffset>();
+
+    Soc::Reg::writeCt<baseAddress + regOffset>( actualValue & (0xffffffff ^ combinedMask) );
 }
 
 
