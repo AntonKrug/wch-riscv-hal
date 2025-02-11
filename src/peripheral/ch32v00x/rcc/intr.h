@@ -155,4 +155,20 @@ namespace Peripheral::Rcc::Intr {
         std::is_same_v<RegField, PLLRDYC_WO_PhaseLockedLoopReadyClear> ||
         std::is_same_v<RegField, CSSC_WO_ExternalHighSpeedSecurityClear>;
 
+    constexpr std::tuple<
+        LSIRDYF_RO_InternalLowSpeedReadyFlag,
+        HSIRDYF_RO_InternalHighSpeedReadyFlag,
+        HSERDYF_RO_ExternalHighSpeedReadyFlag,
+        PLLRDYF_RO_PhaseLockedLoopReadyFlag,
+        CSSF_RO_ExternalHighSpeedSecurityFlag,
+        LSIRDYIE_RW_InternalLowSpeedReadyInteruptEnable,
+        HSIRDYIE_RW_InternalHighSpeedReadyInteruptEnable,
+        HSERDYIE_RW_ExternalHighSpeedReadyInteruptEnable,
+        PLLRDYIE_RW_PhaseLockedLoopReadyInteruptEnable,
+        LSIRDYC_WO_InternalLowSpeedReadyClear,
+        HSIRDYC_WO_InternalHighSpeedReadyClear,
+        HSERDYC_WO_ExternalHighSpeedReadyClear,
+        PLLRDYC_WO_PhaseLockedLoopReadyClear,
+        CSSC_WO_ExternalHighSpeedSecurityClear> fields;
+
 }

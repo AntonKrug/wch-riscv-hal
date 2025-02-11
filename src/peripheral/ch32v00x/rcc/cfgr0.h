@@ -214,4 +214,11 @@ namespace Peripheral::Rcc::Cfgr0 {
         std::is_same_v<RegField, PLLSRC_RW_InputClockSourceForPhaseLockedLoopGenerator> ||
         std::is_same_v<RegField, MCO_RW_MicrocontrolerClockPinOutput>;
 
+    constexpr std::tuple<
+        SW_RW_SystemClockSource,
+        SWS_RO_SystemClockSourceStatus,
+        HPRE_RW_HbClockPrescaler,
+        ADCPRE_RW_AnalogDigitalConverterClockPrescaler,
+        PLLSRC_RW_InputClockSourceForPhaseLockedLoopGenerator,
+        MCO_RW_MicrocontrolerClockPinOutput> fields;
 }

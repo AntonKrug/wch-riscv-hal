@@ -6,6 +6,7 @@
 
 #include <cstdint>
 #include <type_traits>
+#include <tuple>
 
 #include "system/register/util.h"
 
@@ -105,5 +106,17 @@ namespace Peripheral::Rcc::Ctlr {
         std::is_same_v<RegField, CSSON_RW_ClockSafety> ||
         std::is_same_v<RegField, PLLON_RW_PhaseLockedLoopEnable> ||
         std::is_same_v<RegField, PLLRDY_RO_PhaseLockedLoopReady>;
+
+    constexpr std::tuple<
+        HSION_RW_InternalHighSpeedClockEnable,
+        HSIRDY_RO_InternalHighSpeedClockReady,
+        HSITRIM_RW_InternalHighSpeedClockTrim,
+        HSICAL_RO_InternalHighSpeedClockCalibration,
+        HSEON_RW_ExternalHighSpeedClockEnable,
+        HSERDY_RO_ExternalHighSpeedClockReady,
+        HSEBYP_RW_ExternalHighSpeedClockBypass,
+        CSSON_RW_ClockSafety,
+        PLLON_RW_PhaseLockedLoopEnable,
+        PLLRDY_RO_PhaseLockedLoopReady> fields;
 
 }
