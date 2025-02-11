@@ -9,33 +9,33 @@ namespace Soc::Reg::Concept {
     #pragma region FieldType
 
     template<typename RegFieldType>
-    concept FieldTypeWithFieldBitMask = requires
+    concept FieldTypeWithBitMask = requires
         { { RegFieldType::fieldBitMask }; };
 
 
     template<typename RegFieldType>
-    concept FieldTypeWhithFieldAccess = requires
+    concept FieldTypeWhithAccess = requires
         { { RegFieldType::fieldAccess }; };
 
     template<typename RegFieldType>
     concept FieldTypeWhithMaskAndAccess =
-        FieldTypeWithFieldBitMask<RegFieldType> and FieldTypeWhithFieldAccess<RegFieldType>;
+        FieldTypeWithBitMask<RegFieldType> and FieldTypeWhithAccess<RegFieldType>;
 
     #pragma endregion
 
     #pragma region Field
 
     template<auto RegField>
-    concept FieldWithFieldBitMask =
-    FieldTypeWithFieldBitMask<decltype(RegField)>;
+    concept FieldWithBitMask =
+    FieldTypeWithBitMask<decltype(RegField)>;
 
     template<auto RegField>
-    concept FieldWhithFieldAccess =
-        FieldTypeWhithFieldAccess<decltype(RegField)>;
+    concept FieldWhithAccess =
+        FieldTypeWhithAccess<decltype(RegField)>;
 
     template<auto RegField>
     concept FieldWhithMaskAndAccess =
-        FieldWithFieldBitMask<RegField> and FieldWhithFieldAccess<RegField>;
+        FieldWithBitMask<RegField> and FieldWhithAccess<RegField>;
 
     #pragma endregion
 

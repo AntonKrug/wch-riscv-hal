@@ -83,28 +83,28 @@ extern "C" {
         using namespace Peripheral::Rcc;
 
         // Enable internal clock HSI on top of existing state -> it will need 6 clock cycles to apply
-        setRegFieldEnumsSip<
+        setRegFieldsSipCt<
             Ctlr::HSION_RW_InternalHighSpeedClockEnable::enable>();
 
         // CLear everything, but preserve PLLSRC
         // NOTE: The SW_RW_SystemClockSource will get defaulted to HSI source in this step as well
-        keepRegFieldTypesSip<
+        keepRegFieldTypesSipCt<
             Cfgr0::PLLSRC_RW_InputClockSourceForPhaseLockedLoopGenerator>();
 
         // Disabling clocks and clearing settings in a safe order in a 3 separate steps
-        clearRegFieldTypesSip<
+        clearRegFieldTypesSipCt<
             Ctlr::PLLON_RW_PhaseLockedLoopEnable,
             Ctlr::CSSON_RW_ClockSafety,
             Ctlr::HSEON_RW_ExternalHighSpeedClockEnable>();
 
-        clearRegFieldTypesSip<
+        clearRegFieldTypesSipCt<
             Ctlr::HSEBYP_RW_ExternalHighSpeedClockBypass>();
 
-        clearRegFieldTypesSip<
+        clearRegFieldTypesSipCt<
             Cfgr0::PLLSRC_RW_InputClockSourceForPhaseLockedLoopGenerator>();
 
         // Clear the possibly-previously-set ready flags
-        clearRegFieldTypesSip<
+        clearRegFieldTypesSipCt<
             Intr::CSSC_WO_ExternalHighSpeedSecurityClear,
             Intr::PLLRDYC_WO_PhaseLockedLoopReadyClear,
             Intr::HSERDYC_WO_ExternalHighSpeedReadyClear,
@@ -113,7 +113,7 @@ extern "C" {
     }
 
     // ReSharper disable once CppPossiblyErroneousEmptyStatements
-    // while (isRegFieldSetSip<Ctlr::HSIRDY_RO_InternalHighSpeedClockReady::notReady>());
+    // while (isRegFieldsSetSipCt<Ctlr::HSIRDY_RO_InternalHighSpeedClockReady::notReady>());
 
     inline
     void
@@ -125,7 +125,7 @@ extern "C" {
         using namespace Peripheral::Rcc;
         using namespace Literals::Timer;
 
-        setRegFieldEnumsSip<
+        setRegFieldsSipCt<
             Cfgr0::getHbPrescalerEnum<Soc::Clocks::Hsi, UserConfig::systemClock>()>();
     }
 
