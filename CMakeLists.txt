@@ -139,6 +139,7 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/usart.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/concept.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/register_field_to_register.h
+        ${CMAKE_SOURCE_DIR}/src/peripheral/util.h
         ${CMAKE_SOURCE_DIR}/src/system/CH32V003xxxx/soc_template.h
         ${CMAKE_SOURCE_DIR}/src/system/ch32v003/clocks.h
         ${CMAKE_SOURCE_DIR}/src/system/linker_utils.h
