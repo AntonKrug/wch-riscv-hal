@@ -90,6 +90,22 @@ namespace Soc::Reg {
         ReadWrite
     };
 
+    template<FieldAccessRightsEnum access>
+    constexpr bool isFieldAccessWritable() {
+        if (access == FieldAccessRightsEnum::ReadOnly) {
+            return false;
+        }
+        return true;
+    }
+
+    template<std::uint32_t access>
+    constexpr bool isFieldAccessWritable() {
+        if (access == static_cast<std::uint32_t>(FieldAccessRightsEnum::ReadOnly)) {
+            return false;
+        }
+        return true;
+    }
+
     namespace FieldAccessRights {
         constexpr std::uint32_t ReadOnly  = static_cast<std::uint32_t>(FieldAccessRightsEnum::ReadOnly);
         constexpr std::uint32_t WriteOnly = static_cast<std::uint32_t>(FieldAccessRightsEnum::WriteOnly);
