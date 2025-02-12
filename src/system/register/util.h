@@ -151,7 +151,7 @@ namespace Soc::Reg {
     }
 
     template<typename RegField, typename Tuple>
-    constexpr bool IsSameAsOneFieldFromTuple() {
+    constexpr auto IsSameAsOneFieldFromTuple() -> bool {
         return IsSameAsOneFieldFromTupleIndices<RegField, Tuple>(std::make_index_sequence<std::tuple_size_v<Tuple>>{});
     }
 
