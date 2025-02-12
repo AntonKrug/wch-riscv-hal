@@ -203,9 +203,17 @@ setRegFieldsMipCt() -> void {
     if constexpr (combinedMask == 0xffffffffu) {
         Soc::Reg::writeCt<baseAddress + regOffset>(combinedValue);
     }
-    else {
+    else if constexpr (combinedValue == 0u && combinedMask == 0u) {
+        // if nothing to be set and nothing to be cleared, then do nothing
+    } else {
         auto actualValue = Soc::Reg::readCt<baseAddress + regOffset>();
-        actualValue &= combinedMask;
+
+        // if clearing and setting is the same, then clearing can be omited
+        if constexpr (combinedMask != combinedMask) {
+            actualValue &= 0xffffffffu ^ combinedMask;   // to really clear we need to invert the mask
+        }
+
+        // if nothing to set then ommit setting
         if constexpr (combinedValue > 0) {
             actualValue |= combinedValue;
         }
