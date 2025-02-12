@@ -200,16 +200,18 @@ setRegFieldsMipCt() -> void {
     // TODO: detect when full 0xffffffff mask and replace the clear with write,
     //       also detect the cases where all writable fields are already masked and
     //       act as the full clear and do write instead
+
+    static_assert(
+        combinedValue != 0u || combinedMask != 0u,
+        "Both value-to-be-set and their mask are empty, this indicates badly described register field");
+
     if constexpr (combinedMask == 0xffffffffu) {
         Soc::Reg::writeCt<baseAddress + regOffset>(combinedValue);
-    }
-    else if constexpr (combinedValue == 0u && combinedMask == 0u) {
-        // if nothing to be set and nothing to be cleared, then do nothing
     } else {
         auto actualValue = Soc::Reg::readCt<baseAddress + regOffset>();
 
         // if clearing and setting is the same, then clearing can be omited
-        if constexpr (combinedMask != combinedMask) {
+        if constexpr (combinedMask != combinedValue) {
             actualValue &= 0xffffffffu ^ combinedMask;   // to really clear we need to invert the mask
         }
 
