@@ -138,23 +138,6 @@ namespace Peripheral::Rcc::Intr {
 
     // 31-24 reserved
 
-    template<typename RegField>
-    concept IsAnyRegField =
-        std::is_same_v<RegField, LSIRDYF_RO_InternalLowSpeedReadyFlag> ||
-        std::is_same_v<RegField, HSIRDYF_RO_InternalHighSpeedReadyFlag> ||
-        std::is_same_v<RegField, HSERDYF_RO_ExternalHighSpeedReadyFlag> ||
-        std::is_same_v<RegField, PLLRDYF_RO_PhaseLockedLoopReadyFlag> ||
-        std::is_same_v<RegField, CSSF_RO_ExternalHighSpeedSecurityFlag> ||
-        std::is_same_v<RegField, LSIRDYIE_RW_InternalLowSpeedReadyInteruptEnable> ||
-        std::is_same_v<RegField, HSIRDYIE_RW_InternalHighSpeedReadyInteruptEnable> ||
-        std::is_same_v<RegField, HSERDYIE_RW_ExternalHighSpeedReadyInteruptEnable> ||
-        std::is_same_v<RegField, PLLRDYIE_RW_PhaseLockedLoopReadyInteruptEnable> ||
-        std::is_same_v<RegField, LSIRDYC_WO_InternalLowSpeedReadyClear> ||
-        std::is_same_v<RegField, HSIRDYC_WO_InternalHighSpeedReadyClear> ||
-        std::is_same_v<RegField, HSERDYC_WO_ExternalHighSpeedReadyClear> ||
-        std::is_same_v<RegField, PLLRDYC_WO_PhaseLockedLoopReadyClear> ||
-        std::is_same_v<RegField, CSSC_WO_ExternalHighSpeedSecurityClear>;
-
     constexpr std::tuple<
         LSIRDYF_RO_InternalLowSpeedReadyFlag,
         HSIRDYF_RO_InternalHighSpeedReadyFlag,
@@ -170,5 +153,8 @@ namespace Peripheral::Rcc::Intr {
         HSERDYC_WO_ExternalHighSpeedReadyClear,
         PLLRDYC_WO_PhaseLockedLoopReadyClear,
         CSSC_WO_ExternalHighSpeedSecurityClear> fields;
+
+    template<typename RegField>
+    concept IsAnyRegField = Soc::Reg::IsSameAsOneFieldFromTuple<RegField, decltype(fields)>();
 
 }
