@@ -94,19 +94,6 @@ namespace Peripheral::Rcc::Ctlr {
 
     //TODO: v2x/v3x has pll2on,pll2rdy,pll3on,pll3rdy
 
-    template<typename RegField>
-    concept IsAnyRegField =
-        std::is_same_v<RegField, HSION_RW_InternalHighSpeedClockEnable> ||
-        std::is_same_v<RegField, HSIRDY_RO_InternalHighSpeedClockReady> ||
-        std::is_same_v<RegField, HSITRIM_RW_InternalHighSpeedClockTrim> ||
-        std::is_same_v<RegField, HSICAL_RO_InternalHighSpeedClockCalibration> ||
-        std::is_same_v<RegField, HSEON_RW_ExternalHighSpeedClockEnable> ||
-        std::is_same_v<RegField, HSERDY_RO_ExternalHighSpeedClockReady> ||
-        std::is_same_v<RegField, HSEBYP_RW_ExternalHighSpeedClockBypass> ||
-        std::is_same_v<RegField, CSSON_RW_ClockSafety> ||
-        std::is_same_v<RegField, PLLON_RW_PhaseLockedLoopEnable> ||
-        std::is_same_v<RegField, PLLRDY_RO_PhaseLockedLoopReady>;
-
     constexpr std::tuple<
         HSION_RW_InternalHighSpeedClockEnable,
         HSIRDY_RO_InternalHighSpeedClockReady,
@@ -118,5 +105,8 @@ namespace Peripheral::Rcc::Ctlr {
         CSSON_RW_ClockSafety,
         PLLON_RW_PhaseLockedLoopEnable,
         PLLRDY_RO_PhaseLockedLoopReady> fields;
+
+    template<typename RegField>
+    concept IsAnyRegField = Soc::Reg::IsSameAsOneFieldFromTuple<RegField, decltype(fields)>();
 
 }

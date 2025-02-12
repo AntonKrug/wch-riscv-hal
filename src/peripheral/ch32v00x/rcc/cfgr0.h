@@ -205,15 +205,6 @@ namespace Peripheral::Rcc::Cfgr0 {
         pll          = 0b1'11u << 24, // pll is exposed on the pin output
     };
 
-    template<typename RegField>
-    concept IsAnyRegField =
-        std::is_same_v<RegField, SW_RW_SystemClockSource> ||
-        std::is_same_v<RegField, SWS_RO_SystemClockSourceStatus> ||
-        std::is_same_v<RegField, HPRE_RW_HbClockPrescaler> ||
-        std::is_same_v<RegField, ADCPRE_RW_AnalogDigitalConverterClockPrescaler> ||
-        std::is_same_v<RegField, PLLSRC_RW_InputClockSourceForPhaseLockedLoopGenerator> ||
-        std::is_same_v<RegField, MCO_RW_MicrocontrolerClockPinOutput>;
-
     constexpr std::tuple<
         SW_RW_SystemClockSource,
         SWS_RO_SystemClockSourceStatus,
@@ -221,4 +212,8 @@ namespace Peripheral::Rcc::Cfgr0 {
         ADCPRE_RW_AnalogDigitalConverterClockPrescaler,
         PLLSRC_RW_InputClockSourceForPhaseLockedLoopGenerator,
         MCO_RW_MicrocontrolerClockPinOutput> fields;
+
+    template<typename RegField>
+    concept IsAnyRegField = Soc::Reg::IsSameAsOneFieldFromTuple<RegField, decltype(fields)>();
+
 }
