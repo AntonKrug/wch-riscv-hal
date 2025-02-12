@@ -142,7 +142,7 @@ namespace Soc::Reg {
 
     template<typename RegField, typename Tuple, std::size_t Index>
     constexpr auto IsSameAsOneFieldFromTupleIndex() -> bool {
-        return std::is_same_v<RegField, std::tuple_element_t<Index, Tuple>>;
+        return std::is_same_v<const RegField, std::tuple_element_t<Index, Tuple>>;
     }
 
     template<typename RegField, typename Tuple, std::size_t... Indices>
