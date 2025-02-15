@@ -13,6 +13,7 @@
 #include <type_traits>
 
 #include "system/register/util.h"
+#include "system/register/field_access_privilege.h"
 
 namespace Riscv::Csr::Intsyscr {
 

@@ -11,7 +11,7 @@
 #include <type_traits>
 
 #include "system/register/util.h"
-
+#include "system/register/combine.h"
 
 namespace Riscv::Csr::Mtvec {
 

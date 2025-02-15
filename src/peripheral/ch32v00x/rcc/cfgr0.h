@@ -7,6 +7,7 @@
 #include <cstdint>
 
 #include "system/register/util.h"
+#include "system/register/field_access_privilege.h"
 
 // TODO: different SoC might have more registers
 
