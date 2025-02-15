@@ -5,6 +5,7 @@
 #pragma once
 
 #include <cstdint>
+#include <tuple>
 
 #include "rcc/ctlr.h"
 #include "rcc/cfgr0.h"
@@ -69,6 +70,11 @@ namespace Peripheral::Rcc {
         Peripheral::Rcc::Ctlr::IsAnyRegField<Reg> ||
         Peripheral::Rcc::Cfgr0::IsAnyRegField<Reg> ||
         Peripheral::Rcc::Intr::IsAnyRegField<Reg>;
+
+    constexpr std::tuple<
+        decltype(Peripheral::Rcc::Ctlr::fields),
+        decltype(Peripheral::Rcc::Cfgr0::fields),
+        decltype(Peripheral::Rcc::Intr::fields)> registerFields;
 
 }
 
