@@ -127,7 +127,7 @@ namespace Soc::Reg {
 
     template<typename Tuple, std::size_t... Indices>
     constexpr auto getWritableMaskFromTupleTypeIndices(std::index_sequence<Indices...>) -> std::uint32_t {
-        return ( (getWritableFromTupleTypeIndex<Tuple, Indices>()?getBitmaskFromTupleTypeIndex<Tuple, Indices>():0) | ...);
+        return ( (getWritableFromTupleTypeIndex<Tuple, Indices>() ? getBitmaskFromTupleTypeIndex<Tuple, Indices>() : 0) | ...);
     }
 
     template<typename Tuple>

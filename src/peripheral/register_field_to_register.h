@@ -42,17 +42,17 @@ namespace RegFieldTuple {
 
     template<Peripheral::Rcc::Ctlr::IsAnyRegField RegFieldType>
     constexpr auto fromRegFieldType() {
-        return Peripheral::Rcc::Ctlr::fields;
+        return Peripheral::Rcc::Ctlr::metadata::fields;
     }
 
     template<Peripheral::Rcc::Cfgr0::IsAnyRegField RegFieldType>
     constexpr auto fromRegFieldType() {
-        return Peripheral::Rcc::Cfgr0::fields;
+        return Peripheral::Rcc::Cfgr0::metadata::fields;
     }
 
     template<Peripheral::Rcc::Intr::IsAnyRegField RegFieldType>
     constexpr auto fromRegFieldType() {
-        return Peripheral::Rcc::Intr::fields;
+        return Peripheral::Rcc::Intr::metadata::fields;
     }
 
     template<auto RegField>
@@ -66,17 +66,17 @@ namespace RegMemOffset {
 
     template<Peripheral::Rcc::Ctlr::IsAnyRegField RegFieldType>
     constexpr auto fromRegFieldType() -> std::uint32_t {
-        return static_cast<std::uint32_t>(Peripheral::Rcc::RegOffset::Ctrlr);
+        return static_cast<std::uint32_t>(Peripheral::Rcc::Ctlr::metadata::offset);
     }
 
     template<Peripheral::Rcc::Cfgr0::IsAnyRegField RegFieldType>
     constexpr auto fromRegFieldType() -> std::uint32_t {
-        return static_cast<std::uint32_t>(Peripheral::Rcc::RegOffset::Cfgr0);
+        return static_cast<std::uint32_t>(Peripheral::Rcc::Cfgr0::metadata::offset);
     }
 
     template<Peripheral::Rcc::Intr::IsAnyRegField RegFieldType>
     constexpr auto fromRegFieldType() -> std::uint32_t {
-        return static_cast<std::uint32_t>(Peripheral::Rcc::RegOffset::Intr);
+        return static_cast<std::uint32_t>(Peripheral::Rcc::Intr::metadata::offset);
     }
 
     template<auto RegField>

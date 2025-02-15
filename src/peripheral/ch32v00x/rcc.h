@@ -17,9 +17,6 @@ namespace Peripheral::Rcc {
 
     // make it work with relative addresses or multiple instances
     enum class RegOffset: std::uint32_t {
-        Ctrlr     = 0x00,
-        Cfgr0     = 0x04,
-        Intr      = 0x08,
         Apb2prstr = 0x0C,
         Apb1prstr = 0x10,
         Ahbpcenr  = 0x14,
@@ -72,9 +69,9 @@ namespace Peripheral::Rcc {
         Peripheral::Rcc::Intr::IsAnyRegField<Reg>;
 
     constexpr std::tuple<
-        decltype(Peripheral::Rcc::Ctlr::fields),
-        decltype(Peripheral::Rcc::Cfgr0::fields),
-        decltype(Peripheral::Rcc::Intr::fields)> registerFields;
+        decltype(Peripheral::Rcc::Ctlr::metadata::fields),
+        decltype(Peripheral::Rcc::Cfgr0::metadata::fields),
+        decltype(Peripheral::Rcc::Intr::metadata::fields)> registerFields;
 
 }
 
