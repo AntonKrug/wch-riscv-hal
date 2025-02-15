@@ -9,9 +9,9 @@
 namespace Soc::Reg::FieldAccessPrivilege {
 
     enum class AccessRightsEnum: std::uint32_t {
-        ReadOnly  = 1,
-        WriteOnly = 2,
-        ReadWrite = 4
+        ReadOnly,
+        WriteOnly,
+        ReadWrite
     };
 
     namespace AccessRights {
