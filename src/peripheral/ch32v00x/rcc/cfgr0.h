@@ -214,6 +214,11 @@ namespace Peripheral::Rcc::Cfgr0 {
             ADCPRE_RW_AnalogDigitalConverterClockPrescaler,
             PLLSRC_RW_InputClockSourceForPhaseLockedLoopGenerator,
             MCO_RW_MicrocontrolerClockPinOutput> fields = {};
+
+        static constexpr auto getMetadata() {
+            return std::tuple{offset, fields};
+        }
+
     };
 
     template<typename RegField>

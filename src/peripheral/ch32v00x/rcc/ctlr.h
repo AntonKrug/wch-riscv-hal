@@ -108,6 +108,11 @@ namespace Peripheral::Rcc::Ctlr {
             CSSON_RW_ClockSafety,
             PLLON_RW_PhaseLockedLoopEnable,
             PLLRDY_RO_PhaseLockedLoopReady> fields = {};
+
+        static constexpr auto getMetadata() {
+            return std::tuple{offset, fields};
+        }
+
     };
 
     template<typename RegField>

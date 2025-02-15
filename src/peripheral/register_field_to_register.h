@@ -63,6 +63,31 @@ namespace RegFieldTuple {
 
 }
 
+namespace RegMetadata {
+
+    template<Peripheral::Rcc::Ctlr::IsAnyRegField RegFieldType>
+    constexpr auto fromRegFieldType() {
+        return Peripheral::Rcc::Ctlr::metadata::getMetadata();
+    }
+
+    template<Peripheral::Rcc::Cfgr0::IsAnyRegField RegFieldType>
+    constexpr auto fromRegFieldType() {
+        return Peripheral::Rcc::Cfgr0::metadata::getMetadata();
+    }
+
+    template<Peripheral::Rcc::Intr::IsAnyRegField RegFieldType>
+    constexpr auto fromRegFieldType() {
+        return Peripheral::Rcc::Intr::metadata::getMetadata();
+    }
+
+    template<auto RegField>
+    constexpr auto fromRegField() {
+        return fromRegFieldType<decltype(RegField)>();
+    }
+
+
+}
+
 namespace RegMemOffset {
 
     template<Peripheral::Rcc::Ctlr::IsAnyRegField RegFieldType>
@@ -151,10 +176,11 @@ __attribute__ ((
     optimize("-Os"),
 ))
 isRegFieldsSetMipCt() -> bool {
-    constexpr auto combinedValue = Soc::Reg::Combine::enumsToUint32<TestedRegFieldHead, TestedRegFieldTails...>();
-    constexpr auto combinedMask  = Soc::Reg::Combine::fieldMasksToUint32<TestedRegFieldHead, TestedRegFieldTails...>();
-    constexpr auto regOffset     = RegMemOffset::fromRegField<TestedRegFieldHead>();
-    const     auto actualValue   = Soc::Reg::readCt<BaseAddr + regOffset>();
+    constexpr auto combinedValue  = Soc::Reg::Combine::enumsToUint32<TestedRegFieldHead, TestedRegFieldTails...>();
+    constexpr auto combinedMask   = Soc::Reg::Combine::fieldMasksToUint32<TestedRegFieldHead, TestedRegFieldTails...>();
+    // auto [regOffset, _] = RegMetadata::fromRegField<TestedRegFieldHead>();
+    constexpr auto regOffset      = RegMemOffset::fromRegField<TestedRegFieldHead>();
+    const     auto actualValue    = Soc::Reg::readCt<BaseAddr + regOffset>();
 
     return (actualValue & combinedMask) == combinedValue;
 }
@@ -221,6 +247,7 @@ __attribute__ ((
 ))
 setRegFieldsMipCt() -> void {
     // TODO: unify getting fieldtuple and reg offset
+    // auto [ regOffset, regFieldTuple] = RegMetadata::fromRegField<RegFieldHead>();
     constexpr auto regOffset              = RegMemOffset::fromRegField<RegFieldHead>();
     constexpr auto regFieldTuple          = RegFieldTuple::fromRegField<RegFieldHead>();
     constexpr auto valueToBeWritten       = Soc::Reg::Combine::enumsToUint32<RegFieldHead, RegFieldTails...>();

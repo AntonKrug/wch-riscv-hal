@@ -155,6 +155,11 @@ namespace Peripheral::Rcc::Intr {
             HSERDYC_WO_ExternalHighSpeedReadyClear,
             PLLRDYC_WO_PhaseLockedLoopReadyClear,
             CSSC_WO_ExternalHighSpeedSecurityClear> fields = {};
+
+        static constexpr auto getMetadata() {
+            return std::tuple{offset, fields};
+        }
+
     };
 
     template<typename RegField>
