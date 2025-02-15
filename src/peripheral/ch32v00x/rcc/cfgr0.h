@@ -15,7 +15,7 @@
 namespace Peripheral::Rcc::Cfgr0 {
     // Clock configuration
 
-    using namespace Soc::Reg::FieldAccessPriviledges; // so we can use AccessRights::ReadOnly...
+    using namespace Soc::Reg::FieldAccessPrivilege; // so we can use AccessRights::ReadOnly...
 
     enum class SW_RW_SystemClockSource: std::uint32_t {
         fieldBitMask = 0b11u, // not holding any settings or value, it's a bitmask for this specific field

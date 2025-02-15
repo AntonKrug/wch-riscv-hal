@@ -15,7 +15,7 @@
 
 namespace Riscv::Csr::Mtvec {
 
-    using namespace Soc::Reg::FieldAccessPriviledges;
+    using namespace Soc::Reg::FieldAccessPrivilege;
 
     enum class Mode0_RW_VectorizationEnable: std::uint32_t {
         fieldBitMask             = 0b1u, // not holding any settings or value, it's a bitmask for this specific field

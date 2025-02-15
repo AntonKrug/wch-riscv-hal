@@ -13,7 +13,7 @@
 namespace Peripheral::Rcc::Ctlr {
     // Clock control
 
-    using namespace Soc::Reg::FieldAccessPriviledges; // so we can use AccessRights::ReadOnly...
+    using namespace Soc::Reg::FieldAccessPrivilege; // so we can use AccessRights::ReadOnly...
 
     // TODO: check other cpus
     // TODO: RW/RO and other access modes as enum

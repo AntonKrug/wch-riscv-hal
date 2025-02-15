@@ -85,7 +85,7 @@ namespace Soc::Reg {
         return (registerValue & mask) >> offset;
     }
 
-    namespace FieldAccessPriviledges {
+    namespace FieldAccessPrivilege {
 
         enum class AccessRightsEnum: std::uint32_t {
             ReadOnly  = 1,
@@ -127,7 +127,7 @@ namespace Soc::Reg {
 
     template<typename Tuple, std::size_t Index>
     constexpr auto getWritableFromTupleTypeIndex() -> bool {
-        return Soc::Reg::FieldAccessPriviledges::isFieldWritable<static_cast<std::uint32_t>(std::tuple_element_t<Index, Tuple>::fieldAccess)>();
+        return Soc::Reg::FieldAccessPrivilege::isFieldWritable<static_cast<std::uint32_t>(std::tuple_element_t<Index, Tuple>::fieldAccess)>();
     }
 
     template<typename Tuple, std::size_t... Indices>

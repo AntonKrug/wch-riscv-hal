@@ -21,7 +21,7 @@
 
 namespace Riscv::Csr::Mstatus {
 
-    using namespace Soc::Reg::FieldAccessPriviledges;
+    using namespace Soc::Reg::FieldAccessPrivilege;
 
     enum class Mie_MRW_MachineInteruptEnable: std::uint32_t {
         fieldBitMask = 0b1u << 3,     // not holding any settings or value, it's a bitmask for this specific field

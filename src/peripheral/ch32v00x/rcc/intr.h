@@ -12,7 +12,7 @@
 namespace Peripheral::Rcc::Intr {
     // Clock Interupt
 
-    using namespace Soc::Reg::FieldAccessPriviledges; // so we can use AccessRights::ReadOnly...
+    using namespace Soc::Reg::FieldAccessPrivilege; // so we can use AccessRights::ReadOnly...
 
     enum class LSIRDYF_RO_InternalLowSpeedReadyFlag: std::uint32_t {
         fieldBitMask  = 1u, // not holding any settings or value, it's a bitmask for this specific field
