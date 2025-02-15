@@ -5,7 +5,6 @@
 #pragma once
 
 #include <cstdint>
-#include <type_traits>
 #include <tuple>
 
 #include "system/register/util.h"

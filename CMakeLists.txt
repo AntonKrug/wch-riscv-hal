@@ -147,6 +147,7 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/system/memory_map/peripheral_addresses.h
         ${CMAKE_SOURCE_DIR}/src/system/register/concept.h
         ${CMAKE_SOURCE_DIR}/src/system/register/util.h
+        ${CMAKE_SOURCE_DIR}/src/system/register/field_access_privilege.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/concepts.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access_ct.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access_primitives_ct.h
