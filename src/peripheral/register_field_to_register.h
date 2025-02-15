@@ -38,6 +38,30 @@ namespace PeripheralBaseAddr {
 
 }
 
+namespace RegFieldTuple {
+
+    template<Peripheral::Rcc::Ctlr::IsAnyRegField RegFieldType>
+    constexpr auto fromRegFieldType() {
+        return Peripheral::Rcc::Ctlr::fields;
+    }
+
+    template<Peripheral::Rcc::Cfgr0::IsAnyRegField RegFieldType>
+    constexpr auto fromRegFieldType() {
+        return Peripheral::Rcc::Cfgr0::fields;
+    }
+
+    template<Peripheral::Rcc::Intr::IsAnyRegField RegFieldType>
+    constexpr auto fromRegFieldType() {
+        return Peripheral::Rcc::Intr::fields;
+    }
+
+    template<auto RegField>
+    constexpr auto fromRegField() {
+        return fromRegFieldType<decltype(RegField)>();
+    }
+
+}
+
 namespace RegMemOffset {
 
     template<Peripheral::Rcc::Ctlr::IsAnyRegField RegFieldType>
@@ -77,6 +101,8 @@ namespace RegMemOffset {
 #pragma region Primitives
 
 namespace Soc::Reg {
+
+    constexpr std::uint32_t full32bitReg = 0xffffffffu;
 
     template<std::uint32_t Addr>
     inline auto
@@ -193,31 +219,38 @@ __attribute__ ((
     optimize("-Os"),
 ))
 setRegFieldsMipCt() -> void {
-    constexpr auto regOffset     = RegMemOffset::fromRegField<RegFieldHead>();
-    constexpr auto combinedValue = Soc::Reg::combineEnumsToUint32<RegFieldHead, RegFieldTails...>();
-    constexpr auto combinedMask  = Soc::Reg::combineFieldMasksToUint32<RegFieldHead, RegFieldTails...>();
-
-    // TODO: detect when full 0xffffffff mask and replace the clear with write,
-    //       also detect the cases where all writable fields are already masked and
-    //       act as the full clear and do write instead
+    constexpr auto regOffset              = RegMemOffset::fromRegField<RegFieldHead>();
+    constexpr auto regFieldTuple          = RegFieldTuple::fromRegField<RegFieldHead>();
+    constexpr auto valueToBeWritten       = Soc::Reg::combineEnumsToUint32<RegFieldHead, RegFieldTails...>();
+    constexpr auto maskGoingToWritten     = Soc::Reg::combineFieldMasksToUint32<RegFieldHead, RegFieldTails...>();
+    constexpr auto maskShouldBeKept       = 0xffffffffu ^ maskGoingToWritten;
+    constexpr auto maskAllowedToBeWritten = Soc::Reg::getWritableMaskFromTupleType<decltype(regFieldTuple)>();
+    constexpr auto maskForbiddenToWrite   = 0xffffffffu ^ maskAllowedToBeWritten;
 
     static_assert(
-        combinedValue != 0u || combinedMask != 0u,
+        valueToBeWritten != 0u || maskGoingToWritten != 0u,
         "Both value-to-be-set and their mask are empty, this indicates badly described register field");
 
-    if constexpr (combinedMask == 0xffffffffu) {
-        Soc::Reg::writeCt<baseAddress + regOffset>(combinedValue);
+    static_assert(
+        (maskForbiddenToWrite & maskGoingToWritten) == 0,
+        "Some bit[s]/field[s] were going to be written into register which were not writable. It's either bug in SoC's register field description, or in the application. Check if possibly you are setting a RO field.");
+
+    if constexpr (maskGoingToWritten == 0xffffffffu || maskGoingToWritten == maskAllowedToBeWritten) {
+        // Either whole register is going to be set, or whole writable part of the register,
+        // therefore no need to be clearing the register before setting it,
+        // we can just write the whole register directly
+        Soc::Reg::writeCt<baseAddress + regOffset>(valueToBeWritten);
     } else {
         auto actualValue = Soc::Reg::readCt<baseAddress + regOffset>();
 
-        // if clearing and setting is the same, then clearing can be omited
-        if constexpr (combinedMask != combinedValue) {
-            actualValue &= 0xffffffffu ^ combinedMask;   // to really clear we need to invert the mask
+        // if clearing and setting is the same value, then clearing can be omited
+        if constexpr (maskGoingToWritten != valueToBeWritten) {
+            actualValue &= maskShouldBeKept;   // to really clear we need to invert the mask
         }
 
         // if nothing to set then ommit setting
-        if constexpr (combinedValue > 0) {
-            actualValue |= combinedValue;
+        if constexpr (valueToBeWritten > 0) {
+            actualValue |= valueToBeWritten;
         }
         Soc::Reg::writeCt<baseAddress + regOffset>(actualValue);
     }
