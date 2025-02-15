@@ -63,8 +63,7 @@ namespace Soc::Reg {
         return (static_cast<std::uint32_t>(decltype(FieldValues)::fieldBitMask) | ...);
     }
 
-    template <typename... FieldTypes>
-    requires (Concept::FieldTypeWithBitMask<FieldTypes> && ...)
+    template <Concept::FieldTypeWithBitMask... FieldTypes>
     constexpr auto combineFieldTypeMasksToUint32() -> std::uint32_t {
         return (static_cast<std::uint32_t>(FieldTypes::fieldBitMask) | ...);
     }
@@ -87,13 +86,13 @@ namespace Soc::Reg {
     }
 
     enum class FieldAccessRightsEnum: std::uint32_t {
-        ReadOnly,
-        WriteOnly,
-        ReadWrite
+        ReadOnly  = 1,
+        WriteOnly = 2,
+        ReadWrite = 4
     };
 
     template<FieldAccessRightsEnum access>
-    constexpr bool isFieldAccessWritable() {
+    constexpr auto isFieldAccessWritable() -> bool {
         if (access == FieldAccessRightsEnum::ReadOnly) {
             return false;
         }
@@ -101,7 +100,7 @@ namespace Soc::Reg {
     }
 
     template<std::uint32_t access>
-    constexpr bool isFieldAccessWritable() {
+    constexpr auto isFieldAccessWritable() -> bool {
         if (access == static_cast<std::uint32_t>(FieldAccessRightsEnum::ReadOnly)) {
             return false;
         }
@@ -117,23 +116,23 @@ namespace Soc::Reg {
     #pragma region Field Bitmask and Field Access
 
     template<typename Tuple, std::size_t Index>
-    constexpr auto getBitmaskFromTupleIndex() -> std::uint32_t {
+    constexpr auto getBitmaskFromTupleTypeIndex() -> std::uint32_t {
         return static_cast<std::uint32_t>(std::tuple_element_t<Index, Tuple>::fieldBitMask);
     }
 
     template<typename Tuple, std::size_t Index>
-    constexpr auto getWritableFromTupleIndex() -> bool {
+    constexpr auto getWritableFromTupleTypeIndex() -> bool {
         return Soc::Reg::isFieldAccessWritable<static_cast<std::uint32_t>(std::tuple_element_t<Index, Tuple>::fieldAccess)>();
     }
 
     template<typename Tuple, std::size_t... Indices>
-    constexpr auto getWritableMaskFromTupleIndices(std::index_sequence<Indices...>) -> std::uint32_t {
-        return ( (getWritableFromTupleIndex<Tuple, Indices>?getBitmaskFromTupleIndex<Tuple, Indices>():0) | ...);
+    constexpr auto getWritableMaskFromTupleTypeIndices(std::index_sequence<Indices...>) -> std::uint32_t {
+        return ( (getWritableFromTupleTypeIndex<Tuple, Indices>()?getBitmaskFromTupleTypeIndex<Tuple, Indices>():0) | ...);
     }
 
     template<typename Tuple>
-    constexpr auto getWritableMaskFromTuple() -> std::uint32_t {
-        return getMasksFromTupleIndices<Tuple>(std::make_index_sequence<std::tuple_size_v<Tuple>>{});
+    constexpr auto getWritableMaskFromTupleType() -> std::uint32_t {
+        return getWritableMaskFromTupleTypeIndices<Tuple>(std::make_index_sequence<std::tuple_size_v<Tuple>>{});
     }
 
     #pragma endregion
