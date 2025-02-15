@@ -224,7 +224,7 @@ setRegFieldsMipCt() -> void {
     constexpr auto valueToBeWritten       = Soc::Reg::combineEnumsToUint32<RegFieldHead, RegFieldTails...>();
     constexpr auto maskGoingToWritten     = Soc::Reg::combineFieldMasksToUint32<RegFieldHead, RegFieldTails...>();
     constexpr auto maskShouldBeKept       = 0xffffffffu ^ maskGoingToWritten;
-    constexpr auto maskAllowedToBeWritten = Soc::Reg::getWritableMaskFromTupleType<decltype(regFieldTuple)>();
+    constexpr auto maskAllowedToBeWritten = Soc::Reg::combineWritableMaskFromTupleType<decltype(regFieldTuple)>();
     constexpr auto maskForbiddenToWrite   = 0xffffffffu ^ maskAllowedToBeWritten;
 
     static_assert(
