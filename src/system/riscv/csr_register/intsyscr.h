@@ -43,7 +43,7 @@ namespace Riscv::Csr::Intsyscr {
         // worth investigating how the footprint and runtime behavior changes between using
         // HPE or not. Because blindly enabling the HPE might negatively impact the application.
         fieldBitMask = 0b1u, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = FieldAccessRights::ReadWrite,
+        fieldAccess  = AccessRights::ReadWrite,
 
         disable      = 0,            // disable HW prologue and epilogue (see intsyscr.h for more details)
         enable       = fieldBitMask, // enable HW prologoue and epiloge (see intsyscr.h for more details)
@@ -53,7 +53,7 @@ namespace Riscv::Csr::Intsyscr {
         // Enable nesting of intreupts together with PFIC settings the IRQs can get different
         // priorities and dictating order of execution.
         fieldBitMask = 0b1u << 1, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = FieldAccessRights::ReadWrite,
+        fieldAccess  = AccessRights::ReadWrite,
 
         disable      = 0,
         enable       = fieldBitMask,
@@ -61,7 +61,7 @@ namespace Riscv::Csr::Intsyscr {
 
     enum class Eabien_MRW_EmbeddedAbi: std::uint32_t {
         fieldBitMask = 0b1u << 2,     // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = FieldAccessRights::ReadWrite,
+        fieldAccess  = AccessRights::ReadWrite,
 
         disble       = 0,            // Keeping EABI disabled, the way WCH recomends
         enable       = fieldBitMask, // WCH noted that this shouldn't be enabled, and left in the default disabled state

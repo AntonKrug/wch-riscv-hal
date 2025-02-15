@@ -87,29 +87,29 @@ namespace Soc::Reg {
 
     namespace FieldAccessPriviledges {
 
-        enum class FieldAccessRightsEnum: std::uint32_t {
+        enum class AccessRightsEnum: std::uint32_t {
             ReadOnly  = 1,
             WriteOnly = 2,
             ReadWrite = 4
         };
 
-        namespace FieldAccessRights {
-            constexpr std::uint32_t ReadOnly  = static_cast<std::uint32_t>(FieldAccessRightsEnum::ReadOnly);
-            constexpr std::uint32_t WriteOnly = static_cast<std::uint32_t>(FieldAccessRightsEnum::WriteOnly);
-            constexpr std::uint32_t ReadWrite = static_cast<std::uint32_t>(FieldAccessRightsEnum::ReadWrite);
+        namespace AccessRights {
+            constexpr std::uint32_t ReadOnly  = static_cast<std::uint32_t>(AccessRightsEnum::ReadOnly);
+            constexpr std::uint32_t WriteOnly = static_cast<std::uint32_t>(AccessRightsEnum::WriteOnly);
+            constexpr std::uint32_t ReadWrite = static_cast<std::uint32_t>(AccessRightsEnum::ReadWrite);
         }
 
-        template<FieldAccessRightsEnum access>
-        constexpr auto isFieldAccessWritable() -> bool {
-            if (access == FieldAccessRightsEnum::ReadOnly) {
+        template<AccessRightsEnum access>
+        constexpr auto isFieldWritable() -> bool {
+            if (access == AccessRightsEnum::ReadOnly) {
                 return false;
             }
             return true;
         }
 
         template<std::uint32_t access>
-        constexpr auto isFieldAccessWritable() -> bool {
-            if (access == static_cast<std::uint32_t>(FieldAccessRightsEnum::ReadOnly)) {
+        constexpr auto isFieldWritable() -> bool {
+            if (access == static_cast<std::uint32_t>(AccessRightsEnum::ReadOnly)) {
                 return false;
             }
             return true;
@@ -127,7 +127,7 @@ namespace Soc::Reg {
 
     template<typename Tuple, std::size_t Index>
     constexpr auto getWritableFromTupleTypeIndex() -> bool {
-        return Soc::Reg::FieldAccessPriviledges::isFieldAccessWritable<static_cast<std::uint32_t>(std::tuple_element_t<Index, Tuple>::fieldAccess)>();
+        return Soc::Reg::FieldAccessPriviledges::isFieldWritable<static_cast<std::uint32_t>(std::tuple_element_t<Index, Tuple>::fieldAccess)>();
     }
 
     template<typename Tuple, std::size_t... Indices>

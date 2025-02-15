@@ -12,11 +12,11 @@
 namespace Peripheral::Rcc::Intr {
     // Clock Interupt
 
-    using namespace Soc::Reg::FieldAccessPriviledges; // so we can use FieldAccessRights::ReadOnly...
+    using namespace Soc::Reg::FieldAccessPriviledges; // so we can use AccessRights::ReadOnly...
 
     enum class LSIRDYF_RO_InternalLowSpeedReadyFlag: std::uint32_t {
         fieldBitMask  = 1u, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess   = FieldAccessRights::ReadOnly,
+        fieldAccess   = AccessRights::ReadOnly,
 
         noInterupt    = 0, // default
         readyInterupt = fieldBitMask, // set by hw, to clear write LSIRDYC
@@ -24,7 +24,7 @@ namespace Peripheral::Rcc::Intr {
 
     enum class HSIRDYF_RO_InternalHighSpeedReadyFlag: std::uint32_t {
         fieldBitMask  = 1u << 2, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess   = FieldAccessRights::ReadOnly,
+        fieldAccess   = AccessRights::ReadOnly,
 
         noInterupt    = 0, // default
         readyInterupt = fieldBitMask, // set by hw, to clear write HSIRDYC
@@ -32,7 +32,7 @@ namespace Peripheral::Rcc::Intr {
 
     enum class HSERDYF_RO_ExternalHighSpeedReadyFlag: std::uint32_t {
         fieldBitMask  = 1u << 3, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess   = FieldAccessRights::ReadOnly,
+        fieldAccess   = AccessRights::ReadOnly,
 
         noInterupt    = 0, // default
         readyInterupt = fieldBitMask, // set by hw, to clear write HSERDYC
@@ -40,7 +40,7 @@ namespace Peripheral::Rcc::Intr {
 
     enum class PLLRDYF_RO_PhaseLockedLoopReadyFlag: std::uint32_t {
         fieldBitMask  = 1u << 4, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess   = FieldAccessRights::ReadOnly,
+        fieldAccess   = AccessRights::ReadOnly,
 
         noInterupt    = 0, // default
         readyInterupt = fieldBitMask, // set by hw, to clear write PLLRDYC
@@ -50,7 +50,7 @@ namespace Peripheral::Rcc::Intr {
 
     enum class CSSF_RO_ExternalHighSpeedSecurityFlag: std::uint32_t {
         fieldBitMask    = 1u << 7, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess     = FieldAccessRights::ReadOnly,
+        fieldAccess     = AccessRights::ReadOnly,
 
         noInterupt      = 0, // default
         failureInterupt = fieldBitMask, // set by hw, to clear write CSSC
@@ -58,7 +58,7 @@ namespace Peripheral::Rcc::Intr {
 
     enum class LSIRDYIE_RW_InternalLowSpeedReadyInteruptEnable: std::uint32_t {
         fieldBitMask = 1u << 8, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = FieldAccessRights::ReadWrite,
+        fieldAccess  = AccessRights::ReadWrite,
 
         disable      = 0, // default
         enable       = fieldBitMask,
@@ -68,7 +68,7 @@ namespace Peripheral::Rcc::Intr {
 
     enum class HSIRDYIE_RW_InternalHighSpeedReadyInteruptEnable: std::uint32_t {
         fieldBitMask = 1u << 10, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = FieldAccessRights::ReadWrite,
+        fieldAccess  = AccessRights::ReadWrite,
 
         disable      = 0, // default
         enable       = fieldBitMask,
@@ -76,7 +76,7 @@ namespace Peripheral::Rcc::Intr {
 
     enum class HSERDYIE_RW_ExternalHighSpeedReadyInteruptEnable: std::uint32_t {
         fieldBitMask = 1u << 11, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = FieldAccessRights::ReadWrite,
+        fieldAccess  = AccessRights::ReadWrite,
 
         disable      = 0, // default
         enable       = fieldBitMask,
@@ -84,7 +84,7 @@ namespace Peripheral::Rcc::Intr {
 
     enum class PLLRDYIE_RW_PhaseLockedLoopReadyInteruptEnable: std::uint32_t {
         fieldBitMask = 1u << 12, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = FieldAccessRights::ReadWrite,
+        fieldAccess  = AccessRights::ReadWrite,
 
         disable      = 0, // default
         enable       = fieldBitMask,
@@ -94,7 +94,7 @@ namespace Peripheral::Rcc::Intr {
 
     enum class LSIRDYC_WO_InternalLowSpeedReadyClear: std::uint32_t {
         fieldBitMask = 1u << 16, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = FieldAccessRights::WriteOnly,
+        fieldAccess  = AccessRights::WriteOnly,
 
         noAction     = 0, // default
         clearFlag    = fieldBitMask,
@@ -104,7 +104,7 @@ namespace Peripheral::Rcc::Intr {
 
     enum class HSIRDYC_WO_InternalHighSpeedReadyClear: std::uint32_t {
         fieldBitMask = 1u << 18, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = FieldAccessRights::WriteOnly,
+        fieldAccess  = AccessRights::WriteOnly,
 
         noAction     = 0, // default
         clearFlag    = fieldBitMask,
@@ -112,7 +112,7 @@ namespace Peripheral::Rcc::Intr {
 
     enum class HSERDYC_WO_ExternalHighSpeedReadyClear: std::uint32_t {
         fieldBitMask = 1u << 19, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = FieldAccessRights::WriteOnly,
+        fieldAccess  = AccessRights::WriteOnly,
 
         noAction     = 0, // default
         clearFlag    = fieldBitMask,
@@ -120,7 +120,7 @@ namespace Peripheral::Rcc::Intr {
 
     enum class PLLRDYC_WO_PhaseLockedLoopReadyClear: std::uint32_t {
         fieldBitMask = 1u << 20, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = FieldAccessRights::WriteOnly,
+        fieldAccess  = AccessRights::WriteOnly,
 
         noAction     = 0, // default
         clearFlag    = fieldBitMask,
@@ -130,7 +130,7 @@ namespace Peripheral::Rcc::Intr {
 
     enum class CSSC_WO_ExternalHighSpeedSecurityClear: std::uint32_t {
         fieldBitMask = 1u << 23,  // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = FieldAccessRights::WriteOnly,
+        fieldAccess  = AccessRights::WriteOnly,
 
         noAction     = 0, // default
         clearFlag    = fieldBitMask,

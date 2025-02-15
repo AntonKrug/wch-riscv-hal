@@ -19,7 +19,7 @@ namespace Riscv::Csr::Mtvec {
 
     enum class Mode0_RW_VectorizationEnable: std::uint32_t {
         fieldBitMask             = 0b1u, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess              = FieldAccessRights::ReadWrite,
+        fieldAccess              = AccessRights::ReadWrite,
 
         singleUnifiedTrapHandler = 0,   // all interupts handled by only single handler
         vectorizedInterupts      = 0b1, // each interupt has dedicated memory location (BASEADDR + IRQ * 4) in the table, see Mode1
@@ -27,7 +27,7 @@ namespace Riscv::Csr::Mtvec {
 
     enum class Mode1_RW_VectorizedBehaviour: std::uint32_t {
         fieldBitMask          = 0b1u << 1,     // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess           = FieldAccessRights::ReadWrite,
+        fieldAccess           = AccessRights::ReadWrite,
 
         executeInstructions   = 0,            // use table for instructions, small relative jump instructions fit into, other instructions can be used too
         absoluteJumpAddresses = fieldBitMask, // use table for addresses, always jumping, but able to able to address any location
@@ -36,7 +36,7 @@ namespace Riscv::Csr::Mtvec {
     enum class BaseAddr_RW: std::uint32_t {
         // the address value needs to be 1k aligned (0x400)
         fieldBitMask = 0b111111111111111111111111111111u << 2, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = FieldAccessRights::ReadWrite,
+        fieldAccess  = AccessRights::ReadWrite,
     };
 
     template<typename Field>
