@@ -220,6 +220,7 @@ __attribute__ ((
     optimize("-Os"),
 ))
 setRegFieldsMipCt() -> void {
+    // TODO: unify getting fieldtuple and reg offset
     constexpr auto regOffset              = RegMemOffset::fromRegField<RegFieldHead>();
     constexpr auto regFieldTuple          = RegFieldTuple::fromRegField<RegFieldHead>();
     constexpr auto valueToBeWritten       = Soc::Reg::Combine::enumsToUint32<RegFieldHead, RegFieldTails...>();
@@ -282,11 +283,29 @@ __attribute__ ((
     optimize("-Os"),
 ))
 clearRegFieldTypesMipCt() -> void {
-    constexpr auto regOffset    = RegMemOffset::fromRegFieldType<RegFieldTypeHead>();
-    constexpr auto combinedMask = Soc::Reg::Combine::fieldTypeMasksToUint32<RegFieldTypeHead, RegFieldTypeTails...>();
-    const     auto actualValue  = Soc::Reg::readCt<baseAddress + regOffset>();
+    constexpr auto regOffset              = RegMemOffset::fromRegFieldType<RegFieldTypeHead>();
+    constexpr auto regFieldTuple          = RegFieldTuple::fromRegFieldType<RegFieldTypeHead>();
+    constexpr auto maskToClear            = Soc::Reg::Combine::fieldTypeMasksToUint32<RegFieldTypeHead, RegFieldTypeTails...>();
+    constexpr auto maskAllowedToBeWritten = Soc::Reg::Combine::writableMaskFromTupleType<decltype(regFieldTuple)>();
+    constexpr auto maskForbiddenToWrite   = 0xffffffffu ^ maskAllowedToBeWritten;
 
-    Soc::Reg::writeCt<baseAddress + regOffset>(actualValue & combinedMask);
+    static_assert(
+        maskToClear != 0u,
+        "Going not clear anything, this indicates badly described register field");
+
+    static_assert(
+        (maskForbiddenToWrite & maskToClear) == 0,
+        "Some bit[s]/field[s] were going to be cleared into register which were not writable. It's either bug in SoC's register field description, or in the application. Check if possibly you are clearing a RO field.");
+
+    if constexpr (maskToClear == maskAllowedToBeWritten) {
+        // everything what can be written is to be cleared, no point reading
+        Soc::Reg::writeCt<baseAddress + regOffset>(0);
+    }
+    else {
+        const auto actualValue = Soc::Reg::readCt<baseAddress + regOffset>();
+        Soc::Reg::writeCt<baseAddress + regOffset>(actualValue & maskToClear);
+    }
+
 }
 
 
