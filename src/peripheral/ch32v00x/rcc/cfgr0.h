@@ -14,11 +14,11 @@
 namespace Peripheral::Rcc::Cfgr0 {
     // Clock configuration
 
-    using namespace Soc::Reg::FieldAccessPrivilege; // so we can use AccessRights::ReadOnly...
+    using namespace Soc::Reg::FieldAccessPrivilege; // so we can use Field::AccessRights::ReadOnly...
 
     enum class SW_RW_SystemClockSource: std::uint32_t {
         fieldBitMask = 0b11u, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = AccessRights::ReadWrite,
+        fieldAccess  = Field::AccessRights::ReadWrite,
 
         hsi          = 0b00u, // default. internal high speed clock, is selected by HW when returning from standby and stop modes, or when HSE fails when CSSON is enabled
         hse          = 0b01u, // external high speed clock, HW might automatically switch to HSI in some scenarios, read HSI comment
@@ -29,7 +29,7 @@ namespace Peripheral::Rcc::Cfgr0 {
 
     enum class SWS_RO_SystemClockSourceStatus: std::uint32_t {
         fieldBitMask = 0b11u << 2, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = AccessRights::ReadOnly,
+        fieldAccess  = Field::AccessRights::ReadOnly,
 
         usingHsi     = 0b00u << 2, // internal high speed clock used
         usingHse     = 0b01u << 2, // external high speed clock used
@@ -41,7 +41,7 @@ namespace Peripheral::Rcc::Cfgr0 {
     //TODO: this register might change between SoCs
     enum class HPRE_RW_HbClockPrescaler: std::uint32_t { // To drive HCLK
         fieldBitMask    = 0b1'111u << 4, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess     = AccessRights::ReadWrite,
+        fieldAccess     = Field::AccessRights::ReadWrite,
 
         noPrescaler     = 0,             // HCLK = SYSCLK (prescaler is off)
 
@@ -116,7 +116,7 @@ namespace Peripheral::Rcc::Cfgr0 {
     enum class ADCPRE_RW_AnalogDigitalConverterClockPrescaler: std::uint32_t {
         // see getAcdDividerFromPrescalerFieldValue() for equation, lower 3-bits are threated differently than higher 2-bits
         fieldBitMask    = 0b11'111u << 11, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess     = AccessRights::ReadWrite,
+        fieldAccess     = Field::AccessRights::ReadWrite,
 
         divide2even     = 0b00'000u << 11, // default ADC = HB / 2 (must be less than 24MHz)
         divide4odd      = 0b00'001u << 11, // ADC = HB / 4 (must be less than 24MHz)
@@ -182,7 +182,7 @@ namespace Peripheral::Rcc::Cfgr0 {
     enum class PLLSRC_RW_InputClockSourceForPhaseLockedLoopGenerator: std::uint32_t {
         // see getAcdPrescaler() for equation
         fieldBitMask = 0b1u << 16,   // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = AccessRights::ReadWrite,
+        fieldAccess  = Field::AccessRights::ReadWrite,
 
         hsi          = 0,            // PLL = internal high speed clock, default, configure before enabling PLL
         hse          = fieldBitMask, // PLL = external high speed clock, configure before enabling PLL
@@ -191,7 +191,7 @@ namespace Peripheral::Rcc::Cfgr0 {
     //TODO: this register might change between SoCs
     enum class MCO_RW_MicrocontrolerClockPinOutput: std::uint32_t {
         fieldBitMask = 0b111u << 24,  // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = AccessRights::ReadWrite,
+        fieldAccess  = Field::AccessRights::ReadWrite,
 
         noOutput     = 0b0'00u << 24, // default, no clock is output
         noOutputAlt1 = 0b0'01u << 24, // no clock is output

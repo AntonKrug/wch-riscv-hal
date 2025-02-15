@@ -25,7 +25,7 @@ namespace Riscv::Csr::Mstatus {
 
     enum class Mie_MRW_MachineInteruptEnable: std::uint32_t {
         fieldBitMask = 0b1u << 3,     // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = AccessRights::ReadWrite,
+        fieldAccess  = Field::AccessRights::ReadWrite,
 
         disable      = 0,            // Globally disable machine level interupts (bit 3)
         enable       = fieldBitMask, // Globally enable machine level interupts (bit 3)
@@ -33,7 +33,7 @@ namespace Riscv::Csr::Mstatus {
 
     enum class Mpie_MRW_MachinePreviousInteruptEnabled: std::uint32_t {
         fieldBitMask = 0b1u << 7,      // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = AccessRights::ReadWrite,
+        fieldAccess  = Field::AccessRights::ReadWrite,
 
         disabled     = 0,             // Captured value of MIE was "disabled" prior interupt, mret to restore it (bit 7)
         enabled      = fieldBitMask,  // Captured value of MIE was "enabled" prior interupt, mret to restore it (bit 7)
@@ -41,7 +41,7 @@ namespace Riscv::Csr::Mstatus {
 
     enum class Mpp_MRW_MachinePreviousPriviledge: std::uint32_t {
         fieldBitMask = 0b11u << 11, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = AccessRights::ReadWrite,
+        fieldAccess  = Field::AccessRights::ReadWrite,
 
         user         = 0b00u << 11, // 00 user prior interupt, mret to restore it (bit 12-11). Unsupported by QingKeV2
     //  supervisor   = 0b01u << 11, // 01 supervisor prior interupt, mret to restore it (bit 12-11). Unsupported by QingKeV2/V3/V4
@@ -51,14 +51,14 @@ namespace Riscv::Csr::Mstatus {
 
     enum class Mpop_MRW: std::uint32_t {
         fieldBitMask = 0b1u << 23, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = AccessRights::ReadWrite,
+        fieldAccess  = Field::AccessRights::ReadWrite,
 
         disable      = 0,
     };
 
     enum class Mppop_MRW: std::uint32_t {
         fieldBitMask = 0b1 << 23, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = AccessRights::ReadWrite,
+        fieldAccess  = Field::AccessRights::ReadWrite,
 
         disable      = 0,
     };

@@ -6,7 +6,7 @@
 
 #include <cstdint>
 
-namespace Soc::Reg::FieldAccessPrivilege {
+namespace Soc::Reg::FieldAccessPrivilege::Field {
 
     enum class AccessRightsEnum: std::uint32_t {
         ReadOnly,
@@ -21,7 +21,7 @@ namespace Soc::Reg::FieldAccessPrivilege {
     }
 
     template<AccessRightsEnum access>
-    constexpr auto isFieldWritable() -> bool {
+    constexpr auto isWritable() -> bool {
         if (access == AccessRightsEnum::ReadOnly) {
             return false;
         }
@@ -29,7 +29,7 @@ namespace Soc::Reg::FieldAccessPrivilege {
     }
 
     template<std::uint32_t access>
-    constexpr auto isFieldWritable() -> bool {
+    constexpr auto isWritable() -> bool {
         if (access == static_cast<std::uint32_t>(AccessRightsEnum::ReadOnly)) {
             return false;
         }
