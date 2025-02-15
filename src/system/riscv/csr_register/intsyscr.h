@@ -16,7 +16,7 @@
 
 namespace Riscv::Csr::Intsyscr {
 
-    using namespace Soc::Reg;
+    using namespace Soc::Reg::FieldAccessPriviledges;
 
     enum class Hwstken_MRW_HardwarePrologueEpilogue: std::uint32_t {
         // Hardware prologue and epilogue on IRQs, on low-end devices (QingKeV2 like CH32V003)
