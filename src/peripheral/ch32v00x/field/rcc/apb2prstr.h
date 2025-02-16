@@ -79,7 +79,7 @@ namespace Peripheral::Rcc::Apb2prstr {
         keepInReset  = fieldBitMask // Peripheral held in RESET
     };
 
-    constexpr std::uint32_t regMemOffset = 0x0cu;
+    constexpr std::uint32_t regMemOffset = 0x0Cu;
 
     constexpr std::tuple<
         AFIORST_RW_AlternateFuctionInputOutputReset,

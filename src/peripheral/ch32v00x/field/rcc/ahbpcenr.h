@@ -19,16 +19,16 @@ namespace Peripheral::Rcc::Ahbpcenr {
         fieldBitMask = 0b1u << 0, // not holding any settings or value, it's a bitmask for this specific field
         fieldAccess  = Field::AccessRights::ReadWrite,
 
-        disable      = 0u,
-        enable       = fieldBitMask
+        noClock      = 0u,
+        clockEnable  = fieldBitMask
     };
 
     enum class SRAMEN_RW_SRAM_Clock_Durning_Sleep_Enable: std::uint32_t {
         fieldBitMask = 0b1u << 2, // not holding any settings or value, it's a bitmask for this specific field
         fieldAccess  = Field::AccessRights::ReadWrite,
 
-        disable      = 0u,          // The SRAM clock disabled durning sleep
-        enable       = fieldBitMask // The SRAM clock enabled durning sleep
+        noClock      = 0u,          // The SRAM clock disabled durning sleep
+        clockEnable  = fieldBitMask // The SRAM clock enabled durning sleep
     };
 
     constexpr std::uint32_t regMemOffset = 0x14u;
