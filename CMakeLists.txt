@@ -131,11 +131,11 @@ set(LINKER_SCRIPT_FINAL ${CMAKE_BINARY_DIR}/linker/WCH32Vxxx-for-current-soc-boo
 
 set (headers
         ${CMAKE_SOURCE_DIR}/src/peripheral/base_addr.h
-        ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/gpio.h
-        ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/rcc.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/rcc/cfgr0.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/rcc/ctlr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/rcc/intr.h
+        ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/gpio.h
+        ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/rcc.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/timer.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/usart.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/concept.h
@@ -146,12 +146,12 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/system/linker_utils.h
         ${CMAKE_SOURCE_DIR}/src/system/memory_map/concepts.h
         ${CMAKE_SOURCE_DIR}/src/system/memory_map/peripheral_addresses.h
-        ${CMAKE_SOURCE_DIR}/src/system/register/concept.h
-        ${CMAKE_SOURCE_DIR}/src/system/register/util.h
-        ${CMAKE_SOURCE_DIR}/src/system/register/field_access_privilege.h
-        ${CMAKE_SOURCE_DIR}/src/system/register/combine.h
         ${CMAKE_SOURCE_DIR}/src/system/register/access_ct.h
         ${CMAKE_SOURCE_DIR}/src/system/register/access_primitives_ct.h
+        ${CMAKE_SOURCE_DIR}/src/system/register/combine.h
+        ${CMAKE_SOURCE_DIR}/src/system/register/concept.h
+        ${CMAKE_SOURCE_DIR}/src/system/register/field_access_privilege.h
+        ${CMAKE_SOURCE_DIR}/src/system/register/util.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/concepts.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access_ct.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access_primitives_ct.h
