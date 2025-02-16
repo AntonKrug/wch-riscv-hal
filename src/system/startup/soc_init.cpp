@@ -12,6 +12,7 @@
 #include "peripheral/ch32v00x/rcc.h"
 #include "peripheral/register_field_to_register.h"
 #include "utils/literals/timer.h"
+#include "system/register/access_ct.h"
 
 extern "C" {
 
@@ -81,6 +82,7 @@ extern "C" {
     ))
     resetAndStabilizeClocksToGoodKnownState() {
         using namespace Peripheral::Rcc;
+        using namespace Soc::Reg;
 
         // Enable internal clock HSI on top of existing state -> it will need 6 clock cycles to apply
         setRegFieldsSipCt<
@@ -124,6 +126,7 @@ extern "C" {
     configureNewClocks() {
         using namespace Peripheral::Rcc;
         using namespace Literals::Timer;
+        using namespace Soc::Reg;
 
         setRegFieldsSipCt<
             Cfgr0::getHbPrescalerEnum<Soc::Clocks::Hsi, UserConfig::systemClock>()>();
