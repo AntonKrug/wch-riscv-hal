@@ -7,9 +7,9 @@
 #include <cstdint>
 #include <tuple>
 
-#include "rcc/ctlr.h"
-#include "rcc/cfgr0.h"
-#include "rcc/intr.h"
+#include "field/rcc/ctlr.h"
+#include "field/rcc/cfgr0.h"
+#include "field/rcc/intr.h"
 
 namespace Peripheral::Rcc {
 
