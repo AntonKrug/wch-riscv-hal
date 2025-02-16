@@ -130,6 +130,7 @@ set(LINKER_SCRIPT_FINAL ${CMAKE_BINARY_DIR}/linker/WCH32Vxxx-for-current-soc-boo
 
 
 set (headers
+        ${CMAKE_SOURCE_DIR}/src/peripheral/base_addr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/gpio.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/rcc.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/rcc/cfgr0.h

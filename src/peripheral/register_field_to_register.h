@@ -26,19 +26,6 @@
 // template <typename HeadType, typename... TailTypes>
 // concept HeadSameAsTail = sizeof...(TailTypes) == 0 || (std::is_same_v<HeadType, TailTypes> && ...);
 
-namespace PeripheralBaseAddr {
-
-    template<Peripheral::Rcc::IsAnyRegField RegFieldType>
-    constexpr auto fromRegFieldType() -> std::uint32_t {
-        return Peripheral::Rcc::baseAddr;
-    }
-
-    template<auto RegField>
-    constexpr auto fromRegField() -> std::uint32_t {
-        return fromRegFieldType<decltype(RegField)>();
-    }
-
-}
 
 namespace RegFieldTuple {
 
