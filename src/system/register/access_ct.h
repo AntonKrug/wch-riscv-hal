@@ -9,7 +9,7 @@
 #include "concept.h"
 #include "combine.h"
 #include "access_primitives_ct.h"
-#include "peripheral/register_field_to_register.h"
+#include "peripheral/obtain_reg_metadata.h"
 #include "peripheral/base_addr.h"
 
 constexpr std::uint32_t full32bitReg = 0xffffffffu;
