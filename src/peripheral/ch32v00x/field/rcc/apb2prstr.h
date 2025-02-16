@@ -31,7 +31,7 @@ namespace Peripheral::Rcc::Apb2prstr {
         keepInReset  = fieldBitMask // Peripheral held in RESET
     };
 
-    enum class IOPARST_RW_InputOutputPortCReset: std::uint32_t {
+    enum class IOPCRST_RW_InputOutputPortCReset: std::uint32_t {
         fieldBitMask = 0b1u << 4, // not holding any settings or value, it's a bitmask for this specific field
         fieldAccess  = Field::AccessRights::ReadWrite,
 
@@ -39,7 +39,7 @@ namespace Peripheral::Rcc::Apb2prstr {
         keepInReset  = fieldBitMask // Peripheral held in RESET
     };
 
-    enum class IOPARST_RW_InputOutputPortDReset: std::uint32_t {
+    enum class IOPDRST_RW_InputOutputPortDReset: std::uint32_t {
         fieldBitMask = 0b1u << 5, // not holding any settings or value, it's a bitmask for this specific field
         fieldAccess  = Field::AccessRights::ReadWrite,
 
@@ -84,8 +84,8 @@ namespace Peripheral::Rcc::Apb2prstr {
     constexpr std::tuple<
         AFIORST_RW_AlternateFuctionInputOutputReset,
         IOPARST_RW_InputOutputPortAReset,
-        IOPARST_RW_InputOutputPortCReset,
-        IOPARST_RW_InputOutputPortDReset,
+        IOPCRST_RW_InputOutputPortCReset,
+        IOPDRST_RW_InputOutputPortDReset,
         ADC1RST_RW_AnalogDigitalConverter1Reset,
         TIM1RST_RW_Timer1Reset,
         SPI1RST_RW_SerialPeripheralInterface1Reset,

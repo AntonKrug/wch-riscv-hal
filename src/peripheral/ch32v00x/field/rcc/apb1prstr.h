@@ -59,5 +59,4 @@ namespace Peripheral::Rcc::Apb1prstr {
     template<typename RegField>
     concept IsAnyRegField = Soc::Reg::IsSameAsOneFieldFromTuple<RegField, decltype(regFields)>();
 
-
 }
