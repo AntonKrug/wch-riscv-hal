@@ -36,6 +36,9 @@ namespace Peripheral::WholeRegFieldsTuple {
     template<Peripheral::Rcc::Ahbpcenr::IsAnyRegField RegFieldType>
     constexpr auto fromRegFieldType() { return Peripheral::Rcc::Ahbpcenr::regFields; }
 
+    template<Peripheral::Rcc::Apb1pcenr::IsAnyRegField RegFieldType>
+    constexpr auto fromRegFieldType() { return Peripheral::Rcc::Apb1pcenr::regFields; }
+
     template<auto RegField>
     constexpr auto fromRegField() { return fromRegFieldType<decltype(RegField)>(); }
 
@@ -60,6 +63,9 @@ namespace Peripheral::RegMemOffset {
 
     template<Peripheral::Rcc::Ahbpcenr::IsAnyRegField RegFieldType>
     constexpr auto fromRegFieldType() -> std::uint32_t { return static_cast<std::uint32_t>(Peripheral::Rcc::Ahbpcenr::regMemOffset); }
+
+    template<Peripheral::Rcc::Apb1pcenr::IsAnyRegField RegFieldType>
+    constexpr auto fromRegFieldType() -> std::uint32_t { return static_cast<std::uint32_t>(Peripheral::Rcc::Apb1pcenr::regMemOffset); }
 
     template<auto RegField>
     constexpr auto fromRegField() -> std::uint32_t { return fromRegFieldType<decltype(RegField)>(); }
