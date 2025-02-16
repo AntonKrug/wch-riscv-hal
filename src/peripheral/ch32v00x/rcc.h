@@ -14,6 +14,8 @@
 #include "field/rcc/apb1prstr.h"
 #include "field/rcc/ahbpcenr.h"
 #include "field/rcc/apb1pcenr.h"
+#include "field/rcc/apb2pcenr.h"
+
 
 namespace Peripheral::Rcc {
 
@@ -34,6 +36,7 @@ namespace Peripheral::Rcc {
         Peripheral::Rcc::Apb2prstr::IsAnyRegField<Reg> ||
         Peripheral::Rcc::Apb1prstr::IsAnyRegField<Reg> ||
         Peripheral::Rcc::Ahbpcenr::IsAnyRegField<Reg> ||
+        Peripheral::Rcc::Apb2pcenr::IsAnyRegField<Reg> ||
         Peripheral::Rcc::Apb1pcenr::IsAnyRegField<Reg>;
 
     constexpr std::tuple<
@@ -43,6 +46,7 @@ namespace Peripheral::Rcc {
         decltype(Peripheral::Rcc::Apb2prstr::regFields),
         decltype(Peripheral::Rcc::Apb1prstr::regFields),
         decltype(Peripheral::Rcc::Ahbpcenr::regFields),
+        decltype(Peripheral::Rcc::Apb2pcenr::regFields),
         decltype(Peripheral::Rcc::Apb1pcenr::regFields)
     > registerFields;
 

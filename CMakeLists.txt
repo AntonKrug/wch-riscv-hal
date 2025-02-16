@@ -133,6 +133,7 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/peripheral/base_addr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/rcc/ahbpcenr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/rcc/apb1pcenr.h
+        ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/rcc/apb2pcenr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/rcc/apb1prstr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/rcc/apb2prstr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/rcc/cfgr0.h
