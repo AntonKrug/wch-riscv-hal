@@ -212,7 +212,8 @@ namespace Peripheral::Rcc::Cfgr0 {
         HPRE_RW_HbClockPrescaler,
         ADCPRE_RW_AnalogDigitalConverterClockPrescaler,
         PLLSRC_RW_InputClockSourceForPhaseLockedLoopGenerator,
-        MCO_RW_MicrocontrolerClockPinOutput> regFields;
+        MCO_RW_MicrocontrolerClockPinOutput
+    > regFields;
 
     template<typename RegField>
     concept IsAnyRegField = Soc::Reg::IsSameAsOneFieldFromTuple<RegField, decltype(regFields)>();

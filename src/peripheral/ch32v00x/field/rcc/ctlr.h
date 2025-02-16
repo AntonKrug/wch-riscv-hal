@@ -106,7 +106,8 @@ namespace Peripheral::Rcc::Ctlr {
         HSEBYP_RW_ExternalHighSpeedClockBypass,
         CSSON_RW_ClockSafety,
         PLLON_RW_PhaseLockedLoopEnable,
-        PLLRDY_RO_PhaseLockedLoopReady> regFields;
+        PLLRDY_RO_PhaseLockedLoopReady
+    > regFields;
 
     template<typename RegField>
     concept IsAnyRegField = Soc::Reg::IsSameAsOneFieldFromTuple<RegField, decltype(regFields)>();

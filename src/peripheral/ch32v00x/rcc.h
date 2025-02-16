@@ -7,6 +7,7 @@
 #include <cstdint>
 #include <tuple>
 
+#include "field/rcc/apb2prstr.h"
 #include "field/rcc/ctlr.h"
 #include "field/rcc/cfgr0.h"
 #include "field/rcc/intr.h"
@@ -29,12 +30,15 @@ namespace Peripheral::Rcc {
     concept IsAnyRegField =
         Peripheral::Rcc::Ctlr::IsAnyRegField<Reg> ||
         Peripheral::Rcc::Cfgr0::IsAnyRegField<Reg> ||
-        Peripheral::Rcc::Intr::IsAnyRegField<Reg>;
+        Peripheral::Rcc::Intr::IsAnyRegField<Reg> ||
+        Peripheral::Rcc::Apb2prstr::IsAnyRegField<Reg>;
 
     constexpr std::tuple<
         decltype(Peripheral::Rcc::Ctlr::regFields),
         decltype(Peripheral::Rcc::Cfgr0::regFields),
-        decltype(Peripheral::Rcc::Intr::regFields)> registerFields;
+        decltype(Peripheral::Rcc::Intr::regFields),
+        decltype(Peripheral::Rcc::Apb2prstr::regFields)
+    > registerFields;
 
 }
 

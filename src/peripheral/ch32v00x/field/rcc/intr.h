@@ -153,7 +153,8 @@ namespace Peripheral::Rcc::Intr {
         HSIRDYC_WO_InternalHighSpeedReadyClear,
         HSERDYC_WO_ExternalHighSpeedReadyClear,
         PLLRDYC_WO_PhaseLockedLoopReadyClear,
-        CSSC_WO_ExternalHighSpeedSecurityClear> regFields;
+        CSSC_WO_ExternalHighSpeedSecurityClear
+    > regFields;
 
     template<typename RegField>
     concept IsAnyRegField = Soc::Reg::IsSameAsOneFieldFromTuple<RegField, decltype(regFields)>();
