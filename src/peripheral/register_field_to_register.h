@@ -11,6 +11,7 @@
 #include "ch32v00x/rcc/intr.h"
 #include "system/register/concept.h"
 #include "system/register/combine.h"
+#include "system/register/access_primitives_ct.h"
 
 // TODO: own namespace, combine the CSR actions (registers are basic and CSR register on top)
 //       able to provide isntance instead of baseAddress
@@ -124,45 +125,7 @@ namespace RegMemOffset {
 // }
 
 
-#pragma region Primitives
-
-namespace Soc::Reg {
-
-    constexpr std::uint32_t full32bitReg = 0xffffffffu;
-
-    template<std::uint32_t Addr>
-    inline auto
-    __attribute__ ((
-        always_inline,
-        optimize("-Os"),
-    ))
-    readCt() -> std::uint32_t {
-        return *reinterpret_cast<volatile std::uint32_t *>(Addr);
-    }
-
-    template<std::uint32_t Addr, std::uint32_t CtValue>
-    inline auto
-    __attribute__ ((
-        always_inline,
-        optimize("-Os"),
-    ))
-    writeCt() -> void {
-        *(reinterpret_cast<volatile std::uint32_t *>(Addr))=CtValue;
-    }
-
-    template<std::uint32_t Addr>
-    inline auto
-    __attribute__ ((
-        always_inline,
-        optimize("-Os"),
-    ))
-    writeCt(const std::uint32_t rtValue) -> void {
-        *(reinterpret_cast<volatile std::uint32_t *>(Addr))=rtValue;
-    }
-
-}
-
-#pragma endregion
+constexpr std::uint32_t full32bitReg = 0xffffffffu;
 
 #pragma region isReg
 
@@ -180,7 +143,7 @@ isRegFieldsSetMipCt() -> bool {
     constexpr auto combinedMask   = Soc::Reg::Combine::fieldMasksToUint32<TestedRegFieldHead, TestedRegFieldTails...>();
     // auto [regOffset, _] = RegMetadata::fromRegField<TestedRegFieldHead>();
     constexpr auto regOffset      = RegMemOffset::fromRegField<TestedRegFieldHead>();
-    const     auto actualValue    = Soc::Reg::readCt<BaseAddr + regOffset>();
+    const     auto actualValue    = Soc::Reg::Access::readCt<BaseAddr + regOffset>();
 
     return (actualValue & combinedMask) == combinedValue;
 }
@@ -215,7 +178,7 @@ __attribute__ ((
 auto writeRegFieldsMipCt() -> void {
     constexpr auto regOffset     = RegMemOffset::fromRegField<RegFieldHead>();
     constexpr auto combinedValue = Soc::Reg::Combine::enumsToUint32<RegFieldHead, RegFieldTails...>();
-    Soc::Reg::writeCt<BaseAddr + regOffset, combinedValue>();
+    Soc::Reg::Access::writeCt<BaseAddr + regOffset, combinedValue>();
 }
 
 template<auto RegFieldHead, auto... RegFieldTails>
@@ -268,9 +231,9 @@ setRegFieldsMipCt() -> void {
         // Either whole register is going to be set, or whole writable part of the register,
         // therefore no need to be clearing the register before setting it,
         // we can just write the whole register directly
-        Soc::Reg::writeCt<baseAddress + regOffset>(valueToBeWritten);
+        Soc::Reg::Access::writeCt<baseAddress + regOffset>(valueToBeWritten);
     } else {
-        auto actualValue = Soc::Reg::readCt<baseAddress + regOffset>();
+        auto actualValue = Soc::Reg::Access::readCt<baseAddress + regOffset>();
 
         // if clearing and setting is the same value, then clearing can be omited
         if constexpr (maskGoingToWritten != valueToBeWritten) {
@@ -281,7 +244,7 @@ setRegFieldsMipCt() -> void {
         if constexpr (valueToBeWritten > 0) {
             actualValue |= valueToBeWritten;
         }
-        Soc::Reg::writeCt<baseAddress + regOffset>(actualValue);
+        Soc::Reg::Access::writeCt<baseAddress + regOffset>(actualValue);
     }
 }
 
@@ -326,11 +289,11 @@ clearRegFieldTypesMipCt() -> void {
 
     if constexpr (maskToClear == maskAllowedToBeWritten) {
         // everything what can be written is to be cleared, no point reading
-        Soc::Reg::writeCt<baseAddress + regOffset>(0);
+        Soc::Reg::Access::writeCt<baseAddress + regOffset>(0);
     }
     else {
-        const auto actualValue = Soc::Reg::readCt<baseAddress + regOffset>();
-        Soc::Reg::writeCt<baseAddress + regOffset>(actualValue & maskToClear);
+        const auto actualValue = Soc::Reg::Access::readCt<baseAddress + regOffset>();
+        Soc::Reg::Access::writeCt<baseAddress + regOffset>(actualValue & maskToClear);
     }
 
 }
@@ -360,9 +323,9 @@ __attribute__ ((
 keepRegFieldTypesMipCt() -> void {
     constexpr auto regOffset    = RegMemOffset::fromRegFieldType<RegFieldTypeHead>();
     constexpr auto combinedMask = Soc::Reg::Combine::fieldTypeMasksToUint32<RegFieldTypeHead, RegFieldTypeTails...>();
-    const     auto actualValue  = Soc::Reg::readCt<baseAddress + regOffset>();
+    const     auto actualValue  = Soc::Reg::Access::readCt<baseAddress + regOffset>();
 
-    Soc::Reg::writeCt<baseAddress + regOffset>( actualValue & (0xffffffff ^ combinedMask) );
+    Soc::Reg::Access::writeCt<baseAddress + regOffset>( actualValue & (0xffffffff ^ combinedMask) );
 }
 
 
