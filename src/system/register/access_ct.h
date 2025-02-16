@@ -8,6 +8,7 @@
 
 #include "concept.h"
 #include "combine.h"
+#include "access_primitives_ct.h"
 #include "peripheral/register_field_to_register.h"
 #include "peripheral/base_addr.h"
 

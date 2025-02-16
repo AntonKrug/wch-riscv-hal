@@ -6,12 +6,6 @@
 
 #include "concept.h"
 #include "ch32v00x/rcc.h"
-#include "ch32v00x/rcc/ctlr.h"
-#include "ch32v00x/rcc/cfgr0.h"
-#include "ch32v00x/rcc/intr.h"
-#include "system/register/concept.h"
-#include "system/register/combine.h"
-#include "system/register/access_primitives_ct.h"
 
 // TODO: own namespace, combine the CSR actions (registers are basic and CSR register on top)
 //       able to provide isntance instead of baseAddress
