@@ -204,24 +204,17 @@ namespace Peripheral::Rcc::Cfgr0 {
         pll          = 0b1'11u << 24, // pll is exposed on the pin output
     };
 
-    struct metadata {
-        static constexpr std::uint32_t offset = 0x04u;
+    constexpr std::uint32_t regMemOffset = 0x04u;
 
-        static constexpr std::tuple<
-            SW_RW_SystemClockSource,
-            SWS_RO_SystemClockSourceStatus,
-            HPRE_RW_HbClockPrescaler,
-            ADCPRE_RW_AnalogDigitalConverterClockPrescaler,
-            PLLSRC_RW_InputClockSourceForPhaseLockedLoopGenerator,
-            MCO_RW_MicrocontrolerClockPinOutput> fields = {};
-
-        static constexpr auto getMetadata() {
-            return std::tuple{offset, fields};
-        }
-
-    };
+    constexpr std::tuple<
+        SW_RW_SystemClockSource,
+        SWS_RO_SystemClockSourceStatus,
+        HPRE_RW_HbClockPrescaler,
+        ADCPRE_RW_AnalogDigitalConverterClockPrescaler,
+        PLLSRC_RW_InputClockSourceForPhaseLockedLoopGenerator,
+        MCO_RW_MicrocontrolerClockPinOutput> regFields;
 
     template<typename RegField>
-    concept IsAnyRegField = Soc::Reg::IsSameAsOneFieldFromTuple<RegField, decltype(metadata::fields)>();
+    concept IsAnyRegField = Soc::Reg::IsSameAsOneFieldFromTuple<RegField, decltype(regFields)>();
 
 }

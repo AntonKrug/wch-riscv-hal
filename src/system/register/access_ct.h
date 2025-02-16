@@ -30,7 +30,7 @@ namespace Soc::Reg {
         constexpr auto combinedValue  = Soc::Reg::Combine::enumsToUint32<TestedRegFieldHead, TestedRegFieldTails...>();
         constexpr auto combinedMask   = Soc::Reg::Combine::fieldMasksToUint32<TestedRegFieldHead, TestedRegFieldTails...>();
         // auto [regOffset, _] = RegMetadata::fromRegField<TestedRegFieldHead>();
-        constexpr auto regOffset      = RegMemOffset::fromRegField<TestedRegFieldHead>();
+        constexpr auto regOffset      = Peripheral::RegMemOffset::fromRegField<TestedRegFieldHead>();
         const     auto actualValue    = Soc::Reg::Access::readCt<BaseAddr + regOffset>();
 
         return (actualValue & combinedMask) == combinedValue;
@@ -64,7 +64,7 @@ namespace Soc::Reg {
         optimize("-Os"),
     ))
     auto writeRegFieldsMipCt() -> void {
-        constexpr auto regOffset     = RegMemOffset::fromRegField<RegFieldHead>();
+        constexpr auto regOffset     = Peripheral::RegMemOffset::fromRegField<RegFieldHead>();
         constexpr auto combinedValue = Soc::Reg::Combine::enumsToUint32<RegFieldHead, RegFieldTails...>();
         Soc::Reg::Access::writeCt<BaseAddr + regOffset, combinedValue>();
     }
@@ -99,12 +99,12 @@ namespace Soc::Reg {
     setRegFieldsMipCt() -> void {
         // TODO: unify getting fieldtuple and reg offset
         // auto [ regOffset, regFieldTuple] = RegMetadata::fromRegField<RegFieldHead>();
-        constexpr auto regOffset              = RegMemOffset::fromRegField<RegFieldHead>();
-        constexpr auto regFieldTuple          = RegFieldTuple::fromRegField<RegFieldHead>();
+        constexpr auto regOffset              = Peripheral::RegMemOffset::fromRegField<RegFieldHead>();
+        constexpr auto regFieldsTuple         = Peripheral::WholeRegFieldsTuple::fromRegField<RegFieldHead>();
         constexpr auto valueToBeWritten       = Soc::Reg::Combine::enumsToUint32<RegFieldHead, RegFieldTails...>();
         constexpr auto maskGoingToWritten     = Soc::Reg::Combine::fieldMasksToUint32<RegFieldHead, RegFieldTails...>();
         constexpr auto maskShouldBeKept       = 0xffffffffu ^ maskGoingToWritten;
-        constexpr auto maskAllowedToBeWritten = Soc::Reg::Combine::writableMaskFromTupleType<decltype(regFieldTuple)>();
+        constexpr auto maskAllowedToBeWritten = Soc::Reg::Combine::writableMaskFromTupleType<decltype(regFieldsTuple)>();
         constexpr auto maskForbiddenToWrite   = 0xffffffffu ^ maskAllowedToBeWritten;
 
         static_assert(
@@ -161,10 +161,10 @@ namespace Soc::Reg {
         optimize("-Os"),
     ))
     clearRegFieldTypesMipCt() -> void {
-        constexpr auto regOffset              = RegMemOffset::fromRegFieldType<RegFieldTypeHead>();
-        constexpr auto regFieldTuple          = RegFieldTuple::fromRegFieldType<RegFieldTypeHead>();
+        constexpr auto regOffset              = Peripheral::RegMemOffset::fromRegFieldType<RegFieldTypeHead>();
+        constexpr auto regFieldsTuple         = Peripheral::WholeRegFieldsTuple::fromRegFieldType<RegFieldTypeHead>();
         constexpr auto maskToClear            = Soc::Reg::Combine::fieldTypeMasksToUint32<RegFieldTypeHead, RegFieldTypeTails...>();
-        constexpr auto maskAllowedToBeWritten = Soc::Reg::Combine::writableMaskFromTupleType<decltype(regFieldTuple)>();
+        constexpr auto maskAllowedToBeWritten = Soc::Reg::Combine::writableMaskFromTupleType<decltype(regFieldsTuple)>();
         constexpr auto maskForbiddenToWrite   = 0xffffffffu ^ maskAllowedToBeWritten;
 
         static_assert(
@@ -209,7 +209,7 @@ namespace Soc::Reg {
         optimize("-Os"),
     ))
     keepRegFieldTypesMipCt() -> void {
-        constexpr auto regOffset    = RegMemOffset::fromRegFieldType<RegFieldTypeHead>();
+        constexpr auto regOffset    = Peripheral::RegMemOffset::fromRegFieldType<RegFieldTypeHead>();
         constexpr auto combinedMask = Soc::Reg::Combine::fieldTypeMasksToUint32<RegFieldTypeHead, RegFieldTypeTails...>();
         const     auto actualValue  = Soc::Reg::Access::readCt<baseAddress + regOffset>();
 

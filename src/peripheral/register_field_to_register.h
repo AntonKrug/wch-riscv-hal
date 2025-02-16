@@ -27,21 +27,21 @@
 // concept HeadSameAsTail = sizeof...(TailTypes) == 0 || (std::is_same_v<HeadType, TailTypes> && ...);
 
 
-namespace RegFieldTuple {
+namespace Peripheral::WholeRegFieldsTuple {
 
     template<Peripheral::Rcc::Ctlr::IsAnyRegField RegFieldType>
     constexpr auto fromRegFieldType() {
-        return Peripheral::Rcc::Ctlr::metadata::fields;
+        return Peripheral::Rcc::Ctlr::regFields;
     }
 
     template<Peripheral::Rcc::Cfgr0::IsAnyRegField RegFieldType>
     constexpr auto fromRegFieldType() {
-        return Peripheral::Rcc::Cfgr0::metadata::fields;
+        return Peripheral::Rcc::Cfgr0::regFields;
     }
 
     template<Peripheral::Rcc::Intr::IsAnyRegField RegFieldType>
     constexpr auto fromRegFieldType() {
-        return Peripheral::Rcc::Intr::metadata::fields;
+        return Peripheral::Rcc::Intr::regFields;
     }
 
     template<auto RegField>
@@ -51,46 +51,21 @@ namespace RegFieldTuple {
 
 }
 
-namespace RegMetadata {
-
-    template<Peripheral::Rcc::Ctlr::IsAnyRegField RegFieldType>
-    constexpr auto fromRegFieldType() {
-        return Peripheral::Rcc::Ctlr::metadata::getMetadata();
-    }
-
-    template<Peripheral::Rcc::Cfgr0::IsAnyRegField RegFieldType>
-    constexpr auto fromRegFieldType() {
-        return Peripheral::Rcc::Cfgr0::metadata::getMetadata();
-    }
-
-    template<Peripheral::Rcc::Intr::IsAnyRegField RegFieldType>
-    constexpr auto fromRegFieldType() {
-        return Peripheral::Rcc::Intr::metadata::getMetadata();
-    }
-
-    template<auto RegField>
-    constexpr auto fromRegField() {
-        return fromRegFieldType<decltype(RegField)>();
-    }
-
-
-}
-
-namespace RegMemOffset {
+namespace Peripheral::RegMemOffset {
 
     template<Peripheral::Rcc::Ctlr::IsAnyRegField RegFieldType>
     constexpr auto fromRegFieldType() -> std::uint32_t {
-        return static_cast<std::uint32_t>(Peripheral::Rcc::Ctlr::metadata::offset);
+        return static_cast<std::uint32_t>(Peripheral::Rcc::Ctlr::regMemOffset);
     }
 
     template<Peripheral::Rcc::Cfgr0::IsAnyRegField RegFieldType>
     constexpr auto fromRegFieldType() -> std::uint32_t {
-        return static_cast<std::uint32_t>(Peripheral::Rcc::Cfgr0::metadata::offset);
+        return static_cast<std::uint32_t>(Peripheral::Rcc::Cfgr0::regMemOffset);
     }
 
     template<Peripheral::Rcc::Intr::IsAnyRegField RegFieldType>
     constexpr auto fromRegFieldType() -> std::uint32_t {
-        return static_cast<std::uint32_t>(Peripheral::Rcc::Intr::metadata::offset);
+        return static_cast<std::uint32_t>(Peripheral::Rcc::Intr::regMemOffset);
     }
 
     template<auto RegField>
@@ -99,16 +74,4 @@ namespace RegMemOffset {
     }
 
 }
-
-
-
-// ReSharper disable once CppUnnamedNamespaceInHeaderFile
-// namespace {
-//     template<auto RegField>
-//     requires Soc::MemMappedReg::Concept::RegisterFieldEnumWhichContainsFieldBitMask<decltype(RegField)>
-//     constexpr auto regFieldMask() -> std::uint32_t {
-//         return static_cast<std::uint32_t>(decltype(RegField)::fieldBitMask);
-//     }
-// }
-
 

@@ -94,28 +94,21 @@ namespace Peripheral::Rcc::Ctlr {
 
     //TODO: v2x/v3x has pll2on,pll2rdy,pll3on,pll3rdy
 
-    struct metadata {
-        static constexpr std::uint32_t offset = 0x00u;
+    constexpr std::uint32_t regMemOffset = 0x00u;
 
-        static constexpr std::tuple<
-            HSION_RW_InternalHighSpeedClockEnable,
-            HSIRDY_RO_InternalHighSpeedClockReady,
-            HSITRIM_RW_InternalHighSpeedClockTrim,
-            HSICAL_RO_InternalHighSpeedClockCalibration,
-            HSEON_RW_ExternalHighSpeedClockEnable,
-            HSERDY_RO_ExternalHighSpeedClockReady,
-            HSEBYP_RW_ExternalHighSpeedClockBypass,
-            CSSON_RW_ClockSafety,
-            PLLON_RW_PhaseLockedLoopEnable,
-            PLLRDY_RO_PhaseLockedLoopReady> fields = {};
-
-        static constexpr auto getMetadata() {
-            return std::tuple{offset, fields};
-        }
-
-    };
+    constexpr std::tuple<
+        HSION_RW_InternalHighSpeedClockEnable,
+        HSIRDY_RO_InternalHighSpeedClockReady,
+        HSITRIM_RW_InternalHighSpeedClockTrim,
+        HSICAL_RO_InternalHighSpeedClockCalibration,
+        HSEON_RW_ExternalHighSpeedClockEnable,
+        HSERDY_RO_ExternalHighSpeedClockReady,
+        HSEBYP_RW_ExternalHighSpeedClockBypass,
+        CSSON_RW_ClockSafety,
+        PLLON_RW_PhaseLockedLoopEnable,
+        PLLRDY_RO_PhaseLockedLoopReady> regFields;
 
     template<typename RegField>
-    concept IsAnyRegField = Soc::Reg::IsSameAsOneFieldFromTuple<RegField, decltype(metadata::fields)>();
+    concept IsAnyRegField = Soc::Reg::IsSameAsOneFieldFromTuple<RegField, decltype(regFields)>();
 
 }
