@@ -46,7 +46,7 @@ namespace Soc::Reg {
         optimize("-Os"),
     ))
     isRegFieldsSetSipCt() -> bool {
-        constexpr auto baseAddr = PeripheralBaseAddr::fromRegField<TestedRegFieldHead>();
+        constexpr auto baseAddr = Peripheral::BaseAddr::fromRegField<TestedRegFieldHead>();
         return isRegFieldsSetMipCt<baseAddr, TestedRegFieldHead, TestedRegFieldTails...>();
     }
 
@@ -79,7 +79,7 @@ namespace Soc::Reg {
         optimize("-Os"),
     ))
     auto writeRegFieldsSipCt() -> void {
-        constexpr auto baseAddr = PeripheralBaseAddr::fromRegField<RegFieldHead>();
+        constexpr auto baseAddr = Peripheral::BaseAddr::fromRegField<RegFieldHead>();
         return writeRegFieldsMipCt<baseAddr, RegFieldHead, RegFieldTails...>();
     }
 
@@ -146,7 +146,7 @@ namespace Soc::Reg {
         optimize("-Os"),
     ))
     setRegFieldsSipCt() -> void {
-        constexpr auto baseAddr = PeripheralBaseAddr::fromRegField<RegFieldHead>();
+        constexpr auto baseAddr = Peripheral::BaseAddr::fromRegField<RegFieldHead>();
         return setRegFieldsMipCt<baseAddr, RegFieldHead, RegFieldTails...>();
     }
 
@@ -194,7 +194,7 @@ namespace Soc::Reg {
         optimize("-Os"),
     ))
     clearRegFieldTypesSipCt() -> void {
-        constexpr auto baseAddr = PeripheralBaseAddr::fromRegFieldType<RegFieldTypeHead>();
+        constexpr auto baseAddr = Peripheral::BaseAddr::fromRegFieldType<RegFieldTypeHead>();
         return clearRegFieldTypesMipCt<baseAddr, RegFieldTypeHead, RegFieldTypeTails...>();
     }
 
@@ -224,7 +224,7 @@ namespace Soc::Reg {
         optimize("-Os"),
     ))
     keepRegFieldTypesSipCt() -> void {
-        constexpr auto baseAddr = PeripheralBaseAddr::fromRegFieldType<RegFieldTypeHead>();
+        constexpr auto baseAddr = Peripheral::BaseAddr::fromRegFieldType<RegFieldTypeHead>();
         return keepRegFieldTypesMipCt<baseAddr, RegFieldTypeHead, RegFieldTypeTails...>();
     }
 
