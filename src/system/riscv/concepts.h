@@ -58,8 +58,7 @@ namespace Riscv::Concepts {
         { { CsrField::fieldBitMask }; };
 
 
-    // ReSharper disable once CppUnnamedNamespaceInHeaderFile
-    namespace {
+    namespace _internal {
 
         // The CSRs can come different enums, but must resolve to the same enum value
         // CheckSameCsrValue<QingKeV2::intsyscr, QingKeV4::intsyscr> true
@@ -83,7 +82,7 @@ namespace Riscv::Concepts {
     // CsrField(s) need to belong to the same ParentCsr
     template<auto ParentCsr, auto... CsrFields>
     concept SameCsrFieldEnumsAndMatchingParentCsr =
-        CsrFieldEnumMatchingCsrGeneric<false, ParentCsr, CsrFields...>;
+        _internal::CsrFieldEnumMatchingCsrGeneric<false, ParentCsr, CsrFields...>;
 
 
     // Omit check and provide any CSR as it will be omitted anyway, this
@@ -92,7 +91,7 @@ namespace Riscv::Concepts {
     // Note: intsyscr was entered as arbitary CSR, as the OmmitCheck is set to true
     template<auto... CsrFields>
     concept SameCsrFieldEnums =
-        CsrFieldEnumMatchingCsrGeneric<true, Riscv::Csr::QingKeV2::intsyscr, CsrFields...>;
+        _internal::CsrFieldEnumMatchingCsrGeneric<true, Riscv::Csr::QingKeV2::intsyscr, CsrFields...>;
 
 
 };

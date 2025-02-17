@@ -40,9 +40,7 @@ namespace Peripheral::Usart{
 
     #pragma endregion
 
-
-    namespace {
-        // https://medium.com/@mane.tako/understanding-unnamed-namespaces-in-c-7d41d367fd47
+    namespace _internal {
 
         template<typename TYPE>
         constexpr auto absoluteValueCt(TYPE const value) -> TYPE {
@@ -51,7 +49,7 @@ namespace Peripheral::Usart{
 
         template<typename TYPE>
         constexpr auto roundCt(TYPE const value) -> TYPE {
-            return static_cast<TYPE>(static_cast<int>(value + 0.5f));
+            return static_cast<TYPE>(static_cast<int>(value + 0.5f)); // NOLINT(*-incorrect-roundings)
         }
 
         template<std::uint32_t expectedBaudRate, std::uint32_t actualBaudRate, double errorThreshold>
@@ -72,13 +70,13 @@ namespace Peripheral::Usart{
         static_assert((1<<12) > expectedDivider, "USARTDIV's 12bit mantisa would overflow with these hclk and baudRate values");
         constexpr std::uint16_t mantisa = static_cast<std::uint16_t>(expectedDivider);
 
-        constexpr double leftOver = roundCt(expectedDivider - mantisa);
+        constexpr double leftOver = _internal::roundCt(expectedDivider - mantisa);
         constexpr std::uint8_t fraction = static_cast<std::uint8_t>(leftOver * 16);
 
         static_assert(fraction > 0 || mantisa >0, "Expected baud rate needs to be 16x slower than HCLK or it would result a zero USARTDIV");
 
         constexpr std::uint32_t actualBaudRate = hclk / (16.0 * mantisa + fraction);
-        checkBaudRateError<expectedBaudRate, actualBaudRate, errorThreshold>();
+        _internal::checkBaudRateError<expectedBaudRate, actualBaudRate, errorThreshold>();
 
         // TODO static print
         constexpr std::uint32_t usartDiv = mantisa << 4 | fraction;
