@@ -17,8 +17,6 @@
 
 namespace Riscv::Csr::Intsyscr {
 
-    using namespace Soc::Reg::FieldAccessPrivilege;
-
     enum class Hwstken_MRW_HardwarePrologueEpilogue: std::uint32_t {
         // Hardware prologue and epilogue on IRQs, on low-end devices (QingKeV2 like CH32V003)
         // it saves footprint, but doesn't improve performance (or can make it worse) and might
@@ -44,7 +42,7 @@ namespace Riscv::Csr::Intsyscr {
         // worth investigating how the footprint and runtime behavior changes between using
         // HPE or not. Because blindly enabling the HPE might negatively impact the application.
         fieldBitMask = 0b1u, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = Field::AccessRights::ReadWrite,
+        fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
 
         disable      = 0,            // disable HW prologue and epilogue (see intsyscr.h for more details)
         enable       = fieldBitMask, // enable HW prologoue and epiloge (see intsyscr.h for more details)
@@ -54,7 +52,7 @@ namespace Riscv::Csr::Intsyscr {
         // Enable nesting of intreupts together with PFIC settings the IRQs can get different
         // priorities and dictating order of execution.
         fieldBitMask = 0b1u << 1, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = Field::AccessRights::ReadWrite,
+        fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
 
         disable      = 0,
         enable       = fieldBitMask,
@@ -62,7 +60,7 @@ namespace Riscv::Csr::Intsyscr {
 
     enum class Eabien_MRW_EmbeddedAbi: std::uint32_t {
         fieldBitMask = 0b1u << 2,     // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = Field::AccessRights::ReadWrite,
+        fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
 
         disble       = 0,            // Keeping EABI disabled, the way WCH recomends
         enable       = fieldBitMask, // WCH noted that this shouldn't be enabled, and left in the default disabled state
