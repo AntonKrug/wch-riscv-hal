@@ -39,7 +39,7 @@ namespace Soc::Reg::Combine {
 
     template<typename Tuple, std::size_t Index>
     constexpr auto writableFromTupleTypeIndex() -> bool {
-        return Soc::Reg::FieldAccessPrivilege::Field::isWritable<static_cast<std::uint32_t>(std::tuple_element_t<Index, Tuple>::fieldAccess)>();
+        return FieldAccessRight::isWritable<static_cast<std::uint32_t>(std::tuple_element_t<Index, Tuple>::fieldAccess)>();
     }
 
     template<typename Tuple, std::size_t... Indices>
