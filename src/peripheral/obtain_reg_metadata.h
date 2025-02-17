@@ -16,31 +16,13 @@
 // template <typename HeadType, typename... TailTypes>
 // concept HeadSameAsTail = sizeof...(TailTypes) == 0 || (std::is_same_v<HeadType, TailTypes> && ...);
 
-namespace Peripheral::WholeRegFieldsTuple {
+namespace Peripheral::RegFieldTuple {
 
-    template<Peripheral::Rcc::Ctlr::IsAnyRegField RegFieldType>
-    constexpr auto fromRegFieldType() { return Peripheral::Rcc::Ctlr::regFields; }
+    template<Rcc::Concept::IsAnyRegField RegFieldType>
+    constexpr auto fromPeripheralRegFieldType() { return Rcc::RegFieldTuple::fromRegFieldType<RegFieldType>(); }
 
-    template<Peripheral::Rcc::Cfgr0::IsAnyRegField RegFieldType>
-    constexpr auto fromRegFieldType() { return Peripheral::Rcc::Cfgr0::regFields; }
-
-    template<Peripheral::Rcc::Intr::IsAnyRegField RegFieldType>
-    constexpr auto fromRegFieldType() { return Peripheral::Rcc::Intr::regFields; }
-
-    template<Peripheral::Rcc::Apb2prstr::IsAnyRegField RegFieldType>
-    constexpr auto fromRegFieldType() { return Peripheral::Rcc::Apb2prstr::regFields; }
-
-    template<Peripheral::Rcc::Apb1prstr::IsAnyRegField RegFieldType>
-    constexpr auto fromRegFieldType() { return Peripheral::Rcc::Apb1prstr::regFields; }
-
-    template<Peripheral::Rcc::Ahbpcenr::IsAnyRegField RegFieldType>
-    constexpr auto fromRegFieldType() { return Peripheral::Rcc::Ahbpcenr::regFields; }
-
-    template<Peripheral::Rcc::Apb1pcenr::IsAnyRegField RegFieldType>
-    constexpr auto fromRegFieldType() { return Peripheral::Rcc::Apb1pcenr::regFields; }
-
-    template<Peripheral::Rcc::Rstsckr::IsAnyRegField RegFieldType>
-    constexpr auto fromRegFieldType() { return Peripheral::Rcc::Rstsckr::regFields; }
+    template<typename RegFieldType>
+    constexpr auto fromRegFieldType() { return fromPeripheralRegFieldType<RegFieldType>(); }
 
     template<auto RegField>
     constexpr auto fromRegField() { return fromRegFieldType<decltype(RegField)>(); }
@@ -49,29 +31,11 @@ namespace Peripheral::WholeRegFieldsTuple {
 
 namespace Peripheral::RegMemOffset {
 
-    template<Peripheral::Rcc::Ctlr::IsAnyRegField RegFieldType>
-    constexpr auto fromRegFieldType() -> std::uint32_t { return static_cast<std::uint32_t>(Peripheral::Rcc::Ctlr::regMemOffset); }
+    template<Rcc::Concept::IsAnyRegField RegFieldType>
+    constexpr auto fromPeripheralRegFieldType() { return Rcc::RegMemOffset::fromRegFieldType<RegFieldType>(); }
 
-    template<Peripheral::Rcc::Cfgr0::IsAnyRegField RegFieldType>
-    constexpr auto fromRegFieldType() -> std::uint32_t { return static_cast<std::uint32_t>(Peripheral::Rcc::Cfgr0::regMemOffset); }
-
-    template<Peripheral::Rcc::Intr::IsAnyRegField RegFieldType>
-    constexpr auto fromRegFieldType() -> std::uint32_t { return static_cast<std::uint32_t>(Peripheral::Rcc::Intr::regMemOffset); }
-
-    template<Peripheral::Rcc::Apb2prstr::IsAnyRegField RegFieldType>
-    constexpr auto fromRegFieldType() -> std::uint32_t { return static_cast<std::uint32_t>(Peripheral::Rcc::Apb2prstr::regMemOffset); }
-
-    template<Peripheral::Rcc::Apb1prstr::IsAnyRegField RegFieldType>
-    constexpr auto fromRegFieldType() -> std::uint32_t { return static_cast<std::uint32_t>(Peripheral::Rcc::Apb1prstr::regMemOffset); }
-
-    template<Peripheral::Rcc::Ahbpcenr::IsAnyRegField RegFieldType>
-    constexpr auto fromRegFieldType() -> std::uint32_t { return static_cast<std::uint32_t>(Peripheral::Rcc::Ahbpcenr::regMemOffset); }
-
-    template<Peripheral::Rcc::Apb1pcenr::IsAnyRegField RegFieldType>
-    constexpr auto fromRegFieldType() -> std::uint32_t { return static_cast<std::uint32_t>(Peripheral::Rcc::Apb1pcenr::regMemOffset); }
-
-    template<Peripheral::Rcc::Rstsckr::IsAnyRegField RegFieldType>
-    constexpr auto fromRegFieldType() -> std::uint32_t { return static_cast<std::uint32_t>(Peripheral::Rcc::Rstsckr::regMemOffset); }
+    template<typename RegField>
+    constexpr auto fromRegFieldType() -> std::uint32_t { return fromPeripheralRegFieldType<RegField>(); }
 
     template<auto RegField>
     constexpr auto fromRegField() -> std::uint32_t { return fromRegFieldType<decltype(RegField)>(); }
