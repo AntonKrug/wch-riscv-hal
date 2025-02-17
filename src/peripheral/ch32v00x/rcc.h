@@ -15,18 +15,12 @@
 #include "field/rcc/ahbpcenr.h"
 #include "field/rcc/apb1pcenr.h"
 #include "field/rcc/apb2pcenr.h"
+#include "field/rcc/rstsckr.h"
 
 
 namespace Peripheral::Rcc {
 
     constexpr std::uint32_t baseAddr = 0x4002'1000;
-
-    // make it work with relative addresses or multiple instances
-    enum class RegOffset: std::uint32_t {
-        Apb2pcenr = 0x18,
-        Apb1pcenr = 0x1C,
-        Rstsckr   = 0x24
-    };
 
     template<typename Reg>
     concept IsAnyRegField =
@@ -37,7 +31,8 @@ namespace Peripheral::Rcc {
         Peripheral::Rcc::Apb1prstr::IsAnyRegField<Reg> ||
         Peripheral::Rcc::Ahbpcenr::IsAnyRegField<Reg> ||
         Peripheral::Rcc::Apb2pcenr::IsAnyRegField<Reg> ||
-        Peripheral::Rcc::Apb1pcenr::IsAnyRegField<Reg>;
+        Peripheral::Rcc::Apb1pcenr::IsAnyRegField<Reg> ||
+        Peripheral::Rcc::Rstsckr::IsAnyRegField<Reg>;
 
     constexpr std::tuple<
         decltype(Peripheral::Rcc::Ctlr::regFields),
@@ -47,7 +42,8 @@ namespace Peripheral::Rcc {
         decltype(Peripheral::Rcc::Apb1prstr::regFields),
         decltype(Peripheral::Rcc::Ahbpcenr::regFields),
         decltype(Peripheral::Rcc::Apb2pcenr::regFields),
-        decltype(Peripheral::Rcc::Apb1pcenr::regFields)
+        decltype(Peripheral::Rcc::Apb1pcenr::regFields),
+        decltype(Peripheral::Rcc::Rstsckr::regFields)
     > registerFields;
 
 }

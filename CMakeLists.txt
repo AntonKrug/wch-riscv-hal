@@ -139,6 +139,7 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/rcc/cfgr0.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/rcc/ctlr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/rcc/intr.h
+        ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/rcc/rstsckr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/gpio.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/rcc.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/timer.h
