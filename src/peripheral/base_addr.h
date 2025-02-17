@@ -10,7 +10,7 @@
 
 namespace Peripheral::BaseAddr {
 
-    template<Peripheral::Rcc::IsAnyRegField RegFieldType>
+    template<Peripheral::Rcc::Concept::IsAnyRegField RegFieldType>
     constexpr auto fromRegFieldType() -> std::uint32_t {
         return Peripheral::Rcc::baseAddr;
     }
