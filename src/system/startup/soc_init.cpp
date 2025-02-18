@@ -112,8 +112,19 @@ extern "C" {
             Intr::LSIRDYC_WO_InternalLowSpeedReadyClear>();
     }
 
-    // ReSharper disable once CppPossiblyErroneousEmptyStatements
-    // while (isRegFieldsSetSipCt<Ctlr::HSIRDY_RO_InternalHighSpeedClockReady::notReady>());
+    inline
+    void
+    __attribute__ ((
+        always_inline,
+        optimize("-Os"),
+    ))
+    trimHsiClockCalibration() {
+        using namespace Peripheral::Rcc;
+        using namespace Soc::Reg;
+
+        constexpr auto rawValue = Ctlr::produceRawTrimValueCt<UserConfig::hsiTrim>();
+        setRegFieldsWithRawValueSipCt<rawValue, Ctlr::HSITRIM_RW_InternalHighSpeedClockTrim>();
+    }
 
     inline
     void
@@ -123,11 +134,15 @@ extern "C" {
     ))
     configureNewClocks() {
         using namespace Peripheral::Rcc;
-        using namespace Literals::Timer;
+        //using namespace Literals::Timer;
         using namespace Soc::Reg;
 
         setRegFieldsSipCt<
             Cfgr0::getHbPrescalerEnum<Soc::Clocks::Hsi, UserConfig::systemClock>()>();
+
+        // clearRegFieldTypesSipCt<
+        //     Ahbpcenr::DMA1EN_RW_DirectMemoryAccess1Enable>();
+
     }
 
     // https://gcc.gnu.org/onlinedocs/gcc-14.2.0/gcc/Optimize-Options.html
@@ -170,7 +185,8 @@ extern "C" {
 
         // System clock configuration
         resetAndStabilizeClocksToGoodKnownState();
-        configureNewClocks();
+        trimHsiClockCalibration();
+        // configureNewClocks();
     }
 
 
