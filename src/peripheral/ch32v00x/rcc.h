@@ -46,25 +46,25 @@ namespace Peripheral::Rcc {
     }
 
     namespace RegMemOffset {
-        template<Rcc::Concept::IsCtlrField _>      constexpr auto fromRegFieldType() { return Rcc::Ctlr::regMemOffset; }
-        template<Rcc::Concept::IsCfgr0Field _>     constexpr auto fromRegFieldType() { return Rcc::Cfgr0::regMemOffset; }
-        template<Rcc::Concept::IsIntrField _>      constexpr auto fromRegFieldType() { return Rcc::Intr::regMemOffset; }
-        template<Rcc::Concept::IsApb2prstrField _> constexpr auto fromRegFieldType() { return Rcc::Apb2prstr::regMemOffset; }
-        template<Rcc::Concept::IsApb1prstrField _> constexpr auto fromRegFieldType() { return Rcc::Apb1prstr::regMemOffset; }
-        template<Rcc::Concept::IsAhbpcenrField _>  constexpr auto fromRegFieldType() { return Rcc::Ahbpcenr::regMemOffset; }
-        template<Rcc::Concept::IsApb1pcenrField _> constexpr auto fromRegFieldType() { return Rcc::Apb1pcenr::regMemOffset; }
-        template<Rcc::Concept::IsRstsckrField _>   constexpr auto fromRegFieldType() { return Rcc::Rstsckr::regMemOffset; }
+        template<Concept::IsCtlrField _>      constexpr auto fromRegFieldType() { return Ctlr::regMemOffset; }
+        template<Concept::IsCfgr0Field _>     constexpr auto fromRegFieldType() { return Cfgr0::regMemOffset; }
+        template<Concept::IsIntrField _>      constexpr auto fromRegFieldType() { return Intr::regMemOffset; }
+        template<Concept::IsApb2prstrField _> constexpr auto fromRegFieldType() { return Apb2prstr::regMemOffset; }
+        template<Concept::IsApb1prstrField _> constexpr auto fromRegFieldType() { return Apb1prstr::regMemOffset; }
+        template<Concept::IsAhbpcenrField _>  constexpr auto fromRegFieldType() { return Ahbpcenr::regMemOffset; }
+        template<Concept::IsApb1pcenrField _> constexpr auto fromRegFieldType() { return Apb1pcenr::regMemOffset; }
+        template<Concept::IsRstsckrField _>   constexpr auto fromRegFieldType() { return Rstsckr::regMemOffset; }
     }
 
     namespace RegFieldTuple {
-        template<Rcc::Concept::IsCtlrField _>      constexpr auto fromRegFieldType() { return Rcc::Ctlr::regFields; }
-        template<Rcc::Concept::IsCfgr0Field _>     constexpr auto fromRegFieldType() { return Rcc::Cfgr0::regFields; }
-        template<Rcc::Concept::IsIntrField _>      constexpr auto fromRegFieldType() { return Rcc::Intr::regFields; }
-        template<Rcc::Concept::IsApb2prstrField _> constexpr auto fromRegFieldType() { return Rcc::Apb2prstr::regFields; }
-        template<Rcc::Concept::IsApb1prstrField _> constexpr auto fromRegFieldType() { return Rcc::Apb1prstr::regFields; }
-        template<Rcc::Concept::IsAhbpcenrField _>  constexpr auto fromRegFieldType() { return Rcc::Ahbpcenr::regFields; }
-        template<Rcc::Concept::IsApb1pcenrField _> constexpr auto fromRegFieldType() { return Rcc::Apb1pcenr::regFields; }
-        template<Rcc::Concept::IsRstsckrField _>   constexpr auto fromRegFieldType() { return Rcc::Rstsckr::regFields; }
+        template<Concept::IsCtlrField _>      constexpr auto fromRegFieldType() { return Ctlr::regFields; }
+        template<Concept::IsCfgr0Field _>     constexpr auto fromRegFieldType() { return Cfgr0::regFields; }
+        template<Concept::IsIntrField _>      constexpr auto fromRegFieldType() { return Intr::regFields; }
+        template<Concept::IsApb2prstrField _> constexpr auto fromRegFieldType() { return Apb2prstr::regFields; }
+        template<Concept::IsApb1prstrField _> constexpr auto fromRegFieldType() { return Apb1prstr::regFields; }
+        template<Concept::IsAhbpcenrField _>  constexpr auto fromRegFieldType() { return Ahbpcenr::regFields; }
+        template<Concept::IsApb1pcenrField _> constexpr auto fromRegFieldType() { return Apb1pcenr::regFields; }
+        template<Concept::IsRstsckrField _>   constexpr auto fromRegFieldType() { return Rcc::Rstsckr::regFields; }
     }
 
 }
