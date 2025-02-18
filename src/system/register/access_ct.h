@@ -86,30 +86,27 @@ namespace Soc::Reg {
 
     #pragma endregion
 
-    #pragma region setReg
+    #pragma region setRegWithRawValue
 
-    template<std::uint32_t baseAddress, auto RegFieldHead, auto... RegFieldTails>
+    template<std::uint32_t BaseAddress, std::uint32_t ValueToBeWritten, typename  RegFieldTypeHead, typename ... RegFieldTypeTails>
     requires
-        Soc::Reg::Concept::FieldWithBitMask<RegFieldHead> &&
-        (Soc::Reg::Concept::FieldWithBitMask<RegFieldTails> && ...)
+        Soc::Reg::Concept::FieldTypeWithBitMask<RegFieldTypeHead> &&
+        (Soc::Reg::Concept::FieldTypeWithBitMask<RegFieldTypeTails> && ...)
     inline auto
     __attribute__ ((
         always_inline,
         optimize("-Os"),
     ))
-    setRegFieldsMipCt() -> void {
-        // TODO: unify getting fieldtuple and reg offset
-        // auto [ regOffset, regFieldTuple] = RegMetadata::fromRegField<RegFieldHead>();
-        constexpr auto regOffset              = Peripheral::RegMemOffset::fromRegField<RegFieldHead>();
-        constexpr auto regFieldsTuple         = Peripheral::RegFieldTuple::fromRegField<RegFieldHead>();
-        constexpr auto valueToBeWritten       = Soc::Reg::Combine::enumsToUint32<RegFieldHead, RegFieldTails...>();
-        constexpr auto maskGoingToWritten     = Soc::Reg::Combine::fieldMasksToUint32<RegFieldHead, RegFieldTails...>();
+    setRegFieldsWithRawValueMipCt() -> void {
+        constexpr auto regOffset              = Peripheral::RegMemOffset::fromRegFieldType<RegFieldTypeHead>();
+        constexpr auto regFieldsTuple         = Peripheral::RegFieldTuple::fromRegFieldType<RegFieldTypeHead>();
+        constexpr auto maskGoingToWritten     = Soc::Reg::Combine::fieldTypeMasksToUint32<RegFieldTypeHead, RegFieldTypeTails...>();
         constexpr auto maskShouldBeKept       = 0xffffffffu ^ maskGoingToWritten;
         constexpr auto maskAllowedToBeWritten = Soc::Reg::Combine::writableMaskFromTupleType<decltype(regFieldsTuple)>();
         constexpr auto maskForbiddenToWrite   = 0xffffffffu ^ maskAllowedToBeWritten;
 
         static_assert(
-            valueToBeWritten != 0u || maskGoingToWritten != 0u,
+            ValueToBeWritten != 0u || maskGoingToWritten != 0u,
             "Both value-to-be-set and their mask are empty, this indicates badly described register field");
 
         static_assert(
@@ -120,21 +117,53 @@ namespace Soc::Reg {
             // Either whole register is going to be set, or whole writable part of the register,
             // therefore no need to be clearing the register before setting it,
             // we can just write the whole register directly
-            Soc::Reg::Access::writeCt<baseAddress + regOffset>(valueToBeWritten);
+            Soc::Reg::Access::writeCt<BaseAddress + regOffset>(ValueToBeWritten);
         } else {
-            auto actualValue = Soc::Reg::Access::readCt<baseAddress + regOffset>();
+            auto actualValue = Soc::Reg::Access::readCt<BaseAddress + regOffset>();
 
             // if clearing and setting is the same value, then clearing can be omited
-            if constexpr (maskGoingToWritten != valueToBeWritten) {
+            if constexpr (maskGoingToWritten != ValueToBeWritten) {
                 actualValue &= maskShouldBeKept;   // to really clear we need to invert the mask
             }
 
             // if nothing to set then ommit setting
-            if constexpr (valueToBeWritten > 0) {
-                actualValue |= valueToBeWritten;
+            if constexpr (ValueToBeWritten > 0) {
+                actualValue |= ValueToBeWritten;
             }
-            Soc::Reg::Access::writeCt<baseAddress + regOffset>(actualValue);
+            Soc::Reg::Access::writeCt<BaseAddress + regOffset>(actualValue);
         }
+    }
+
+    template<std::uint32_t ValueToBeWritten, typename  RegFieldTypeHead, typename... RegFieldTypeTails>
+    // requires
+    //     Soc::Reg::Concept::FieldTypeWithBitMask<RegFieldTypeHead> &&
+    //     (Soc::Reg::Concept::FieldTypeWithBitMask<RegFieldTypeTails> && ...)
+    inline auto
+    __attribute__ ((
+        always_inline,
+        optimize("-Os"),
+    ))
+    setRegFieldsWithRawValueSipCt() -> void {
+        constexpr auto baseAddr = Peripheral::BaseAddr::fromRegFieldType<RegFieldTypeHead>();
+        return setRegFieldsWithRawValueMipCt<baseAddr, ValueToBeWritten, RegFieldTypeHead, RegFieldTypeTails...>();
+    }
+
+    #pragma endregion
+
+    #pragma region setReg
+
+    template<std::uint32_t BaseAddress, auto RegFieldHead, auto... RegFieldTails>
+    requires
+        Soc::Reg::Concept::FieldWithBitMask<RegFieldHead> &&
+        (Soc::Reg::Concept::FieldWithBitMask<RegFieldTails> && ...)
+    inline auto
+    __attribute__ ((
+        always_inline,
+        optimize("-Os"),
+    ))
+    setRegFieldsMipCt() -> void {
+        constexpr auto valueToBeWritten = Soc::Reg::Combine::enumsToUint32<RegFieldHead, RegFieldTails...>();
+        setRegFieldsWithRawValueMipCt<BaseAddress, valueToBeWritten, decltype(RegFieldHead),decltype(RegFieldTails)...>();
     }
 
     template<auto RegFieldHead, auto... RegFieldTails>
@@ -155,7 +184,8 @@ namespace Soc::Reg {
 
     #pragma region ClearReg
 
-    template<std::uint32_t baseAddress, typename RegFieldTypeHead, typename... RegFieldTypeTails>
+    // TODO: requirements/concepts for arguments
+    template<std::uint32_t BaseAddress, typename RegFieldTypeHead, typename... RegFieldTypeTails>
     inline auto
     __attribute__ ((
         always_inline,
@@ -178,16 +208,16 @@ namespace Soc::Reg {
 
         if constexpr (maskToClear == maskAllowedToBeWritten) {
             // everything what can be written is to be cleared, no point reading
-            Soc::Reg::Access::writeCt<baseAddress + regOffset>(0);
+            Soc::Reg::Access::writeCt<BaseAddress + regOffset, 0>();
         }
         else {
-            const auto actualValue = Soc::Reg::Access::readCt<baseAddress + regOffset>();
-            Soc::Reg::Access::writeCt<baseAddress + regOffset>(actualValue & maskToClear);
+            const auto actualValue = Soc::Reg::Access::readCt<BaseAddress + regOffset>();
+            Soc::Reg::Access::writeCt<BaseAddress + regOffset>(actualValue & maskToClear);
         }
 
     }
 
-
+    // TODO: requirements/concepts for arguments
     template<typename RegFieldTypeHead, typename... RegFieldTypeTails>
     inline auto
     __attribute__ ((
@@ -203,7 +233,8 @@ namespace Soc::Reg {
 
     #pragma region KeepReg
 
-    template<std::uint32_t baseAddress, typename RegFieldTypeHead, typename... RegFieldTypeTails>
+    // TODO: requirements/concepts for arguments
+    template<std::uint32_t BaseAddress, typename RegFieldTypeHead, typename... RegFieldTypeTails>
     inline auto
     __attribute__ ((
         always_inline,
@@ -212,12 +243,12 @@ namespace Soc::Reg {
     keepRegFieldTypesMipCt() -> void {
         constexpr auto regOffset    = Peripheral::RegMemOffset::fromRegFieldType<RegFieldTypeHead>();
         constexpr auto combinedMask = Soc::Reg::Combine::fieldTypeMasksToUint32<RegFieldTypeHead, RegFieldTypeTails...>();
-        const     auto actualValue  = Soc::Reg::Access::readCt<baseAddress + regOffset>();
+        const     auto actualValue  = Soc::Reg::Access::readCt<BaseAddress + regOffset>();
 
-        Soc::Reg::Access::writeCt<baseAddress + regOffset>( actualValue & (0xffffffff ^ combinedMask) );
+        Soc::Reg::Access::writeCt<BaseAddress + regOffset>( actualValue & (0xffffffff ^ combinedMask) );
     }
 
-
+    // TODO: requirements/concepts for arguments
     template<typename RegFieldTypeHead, typename... RegFieldTypeTails>
     inline auto
     __attribute__ ((
