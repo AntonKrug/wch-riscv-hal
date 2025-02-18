@@ -35,9 +35,48 @@ namespace Peripheral::Rcc {
 
         enum class HSITRIM_RW_InternalHighSpeedClockTrim: std::uint32_t {
             // Able to superimpose on top of HSICAL[7:0] to adjust HSI frequency. Range is 0-31 60kHz steps, value 16 is the default midpoint
+            // HSITRIM=0  coresponds to -960 kHz
+            // HSITRIM=1  coresponds to -900 kHz
+            // HSITRIM=2  coresponds to -840 kHz
+            // HSITRIM=3  coresponds to -780 kHz
+            // HSITRIM=4  coresponds to -720 kHz
+            // HSITRIM=5  coresponds to -660 kHz
+            // HSITRIM=6  coresponds to -600 kHz
+            // HSITRIM=7  coresponds to -540 kHz
+            // HSITRIM=8  coresponds to -480 kHz
+            // HSITRIM=9  coresponds to -420 kHz
+            // HSITRIM=10 coresponds to -360 kHz
+            // HSITRIM=11 coresponds to -300 kHz
+            // HSITRIM=12 coresponds to -240 kHz
+            // HSITRIM=13 coresponds to -180 kHz
+            // HSITRIM=14 coresponds to -120 kHz
+            // HSITRIM=15 coresponds to  -60 kHz
+            // HSITRIM=16 coresponds to    0 kHz
+            // HSITRIM=17 coresponds to   60 kHz
+            // HSITRIM=18 coresponds to  120 kHz
+            // HSITRIM=19 coresponds to  180 kHz
+            // HSITRIM=20 coresponds to  240 kHz
+            // HSITRIM=21 coresponds to  300 kHz
+            // HSITRIM=22 coresponds to  360 kHz
+            // HSITRIM=23 coresponds to  420 kHz
+            // HSITRIM=24 coresponds to  480 kHz
+            // HSITRIM=25 coresponds to  540 kHz
+            // HSITRIM=26 coresponds to  600 kHz
+            // HSITRIM=27 coresponds to  660 kHz
+            // HSITRIM=28 coresponds to  720 kHz
+            // HSITRIM=29 coresponds to  780 kHz
+            // HSITRIM=30 coresponds to  840 kHz
+            // HSITRIM=31 coresponds to  900 kHz
+
             fieldBitMask = 0b11111u << 3, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
         };
+
+        template<std::uint8_t Trim>
+        constexpr static auto produceRawTrimValueCt() -> std::uint32_t {
+            static_assert(Trim < 32, "Trim is 5-bits, the value must be in range 0-31");
+            return Trim << Soc::Reg::enumBitMaskOffsetCt<HSITRIM_RW_InternalHighSpeedClockTrim>();
+        }
 
         enum class HSICAL_RO_InternalHighSpeedClockCalibration: std::uint32_t {
             fieldBitMask = 0b11111111u << 8, // not holding any settings or value, it's a bitmask for this specific field
