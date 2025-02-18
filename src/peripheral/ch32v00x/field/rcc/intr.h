@@ -15,6 +15,8 @@ namespace Peripheral::Rcc {
     struct Intr {
         // Clock Interupt
 
+        constexpr static std::uint32_t regMemOffset = 0x08u;
+
         enum class LSIRDYF_RO_InternalLowSpeedReadyFlag: std::uint32_t {
             fieldBitMask  = 1u, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess   = Soc::Reg::FieldAccessRight::ReadOnly,
@@ -138,7 +140,6 @@ namespace Peripheral::Rcc {
         };
 
         // 31-24 reserved
-        constexpr static std::uint32_t regMemOffset = 0x08u;
 
         constexpr static std::tuple<
             LSIRDYF_RO_InternalLowSpeedReadyFlag,

@@ -17,6 +17,8 @@ namespace Peripheral::Rcc {
     struct Cfgr0 {
         // Clock configuration
 
+        constexpr static std::uint32_t regMemOffset = 0x04u;
+
         enum class SW_RW_SystemClockSource: std::uint32_t {
             fieldBitMask = 0b11u, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
@@ -204,8 +206,6 @@ namespace Peripheral::Rcc {
             hse          = 0b1'10u << 24, // hse is exposed on the pin output
             pll          = 0b1'11u << 24, // pll is exposed on the pin output
         };
-
-        constexpr static std::uint32_t regMemOffset = 0x04u;
 
         constexpr static std::tuple<
             SW_RW_SystemClockSource,

@@ -15,6 +15,8 @@ namespace Peripheral::Rcc {
     struct Rstsckr {
         // Reset status control
 
+        constexpr static std::uint32_t regMemOffset = 0x24u;
+
         enum class LSION_RW_InternalLowSpeedClockEnable: std::uint32_t {
             fieldBitMask   = 0b1u << 0, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess    = Soc::Reg::FieldAccessRight::ReadWrite,
@@ -86,8 +88,6 @@ namespace Peripheral::Rcc {
             noReset        = 0u,  // no low power reset, set by HW, cleared by user with RMVF
             resetOccured   = fieldBitMask // low power reset happened, set by HW, cleared by user with RMVFs
         };
-
-        constexpr static std::uint32_t regMemOffset = 0x24u;
 
         constexpr static std::tuple<
             LSION_RW_InternalLowSpeedClockEnable,

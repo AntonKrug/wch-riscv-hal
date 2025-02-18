@@ -15,6 +15,8 @@ namespace Peripheral::Rcc {
     struct Ctlr {
         // Clock control
 
+        constexpr static std::uint32_t regMemOffset = 0x00u;
+
         // TODO: check other cpus
         // TODO: RW/RO and other access modes as enum
         enum class HSION_RW_InternalHighSpeedClockEnable: std::uint32_t {
@@ -132,8 +134,6 @@ namespace Peripheral::Rcc {
         };
 
         //TODO: v2x/v3x has pll2on,pll2rdy,pll3on,pll3rdy
-
-        constexpr static std::uint32_t regMemOffset = 0x00u;
 
         constexpr static std::tuple<
             HSION_RW_InternalHighSpeedClockEnable,

@@ -15,6 +15,8 @@ namespace Peripheral::Rcc {
     struct Apb2pcenr {
         // Advanced Peripheral Bus 2 (low speed) peripheral clock enable
 
+        constexpr static std::uint32_t regMemOffset = 0x18u;
+
         enum class AFIOEN_RW_AlternateFuctionInputOutputClockEnable: std::uint32_t {
             fieldBitMask = 0b1u << 0, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
@@ -78,8 +80,6 @@ namespace Peripheral::Rcc {
             noClock      = 0u,
             clockEnable  = fieldBitMask
         };
-
-        constexpr static std::uint32_t regMemOffset = 0x18u;
 
         constexpr static std::tuple<
             AFIOEN_RW_AlternateFuctionInputOutputClockEnable,

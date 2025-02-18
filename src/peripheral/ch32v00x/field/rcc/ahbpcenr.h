@@ -15,6 +15,8 @@ namespace Peripheral::Rcc {
     struct Ahbpcenr {
         // Advanced High-performance Bus peripheral clock enable
 
+        constexpr static std::uint32_t regMemOffset = 0x14u;
+
         enum class DMA1EN_RW_DirectMemoryAccess1Enable: std::uint32_t {
             fieldBitMask = 0b1u << 0, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
@@ -30,8 +32,6 @@ namespace Peripheral::Rcc {
             noClock      = 0u,          // The SRAM clock disabled durning sleep
             clockEnable  = fieldBitMask // The SRAM clock enabled durning sleep
         };
-
-        constexpr static std::uint32_t regMemOffset = 0x14u;
 
         constexpr static std::tuple<
             DMA1EN_RW_DirectMemoryAccess1Enable,

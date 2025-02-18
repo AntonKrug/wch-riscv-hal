@@ -15,6 +15,8 @@ namespace Peripheral::Rcc {
     struct Apb1prstr {
         // Advanced Peripheral Bus 1 (low speed) peripheral reset register
 
+        constexpr static std::uint32_t regMemOffset = 0x10u;
+
         enum class TIM2RST_RW_Timer2Reset: std::uint32_t {
             fieldBitMask = 0b1u << 0, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
@@ -46,8 +48,6 @@ namespace Peripheral::Rcc {
             noImpact     = 0u,          // Peripheral is NOT held in RESET
             keepInReset  = fieldBitMask // Peripheral held in RESET
         };
-
-        constexpr static std::uint32_t regMemOffset = 0x10u;
 
         constexpr static std::tuple<
             TIM2RST_RW_Timer2Reset,
