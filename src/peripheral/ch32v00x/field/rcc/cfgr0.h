@@ -187,8 +187,8 @@ namespace Peripheral::Rcc {
             fieldBitMask = 0b1u << 16,   // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
 
-            hsi          = 0,            // PLL = internal high speed clock, default, configure before enabling PLL
-            hse          = fieldBitMask, // PLL = external high speed clock, configure before enabling PLL
+            hsi2x        = 0,            // PLL = 2 * internal high speed clock, default, configure before enabling PLL (PLLCLK = 2*PLLSCR)
+            hse2x        = fieldBitMask, // PLL = 2 * external high speed clock, configure before enabling PLL (PLLCLK = 2*PLLSCR)
         };
 
         //TODO: this register might change between SoCs
