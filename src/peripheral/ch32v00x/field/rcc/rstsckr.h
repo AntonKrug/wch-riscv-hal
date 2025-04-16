@@ -22,7 +22,7 @@ namespace Peripheral::Rcc {
             fieldAccess    = Soc::Reg::FieldAccessRight::ReadWrite,
 
             disable        = 0u,  // will take 3 cycles for LSIRDY to take effect
-            enabled        = fieldBitMask // check LSIRDY if it's ready
+            enable         = fieldBitMask // check LSIRDY if it's ready
         };
 
         enum class LSIRDY_RO_InternalLowSpeedClockSteadyReadyFlag: std::uint32_t {
