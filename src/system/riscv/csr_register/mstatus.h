@@ -52,6 +52,7 @@ namespace Riscv::Csr::Mstatus {
         fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
 
         disable      = 0,
+        enable       = fieldBitMask,
     };
 
     enum class Mppop_MRW: std::uint32_t {
@@ -59,6 +60,7 @@ namespace Riscv::Csr::Mstatus {
         fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
 
         disable      = 0,
+        enable       = fieldBitMask,
     };
 
     template<typename Field>
