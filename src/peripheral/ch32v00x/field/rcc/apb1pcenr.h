@@ -7,7 +7,6 @@
 #include <cstdint>
 #include <tuple>
 
-#include "system/register/util.h"
 #include "system/register/field_access_privilege.h"
 
 namespace Peripheral::Rcc {

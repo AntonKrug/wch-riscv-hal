@@ -7,7 +7,6 @@
 #include <cstdint>
 #include <tuple>
 
-#include "system/register/util.h"
 #include "system/register/field_access_privilege.h"
 
 namespace Peripheral::Rcc {
@@ -25,7 +24,7 @@ namespace Peripheral::Rcc {
             clockEnable  = fieldBitMask
         };
 
-        enum class SRAMEN_RW_SRAM_Clock_Durning_Sleep_Enable: std::uint32_t {
+        enum class SRAMEN_RW_SramClockDurningSleepEnable: std::uint32_t {
             fieldBitMask = 0b1u << 2, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
 
@@ -35,7 +34,7 @@ namespace Peripheral::Rcc {
 
         constexpr static std::tuple<
             DMA1EN_RW_DirectMemoryAccess1Enable,
-            SRAMEN_RW_SRAM_Clock_Durning_Sleep_Enable
+            SRAMEN_RW_SramClockDurningSleepEnable
         > regFields = {};
     };
 
