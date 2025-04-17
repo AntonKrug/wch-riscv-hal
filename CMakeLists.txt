@@ -46,12 +46,12 @@ set(TOOLCHAIN_PATH_BIN "${TOOLCHAIN_PATH}/bin")
 #set(MY_TOOLCHAIN_CROSS_PREFIX "riscv-none-elf-")
 #set(MY_TOOLCHAIN_CROSS_PREFIX "riscv-none-embed-")
 set(MY_TOOLCHAIN_CROSS_PREFIX "riscv-wch-elf-")
-set(CMAKE_C_COMPILER "${TOOLCHAIN_PATH_BIN}/${MY_TOOLCHAIN_CROSS_PREFIX}gcc${CMAKE_HOST_EXECUTABLE_SUFFIX}")
+set(CMAKE_C_COMPILER   "${TOOLCHAIN_PATH_BIN}/${MY_TOOLCHAIN_CROSS_PREFIX}gcc${CMAKE_HOST_EXECUTABLE_SUFFIX}")
 set(CMAKE_CXX_COMPILER "${TOOLCHAIN_PATH_BIN}/${MY_TOOLCHAIN_CROSS_PREFIX}g++${CMAKE_HOST_EXECUTABLE_SUFFIX}")
-set(CMAKE_SIZE "${TOOLCHAIN_PATH_BIN}/${MY_TOOLCHAIN_CROSS_PREFIX}size${CMAKE_HOST_EXECUTABLE_SUFFIX}")
-set(CMAKE_OBJCOPY "${TOOLCHAIN_PATH_BIN}/${MY_TOOLCHAIN_CROSS_PREFIX}objcopy${CMAKE_HOST_EXECUTABLE_SUFFIX}")
-set(CMAKE_OBJDUMP "${TOOLCHAIN_PATH_BIN}/${MY_TOOLCHAIN_CROSS_PREFIX}objdump${CMAKE_HOST_EXECUTABLE_SUFFIX}")
-set(CMAKE_STRIP "${TOOLCHAIN_PATH_BIN}/${MY_TOOLCHAIN_CROSS_PREFIX}strip${CMAKE_HOST_EXECUTABLE_SUFFIX}")
+set(CMAKE_SIZE         "${TOOLCHAIN_PATH_BIN}/${MY_TOOLCHAIN_CROSS_PREFIX}size${CMAKE_HOST_EXECUTABLE_SUFFIX}")
+set(CMAKE_OBJCOPY      "${TOOLCHAIN_PATH_BIN}/${MY_TOOLCHAIN_CROSS_PREFIX}objcopy${CMAKE_HOST_EXECUTABLE_SUFFIX}")
+set(CMAKE_OBJDUMP      "${TOOLCHAIN_PATH_BIN}/${MY_TOOLCHAIN_CROSS_PREFIX}objdump${CMAKE_HOST_EXECUTABLE_SUFFIX}")
+set(CMAKE_STRIP        "${TOOLCHAIN_PATH_BIN}/${MY_TOOLCHAIN_CROSS_PREFIX}strip${CMAKE_HOST_EXECUTABLE_SUFFIX}")
 
 #https://cmake.org/cmake/help/latest/command/find_program.html
 #find_program(CMAKE_SIZE    size    PATHS "${TOOLCHAIN_PATH_BIN}" NO_CACHE NO_DEFAULT_PATH)
@@ -133,8 +133,9 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/peripheral/base_addr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/afio.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/afio/pcfr1.h
-        ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/dma/intfr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/dma/cfgr.h
+        ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/dma/intfcr.h
+        ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/dma/intfr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/rcc/ahbpcenr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/rcc/apb1pcenr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/rcc/apb1prstr.h
