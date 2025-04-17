@@ -11,6 +11,7 @@
 #include "peripheral/ch32v00x/rcc.h"
 #include "utils/literals/timer.h"
 #include "system/register/access_ct.h"
+#include "peripheral/ch32v00x/dma.h"
 
 extern "C" {
 
@@ -110,6 +111,13 @@ extern "C" {
             Intr::HSERDYC_WO_ExternalHighSpeedReadyClear,
             Intr::HSIRDYC_WO_InternalHighSpeedReadyClear,
             Intr::LSIRDYC_WO_InternalLowSpeedReadyClear>();
+
+        Peripheral::Dma::configureDma<
+            1,
+            3,
+            Peripheral::Dma::Direction::PeripheralToMemory,
+            0,
+            0, Peripheral::Dma::Priority::low, Peripheral::Dma::SizeAlignment::byte, Peripheral::Dma::SizeAlignment::word, true, false, false, false, false, false>();
     }
 
     inline
