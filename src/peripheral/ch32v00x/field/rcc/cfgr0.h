@@ -88,8 +88,6 @@ namespace Peripheral::Rcc {
                 ratioFraction == static_cast<double>(ratioWhole),
                 "The SysClock and DesiredHbClock frequencies can't be divided by a whole number division");
 
-            // static_assert( ratioWhole == 3, "aaaa");
-
             if constexpr (ratioWhole == 1) {
                 return 0u;
             } else if constexpr (ratioWhole < 9) {
@@ -125,7 +123,7 @@ namespace Peripheral::Rcc {
             divide4odd      = 0b00'001u << 11, // ADC = HB / 4 (must be less than 24MHz)
             divide4even     = 0b00'010u << 11, // ADC = HB / 4 (must be less than 24MHz)
             divide8odd      = 0b00'011u << 11, // ADC = HB / 8 (must be less than 24MHz)
-            divideeven      = 0b00'100u << 11, // ADC = HB / 6 (must be less than 24MHz)
+            divide6even     = 0b00'100u << 11, // ADC = HB / 6 (must be less than 24MHz)
             divide12odd     = 0b00'101u << 11, // ADC = HB / 12 (must be less than 24MHz)
             divide8even     = 0b00'110u << 11, // ADC = HB / 8 (must be less than 24MHz)
             divide16odd     = 0b00'111u << 11, // ADC = HB / 16 (must be less than 24MHz)
@@ -142,8 +140,8 @@ namespace Peripheral::Rcc {
             divide2evenAlt2 = 0b10'000u << 11, // ADC = HB / 2 (must be less than 24MHz)
             divide16oddAlt2 = 0b10'001u << 11, // ADC = HB / 16 (must be less than 24MHz)
             divide4evenAlt2 = 0b10'010u << 11, // ADC = HB / 4 (must be less than 24MHz)
-            dvided32oddAlt1 = 0b10'011u << 11, // ADC = HB / 32 (must be less than 24MHz)
-            dvided6evenAlt2 = 0b10'100u << 11, // ADC = HB / 6 (must be less than 24MHz)
+            divide32oddAlt1 = 0b10'011u << 11, // ADC = HB / 32 (must be less than 24MHz)
+            divide6evenAlt2 = 0b10'100u << 11, // ADC = HB / 6 (must be less than 24MHz)
             divide48odd     = 0b10'101u << 11, // ADC = HB / 48 (must be less than 24MHz)
             divide8evenAlt2 = 0b10'110u << 11, // ADC = HB / 8 (must be less than 24MHz)
             divide64odd     = 0b10'111u << 11, // ADC = HB / 64 (must be less than 24MHz)
@@ -192,7 +190,7 @@ namespace Peripheral::Rcc {
         };
 
         //TODO: this register might change between SoCs
-        enum class MCO_RW_MicrocontrolerClockPinOutput: std::uint32_t {
+        enum class MCO_RW_MicrocontrollerClockPinOutput: std::uint32_t {
             fieldBitMask = 0b111u << 24,  // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
 
@@ -213,7 +211,7 @@ namespace Peripheral::Rcc {
             HPRE_RW_HbClockPrescaler,
             ADCPRE_RW_AnalogDigitalConverterClockPrescaler,
             PLLSRC_RW_InputClockSourceForPhaseLockedLoopGenerator,
-            MCO_RW_MicrocontrolerClockPinOutput
+            MCO_RW_MicrocontrollerClockPinOutput
         > regFields = {};
 
     };

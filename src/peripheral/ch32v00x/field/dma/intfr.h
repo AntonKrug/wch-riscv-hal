@@ -19,8 +19,8 @@ namespace Peripheral::Dma {
             fieldBitMask   = 0b1u << fieldBitOffset, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess    = Soc::Reg::FieldAccessRight::ReadOnly,
 
-            noInterrupt      = 0 << fieldBitOffset, // No interrupt occurred
-            interruptOccured = fieldBitMask,        // Can be queried to find out which channel expierenced IRQ before querying what type of IRQ happened
+            noInterrupt       = 0 << fieldBitOffset, // No interrupt occurred
+            interruptOccurred = fieldBitMask,        // Can be queried to find out which channel experienced IRQ before querying what type of IRQ happened
         };
 
         enum class TCIF_RO_TransferCompleteInterruptFlag: std::uint32_t {
@@ -28,8 +28,8 @@ namespace Peripheral::Dma {
             fieldBitMask   = 0b1u << fieldBitOffset, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess    = Soc::Reg::FieldAccessRight::ReadOnly,
 
-            noInterrupt      = 0 << fieldBitOffset, // No interrupt occurred
-            interruptOccured = fieldBitMask,        // Transmission was completed
+            noInterrupt       = 0 << fieldBitOffset, // No interrupt occurred
+            interruptOccurred = fieldBitMask,        // Transmission was completed
         };
 
         enum class HTIF_RO_HalfTransferInterruptFlag: std::uint32_t {
@@ -37,8 +37,8 @@ namespace Peripheral::Dma {
             fieldBitMask   = 0b1u << fieldBitOffset, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess    = Soc::Reg::FieldAccessRight::ReadOnly,
 
-            noInterrupt      = 0 << fieldBitOffset, // No interrupt occurred
-            interruptOccured = fieldBitMask,        // Transmission transfered more than half of the content specified in CNT register
+            noInterrupt       = 0 << fieldBitOffset, // No interrupt occurred
+            interruptOccurred = fieldBitMask,        // Transmission transferred more than half of the content specified in CNT register
         };
 
         enum class TEIF_RO_TransferErrorInterruptFlag: std::uint32_t {
@@ -46,8 +46,8 @@ namespace Peripheral::Dma {
             fieldBitMask   = 0b1u << fieldBitOffset, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess    = Soc::Reg::FieldAccessRight::ReadOnly,
 
-            noInterrupt      = 0 << fieldBitOffset, // No interrupt occurred
-            interruptOccured = fieldBitMask,        // Transmission expierenced error, disabled channel (EN=disabled in CFGR register)
+            noInterrupt       = 0 << fieldBitOffset, // No interrupt occurred
+            interruptOccurred = fieldBitMask,        // Transmission experienced error, disabled channel (EN=disabled in CFGR register)
         };
 
         constexpr static std::tuple<

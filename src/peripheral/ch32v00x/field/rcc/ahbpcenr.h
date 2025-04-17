@@ -24,17 +24,17 @@ namespace Peripheral::Rcc {
             clockEnable  = fieldBitMask
         };
 
-        enum class SRAMEN_RW_SramClockDurningSleepEnable: std::uint32_t {
+        enum class SRAMEN_RW_SramClockDuringSleepEnable: std::uint32_t {
             fieldBitMask = 0b1u << 2, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
 
-            noClock      = 0u,          // The SRAM clock disabled durning sleep
-            clockEnable  = fieldBitMask // The SRAM clock enabled durning sleep
+            noClock      = 0u,          // The SRAM clock disabled during sleep
+            clockEnable  = fieldBitMask // The SRAM clock enabled during sleep
         };
 
         constexpr static std::tuple<
             DMA1EN_RW_DirectMemoryAccess1Enable,
-            SRAMEN_RW_SramClockDurningSleepEnable
+            SRAMEN_RW_SramClockDuringSleepEnable
         > regFields = {};
     };
 

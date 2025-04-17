@@ -12,7 +12,7 @@
 namespace Peripheral::Rcc {
 
     struct Intr {
-        // Clock Interupt
+        // Clock Interrupt
 
         constexpr static std::uint32_t regMemOffset = 0x08u;
 
@@ -20,32 +20,32 @@ namespace Peripheral::Rcc {
             fieldBitMask  = 1u, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess   = Soc::Reg::FieldAccessRight::ReadOnly,
 
-            noInterupt    = 0, // default
-            readyInterupt = fieldBitMask, // set by hw, to clear write LSIRDYC
+            noInterrupt    = 0, // default
+            readyInterrupt = fieldBitMask, // set by hw, to clear write LSIRDYC
         };
 
         enum class HSIRDYF_RO_InternalHighSpeedReadyFlag: std::uint32_t {
             fieldBitMask  = 1u << 2, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess   = Soc::Reg::FieldAccessRight::ReadOnly,
 
-            noInterupt    = 0, // default
-            readyInterupt = fieldBitMask, // set by hw, to clear write HSIRDYC
+            noInterrupt    = 0, // default
+            readyInterrupt = fieldBitMask, // set by hw, to clear write HSIRDYC
         };
 
         enum class HSERDYF_RO_ExternalHighSpeedReadyFlag: std::uint32_t {
             fieldBitMask  = 1u << 3, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess   = Soc::Reg::FieldAccessRight::ReadOnly,
 
-            noInterupt    = 0, // default
-            readyInterupt = fieldBitMask, // set by hw, to clear write HSERDYC
+            noInterrupt    = 0, // default
+            readyInterrupt = fieldBitMask, // set by hw, to clear write HSERDYC
         };
 
         enum class PLLRDYF_RO_PhaseLockedLoopReadyFlag: std::uint32_t {
             fieldBitMask  = 1u << 4, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess   = Soc::Reg::FieldAccessRight::ReadOnly,
 
-            noInterupt    = 0, // default
-            readyInterupt = fieldBitMask, // set by hw, to clear write PLLRDYC
+            noInterrupt    = 0, // default
+            readyInterrupt = fieldBitMask, // set by hw, to clear write PLLRDYC
         };
 
         // 2 bits reseved
@@ -54,8 +54,8 @@ namespace Peripheral::Rcc {
             fieldBitMask    = 1u << 7, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess     = Soc::Reg::FieldAccessRight::ReadOnly,
 
-            noInterupt      = 0, // default
-            failureInterupt = fieldBitMask, // set by hw, to clear write CSSC
+            noInterrupt      = 0, // default
+            failureInterrupt = fieldBitMask, // set by hw, to clear write CSSC
         };
 
         enum class LSIRDYIE_RW_InternalLowSpeedReadyInteruptEnable: std::uint32_t {

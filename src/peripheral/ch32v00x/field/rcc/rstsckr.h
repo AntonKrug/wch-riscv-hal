@@ -44,8 +44,8 @@ namespace Peripheral::Rcc {
             fieldBitMask   = 0b1u << 26, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess    = Soc::Reg::FieldAccessRight::ReadOnly,
 
-            noReset        = 0u,  // no NRST pin reset occured, set by HW, cleared by user with RMVF
-            resetOccured   = fieldBitMask // NRST pin reset occured happened, set by HW, cleared by user with RMVF
+            noReset        = 0u,  // no NRST pin reset occurred, set by HW, cleared by user with RMVF
+            resetOccurred  = fieldBitMask // NRST pin reset occurred happened, set by HW, cleared by user with RMVF
         };
 
         enum class PORRSTF_RO_PowerUpDownResetFlag: std::uint32_t {
@@ -53,7 +53,7 @@ namespace Peripheral::Rcc {
             fieldAccess    = Soc::Reg::FieldAccessRight::ReadOnly,
 
             noReset        = 0u,  // no power-up/down reset, set by HW, cleared by user with RMVF
-            resetOccured   = fieldBitMask // power-up/down reset happened, set by HW, cleared by user with RMVFs
+            resetOccurred  = fieldBitMask // power-up/down reset happened, set by HW, cleared by user with RMVFs
         };
 
         enum class SFTRSTF_RO_SoftwareResetFlag: std::uint32_t {
@@ -61,7 +61,7 @@ namespace Peripheral::Rcc {
             fieldAccess    = Soc::Reg::FieldAccessRight::ReadOnly,
 
             noReset        = 0u,  // no software reset, set by HW, cleared by user with RMVF
-            resetOccured   = fieldBitMask // power-up/down reset happened, set by HW, cleared by user with RMVFs
+            resetOccurred  = fieldBitMask // power-up/down reset happened, set by HW, cleared by user with RMVFs
         };
 
         enum class IWDGRSTF_RO_IndependentWatchdogResetFlag: std::uint32_t {
@@ -69,7 +69,7 @@ namespace Peripheral::Rcc {
             fieldAccess    = Soc::Reg::FieldAccessRight::ReadOnly,
 
             noReset        = 0u,  // no independent watchdog reset, set by HW, cleared by user with RMVF
-            resetOccured   = fieldBitMask // independent watchdog reset happened, set by HW, cleared by user with RMVFs
+            resetOccurred  = fieldBitMask // independent watchdog reset happened, set by HW, cleared by user with RMVFs
         };
 
         enum class WWDGRSTF_RO_WindowWatchdogResetFlag: std::uint32_t {
@@ -77,7 +77,7 @@ namespace Peripheral::Rcc {
             fieldAccess    = Soc::Reg::FieldAccessRight::ReadOnly,
 
             noReset        = 0u,  // no window watchdog reset, set by HW, cleared by user with RMVF
-            resetOccured   = fieldBitMask // window watchdog reset happened, set by HW, cleared by user with RMVFs
+            resetOccurred  = fieldBitMask // window watchdog reset happened, set by HW, cleared by user with RMVFs
         };
 
         enum class LPWRRSTF_RO_LowPowerResetFlag: std::uint32_t {
@@ -85,7 +85,7 @@ namespace Peripheral::Rcc {
             fieldAccess    = Soc::Reg::FieldAccessRight::ReadOnly,
 
             noReset        = 0u,  // no low power reset, set by HW, cleared by user with RMVF
-            resetOccured   = fieldBitMask // low power reset happened, set by HW, cleared by user with RMVFs
+            resetOccurred  = fieldBitMask // low power reset happened, set by HW, cleared by user with RMVFs
         };
 
         constexpr static std::tuple<
