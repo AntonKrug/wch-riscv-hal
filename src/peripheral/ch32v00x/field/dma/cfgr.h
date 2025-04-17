@@ -10,7 +10,7 @@
 #include "system/register/field_access_privilege.h"
 
 namespace Peripheral::Dma {
-    struct Cfgf {
+    struct Cfgr {
         constexpr static std::uint32_t regMemAlignment = 0x20;
 
         // Write to this whole register only when the channel is off, after setting EN=enabled, do not configure

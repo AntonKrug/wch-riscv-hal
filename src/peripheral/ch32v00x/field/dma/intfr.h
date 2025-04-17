@@ -11,7 +11,7 @@
 
 namespace Peripheral::Dma {
 
-    struct Cfgf {
+    struct Intfr {
         constexpr static std::uint32_t regFieldAlignment = 0x4;
 
         enum class GIF_RO_GlobalInterruptFlag: std::uint32_t {
