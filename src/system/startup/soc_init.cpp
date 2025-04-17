@@ -164,7 +164,7 @@ extern "C" {
         Csr::AccessCt::write<
             Csr::Mstatus::Mie_MRW_MachineInteruptEnable::disable,
             Csr::Mstatus::Mpp_MRW_MachinePreviousPriviledge::machine,
-            Csr::Mstatus::Mpie_MRW_MachinePreviousInteruptEnabled::enabled>();
+            Csr::Mstatus::Mpie_MRW_MachinePreviousInteruptWasEnabled::enabled>();
 
         // Initialize the bss and data sections
         zeroizeBss();
