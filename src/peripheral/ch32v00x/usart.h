@@ -28,13 +28,13 @@ namespace Peripheral::Usart{
 
 
     enum class BaudRate: std::uint32_t {
-        baud4_8k   =   4'800,
-        baud9_6k   =   9'600, // often used - slow baudrate
-        baud19_2k  =  19'200,
-        baud38_4k  =  38'400,
-        baud57_6k  =  57'600,
-        baud115_2k = 115'200, // often used - faster baudrate
-        baud230_4k = 230'400,
+        baud4_8k   =   4'800U,
+        baud9_6k   =   9'600U, // often used - slow baudrate
+        baud19_2k  =  19'200U,
+        baud38_4k  =  38'400U,
+        baud57_6k  =  57'600U,
+        baud115_2k = 115'200U, // often used - faster baudrate
+        baud230_4k = 230'400U,
     };
 
 
@@ -44,12 +44,12 @@ namespace Peripheral::Usart{
 
         template<typename TYPE>
         constexpr auto absoluteValueCt(TYPE const value) -> TYPE {
-            return (value < 0) ? -value : value;
+            return (value < 0U) ? -value : value;
         }
 
         template<typename TYPE>
         constexpr auto roundCt(TYPE const value) -> TYPE {
-            return static_cast<TYPE>(static_cast<int>(value + 0.5f)); // NOLINT(*-incorrect-roundings)
+            return static_cast<TYPE>(static_cast<int>(value + 0.5F)); // NOLINT(*-incorrect-roundings)
         }
 
         template<std::uint32_t expectedBaudRate, std::uint32_t actualBaudRate, double errorThreshold>
@@ -66,16 +66,16 @@ namespace Peripheral::Usart{
 
     template<std::uint32_t hclk, std::uint32_t expectedBaudRate, double errorThreshold = 1.0>
     constexpr static std::uint32_t calculateUsartDivCT() {
-        constexpr double expectedDivider = hclk / (16.0 * expectedBaudRate);
-        static_assert((1<<12) > expectedDivider, "USARTDIV's 12bit mantisa would overflow with these hclk and baudRate values");
+        constexpr double expectedDivider = hclk / (16.0F * expectedBaudRate);
+        static_assert((1U << 12U) > expectedDivider, "USARTDIV's 12bit mantisa would overflow with these hclk and baudRate values");
         constexpr std::uint16_t mantisa = static_cast<std::uint16_t>(expectedDivider);
 
         constexpr double leftOver = _internal::roundCt(expectedDivider - mantisa);
-        constexpr std::uint8_t fraction = static_cast<std::uint8_t>(leftOver * 16);
+        constexpr std::uint8_t fraction = static_cast<std::uint8_t>(leftOver * 16U);
 
         static_assert(fraction > 0 || mantisa >0, "Expected baud rate needs to be 16x slower than HCLK or it would result a zero USARTDIV");
 
-        constexpr std::uint32_t actualBaudRate = hclk / (16.0 * mantisa + fraction);
+        constexpr std::uint32_t actualBaudRate = hclk / (16.0F * mantisa + fraction);
         _internal::checkBaudRateError<expectedBaudRate, actualBaudRate, errorThreshold>();
 
         // TODO static print

@@ -12,7 +12,7 @@
 #include "peripheral/obtain_reg_metadata.h"
 #include "peripheral/base_addr.h"
 
-constexpr std::uint32_t full32bitReg = 0xffffffffu;
+constexpr std::uint32_t full32bitReg = 0xffffffffU;
 
 namespace Soc::Reg {
 
