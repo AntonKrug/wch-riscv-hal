@@ -14,15 +14,16 @@ namespace Peripheral::Dma {
         constexpr static std::uint32_t regMemAlignment = 0x20;
 
         // Write to this whole register only when the channel is off, after setting EN=enabled, do not configure
-        // (aka write to CFGR, CNTR, PADDR, MADDR) any further until it's off
+        // (aka write to CFGR, CNTR, PADDR, MADDR) any further until it's off.
+        // It can set itselff off on error, on finished transmission while cyclic mode is off
 
         enum class MEM2MEM_RW_MemoryToMemory: std::uint32_t {
             fieldBitOffset = 14,
             fieldBitMask   = 0b1u << fieldBitOffset, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess    = Soc::Reg::FieldAccessRight::ReadWrite,
 
-            disable = 0 << fieldBitOffset, // When disabled, then DIR dictates the behavior
-            enable  = fieldBitMask,        // When enabled, the DIR is ignored, Memory-Memory *MADDR=*PADDR
+            disable = 0 << fieldBitOffset, // When disabled, then DIR dictates the behavior and channel needs to be started with peripheral request
+            enable  = fieldBitMask,        // When enabled, the DIR is ignored, Memory-Memory *MADDR=*PADDR, started instantly after EN is set to enable. Can probably be used to read peripherals, but will not get peripheral request trigger.
         };
 
         enum class PL_RW_ChannelPriority: std::uint32_t {
@@ -81,7 +82,7 @@ namespace Peripheral::Dma {
             fieldBitMask   = 0b1u << fieldBitOffset, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess    = Soc::Reg::FieldAccessRight::ReadWrite,
 
-            singleOperation = 0b0u << fieldBitOffset, // After CNT register is 0 the DMA is finished
+            singleOperation = 0b0u << fieldBitOffset, // After CNT register is 0 the DMA is finished, and EN=disabled
             cyclicOperation = fieldBitMask            // After CNT register is 0 it will get reloaded to its initial written value and continues transfering until EN is disabled
         };
 
@@ -91,7 +92,7 @@ namespace Peripheral::Dma {
             fieldAccess    = Soc::Reg::FieldAccessRight::ReadWrite,
 
             readFromPeripheral = 0b0u << fieldBitOffset, // if (MEM2MEM==disabled) Peripheral2Memory *MADDR=*PADDR else Memory-Memory *MADDR=*PADDR
-            readFromMemory     = fieldBitMask            // if (MEM2MEM==enabled)  Memory2Peripheral *PADDR=*MADDR else Memory-Memory *MADDR=*PADDR
+            readFromMemory     = fieldBitMask            // if (MEM2MEM==disabled) Memory2Peripheral *PADDR=*MADDR else Memory-Memory *MADDR=*PADDR
         };
 
         enum class TEIE_RW_TransmissionErrorInteruptEnable: std::uint32_t {
@@ -127,7 +128,7 @@ namespace Peripheral::Dma {
             fieldAccess    = Soc::Reg::FieldAccessRight::ReadWrite,
 
             disable = 0b0u << fieldBitOffset, // Channel is off, no DMA is used
-            enable  = fieldBitMask            // Channel is on, DMA is used, no more writting/configuration to DMA until it's off again. HW can still turn off the channel when error occurs.
+            enable  = fieldBitMask            // Channel is on, DMA is used, no more writting/configuration to DMA until it's off again. HW can still turn off the channel when error occurs, or when in singleOperation the CNT counts to 0.
         };
 
         constexpr static std::tuple<
