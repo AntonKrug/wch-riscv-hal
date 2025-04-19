@@ -14,69 +14,69 @@ namespace Peripheral::Rcc {
     struct Apb2pcenr {
         // Advanced Peripheral Bus 2 (low speed) peripheral clock enable
 
-        constexpr static std::uint32_t regMemOffset = 0x18u;
+        constexpr static std::uint32_t regMemOffset = 0x18U;
 
         enum class AFIOEN_RW_AlternateFuctionInputOutputClockEnable: std::uint32_t {
-            fieldBitMask = 0b1u << 0, // not holding any settings or value, it's a bitmask for this specific field
+            fieldBitMask = 0b1U << 0U, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
 
-            noClock      = 0u,
+            noClock      = 0U,
             clockEnable  = fieldBitMask
         };
 
         enum class IOPAEN_RW_InputOutputPortAClockEnable: std::uint32_t {
-            fieldBitMask = 0b1u << 2, // not holding any settings or value, it's a bitmask for this specific field
+            fieldBitMask = 0b1U << 2U, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
 
-            noClock      = 0u,
+            noClock      = 0U,
             clockEnable  = fieldBitMask
         };
 
         enum class IOPAEN_RW_InputOutputPortCClockEnable: std::uint32_t {
-            fieldBitMask = 0b1u << 4, // not holding any settings or value, it's a bitmask for this specific field
+            fieldBitMask = 0b1U << 4U, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
 
-            noClock      = 0u,
+            noClock      = 0U,
             clockEnable  = fieldBitMask
         };
 
         enum class IOPDEN_RW_InputOutputPortDClockEnable: std::uint32_t {
-            fieldBitMask = 0b1u << 5, // not holding any settings or value, it's a bitmask for this specific field
+            fieldBitMask = 0b1U << 5U, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
 
-            noClock      = 0u,
+            noClock      = 0U,
             clockEnable  = fieldBitMask
         };
 
         enum class ACD1EN_RW_AnalogDigitalConverter1ClockEnable: std::uint32_t {
-            fieldBitMask = 0b1u << 9, // not holding any settings or value, it's a bitmask for this specific field
+            fieldBitMask = 0b1U << 9U, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
 
-            noClock      = 0u,
+            noClock      = 0U,
             clockEnable  = fieldBitMask
         };
 
         enum class TIM1EN_RW_Timer1ClockEnable: std::uint32_t {
-            fieldBitMask = 0b1u << 11, // not holding any settings or value, it's a bitmask for this specific field
+            fieldBitMask = 0b1U << 11U, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
 
-            noClock      = 0u,
+            noClock      = 0U,
             clockEnable  = fieldBitMask
         };
 
         enum class SPI1EN_RW_SerialPeripheralInterface1ClockEnable: std::uint32_t {
-            fieldBitMask = 0b1u << 12, // not holding any settings or value, it's a bitmask for this specific field
+            fieldBitMask = 0b1U << 12U, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
 
-            noClock      = 0u,
+            noClock      = 0U,
             clockEnable  = fieldBitMask
         };
 
         enum class USART1EN_RW_UniversalSynchronousAsynchronousReceiverTransmitter1ClockEnable: std::uint32_t {
-            fieldBitMask = 0b1u << 14, // not holding any settings or value, it's a bitmask for this specific field
+            fieldBitMask = 0b1U << 14U, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
 
-            noClock      = 0u,
+            noClock      = 0U,
             clockEnable  = fieldBitMask
         };
 

@@ -18,7 +18,7 @@
 
 namespace Peripheral::Rcc {
 
-    constexpr std::uint32_t baseAddr = 0x4002'1000;
+    constexpr std::uint32_t baseAddr = 0x4002'1000U;
 
     namespace Concept {
         template<typename RegField> concept IsCtlrField      = Soc::Reg::IsSameAsOneFieldFromTuple<RegField, decltype(Ctlr::regFields)>();

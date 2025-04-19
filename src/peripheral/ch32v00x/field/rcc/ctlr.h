@@ -15,23 +15,23 @@ namespace Peripheral::Rcc {
     struct Ctlr {
         // Clock control
 
-        constexpr static std::uint32_t regMemOffset = 0x00u;
+        constexpr static std::uint32_t regMemOffset = 0x00U;
 
         // TODO: check other cpus
         // TODO: RW/RO and other access modes as enum
         enum class HSION_RW_InternalHighSpeedClockEnable: std::uint32_t {
-            fieldBitMask = 0b1u,         // not holding any settings or value, it's a bitmask for this specific field
+            fieldBitMask = 0b1U,         // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
 
-            disable      = 0,            // after disabling HSI, it takes 6 cycles to propagate the change
+            disable      = 0U,           // after disabling HSI, it takes 6 cycles to propagate the change
             enable       = fieldBitMask, // HSI can set by HW as well (when waking up from standby or when expierencing failure while using HSE). v003=24Mhz, x033/x035=48Mhz others=8Mhz
         };
 
         enum class HSIRDY_RO_InternalHighSpeedClockReady: std::uint32_t {
-            fieldBitMask   = 0b1u << 1,    // not holding any settings or value, it's a bitmask for this specific field
+            fieldBitMask   = 0b1U << 1,    // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess    = Soc::Reg::FieldAccessRight::ReadOnly,
 
-            notReady       = 0,            // HSI not ready/stable yet, wait for a bit longer
+            notReady       = 0U,           // HSI not ready/stable yet, wait for a bit longer
             readyAndStable = fieldBitMask, // HSI can set by HW as well (when waking up from standby or when expierencing failure while using HSE)
         };
 
@@ -70,66 +70,66 @@ namespace Peripheral::Rcc {
             // HSITRIM=30 coresponds to  840 kHz
             // HSITRIM=31 coresponds to  900 kHz
 
-            fieldBitMask = 0b11111u << 3, // not holding any settings or value, it's a bitmask for this specific field
+            fieldBitMask = 0b11111U << 3, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
         };
 
         template<std::uint8_t Trim>
         constexpr static auto produceRawTrimValueCt() -> std::uint32_t {
-            static_assert(Trim < 32, "Trim is 5-bits, the value must be in range 0-31");
+            static_assert(Trim < 32U, "Trim is 5-bits, the value must be in range 0-31");
             return Trim << Soc::Reg::enumBitMaskOffsetCt<HSITRIM_RW_InternalHighSpeedClockTrim>();
         }
 
         enum class HSICAL_RO_InternalHighSpeedClockCalibration: std::uint32_t {
-            fieldBitMask = 0b11111111u << 8, // not holding any settings or value, it's a bitmask for this specific field
+            fieldBitMask = 0b11111111U << 8U, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = Soc::Reg::FieldAccessRight::ReadOnly,
         };
 
         enum class HSEON_RW_ExternalHighSpeedClockEnable: std::uint32_t {
-            fieldBitMask = 0b1u << 16,   // not holding any settings or value, it's a bitmask for this specific field
+            fieldBitMask = 0b1U << 16U,   // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
 
-            disable      = 0,            // default, changes take 6 cycles to apply
+            disable      = 0U,           // default, changes take 6 cycles to apply
             enable       = fieldBitMask, // changes take 6 cycles to apply. turned off when entering standby mode,
         };
 
         enum class HSERDY_RO_ExternalHighSpeedClockReady: std::uint32_t {
-            fieldBitMask   = 0b1u << 17,   // not holding any settings or value, it's a bitmask for this specific field
+            fieldBitMask   = 0b1U << 17U,  // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess    = Soc::Reg::FieldAccessRight::ReadOnly,
 
-            notReady       = 0,            // default, HSE not ready/stable yet, wait for a bit longer
+            notReady       = 0U,           // default, HSE not ready/stable yet, wait for a bit longer
             readyAndStable = fieldBitMask, // HSE will be turned off when entering standby mode
         };
 
         enum class HSEBYP_RW_ExternalHighSpeedClockBypass: std::uint32_t {
-            fieldBitMask           = 0b1u << 18,   // not holding any settings or value, it's a bitmask for this specific field
+            fieldBitMask           = 0b1U << 18U,  // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess            = Soc::Reg::FieldAccessRight::ReadWrite,
 
-            useCeramicResonator    = 0,            // default, resonate oscillator connected to the external pins, configure this while HSEON is off
+            useCeramicResonator    = 0U,           // default, resonate oscillator connected to the external pins, configure this while HSEON is off
             bypassCeramicResonator = fieldBitMask, // consume digital clock signal on external pin, configure this while HSEON is off
         };
 
         enum class CSSON_RW_ClockSafety: std::uint32_t {
-            fieldBitMask = 0b1u << 19,   // not holding any settings or value, it's a bitmask for this specific field
+            fieldBitMask = 0b1U << 19U,  // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
 
-            noProtection = 0,            // disable protection HSE issues will not cause IRQ or flags to be set
+            noProtection = 0U,           // disable protection HSE issues will not cause IRQ or flags to be set
             protectHse   = fieldBitMask, // when HSERDY=1 triggers CSSF and NMI IRQ when HSE abnormal, when HSERDY=0 disable protection
         };
 
         enum class PLLON_RW_PhaseLockedLoopEnable: std::uint32_t {
-            fieldBitMask = 0b1u << 24,   // not holding any settings or value, it's a bitmask for this specific field
+            fieldBitMask = 0b1U << 24U,  // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
 
-            disable      = 0,            // clock generator is off
+            disable      = 0U,           // clock generator is off
             enable       = fieldBitMask, // clock generator is on, but will be disabled when entering standby
         };
 
         enum class PLLRDY_RO_PhaseLockedLoopReady: std::uint32_t {
-            fieldBitMask   = 0b1u << 25,   // not holding any settings or value, it's a bitmask for this specific field
+            fieldBitMask   = 0b1U << 25U,  // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess    = Soc::Reg::FieldAccessRight::ReadOnly,
 
-            notReady       = 0,            // PLL clock lock NOT achieved yet, wait for a bit longer
+            notReady       = 0U,           // PLL clock lock NOT achieved yet, wait for a bit longer
             readyAndStable = fieldBitMask, // PLL clock lock achieved
         };
 
