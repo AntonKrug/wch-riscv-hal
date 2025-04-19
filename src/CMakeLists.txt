@@ -2,6 +2,8 @@
 # https://stackoverflow.com/questions/2410976/how-can-i-define-a-string-literal-on-the-gcc-command-line
 
 cmake_minimum_required(VERSION 3.28)
+
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_SYSTEM_NAME Generic)
 project(wch-riscv-hal C CXX ASM)
 #set(BINARY_FIRST_PASS ${PROJECT_NAME}-pass-1.elf)
