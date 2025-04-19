@@ -12,7 +12,7 @@ namespace Peripheral::Dma {
 
     constexpr std::uint32_t baseAddr = 0x4002'0000U;
 
-    enum class DmaId : std::uint32_t {
+    enum class Id : std::uint32_t {
         // DMA1 ch1 triggers
         Adc1HwTrigger     = 0x011U,
         Tim2Ch3HwTrigger  = 0x011U,
@@ -54,6 +54,10 @@ namespace Peripheral::Dma {
         Dma1Ch7SwTrigger  = 0x117U,
     };
 
+    constexpr auto ToInstance  = [](Id id) constexpr -> std::uint8_t { return  static_cast<std::uint32_t>(id) & 0x00fU; };
+    constexpr auto ToChannel   = [](Id id) constexpr -> std::uint8_t { return (static_cast<std::uint32_t>(id) & 0x0f0U) >> 8U; };
+    constexpr auto IsHwTrigger = [](Id id) constexpr -> std::uint8_t { return (static_cast<std::uint32_t>(id) & 0xf00U) >> 16U; };
+
     enum class Direction {
         PeripheralToMemory, // MEM2MEM=0, DIR=0  *MADDR=*PADDR
         MemoryToPeripheral, // MEM2MEM=0, DIR=1  *PADDR=*MADDR
@@ -74,24 +78,33 @@ namespace Peripheral::Dma {
     };
 
     template<
-        std::uint8_t  TplInstance,
-        std::uint8_t  TplChannel,
-        Direction     TplDirection,
-        std::uint32_t TplSourceAddress,
-        SizeAlignment TplSourceAlignment,
-        bool          TplSourceIncrement,
-        std::uint32_t TplDestinationAddress,
-        SizeAlignment TplDestinationAlignment,
-        bool          TplDestinationIncrement,
-        std::uint16_t TplSizeOfTransmission,
-        bool          TplCyclicMode,
-        Priority      TplPriority,
-        bool          TplTransmissionErrorIrq,
-        bool          TplHalfTransmissionIrq,
-        bool          TplFullTransmissionIrq,
-        bool          TplEnableIrq
+        Id             TplRequester,
+        Direction      TplDirection,
+        std::uintptr_t TplSourceAddress,
+        SizeAlignment  TplSourceAlignment,
+        bool           TplSourceIncrement,
+        std::uintptr_t TplDestinationAddress,
+        SizeAlignment  TplDestinationAlignment,
+        bool           TplDestinationIncrement,
+        std::uint16_t  TplSizeOfTransmission,
+        bool           TplCyclicMode,
+        Priority       TplPriority,
+        bool           TplTransmissionErrorIrq,
+        bool           TplHalfTransmissionIrq,
+        bool           TplFullTransmissionIrq,
+        bool           TplEnableDma
     >
-    constexpr static auto configureDma() -> void {
+    constexpr auto initDmaGenericCt() -> void {
+        constexpr std::uint8_t instance = ToInstance(TplRequester);
+        constexpr std::uint8_t channel  = ToChannel(TplRequester);
+        constexpr bool isHwTrigger      = IsHwTrigger(TplRequester);
+
+
+        // static_assert(
+        //     instance == 1U &&
+        //     (channel == 2U || channel == 3U || channel == 4U || channel == 5U) &&
+        //     TplSourceAddress < 64535, "Breaking boundary");
     }
+
 
 }
