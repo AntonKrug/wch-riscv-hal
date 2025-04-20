@@ -114,8 +114,9 @@ extern "C" {
             Intr::LSIRDYC_WO_InternalLowSpeedReadyClear>();
 
         Peripheral::Dma::noDuplicateId<
-            Peripheral::Dma::Id::Adc1HwTrigger,
-            Peripheral::Dma::Id::Dma1Ch2SwTrigger
+            Peripheral::Dma::Id::Spi1RxHwTrigger,
+            Peripheral::Dma::Id::Tim2Ch1HwTrigger,
+            Peripheral::Dma::Id::Dma1Ch5SwTrigger
         >();
 
         Peripheral::Dma::initDmaGenericCt<

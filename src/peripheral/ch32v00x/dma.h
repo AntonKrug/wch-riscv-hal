@@ -13,6 +13,13 @@ namespace Peripheral::Dma {
     constexpr std::uint32_t baseAddr = 0x4002'0000U;
     constexpr std::uint16_t instanceOffset = 0x400U;
 
+    // DMA boundaries section and sentences are confusing and in some cases do not make sense
+    // "penultimate digit" second last number 0, 1, 2
+    // DMA 1 channels must be on 64K bondaries 0-64K or 64k-128k 63k-65k
+    // CH32v307VCT6 with 128k ram
+    // DMA1 channel 2, 3, 4, 5 128k boundaries
+    // DMA1 channel 1, 6, 7 needs 64k boundaries
+
     enum class Id: std::uint32_t {
         // DMA1 ch1 triggers
         Adc1HwTrigger     = 0x011U,
@@ -71,13 +78,19 @@ namespace Peripheral::Dma {
         return static_cast<std::uint8_t>((static_cast<std::uint32_t>(id) & 0xf00U) >> 16U);
     };
 
-    template<Id TplIdHead, Id... TplIdTail>
-    constexpr auto noDuplicateId() -> void {
-        // check if current head has duplicate
+    template<Id TplIdHead, Id... TplIdTail >
+    concept assert_head_not_duplicated_in_tail = [] {
+        // check if current HEAD has duplicate in the TAIL section
         static_assert(
             ( (ToInstanceAndChannel(TplIdHead) != ToInstanceAndChannel(TplIdTail)) && ... ),
             "Duplicate IDs used, there might be overlap between HW and SW triggers, or multiple HW triggers used of the same instance and channel");
+        return true;
+    }();
 
+    template<Id TplIdHead, Id... TplIdTail>
+    requires assert_head_not_duplicated_in_tail<TplIdHead, TplIdTail...>
+    constexpr auto noDuplicateId() -> void {
+        // If there are 2 or more TAIL entries after truncating HEAD, then keep checking for more duplication
         if constexpr (sizeof...(TplIdTail) >= 2U) {
             noDuplicateId<TplIdTail...>();
         }
