@@ -11,8 +11,9 @@
 namespace Peripheral::Dma {
 
     constexpr std::uint32_t baseAddr = 0x4002'0000U;
+    constexpr std::uint16_t instanceOffset = 0x400U;
 
-    enum class Id : std::uint32_t {
+    enum class Id: std::uint32_t {
         // DMA1 ch1 triggers
         Adc1HwTrigger     = 0x011U,
         Tim2Ch3HwTrigger  = 0x011U,
@@ -54,9 +55,33 @@ namespace Peripheral::Dma {
         Dma1Ch7SwTrigger  = 0x117U,
     };
 
-    constexpr auto ToInstance  = [](Id id) constexpr -> std::uint8_t { return  static_cast<std::uint32_t>(id) & 0x00fU; };
-    constexpr auto ToChannel   = [](Id id) constexpr -> std::uint8_t { return (static_cast<std::uint32_t>(id) & 0x0f0U) >> 8U; };
-    constexpr auto IsHwTrigger = [](Id id) constexpr -> std::uint8_t { return (static_cast<std::uint32_t>(id) & 0xf00U) >> 16U; };
+    constexpr auto ToInstanceAndChannel = [](Id id) constexpr -> std::uint16_t {
+        return static_cast<std::uint16_t>(static_cast<std::uint32_t>(id) & 0x0ffU);
+    };
+
+    constexpr auto ToInstance = [](Id id) constexpr -> std::uint8_t  {
+        return static_cast<std::uint8_t>(static_cast<std::uint32_t>(id) & 0x00fU);
+    };
+
+    constexpr auto ToChannel = [](Id id) constexpr -> std::uint8_t  {
+        return static_cast<std::uint8_t>((static_cast<std::uint32_t>(id) & 0x0f0U) >> 8U);
+    };
+
+    constexpr auto IsHwTrigger = [](Id id) constexpr -> std::uint8_t  {
+        return static_cast<std::uint8_t>((static_cast<std::uint32_t>(id) & 0xf00U) >> 16U);
+    };
+
+    template<Id TplIdHead, Id... TplIdTail>
+    constexpr auto noDuplicateId() -> void {
+        // check if current head has duplicate
+        static_assert(
+            ( (ToInstanceAndChannel(TplIdHead) != ToInstanceAndChannel(TplIdTail)) && ... ),
+            "Duplicate IDs used, there might be overlap between HW and SW triggers, or multiple HW triggers used of the same instance and channel");
+
+        if constexpr (sizeof...(TplIdTail) >= 2U) {
+            noDuplicateId<TplIdTail...>();
+        }
+    }
 
     enum class Direction {
         PeripheralToMemory, // MEM2MEM=0, DIR=0  *MADDR=*PADDR

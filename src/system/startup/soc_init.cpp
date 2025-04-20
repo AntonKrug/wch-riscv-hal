@@ -113,13 +113,18 @@ extern "C" {
             Intr::HSIRDYC_WO_InternalHighSpeedReadyClear,
             Intr::LSIRDYC_WO_InternalLowSpeedReadyClear>();
 
+        Peripheral::Dma::noDuplicateId<
+            Peripheral::Dma::Id::Adc1HwTrigger,
+            Peripheral::Dma::Id::Dma1Ch2SwTrigger
+        >();
+
         Peripheral::Dma::initDmaGenericCt<
             Peripheral::Dma::Id::Tim1Ch1HwTrigger,
             Peripheral::Dma::Direction::PeripheralToMemory,
             0x100U,
             Peripheral::Dma::SizeAlignment::doubleWord,
             true,
-            globalBufferAddr,
+            0x1000U,
             Peripheral::Dma::SizeAlignment::doubleWord,
             true,
             65535U,
