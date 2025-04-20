@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <type_traits>
+
 #include "field/dma/cfgr.h"
 #include "field/dma/intfcr.h"
 #include "field/dma/intfr.h"
@@ -98,17 +100,17 @@ namespace Peripheral::Dma {
         MemoryToMemory      // MEM2MEM=1, DIR=x  *MADDR=*PADDR
     };
 
-    enum class Priority {
-        low,
-        medium,
-        high,
-        veryHigh
+    enum class Priority: std::uint8_t {
+        low      = 0U,
+        medium   = 1U,
+        high     = 2U,
+        veryHigh = 3U
     };
 
-    enum class SizeAlignment {
-        byte,
-        word,
-        doubleWord
+    enum class SizeAlignment: std::uint8_t {
+        byte       = 1U,
+        word       = 2U,
+        doubleWord = 4U
     };
 
     template<
@@ -138,6 +140,32 @@ namespace Peripheral::Dma {
         //     instance == 1U &&
         //     (channel == 2U || channel == 3U || channel == 4U || channel == 5U) &&
         //     TplSourceAddress < 64535, "Breaking boundary");
+    }
+
+    template<
+        Id             TplRequester,
+        std::uintptr_t TplSourceAddress,
+        SizeAlignment  TplSourceAlignment,
+        bool           TplSourceIncrement,
+        bool           TplDestinationIncrement,
+        std::uint16_t  TplSizeOfTransmission,
+        bool           TplCyclicMode,
+        Priority       TplPriority,
+        bool           TplTransmissionErrorIrq,
+        bool           TplHalfTransmissionIrq,
+        bool           TplFullTransmissionIrq,
+        typename       TplDestinationPointerType
+    >
+    requires std::is_pointer_v<TplDestinationPointerType>
+    constexpr auto initPeripheralToMemoryCt(const TplDestinationPointerType destinationPointer) -> void {
+        constexpr std::uint8_t instance = ToInstance(TplRequester);
+        constexpr std::uint8_t channel  = ToChannel(TplRequester);
+        constexpr bool isHwTrigger      = IsHwTrigger(TplRequester);
+
+        constexpr std::size_t alignmentSize = alignof(TplDestinationPointerType);
+        constexpr auto destinationAlignment = static_cast<SizeAlignment>(alignmentSize);
+
+        baseAddr + instanceOffset * instance
     }
 
 
