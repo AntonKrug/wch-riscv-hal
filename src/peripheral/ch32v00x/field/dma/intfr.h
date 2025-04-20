@@ -12,8 +12,6 @@
 namespace Peripheral::Dma {
 
     struct Intfr {
-        constexpr static std::uint32_t regFieldAlignment = 0x4U;
-
         enum class GIF_RO_GlobalInterruptFlag: std::uint32_t {
             fieldBitOffset = 0U,
             fieldBitMask   = 0b1U << fieldBitOffset, // not holding any settings or value, it's a bitmask for this specific field

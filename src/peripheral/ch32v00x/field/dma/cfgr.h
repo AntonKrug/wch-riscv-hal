@@ -11,8 +11,6 @@
 
 namespace Peripheral::Dma {
     struct Cfgr {
-        constexpr static std::uint32_t regMemAlignment = 0x20U;
-
         // Write to this whole register only when the channel is off, after setting EN=enabled, do not configure
         // (aka write to CFGR, CNTR, PADDR, MADDR) any further until it's off.
         // It can set itselff off on error, on finished transmission while cyclic mode is off
