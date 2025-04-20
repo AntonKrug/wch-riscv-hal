@@ -145,6 +145,7 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/rcc/ctlr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/rcc/intr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/rcc/rstsckr.h
+        ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/utils/dma.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/dma.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/gpio.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/rcc.h
