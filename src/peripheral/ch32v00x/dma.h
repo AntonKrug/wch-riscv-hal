@@ -78,19 +78,15 @@ namespace Peripheral::Dma {
         return static_cast<std::uint8_t>((static_cast<std::uint32_t>(id) & 0xf00U) >> 16U);
     };
 
-    template<Id TplIdHead, Id... TplIdTail >
-    concept assert_head_not_duplicated_in_tail = [] {
-        // check if current HEAD has duplicate in the TAIL section
+    template<Id TplIdHead, Id... TplIdTail>
+    constexpr auto noDuplicateId() -> void {
+        // Check if current HEAD has duplicate in the TAIL section
         static_assert(
             ( (ToInstanceAndChannel(TplIdHead) != ToInstanceAndChannel(TplIdTail)) && ... ),
             "Duplicate IDs used, there might be overlap between HW and SW triggers, or multiple HW triggers used of the same instance and channel");
-        return true;
-    }();
 
-    template<Id TplIdHead, Id... TplIdTail>
-    requires assert_head_not_duplicated_in_tail<TplIdHead, TplIdTail...>
-    constexpr auto noDuplicateId() -> void {
-        // If there are 2 or more TAIL entries after truncating HEAD, then keep checking for more duplication
+        // If there are 2 or more TAIL entries (after truncating HEAD), then
+        // make the first TAIL entry as new HEAD and then keep checking for more combinations
         if constexpr (sizeof...(TplIdTail) >= 2U) {
             noDuplicateId<TplIdTail...>();
         }
