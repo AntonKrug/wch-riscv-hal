@@ -116,7 +116,7 @@ extern "C" {
         Peripheral::Dma::noDuplicateId<
             Peripheral::Dma::Id::Spi1RxHwTrigger,
             Peripheral::Dma::Id::Tim2Ch1HwTrigger,
-            Peripheral::Dma::Id::Dma1Ch5SwTrigger
+            Peripheral::Dma::Id::Dma1Ch7SwTrigger
         >();
 
         Peripheral::Dma::initDmaGenericCt<
