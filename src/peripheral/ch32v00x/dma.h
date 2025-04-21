@@ -9,6 +9,7 @@
 #include "field/dma/cfgr.h"
 #include "field/dma/intfcr.h"
 #include "field/dma/intfr.h"
+#include "system/register/util.h"
 
 namespace Peripheral::Dma {
 
@@ -115,93 +116,99 @@ namespace Peripheral::Dma {
     //     high     = 2U,
     //     veryHigh = 3U
     // };
-    using Priority = Cfgr::PL_RW_ChannelPriority;
+    using Priority            = Cfgr::PL_RW_ChannelPriority;
+    using PeripheralAlignment = Cfgr::PSIZE_RW_PeripheralAlignment;
+    using MemoryAlignment     = Cfgr::MSIZE_RW_MemoryAlignment;
 
-    using MemorySize = Cfgr::MSIZE_RW_MemoryAlignment;
-    using PeripheralSize = Cfgr::PSIZE_RW_PeripheralAlignment;
 
-
-    enum class SizeAlignment: std::uint32_t {
-        byte       = 1U,
-        word       = 2U,
-        doubleWord = 4U
-    };
-
-    template<SizeAlignment alignment>
-    constexpr auto sizeAlignmentToMsize() -> Cfgr::MSIZE_RW_MemoryAlignment {
-        constexpr auto value = static_cast<std::uint32_t>(alignment);
-        constexpr auto offsetValue = value << static_cast<std::uint32_t>(Cfgr::MSIZE_RW_MemoryAlignment::fieldBitOffset);
-        return static_cast<Cfgr::MSIZE_RW_MemoryAlignment>(offsetValue);
-    }
-
-    template<SizeAlignment alignment>
-    constexpr auto sizeAlignmentToPsize() -> Cfgr::PSIZE_RW_PeripheralAlignment {
-        constexpr auto value = static_cast<std::uint32_t>(alignment);
-        constexpr auto offsetValue = value << static_cast<std::uint32_t>(Cfgr::PSIZE_RW_PeripheralAlignment::fieldBitOffset);
-        return static_cast<Cfgr::PSIZE_RW_PeripheralAlignment>(offsetValue);
-    }
+    // enum class SizeAlignment: std::uint32_t {
+    //     byte       = 1U,
+    //     word       = 2U,
+    //     doubleWord = 4U
+    // };
+    //
+    // template<SizeAlignment alignment>
+    // constexpr auto sizeAlignmentToMsize() -> Cfgr::MSIZE_RW_MemoryAlignment {
+    //     constexpr auto value = static_cast<std::uint32_t>(alignment);
+    //     constexpr auto offsetValue = value << static_cast<std::uint32_t>(Cfgr::MSIZE_RW_MemoryAlignment::fieldBitOffset);
+    //     return static_cast<Cfgr::MSIZE_RW_MemoryAlignment>(offsetValue);
+    // }
+    //
+    // template<SizeAlignment alignment>
+    // constexpr auto sizeAlignmentToPsize() -> Cfgr::PSIZE_RW_PeripheralAlignment {
+    //     constexpr auto value = static_cast<std::uint32_t>(alignment);
+    //     constexpr auto offsetValue = value << static_cast<std::uint32_t>(Cfgr::PSIZE_RW_PeripheralAlignment::fieldBitOffset);
+    //     return static_cast<Cfgr::PSIZE_RW_PeripheralAlignment>(offsetValue);
+    // }
 
     template<typename TplPointerType>
     requires std::is_pointer_v<TplPointerType>
-    constexpr auto pointerToSizeAlignment(const TplPointerType pointer) -> SizeAlignment {
+    constexpr auto pointerToPeripheralSizeAlignment(const TplPointerType pointer) -> Cfgr::PSIZE_RW_PeripheralAlignment {
         constexpr std::size_t alignmentSize = alignof(TplPointerType);
-        return static_cast<SizeAlignment>(alignmentSize);
+        return static_cast<Cfgr::PSIZE_RW_PeripheralAlignment>(alignmentSize);
     }
 
+    //
+    // template<
+    //     Id             TplRequester,
+    //     Direction      TplDirection,
+    //     std::uintptr_t TplSourceAddress,
+    //     SizeAlignment  TplSourceAlignment,
+    //     bool           TplSourceIncrement,
+    //     std::uintptr_t TplDestinationAddress,
+    //     SizeAlignment  TplDestinationAlignment,
+    //     bool           TplDestinationIncrement,
+    //     std::uint16_t  TplSizeOfTransmission,
+    //     bool           TplCyclicMode,
+    //     Priority       TplPriority,
+    //     bool           TplTransmissionErrorIrq,
+    //     bool           TplHalfTransmissionIrq,
+    //     bool           TplFullTransmissionIrq,
+    //     bool           TplEnableDma
+    // >
+    // constexpr auto initDmaGenericCt() -> void {
+    //     constexpr auto instance = idToDmaInstance(TplRequester);
+    //     constexpr auto channel  = idToChannel(TplRequester);
+    //     constexpr bool isHwTrigger     = idIsHwTrigger(TplRequester);
+    //
+    //
+    //     // static_assert(
+    //     //     instance == 1U &&
+    //     //     (channel == 2U || channel == 3U || channel == 4U || channel == 5U) &&
+    //     //     TplSourceAddress < 64535, "Breaking boundary");
+    // }
+
+
     template<
-        Id             TplRequester,
-        Direction      TplDirection,
-        std::uintptr_t TplSourceAddress,
-        SizeAlignment  TplSourceAlignment,
-        bool           TplSourceIncrement,
-        std::uintptr_t TplDestinationAddress,
-        SizeAlignment  TplDestinationAlignment,
-        bool           TplDestinationIncrement,
-        std::uint16_t  TplSizeOfTransmission,
-        bool           TplCyclicMode,
-        Priority       TplPriority,
-        bool           TplTransmissionErrorIrq,
-        bool           TplHalfTransmissionIrq,
-        bool           TplFullTransmissionIrq,
-        bool           TplEnableDma
-    >
-    constexpr auto initDmaGenericCt() -> void {
-        constexpr auto instance = idToDmaInstance(TplRequester);
-        constexpr auto channel  = idToChannel(TplRequester);
-        constexpr bool isHwTrigger     = idIsHwTrigger(TplRequester);
-
-
-        // static_assert(
-        //     instance == 1U &&
-        //     (channel == 2U || channel == 3U || channel == 4U || channel == 5U) &&
-        //     TplSourceAddress < 64535, "Breaking boundary");
-    }
-
-
-    template<
-        Id             TplRequester,
-        std::uintptr_t TplSourceAddress,
-        SizeAlignment  TplSourceAlignment,
-        bool           TplSourceIncrement,
-        bool           TplDestinationIncrement,
-        std::uint16_t  TplSizeOfTransmission,
-        bool           TplCyclicMode,
-        Priority       TplPriority,
-        bool           TplTransmissionErrorIrq,
-        bool           TplHalfTransmissionIrq,
-        bool           TplFullTransmissionIrq,
-        typename       TplDestinationPointerType
+        Id                  TplRequesterId,
+        std::uintptr_t      TplSourceAddress,
+        PeripheralAlignment TplSourceAlignment,
+        bool                TplSourceIncrement,
+        bool                TplDestinationIncrement,
+        std::uint16_t       TplSizeOfTransmission,
+        bool                TplCyclicMode,
+        Priority            TplPriority,
+        bool                TplTransmissionErrorIrq,
+        bool                TplHalfTransmissionIrq,
+        bool                TplFullTransmissionIrq,
+        typename            TplDestinationPointerType
     >
     requires std::is_pointer_v<TplDestinationPointerType>
     constexpr auto initPeripheralToMemoryCt(const TplDestinationPointerType destinationPointer) -> void {
-        constexpr auto instance = idToDmaInstance(TplRequester);
-        constexpr auto channel  = idToChannel(TplRequester);
-        constexpr bool isHwTrigger     = idIsHwTrigger(TplRequester);
+        constexpr auto instance = idToDmaInstance(TplRequesterId);
+        constexpr auto channel  = idToChannel(TplRequesterId);
+        constexpr bool isHwTrigger     = idIsHwTrigger(TplRequesterId);
 
         constexpr auto destinationAlignment = pointerToSizeAlignment(destinationPointer);
 
-        constexpr auto cfgrPtr = reinterpret_cast<uint32_t*>(addressCfgr(TplRequester));
-        constexpr auto psize   = sizeAlignmentToPsize<TplSourceAlignment>();
+        constexpr auto cfgrPtr = reinterpret_cast<uint32_t*>(addressCfgr(TplRequesterId));
+        constexpr auto psize   = pointerToPeripheralSizeAlignment<TplSourceAlignment>();
+
+        constexpr auto pIncrement           = Soc::Reg::boolToRegisterFieldEnum<TplSourceIncrement,      Cfgr::PINC_RW_PeripheralAddressIncrementMode>();
+        constexpr auto mIncrement           = Soc::Reg::boolToRegisterFieldEnum<TplDestinationIncrement, Cfgr::MINC_RW_MemoryAddressIncrementMode>();
+        constexpr auto cyclic               = Soc::Reg::boolToRegisterFieldEnum<TplCyclicMode,           Cfgr::CIRC_RW_CyclicMode>();
+        constexpr auto irqTransmissionError = Soc::Reg::boolToRegisterFieldEnum<TplTransmissionErrorIrq, Cfgr::TEIE_RW_TransmissionErrorInteruptEnable>();
+        constexpr auto irqHalfTransmission  = Soc::Reg::boolToRegisterFieldEnum<TplHalfTransmissionIrq,  Cfgr::HTIE_RW_HalfTransmissionInteruptEnable>();
 
         // Cfgr::MEM2MEM_RW_MemoryToMemory::disable
         // Cfgr::PL_RW_ChannelPriority::
