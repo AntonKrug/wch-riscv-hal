@@ -22,11 +22,11 @@ namespace Soc::Reg::Concept {
 
     template<typename RegFieldType>
     concept FieldTypeWithEnableValue = requires
-    { { RegFieldType::Enable }; };
+    { { RegFieldType::enable }; };
 
     template<typename RegFieldType>
     concept FieldTypeWithDisableValue = requires
-    { { RegFieldType::Disable }; };
+    { { RegFieldType::disable }; };
 
     template<typename RegFieldType>
     concept FieldTypeWithFieldBitOffset = requires
@@ -37,7 +37,7 @@ namespace Soc::Reg::Concept {
         FieldTypeWithEnableValue<RegFieldType> and FieldTypeWithDisableValue<RegFieldType>;
 
     // Supports bool semantics (has enable/disable) values and has offset which can be used for conversions
-    // TODO: check size of the bitmask and allow 1bit enums
+    // TODO: check size of the bitmask and allow 1bit enums only
     template<typename RegFieldType>
     concept FieldTypeWithBoolInteroperability =
         FieldTypeWithEnableValue<RegFieldType> and FieldTypeWithDisableValue<RegFieldType> and FieldTypeWithFieldBitOffset<RegFieldType>;
