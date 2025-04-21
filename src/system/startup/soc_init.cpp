@@ -12,7 +12,7 @@
 #include "utils/literals/timer.h"
 #include "system/register/access_ct.h"
 #include "peripheral/ch32v00x/dma.h"
-#include "dma_experiment_buffer.h"
+// #include "dma_experiment_buffer.h"
 
 extern "C" {
 
@@ -119,22 +119,22 @@ extern "C" {
             Peripheral::Dma::Id::Dma1Ch7SwTrigger
         >();
 
-        Peripheral::Dma::initDmaGenericCt<
-            Peripheral::Dma::Id::Tim1Ch1HwTrigger,
-            Peripheral::Dma::Direction::PeripheralToMemory,
-            0x100U,
-            Peripheral::Dma::SizeAlignment::doubleWord,
-            true,
-            0x1000U,
-            Peripheral::Dma::SizeAlignment::doubleWord,
-            true,
-            65535U,
-            false,
-            Peripheral::Dma::Priority::low,
-            true,
-            false,
-            true,
-            true>();
+        // Peripheral::Dma::initDmaGenericCt<
+        //     Peripheral::Dma::Id::Tim1Ch1HwTrigger,
+        //     Peripheral::Dma::Direction::PeripheralToMemory,
+        //     0x100U,
+        //     Peripheral::Dma::SizeAlignment::doubleWord,
+        //     true,
+        //     0x1000U,
+        //     Peripheral::Dma::SizeAlignment::doubleWord,
+        //     true,
+        //     65535U,
+        //     false,
+        //     Peripheral::Dma::Priority::low,
+        //     true,
+        //     false,
+        //     true,
+        //     true>();
     }
 
     inline
