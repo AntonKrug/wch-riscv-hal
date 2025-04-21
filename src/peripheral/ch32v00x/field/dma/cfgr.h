@@ -62,8 +62,8 @@ namespace Peripheral::Dma {
             fieldBitMask   = 0b1U << fieldBitOffset, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess    = Soc::Reg::FieldAccessRight::ReadWrite,
 
-            noIncrement = 0b0U << fieldBitOffset, // Do not incremet the MADDR
-            increment   = fieldBitMask            // Increment MADDR register depending how MSIZE field is set (1,2 or 4 byte increments)
+            disable = 0b0U << fieldBitOffset, // Do not incremet the MADDR
+            enable  = fieldBitMask            // Increment MADDR register depending how MSIZE field is set (1,2 or 4 byte increments)
         };
 
         enum class PINC_RW_PeripheralAddressIncrementMode: std::uint32_t {
@@ -71,8 +71,8 @@ namespace Peripheral::Dma {
             fieldBitMask   = 0b1U << fieldBitOffset, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess    = Soc::Reg::FieldAccessRight::ReadWrite,
 
-            noIncrement = 0b0U << fieldBitOffset, // Do not incremet the PADDR
-            increment   = fieldBitMask            // Increment PADDR register depending how PSIZE field is set (1,2 or 4 byte increments)
+            disable = 0b0U << fieldBitOffset, // Do not incremet the PADDR
+            enable  = fieldBitMask            // Increment PADDR register depending how PSIZE field is set (1,2 or 4 byte increments)
         };
 
         enum class CIRC_RW_CyclicMode: std::uint32_t {
@@ -80,8 +80,8 @@ namespace Peripheral::Dma {
             fieldBitMask   = 0b1U << fieldBitOffset, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess    = Soc::Reg::FieldAccessRight::ReadWrite,
 
-            singleOperation = 0b0U << fieldBitOffset, // After CNT register is 0 the DMA is finished, and EN=disabled
-            cyclicOperation = fieldBitMask            // After CNT register is 0 it will get reloaded to its initial written value and continues transfering until EN is disabled
+            disable = 0b0U << fieldBitOffset, // After CNT register is 0 the DMA is finished, and EN=disabled
+            enable  = fieldBitMask            // After CNT register is 0 it will get reloaded to its initial written value and continues transfering until EN is disabled
         };
 
         enum class DIR_RW_DataTransferDirection: std::uint32_t {
