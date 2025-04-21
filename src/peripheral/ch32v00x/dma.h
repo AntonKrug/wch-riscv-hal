@@ -148,6 +148,13 @@ namespace Peripheral::Dma {
         return static_cast<Cfgr::PSIZE_RW_PeripheralAlignment>(alignmentSize);
     }
 
+    template<typename TplPointerType>
+    requires std::is_pointer_v<TplPointerType>
+    constexpr auto pointerToMemorySizeAlignment(const TplPointerType pointer) -> Cfgr::MSIZE_RW_MemoryAlignment {
+        constexpr std::size_t alignmentSize = alignof(TplPointerType);
+        return static_cast<Cfgr::MSIZE_RW_MemoryAlignment>(alignmentSize);
+    }
+
     //
     // template<
     //     Id             TplRequester,
@@ -178,10 +185,11 @@ namespace Peripheral::Dma {
     //     //     TplSourceAddress < 64535, "Breaking boundary");
     // }
 
+    // TODO: std::uintptr_t or uint32_t
 
     template<
         Id                  TplRequesterId,
-        std::uintptr_t      TplSourceAddress,
+        std::uint32_t       TplSourceAddress,
         PeripheralAlignment TplSourceAlignment,
         bool                TplSourceIncrement,
         bool                TplDestinationIncrement,
@@ -194,25 +202,40 @@ namespace Peripheral::Dma {
         typename            TplDestinationPointerType
     >
     requires std::is_pointer_v<TplDestinationPointerType>
-    constexpr auto initPeripheralToMemoryCt(const TplDestinationPointerType destinationPointer) -> void {
-        constexpr auto instance = idToDmaInstance(TplRequesterId);
-        constexpr auto channel  = idToChannel(TplRequesterId);
-        constexpr bool isHwTrigger     = idIsHwTrigger(TplRequesterId);
-
-        constexpr auto destinationAlignment = pointerToSizeAlignment(destinationPointer);
-
-        constexpr auto cfgrPtr = reinterpret_cast<uint32_t*>(addressCfgr(TplRequesterId));
-        constexpr auto psize   = pointerToPeripheralSizeAlignment<TplSourceAlignment>();
-
-        constexpr auto pIncrement           = Soc::Reg::boolToRegisterFieldEnum<TplSourceIncrement,      Cfgr::PINC_RW_PeripheralAddressIncrementMode>();
-        constexpr auto mIncrement           = Soc::Reg::boolToRegisterFieldEnum<TplDestinationIncrement, Cfgr::MINC_RW_MemoryAddressIncrementMode>();
-        constexpr auto cyclic               = Soc::Reg::boolToRegisterFieldEnum<TplCyclicMode,           Cfgr::CIRC_RW_CyclicMode>();
+    inline constexpr auto
+    __attribute__ ((always_inline))
+    initPeripheralToMemoryCt(const TplDestinationPointerType destinationPointer) -> void {
+        constexpr auto sourceIncrement      = Soc::Reg::boolToRegisterFieldEnum<TplSourceIncrement,      Cfgr::PINC_RW_PeripheralAddressIncrementMode>();
+        constexpr auto destinationIncrement = Soc::Reg::boolToRegisterFieldEnum<TplDestinationIncrement, Cfgr::MINC_RW_MemoryAddressIncrementMode>();
+        constexpr auto isCyclic             = Soc::Reg::boolToRegisterFieldEnum<TplCyclicMode,           Cfgr::CIRC_RW_CyclicMode>();
         constexpr auto irqTransmissionError = Soc::Reg::boolToRegisterFieldEnum<TplTransmissionErrorIrq, Cfgr::TEIE_RW_TransmissionErrorInteruptEnable>();
         constexpr auto irqHalfTransmission  = Soc::Reg::boolToRegisterFieldEnum<TplHalfTransmissionIrq,  Cfgr::HTIE_RW_HalfTransmissionInteruptEnable>();
+        constexpr auto irqFullTransmission  = Soc::Reg::boolToRegisterFieldEnum<TplFullTransmissionIrq,  Cfgr::TCIE_RW_TransmissionCompletionInteruptEnable>();
 
-        // Cfgr::MEM2MEM_RW_MemoryToMemory::disable
-        // Cfgr::PL_RW_ChannelPriority::
-        // Cfgr::DIR_RW_DataTransferDirection::readFromPeripheral
+        constexpr auto destinationAlignment = pointerToMemorySizeAlignment(destinationPointer);
+
+        Soc::Reg::Access::writeCt<addressPaddr(TplRequesterId), TplSourceAddress>();
+        Soc::Reg::Access::writeCt<addressMaddr(TplRequesterId), destinationPointer>();
+        Soc::Reg::Access::writeCt<addressCntr(TplRequesterId), static_cast<std::uint32_t>(TplSizeOfTransmission)>();
+
+        Soc::Reg::Access::writeCt<
+            addressCfgr(TplRequesterId),
+            Soc::Reg::Combine::enumsToUint32<
+                Cfgr::MEM2MEM_RW_MemoryToMemory::disable,
+                TplPriority,
+                destinationAlignment,
+                TplSourceAlignment,
+                destinationIncrement,
+                sourceIncrement,
+                isCyclic,
+                Cfgr::DIR_RW_DataTransferDirection::readFromPeripheral,
+                irqTransmissionError,
+                irqHalfTransmission,
+                irqFullTransmission,
+                Cfgr::EN_RW_ChannelEnable::enable
+            >()
+        >();
+
     }
 
 

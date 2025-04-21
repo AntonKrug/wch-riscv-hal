@@ -119,22 +119,20 @@ extern "C" {
             Peripheral::Dma::Id::Dma1Ch7SwTrigger
         >();
 
-        // Peripheral::Dma::initDmaGenericCt<
-        //     Peripheral::Dma::Id::Tim1Ch1HwTrigger,
-        //     Peripheral::Dma::Direction::PeripheralToMemory,
-        //     0x100U,
-        //     Peripheral::Dma::SizeAlignment::doubleWord,
-        //     true,
-        //     0x1000U,
-        //     Peripheral::Dma::SizeAlignment::doubleWord,
-        //     true,
-        //     65535U,
-        //     false,
-        //     Peripheral::Dma::Priority::low,
-        //     true,
-        //     false,
-        //     true,
-        //     true>();
+        uint32_t something;
+
+        Peripheral::Dma::initPeripheralToMemoryCt<
+            Peripheral::Dma::Id::Tim1Ch1HwTrigger,
+            0x100U,
+            Peripheral::Dma::PeripheralAlignment::bit32,
+            false,
+            true,
+            16U,
+            false,
+            Peripheral::Dma::Priority::low,
+            true,
+            false,
+            true>(&something);
     }
 
     inline
