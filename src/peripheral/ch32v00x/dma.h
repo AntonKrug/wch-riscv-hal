@@ -117,6 +117,10 @@ namespace Peripheral::Dma {
     // };
     using Priority = Cfgr::PL_RW_ChannelPriority;
 
+    using MemorySize = Cfgr::MSIZE_RW_MemoryAlignment;
+    using PeripheralSize = Cfgr::PSIZE_RW_PeripheralAlignment;
+
+
     enum class SizeAlignment: std::uint32_t {
         byte       = 1U,
         word       = 2U,
