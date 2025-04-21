@@ -66,7 +66,7 @@ namespace Peripheral::Dma {
             increment   = fieldBitMask            // Increment MADDR register depending how MSIZE field is set (1,2 or 4 byte increments)
         };
 
-        enum class PINC_RW_MemoryAddressIncrementMode: std::uint32_t {
+        enum class PINC_RW_PeripheralAddressIncrementMode: std::uint32_t {
             fieldBitOffset = 6U,
             fieldBitMask   = 0b1U << fieldBitOffset, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess    = Soc::Reg::FieldAccessRight::ReadWrite,
@@ -135,7 +135,7 @@ namespace Peripheral::Dma {
             MSIZE_RW_MemoryAlignment,
             PSIZE_RW_PeripheralAlignment,
             MINC_RW_MemoryAddressIncrementMode,
-            PINC_RW_MemoryAddressIncrementMode,
+            PINC_RW_PeripheralAddressIncrementMode,
             CIRC_RW_CyclicMode,
             DIR_RW_DataTransferDirection,
             TEIE_RW_TransmissionErrorInteruptEnable,
