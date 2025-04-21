@@ -73,12 +73,12 @@ namespace Soc::Reg {
 
     //TODO: use field offsets everywhere, do not calculate the bitMaskOffsetCt
 
-    template<bool value, Concept::FieldTypeWithBoolInteroperability RegisterFieldType>
+    template<bool value, typename  RegisterFieldType>
+    requires Concept::FieldTypeWithEnableAndDisableValues<RegisterFieldType>
     inline constexpr auto
     __attribute__ ((always_inline))
     boolToRegisterFieldEnum() -> RegisterFieldType {
-        std::uint32_t rawValue = (value ? 1U : 0U) << bitMaskOffsetCt<RegisterFieldType::fieldBitMask>();
-        return static_cast<RegisterFieldType>(rawValue);
+        return value ? RegisterFieldType::enable : RegisterFieldType::disable;
     }
 
     template<auto RegisterField>
@@ -86,20 +86,20 @@ namespace Soc::Reg {
     inline constexpr auto
     __attribute__ ((always_inline))
     registerFieldEnumToBool() -> bool {
-        constexpr std::uint32_t rawValue = static_cast<std::uint32_t>(RegisterField) >> bitMaskOffsetCt<decltype(RegisterField)::fieldBitMask>();
+        constexpr std::uint32_t rawValue = static_cast<std::uint32_t>(RegisterField) >> decltype(RegisterField)::fieldBitOffset;
         return rawValue==1U;
     }
 
     template<auto value, Concept::FieldTypeWithBitMask RegisterFieldType>
     constexpr auto valueToRegisterFieldEnum() -> RegisterFieldType {
-        constexpr auto rawValue = static_cast<std::uint32_t>(value) << bitMaskOffsetCt<RegisterFieldType::fieldBitMask>();
+        constexpr auto rawValue = static_cast<std::uint32_t>(value) << RegisterFieldType::fieldBitOffset;
         return static_cast<RegisterFieldType>(rawValue);
     }
 
     template<auto RegisterField>
     requires Concept::FieldWithBitMask<RegisterField>
     constexpr auto registerFieldEnumToUint32() -> std::uint32_t {
-        return static_cast<std::uint32_t>(RegisterField) >> bitMaskOffsetCt<decltype(RegisterField)::fieldBitMask>();
+        return static_cast<std::uint32_t>(RegisterField) >> decltype(RegisterField)::fieldBitOffset;
     }
 
     #pragma endregion
