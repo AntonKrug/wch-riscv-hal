@@ -13,10 +13,10 @@
 namespace Soc::Reg {
 
     template<std::uint32_t BitMaskValue>
-    constexpr auto bitMaskOffsetCt() -> std::uint8_t {
-        std::uint8_t count = 0;
+    constexpr auto bitMaskOffsetCt() -> std::uint32_t {
+        std::uint32_t count = 0U;
         std::uint32_t tmp = BitMaskValue;
-        while ( ((tmp&0b1) == 0) && (count<31) ) {
+        while ( ((tmp&0b1) == 0U) && (count<31U) ) {
             tmp >>= 1;
             count++;
         }
@@ -36,15 +36,15 @@ namespace Soc::Reg {
     }
 
     template<std::uint32_t BitMaskValue>
-    constexpr auto bitMasksSizeCt() -> std::uint8_t {
-        std::uint8_t count = 0;
+    constexpr auto bitMasksSizeCt() -> std::uint32_t {
+        std::uint32_t count = 0U;
         std::uint32_t tmp = BitMaskValue;
-        while ( ((tmp&0b1) == 0) && (count<31) ) {
+        while ( ((tmp&0b1) == 0U) && (count<31U) ) {
             tmp >>= 1;
             count++;
         }
-        count = 0;
-        while (tmp&0b1) {
+        count = 0U;
+        while ( (tmp &0b1) != 0U) {
             tmp >>= 1;
             count++;
         }
@@ -67,6 +67,42 @@ namespace Soc::Reg {
         constexpr auto offset = Soc::Reg::bitMaskOffsetCt<static_cast<std::uint32_t>(RegisterFieldType::fieldBitMask)>();
         return (registerValue & mask) >> offset;
     }
+
+
+    #pragma region Interoperability - converting from other types (and primitives) to Field enums and vice versa
+
+    //TODO: use field offsets everywhere, do not calculate the bitMaskOffsetCt
+
+    template<bool value, Concept::FieldTypeWithBoolInteroperability RegisterFieldType>
+    inline constexpr auto
+    __attribute__ ((always_inline))
+    boolToRegisterFieldEnum() -> RegisterFieldType {
+        std::uint32_t rawValue = (value ? 1U : 0U) << bitMaskOffsetCt<RegisterFieldType::fieldBitMask>();
+        return static_cast<RegisterFieldType>(rawValue);
+    }
+
+    template<auto RegisterField>
+    requires Concept::FieldWithBoolInteroperability<RegisterField>
+    inline constexpr auto
+    __attribute__ ((always_inline))
+    registerFieldEnumToBool() -> bool {
+        constexpr std::uint32_t rawValue = static_cast<std::uint32_t>(RegisterField) >> bitMaskOffsetCt<decltype(RegisterField)::fieldBitMask>();
+        return rawValue==1U;
+    }
+
+    template<auto value, Concept::FieldTypeWithBitMask RegisterFieldType>
+    constexpr auto valueToRegisterFieldEnum() -> RegisterFieldType {
+        constexpr auto rawValue = static_cast<std::uint32_t>(value) << bitMaskOffsetCt<RegisterFieldType::fieldBitMask>();
+        return static_cast<RegisterFieldType>(rawValue);
+    }
+
+    template<auto RegisterField>
+    requires Concept::FieldWithBitMask<RegisterField>
+    constexpr auto registerFieldEnumToUint32() -> std::uint32_t {
+        return static_cast<std::uint32_t>(RegisterField) >> bitMaskOffsetCt<decltype(RegisterField)::fieldBitMask>();
+    }
+
+    #pragma endregion
 
 
     #pragma region IsSameAsOneFieldFromTuple
