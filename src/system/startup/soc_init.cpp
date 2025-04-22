@@ -132,6 +132,7 @@ extern "C" {
             Peripheral::Dma::Priority::low,
             true,
             false,
+            true,
             true>(&something);
     }
 

@@ -146,50 +146,35 @@ namespace Peripheral::Dma {
 
     template<typename TplPointerType>
     requires std::is_pointer_v<TplPointerType>
-    constexpr auto pointerToPeripheralSizeAlignment(const TplPointerType pointer) -> Cfgr::PSIZE_RW_PeripheralAlignment {
-        constexpr std::size_t alignmentSize = alignof(TplPointerType);
-        return static_cast<Cfgr::PSIZE_RW_PeripheralAlignment>(alignmentSize);
+    constexpr auto pointerToPeripheralSizeAlignment() -> Cfgr::PSIZE_RW_PeripheralAlignment {
+        return Soc::Reg::valueToRegisterFieldEnum<alignof(TplPointerType), Cfgr::PSIZE_RW_PeripheralAlignment>();
     }
 
     template<typename TplPointerType>
     requires std::is_pointer_v<TplPointerType>
     constexpr auto pointerToMemorySizeAlignment() -> Cfgr::MSIZE_RW_MemoryAlignment {
-        constexpr std::size_t alignmentSize = alignof(TplPointerType);
-        //TODO offset to util
-        return static_cast<Cfgr::MSIZE_RW_MemoryAlignment>(alignmentSize);
+        return Soc::Reg::valueToRegisterFieldEnum<alignof(TplPointerType), Cfgr::MSIZE_RW_MemoryAlignment>();
     }
 
     //
-    // template<
-    //     Id             TplRequester,
-    //     Direction      TplDirection,
-    //     std::uintptr_t TplSourceAddress,
-    //     SizeAlignment  TplSourceAlignment,
-    //     bool           TplSourceIncrement,
-    //     std::uintptr_t TplDestinationAddress,
-    //     SizeAlignment  TplDestinationAlignment,
-    //     bool           TplDestinationIncrement,
-    //     std::uint16_t  TplSizeOfTransmission,
-    //     bool           TplCyclicMode,
-    //     Priority       TplPriority,
-    //     bool           TplTransmissionErrorIrq,
-    //     bool           TplHalfTransmissionIrq,
-    //     bool           TplFullTransmissionIrq,
-    //     bool           TplEnableDma
-    // >
-    // constexpr auto initDmaGenericCt() -> void {
-    //     constexpr auto instance = idToDmaInstance(TplRequester);
-    //     constexpr auto channel  = idToChannel(TplRequester);
-    //     constexpr bool isHwTrigger     = idIsHwTrigger(TplRequester);
-    //
-    //
-    //     // static_assert(
-    //     //     instance == 1U &&
-    //     //     (channel == 2U || channel == 3U || channel == 4U || channel == 5U) &&
-    //     //     TplSourceAddress < 64535, "Breaking boundary");
-    // }
+    template<
+        Id             TplRequester,
+        std::uintptr_t TplMemoryAddress,
+        std::uint16_t  TplSizeOfTransmission,
+    >
+    constexpr auto checkForBoundaries() -> void {
+        constexpr auto instance = idToDmaInstance(TplRequester);
+        constexpr auto channel  = idToChannel(TplRequester);
+        constexpr bool isHwTrigger     = idIsHwTrigger(TplRequester);
 
-    // TODO: std::uintptr_t or uint32_t
+        static_assert(
+            (instance == 1U && (channel == 2U || channel == 3U || channel == 4U || channel == 5U)) &&
+            ((TplMemoryAddress + TplSizeOfTransmission) <= 131072U), "Breaking 128k boundary");
+
+        static_assert(
+            (instance == 1U && (channel == 1U || channel == 6U || channel == 7U)) &&
+            ((TplMemoryAddress + TplSizeOfTransmission) <= 65535U), "Breaking 128k boundary");
+    }
 
     template<
         Id                  TplRequesterId,
@@ -203,6 +188,7 @@ namespace Peripheral::Dma {
         bool                TplTransmissionErrorIrq,
         bool                TplHalfTransmissionIrq,
         bool                TplFullTransmissionIrq,
+        bool                TplEnableDma,
         typename            TplDestinationPointerType
     >
     requires std::is_pointer_v<TplDestinationPointerType>
@@ -215,6 +201,7 @@ namespace Peripheral::Dma {
         constexpr auto irqTransmissionError = Soc::Reg::boolToRegisterFieldEnum<TplTransmissionErrorIrq, Cfgr::TEIE_RW_TransmissionErrorInteruptEnable>();
         constexpr auto irqHalfTransmission  = Soc::Reg::boolToRegisterFieldEnum<TplHalfTransmissionIrq,  Cfgr::HTIE_RW_HalfTransmissionInteruptEnable>();
         constexpr auto irqFullTransmission  = Soc::Reg::boolToRegisterFieldEnum<TplFullTransmissionIrq,  Cfgr::TCIE_RW_TransmissionCompletionInteruptEnable>();
+        constexpr auto isEnabled            = Soc::Reg::boolToRegisterFieldEnum<TplEnableDma,            Cfgr::EN_RW_ChannelEnable>();
 
         constexpr auto destinationAlignment = pointerToMemorySizeAlignment<TplDestinationPointerType>();
 
@@ -236,11 +223,9 @@ namespace Peripheral::Dma {
                 irqTransmissionError,
                 irqHalfTransmission,
                 irqFullTransmission,
-                Cfgr::EN_RW_ChannelEnable::enable
+                isEnabled
             >()
         >();
-
     }
-
 
 }
