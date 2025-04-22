@@ -9,6 +9,7 @@
 #include "field/dma/cfgr.h"
 #include "field/dma/intfcr.h"
 #include "field/dma/intfr.h"
+#include "system/register/access_primitives.h"
 #include "system/register/util.h"
 
 namespace Peripheral::Dma {
@@ -91,7 +92,9 @@ namespace Peripheral::Dma {
     constexpr auto addressMaddr  = [](const Id id) constexpr -> std::uintptr_t { return addressChannelRegister(id, 3U); };
 
     template<Id TplIdHead, Id... TplIdTail>
-    constexpr auto noDuplicateId() -> void {
+    inline constexpr auto
+    __attribute__ ((always_inline))
+    noDuplicateId() -> void {
         // Check if current HEAD has duplicate in the TAIL section
         static_assert(
             ( (idToTruncateTrigger(TplIdHead) != idToTruncateTrigger(TplIdTail)) && ... ),
@@ -150,8 +153,9 @@ namespace Peripheral::Dma {
 
     template<typename TplPointerType>
     requires std::is_pointer_v<TplPointerType>
-    constexpr auto pointerToMemorySizeAlignment(const TplPointerType pointer) -> Cfgr::MSIZE_RW_MemoryAlignment {
+    constexpr auto pointerToMemorySizeAlignment() -> Cfgr::MSIZE_RW_MemoryAlignment {
         constexpr std::size_t alignmentSize = alignof(TplPointerType);
+        //TODO offset to util
         return static_cast<Cfgr::MSIZE_RW_MemoryAlignment>(alignmentSize);
     }
 
@@ -212,13 +216,13 @@ namespace Peripheral::Dma {
         constexpr auto irqHalfTransmission  = Soc::Reg::boolToRegisterFieldEnum<TplHalfTransmissionIrq,  Cfgr::HTIE_RW_HalfTransmissionInteruptEnable>();
         constexpr auto irqFullTransmission  = Soc::Reg::boolToRegisterFieldEnum<TplFullTransmissionIrq,  Cfgr::TCIE_RW_TransmissionCompletionInteruptEnable>();
 
-        constexpr auto destinationAlignment = pointerToMemorySizeAlignment(destinationPointer);
+        constexpr auto destinationAlignment = pointerToMemorySizeAlignment<TplDestinationPointerType>();
 
-        Soc::Reg::Access::writeCt<addressPaddr(TplRequesterId), TplSourceAddress>();
-        Soc::Reg::Access::writeCt<addressMaddr(TplRequesterId), destinationPointer>();
-        Soc::Reg::Access::writeCt<addressCntr(TplRequesterId), static_cast<std::uint32_t>(TplSizeOfTransmission)>();
+        Soc::Reg::Access::writeCtAddrVal<addressPaddr(TplRequesterId), TplSourceAddress>();
+        Soc::Reg::Access::writeCtAddr<addressMaddr(TplRequesterId)>(reinterpret_cast<std::uint32_t>(destinationPointer));
+        Soc::Reg::Access::writeCtAddrVal<addressCntr(TplRequesterId), static_cast<std::uint32_t>(TplSizeOfTransmission)>();
 
-        Soc::Reg::Access::writeCt<
+        Soc::Reg::Access::writeCtAddrVal<
             addressCfgr(TplRequesterId),
             Soc::Reg::Combine::enumsToUint32<
                 Cfgr::MEM2MEM_RW_MemoryToMemory::disable,

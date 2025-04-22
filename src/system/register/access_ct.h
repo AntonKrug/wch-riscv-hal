@@ -8,7 +8,7 @@
 
 #include "concept.h"
 #include "combine.h"
-#include "access_primitives_ct.h"
+#include "access_primitives.h"
 #include "peripheral/obtain_reg_metadata.h"
 #include "peripheral/base_addr.h"
 
@@ -32,7 +32,7 @@ namespace Soc::Reg {
         constexpr auto combinedMask   = Soc::Reg::Combine::fieldMasksToUint32<TestedRegFieldHead, TestedRegFieldTails...>();
         // auto [regOffset, _] = RegMetadata::fromRegField<TestedRegFieldHead>();
         constexpr auto regOffset      = Peripheral::RegMemOffset::fromRegField<TestedRegFieldHead>();
-        const     auto actualValue    = Soc::Reg::Access::readCt<BaseAddr + regOffset>();
+        const     auto actualValue    = Soc::Reg::Access::readCtAddr<BaseAddr + regOffset>();
 
         return (actualValue & combinedMask) == combinedValue;
     }
@@ -67,7 +67,7 @@ namespace Soc::Reg {
     auto writeRegFieldsMipCt() -> void {
         constexpr auto regOffset     = Peripheral::RegMemOffset::fromRegField<RegFieldHead>();
         constexpr auto combinedValue = Soc::Reg::Combine::enumsToUint32<RegFieldHead, RegFieldTails...>();
-        Soc::Reg::Access::writeCt<BaseAddr + regOffset, combinedValue>();
+        Soc::Reg::Access::writeCtAddrVal<BaseAddr + regOffset, combinedValue>();
     }
 
     template<auto RegFieldHead, auto... RegFieldTails>
@@ -117,9 +117,9 @@ namespace Soc::Reg {
             // Either whole register is going to be set, or whole writable part of the register,
             // therefore no need to be clearing the register before setting it,
             // we can just write the whole register directly
-            Soc::Reg::Access::writeCt<BaseAddress + regOffset>(ValueToBeWritten);
+            Soc::Reg::Access::writeCtAddr<BaseAddress + regOffset>(ValueToBeWritten);
         } else {
-            auto actualValue = Soc::Reg::Access::readCt<BaseAddress + regOffset>();
+            auto actualValue = Soc::Reg::Access::readCtAddr<BaseAddress + regOffset>();
 
             // if clearing and setting is the same value, then clearing can be omited
             if constexpr (maskGoingToWritten != ValueToBeWritten) {
@@ -130,7 +130,7 @@ namespace Soc::Reg {
             if constexpr (ValueToBeWritten > 0) {
                 actualValue |= ValueToBeWritten;
             }
-            Soc::Reg::Access::writeCt<BaseAddress + regOffset>(actualValue);
+            Soc::Reg::Access::writeCtAddr<BaseAddress + regOffset>(actualValue);
         }
     }
 
@@ -208,11 +208,11 @@ namespace Soc::Reg {
 
         if constexpr (maskToClear == maskAllowedToBeWritten) {
             // everything what can be written is to be cleared, no point reading
-            Soc::Reg::Access::writeCt<BaseAddress + regOffset, 0>();
+            Soc::Reg::Access::writeCtAddrVal<BaseAddress + regOffset, 0>();
         }
         else {
-            const auto actualValue = Soc::Reg::Access::readCt<BaseAddress + regOffset>();
-            Soc::Reg::Access::writeCt<BaseAddress + regOffset>(actualValue & maskToClear);
+            const auto actualValue = Soc::Reg::Access::readCtAddr<BaseAddress + regOffset>();
+            Soc::Reg::Access::writeCtAddr<BaseAddress + regOffset>(actualValue & maskToClear);
         }
 
     }
@@ -243,9 +243,9 @@ namespace Soc::Reg {
     keepRegFieldTypesMipCt() -> void {
         constexpr auto regOffset    = Peripheral::RegMemOffset::fromRegFieldType<RegFieldTypeHead>();
         constexpr auto combinedMask = Soc::Reg::Combine::fieldTypeMasksToUint32<RegFieldTypeHead, RegFieldTypeTails...>();
-        const     auto actualValue  = Soc::Reg::Access::readCt<BaseAddress + regOffset>();
+        const     auto actualValue  = Soc::Reg::Access::readCtAddr<BaseAddress + regOffset>();
 
-        Soc::Reg::Access::writeCt<BaseAddress + regOffset>( actualValue & (0xffffffff ^ combinedMask) );
+        Soc::Reg::Access::writeCtAddr<BaseAddress + regOffset>( actualValue & (0xffffffff ^ combinedMask) );
     }
 
     // TODO: requirements/concepts for arguments
