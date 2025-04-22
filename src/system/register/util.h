@@ -92,14 +92,14 @@ namespace Soc::Reg {
 
     template<auto value, Concept::FieldTypeWithBitMask RegisterFieldType>
     constexpr auto valueToRegisterFieldEnum() -> RegisterFieldType {
-        constexpr auto rawValue = static_cast<std::uint32_t>(value) << RegisterFieldType::fieldBitOffset;
+        constexpr auto rawValue = static_cast<std::uint32_t>(value) << static_cast<std::uint32_t>(RegisterFieldType::fieldBitOffset);
         return static_cast<RegisterFieldType>(rawValue);
     }
 
     template<auto RegisterField>
     requires Concept::FieldWithBitMask<RegisterField>
     constexpr auto registerFieldEnumToUint32() -> std::uint32_t {
-        return static_cast<std::uint32_t>(RegisterField) >> decltype(RegisterField)::fieldBitOffset;
+        return static_cast<std::uint32_t>(RegisterField) >> static_cast<std::uint32_t>(decltype(RegisterField)::fieldBitOffset);
     }
 
     #pragma endregion
