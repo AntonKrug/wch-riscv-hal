@@ -113,23 +113,11 @@ namespace Peripheral::Dma {
         MemoryToMemory      // MEM2MEM=1, DIR=x  *MADDR=*PADDR
     };
 
-    // enum class Priority: std::uint32_t {
-    //     low      = 0U,
-    //     medium   = 1U,
-    //     high     = 2U,
-    //     veryHigh = 3U
-    // };
     using Priority            = Cfgr::PL_RW_ChannelPriority;
     using PeripheralAlignment = Cfgr::PSIZE_RW_PeripheralAlignment;
     using MemoryAlignment     = Cfgr::MSIZE_RW_MemoryAlignment;
 
 
-    // enum class SizeAlignment: std::uint32_t {
-    //     byte       = 1U,
-    //     word       = 2U,
-    //     doubleWord = 4U
-    // };
-    //
     // template<SizeAlignment alignment>
     // constexpr auto sizeAlignmentToMsize() -> Cfgr::MSIZE_RW_MemoryAlignment {
     //     constexpr auto value = static_cast<std::uint32_t>(alignment);
@@ -156,24 +144,39 @@ namespace Peripheral::Dma {
         return Soc::Reg::valueToRegisterFieldEnum<alignof(TplPointerType), Cfgr::MSIZE_RW_MemoryAlignment>();
     }
 
-    //
     template<
-        Id             TplRequester,
-        std::uintptr_t TplMemoryAddress,
-        std::uint16_t  TplSizeOfTransmission,
+        Id            TplRequester,
+        std::uint32_t TplMemoryAddress,
+        std::uint16_t TplSizeOfTransmission
     >
-    constexpr auto checkForBoundaries() -> void {
+    constexpr auto isInBoundariesCheckCt() -> void {
         constexpr auto instance = idToDmaInstance(TplRequester);
         constexpr auto channel  = idToChannel(TplRequester);
-        constexpr bool isHwTrigger     = idIsHwTrigger(TplRequester);
 
         static_assert(
             (instance == 1U && (channel == 2U || channel == 3U || channel == 4U || channel == 5U)) &&
-            ((TplMemoryAddress + TplSizeOfTransmission) <= 131072U), "Breaking 128k boundary");
+            ((TplMemoryAddress + TplSizeOfTransmission - 1U) <= 131072U), "Breaking 128k boundary");
 
         static_assert(
             (instance == 1U && (channel == 1U || channel == 6U || channel == 7U)) &&
-            ((TplMemoryAddress + TplSizeOfTransmission) <= 65535U), "Breaking 128k boundary");
+            ((TplMemoryAddress + TplSizeOfTransmission -1U) <= 65535U), "Breaking 128k boundary");
+    }
+
+    template<
+        Id            TplRequester,
+        std::uint16_t TplSizeOfTransmission
+    >
+    [[nodiscard]] constexpr auto isInBoundariesCheck(std::uint32_t memoryAddress) -> bool {
+        constexpr auto instance = idToDmaInstance(TplRequester);
+        constexpr auto channel  = idToChannel(TplRequester);
+
+        if constexpr (instance == 1U && (channel == 2U || channel == 3U || channel == 4U || channel == 5U)) {
+            return ((memoryAddress + TplSizeOfTransmission - 1U) <= 131072U);
+        } else if constexpr (instance == 1U && (channel == 1U || channel == 6U || channel == 7U)) {
+            return ((memoryAddress + TplSizeOfTransmission - 1U) <= 131072U);
+        } else {
+            return true;
+        }
     }
 
     template<
@@ -205,9 +208,9 @@ namespace Peripheral::Dma {
 
         constexpr auto destinationAlignment = pointerToMemorySizeAlignment<TplDestinationPointerType>();
 
+        Soc::Reg::Access::writeCtAddrVal<addressCntr(TplRequesterId), static_cast<std::uint32_t>(TplSizeOfTransmission)>();
         Soc::Reg::Access::writeCtAddrVal<addressPaddr(TplRequesterId), TplSourceAddress>();
         Soc::Reg::Access::writeCtAddr<addressMaddr(TplRequesterId)>(reinterpret_cast<std::uint32_t>(destinationPointer));
-        Soc::Reg::Access::writeCtAddrVal<addressCntr(TplRequesterId), static_cast<std::uint32_t>(TplSizeOfTransmission)>();
 
         Soc::Reg::Access::writeCtAddrVal<
             addressCfgr(TplRequesterId),
@@ -220,6 +223,57 @@ namespace Peripheral::Dma {
                 sourceIncrement,
                 isCyclic,
                 Cfgr::DIR_RW_DataTransferDirection::readFromPeripheral,
+                irqTransmissionError,
+                irqHalfTransmission,
+                irqFullTransmission,
+                isEnabled
+            >()
+        >();
+    }
+
+    template<
+        Id                  TplRequesterId,
+        Direction           TplDirection,
+        PeripheralAlignment TplPeripheralAlignment,
+        bool                TplPeripheralIncrement,
+        MemoryAlignment     TplMemoryAlignment,
+        bool                TplMemoryIncrement,
+        std::uint16_t       TplSizeOfTransmission,
+        bool                TplCyclicMode,
+        Priority            TplPriority,
+        bool                TplTransmissionErrorIrq,
+        bool                TplHalfTransmissionIrq,
+        bool                TplFullTransmissionIrq,
+        bool                TplEnableDma,
+        typename            TplPeripheralPointerType,
+        typename            TplMemoryPointerType
+    >
+    requires std::is_pointer_v<TplPeripheralPointerType> and std::is_pointer_v<TplMemoryPointerType>
+    inline constexpr auto
+    __attribute__ ((always_inline))
+    initGenericCt(
+        const TplPeripheralPointerType peripheralPointer,
+        const TplMemoryPointerType memoryPointer) -> void {
+        constexpr auto isCyclic             = Soc::Reg::boolToRegisterFieldEnum<TplCyclicMode,           Cfgr::CIRC_RW_CyclicMode>();
+        constexpr auto irqTransmissionError = Soc::Reg::boolToRegisterFieldEnum<TplTransmissionErrorIrq, Cfgr::TEIE_RW_TransmissionErrorInteruptEnable>();
+        constexpr auto irqHalfTransmission  = Soc::Reg::boolToRegisterFieldEnum<TplHalfTransmissionIrq,  Cfgr::HTIE_RW_HalfTransmissionInteruptEnable>();
+        constexpr auto irqFullTransmission  = Soc::Reg::boolToRegisterFieldEnum<TplFullTransmissionIrq,  Cfgr::TCIE_RW_TransmissionCompletionInteruptEnable>();
+        constexpr auto isEnabled            = Soc::Reg::boolToRegisterFieldEnum<TplEnableDma,            Cfgr::EN_RW_ChannelEnable>();
+
+        Soc::Reg::Access::writeCtAddrVal<addressCntr(TplRequesterId), static_cast<std::uint32_t>(TplSizeOfTransmission)>();
+        Soc::Reg::Access::writeCtAddr<addressPaddr(TplRequesterId)>(reinterpret_cast<std::uint32_t>(peripheralPointer));
+        Soc::Reg::Access::writeCtAddr<addressMaddr(TplRequesterId)>(reinterpret_cast<std::uint32_t>(memoryPointer));
+
+        Soc::Reg::Access::writeCtAddrVal<
+            addressCfgr(TplRequesterId),
+            Soc::Reg::Combine::enumsToUint32<
+                TplDirection,
+                TplPriority,
+                TplMemoryAlignment,
+                TplMemoryIncrement,
+                TplPeripheralAlignment,
+                TplPeripheralIncrement,
+                isCyclic,
                 irqTransmissionError,
                 irqHalfTransmission,
                 irqFullTransmission,
