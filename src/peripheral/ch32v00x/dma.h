@@ -341,6 +341,7 @@ namespace Peripheral::Dma {
         constexpr auto irqTransmissionError = Soc::Reg::boolToRegisterFieldEnum<TplTransmissionErrorIrq, Cfgr::TEIE_RW_TransmissionErrorInteruptEnable>();
         constexpr auto irqHalfTransmission  = Soc::Reg::boolToRegisterFieldEnum<TplHalfTransmissionIrq,  Cfgr::HTIE_RW_HalfTransmissionInteruptEnable>();
         constexpr auto irqFullTransmission  = Soc::Reg::boolToRegisterFieldEnum<TplFullTransmissionIrq,  Cfgr::TCIE_RW_TransmissionCompletionInteruptEnable>();
+        // When enabling channel in MemoryToMemory mode, it will start transition instantly
         constexpr auto isEnabled            = Soc::Reg::boolToRegisterFieldEnum<TplEnableDma,            Cfgr::EN_RW_ChannelEnable>();
 
         constexpr auto sourceAlignment      = pointerToPeripheralSizeAlignment<TplSourcePointerType>();
@@ -413,7 +414,7 @@ namespace Peripheral::Dma {
         constexpr auto isEnabled            = Soc::Reg::boolToRegisterFieldEnum<TplEnableDma,            Cfgr::EN_RW_ChannelEnable>();
 
         if constexpr (TplDirection == Direction::MemoryToMemory) {
-            static_assert(isHwTrigger == false, "MemomryToMemory mode can't be triggered by HW requester ID");
+            static_assert(isHwTrigger == false, "MemomryToMemory mode can't be triggered by HW requester ID, it will be triggered instanly as EN field is enabled");
             static_assert(TplCyclicMode == false, "MemoryToMemory mode can't be used with Cyclic mode");
         }
 

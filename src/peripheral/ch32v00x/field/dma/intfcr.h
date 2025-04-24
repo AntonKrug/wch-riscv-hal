@@ -12,6 +12,8 @@
 namespace Peripheral::Dma {
 
     struct Intfcr {
+        // NOTE: these fields can't be used directly as is, as the real registers have many instances of these fields repeated
+
         enum class CGIF_WO_ClearGlobalInterruptFlag: std::uint32_t {
             fieldBitOffset = 0U,
             fieldBitMask   = 0b1U << fieldBitOffset, // not holding any settings or value, it's a bitmask for this specific field
