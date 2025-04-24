@@ -225,13 +225,13 @@ namespace Peripheral::Dma {
 
         constexpr auto destinationAlignment = pointerToMemorySizeAlignment<TplDestinationPointerType>();
 
-        static_assert(
-            TplTransferCount > 0U ||
-            ( TplTransferCount == 0U && TplSourceIncrement == false && TplDestinationIncrement == false ),
-            "Can't increment source and/or destination when doing single transfers (TplTransferCount==0)"
-        );
+        static_assert(isHwTrigger == true, "PeripheralToMemory Requester ID can't be triggered by SW requester ID, enabing EN field will not start transmission, but wait for HW event requester");
 
-        // static_assert(isHwTrigger == true, "For PeripheralToMemory Requester ID indicates that ");
+        if constexpr (TplTransferCount == 0U) {
+            static_assert(TplSourceIncrement == false && TplDestinationIncrement == false,
+                "Can't increment source and/or destination when doing single transfers (TplTransferCount==0)"
+            );
+        }
 
         Soc::Reg::Access::writeCtAddrVal<addressCntr(TplRequesterId), static_cast<std::uint32_t>(TplTransferCount)>();
         Soc::Reg::Access::writeCtAddrVal<addressPaddr(TplRequesterId), TplSourceAddress>();
@@ -286,11 +286,13 @@ namespace Peripheral::Dma {
 
         constexpr auto sourceAlignment = pointerToMemorySizeAlignment<TplSourcePointerType>();
 
-        static_assert(
-            TplTransferCount > 0U ||
-            ( TplTransferCount == 0U && TplSourceIncrement == false && TplDestinationIncrement == false ),
-            "Can't increment source and/or destination when doing single transfers (TplTransferCount==0)"
-        );
+        static_assert(isHwTrigger == true, "MemoryToPeripheral Requester ID can't be triggered by SW requester ID, enabing EN field will not start transmission, but wait for HW event requester");
+
+        if constexpr (TplTransferCount == 0U) {
+            static_assert(TplSourceIncrement == false && TplDestinationIncrement == false,
+                "Can't increment source and/or destination when doing single transfers (TplTransferCount==0)"
+            );
+        }
 
         Soc::Reg::Access::writeCtAddrVal<addressCntr(TplRequesterId), static_cast<std::uint32_t>(TplTransferCount)>();
         Soc::Reg::Access::writeCtAddrVal<addressPaddr(TplRequesterId), TplDestinationAddress>();
@@ -347,11 +349,13 @@ namespace Peripheral::Dma {
         constexpr auto sourceAlignment      = pointerToPeripheralSizeAlignment<TplSourcePointerType>();
         constexpr auto destinationAlignment = pointerToMemorySizeAlignment<TplDestinationPointerType>();
 
-        static_assert(
-            TplTransferCount > 0U ||
-            ( TplTransferCount == 0U && TplSourceIncrement == false && TplDestinationIncrement == false ),
-            "Can't increment source and/or destination when doing single transfers (TplTransferCount==0)"
-        );
+        static_assert(isHwTrigger == false, "MemomryToMemory mode can't be triggered by HW requester ID, it will be triggered instanly as EN field is enabled");
+
+        if constexpr (TplTransferCount == 0U) {
+            static_assert(TplSourceIncrement == false && TplDestinationIncrement == false,
+                "Can't increment source and/or destination when doing single transfers (TplTransferCount==0)"
+            );
+        }
 
         if constexpr (TplTransferCount > 0U) {
             //TODO check the read and write ranges do not overlap
