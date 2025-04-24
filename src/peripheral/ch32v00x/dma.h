@@ -108,9 +108,9 @@ namespace Peripheral::Dma {
     }
 
     enum class Direction {
-        PeripheralToMemory, // MEM2MEM=0, DIR=0  *MADDR=*PADDR
-        MemoryToPeripheral, // MEM2MEM=0, DIR=1  *PADDR=*MADDR
-        MemoryToMemory      // MEM2MEM=1, DIR=x  *MADDR=*PADDR
+        PeripheralToMemory, // MEM2MEM=0, DIR=0, PADDR (source) => MADDR (destination)
+        MemoryToPeripheral, // MEM2MEM=0, DIR=1, MADDR (source) => PADDR (destination)
+        MemoryToMemory      // MEM2MEM=1, DIR=x, PADDR (source) => MADDR (destination)
     };
 
     using Priority            = Cfgr::PL_RW_ChannelPriority;
@@ -163,6 +163,22 @@ namespace Peripheral::Dma {
     }
 
     template<
+        PeripheralAlignment TplPeripheralAlignment,
+        MemoryAlignment     TplMemoryAlignment>
+    constexpr auto comparePAddressWithMAddressAlignment() -> std::int32_t {
+        constexpr auto pAlign = static_cast<std::uint32_t>(TplPeripheralAlignment) >> static_cast<std::uint32_t>(PeripheralAlignment::fieldBitOffset);
+        constexpr auto mAlign = static_cast<std::uint32_t>(TplMemoryAlignment) >> static_cast<std::uint32_t>(MemoryAlignment::fieldBitOffset);
+        if (pAlign > mAlign) {
+            return 1;
+        } else if (pAlign < mAlign) {
+            return -1;
+        } else {
+            // pAlign == mAlign
+            return 0;
+        }
+    }
+
+    template<
         Id            TplRequester,
         std::uint16_t TplSizeOfTransmission
     >
@@ -185,7 +201,7 @@ namespace Peripheral::Dma {
         PeripheralAlignment TplSourceAlignment,
         bool                TplSourceIncrement,
         bool                TplDestinationIncrement,
-        std::uint16_t       TplSizeOfTransmission,
+        std::uint16_t       TplTransferCount,
         bool                TplCyclicMode,
         Priority            TplPriority,
         bool                TplTransmissionErrorIrq,
@@ -198,6 +214,7 @@ namespace Peripheral::Dma {
     inline constexpr auto
     __attribute__ ((always_inline))
     initPeripheralToMemoryCt(const TplDestinationPointerType destinationPointer) -> void {
+        constexpr auto isHwTrigger          = idIsHwTrigger(TplRequesterId);
         constexpr auto sourceIncrement      = Soc::Reg::boolToRegisterFieldEnum<TplSourceIncrement,      Cfgr::PINC_RW_PeripheralAddressIncrementMode>();
         constexpr auto destinationIncrement = Soc::Reg::boolToRegisterFieldEnum<TplDestinationIncrement, Cfgr::MINC_RW_MemoryAddressIncrementMode>();
         constexpr auto isCyclic             = Soc::Reg::boolToRegisterFieldEnum<TplCyclicMode,           Cfgr::CIRC_RW_CyclicMode>();
@@ -208,7 +225,15 @@ namespace Peripheral::Dma {
 
         constexpr auto destinationAlignment = pointerToMemorySizeAlignment<TplDestinationPointerType>();
 
-        Soc::Reg::Access::writeCtAddrVal<addressCntr(TplRequesterId), static_cast<std::uint32_t>(TplSizeOfTransmission)>();
+        static_assert(
+            TplTransferCount > 0U ||
+            ( TplTransferCount == 0U && TplSourceIncrement == false && TplDestinationIncrement == false ),
+            "Can't increment source and/or destination when doing single transfers (TplTransferCount==0)"
+        );
+
+        // static_assert(isHwTrigger == true, "For PeripheralToMemory Requester ID indicates that ");
+
+        Soc::Reg::Access::writeCtAddrVal<addressCntr(TplRequesterId), static_cast<std::uint32_t>(TplTransferCount)>();
         Soc::Reg::Access::writeCtAddrVal<addressPaddr(TplRequesterId), TplSourceAddress>();
         Soc::Reg::Access::writeCtAddr<addressMaddr(TplRequesterId)>(reinterpret_cast<std::uint32_t>(destinationPointer));
 
@@ -233,18 +258,142 @@ namespace Peripheral::Dma {
 
     template<
         Id                  TplRequesterId,
-        Direction           TplDirection,
-        PeripheralAlignment TplPeripheralAlignment,
-        bool                TplPeripheralIncrement,
-        MemoryAlignment     TplMemoryAlignment,
-        bool                TplMemoryIncrement,
-        std::uint16_t       TplSizeOfTransmission,
+        bool                TplSourceIncrement,
+        std::uint32_t       TplDestinationAddress,
+        PeripheralAlignment TplDestinationAlignment,
+        bool                TplDestinationIncrement,
+        std::uint16_t       TplTransferCount,
         bool                TplCyclicMode,
         Priority            TplPriority,
         bool                TplTransmissionErrorIrq,
         bool                TplHalfTransmissionIrq,
         bool                TplFullTransmissionIrq,
         bool                TplEnableDma,
+        typename            TplSourcePointerType
+    >
+    requires std::is_pointer_v<TplSourcePointerType>
+    inline constexpr auto
+    __attribute__ ((always_inline))
+    initMemoryToPeripheralCt(const TplSourcePointerType sourcePointer) -> void {
+        constexpr auto isHwTrigger          = idIsHwTrigger(TplRequesterId);
+        constexpr auto sourceIncrement      = Soc::Reg::boolToRegisterFieldEnum<TplSourceIncrement,      Cfgr::PINC_RW_PeripheralAddressIncrementMode>();
+        constexpr auto destinationIncrement = Soc::Reg::boolToRegisterFieldEnum<TplDestinationIncrement, Cfgr::MINC_RW_MemoryAddressIncrementMode>();
+        constexpr auto isCyclic             = Soc::Reg::boolToRegisterFieldEnum<TplCyclicMode,           Cfgr::CIRC_RW_CyclicMode>();
+        constexpr auto irqTransmissionError = Soc::Reg::boolToRegisterFieldEnum<TplTransmissionErrorIrq, Cfgr::TEIE_RW_TransmissionErrorInteruptEnable>();
+        constexpr auto irqHalfTransmission  = Soc::Reg::boolToRegisterFieldEnum<TplHalfTransmissionIrq,  Cfgr::HTIE_RW_HalfTransmissionInteruptEnable>();
+        constexpr auto irqFullTransmission  = Soc::Reg::boolToRegisterFieldEnum<TplFullTransmissionIrq,  Cfgr::TCIE_RW_TransmissionCompletionInteruptEnable>();
+        constexpr auto isEnabled            = Soc::Reg::boolToRegisterFieldEnum<TplEnableDma,            Cfgr::EN_RW_ChannelEnable>();
+
+        constexpr auto sourceAlignment = pointerToMemorySizeAlignment<TplSourcePointerType>();
+
+        static_assert(
+            TplTransferCount > 0U ||
+            ( TplTransferCount == 0U && TplSourceIncrement == false && TplDestinationIncrement == false ),
+            "Can't increment source and/or destination when doing single transfers (TplTransferCount==0)"
+        );
+
+        Soc::Reg::Access::writeCtAddrVal<addressCntr(TplRequesterId), static_cast<std::uint32_t>(TplTransferCount)>();
+        Soc::Reg::Access::writeCtAddrVal<addressPaddr(TplRequesterId), TplDestinationAddress>();
+        Soc::Reg::Access::writeCtAddr<addressMaddr(TplRequesterId)>(reinterpret_cast<std::uint32_t>(sourcePointer));
+
+        Soc::Reg::Access::writeCtAddrVal<
+            addressCfgr(TplRequesterId),
+            Soc::Reg::Combine::enumsToUint32<
+                Cfgr::MEM2MEM_RW_MemoryToMemory::disable,
+                TplPriority,
+                sourceAlignment,
+                TplDestinationAlignment,
+                destinationIncrement,
+                sourceIncrement,
+                isCyclic,
+                Cfgr::DIR_RW_DataTransferDirection::readFromMemory,
+                irqTransmissionError,
+                irqHalfTransmission,
+                irqFullTransmission,
+                isEnabled
+            >()
+        >();
+    }
+
+    template<
+        Id            TplRequesterId,
+        bool          TplSourceIncrement,
+        bool          TplDestinationIncrement,
+        std::uint16_t TplTransferCount,
+        Priority      TplPriority,
+        bool          TplTransmissionErrorIrq,
+        bool          TplHalfTransmissionIrq,
+        bool          TplFullTransmissionIrq,
+        bool          TplEnableDma,
+        typename      TplSourcePointerType,
+        typename      TplDestinationPointerType
+    >
+    requires std::is_pointer_v<TplDestinationPointerType>
+    inline constexpr auto
+    __attribute__ ((always_inline))
+    initMemoryToMemoryCt(
+        const TplSourcePointerType      sourcePointer,
+        const TplDestinationPointerType destinationPointer
+    ) -> void {
+        constexpr auto isHwTrigger          = idIsHwTrigger(TplRequesterId);
+        constexpr auto sourceIncrement      = Soc::Reg::boolToRegisterFieldEnum<TplSourceIncrement,      Cfgr::PINC_RW_PeripheralAddressIncrementMode>();
+        constexpr auto destinationIncrement = Soc::Reg::boolToRegisterFieldEnum<TplDestinationIncrement, Cfgr::MINC_RW_MemoryAddressIncrementMode>();
+        constexpr auto irqTransmissionError = Soc::Reg::boolToRegisterFieldEnum<TplTransmissionErrorIrq, Cfgr::TEIE_RW_TransmissionErrorInteruptEnable>();
+        constexpr auto irqHalfTransmission  = Soc::Reg::boolToRegisterFieldEnum<TplHalfTransmissionIrq,  Cfgr::HTIE_RW_HalfTransmissionInteruptEnable>();
+        constexpr auto irqFullTransmission  = Soc::Reg::boolToRegisterFieldEnum<TplFullTransmissionIrq,  Cfgr::TCIE_RW_TransmissionCompletionInteruptEnable>();
+        constexpr auto isEnabled            = Soc::Reg::boolToRegisterFieldEnum<TplEnableDma,            Cfgr::EN_RW_ChannelEnable>();
+
+        constexpr auto sourceAlignment      = pointerToPeripheralSizeAlignment<TplSourcePointerType>();
+        constexpr auto destinationAlignment = pointerToMemorySizeAlignment<TplDestinationPointerType>();
+
+        static_assert(
+            TplTransferCount > 0U ||
+            ( TplTransferCount == 0U && TplSourceIncrement == false && TplDestinationIncrement == false ),
+            "Can't increment source and/or destination when doing single transfers (TplTransferCount==0)"
+        );
+
+        if constexpr (TplTransferCount > 0U) {
+            //TODO check the read and write ranges do not overlap
+        }
+
+        Soc::Reg::Access::writeCtAddrVal<addressCntr(TplRequesterId), static_cast<std::uint32_t>(TplTransferCount)>();
+        Soc::Reg::Access::writeCtAddr<addressPaddr(TplRequesterId)>(reinterpret_cast<std::uint32_t>(sourcePointer));
+        Soc::Reg::Access::writeCtAddr<addressMaddr(TplRequesterId)>(reinterpret_cast<std::uint32_t>(destinationPointer));
+
+        Soc::Reg::Access::writeCtAddrVal<
+            addressCfgr(TplRequesterId),
+            Soc::Reg::Combine::enumsToUint32<
+                Cfgr::MEM2MEM_RW_MemoryToMemory::enable,
+                TplPriority,
+                destinationAlignment,
+                sourceAlignment,
+                destinationIncrement,
+                sourceIncrement,
+                Cfgr::CIRC_RW_CyclicMode::disable,
+                Cfgr::DIR_RW_DataTransferDirection::readFromPeripheral,
+                irqTransmissionError,
+                irqHalfTransmission,
+                irqFullTransmission,
+                isEnabled
+            >()
+        >();
+    }
+
+    template<
+        Id                  TplRequesterId,
+        Direction           TplDirection,
+        PeripheralAlignment TplPeripheralAlignment,
+        bool                TplPeripheralIncrement,
+        MemoryAlignment     TplMemoryAlignment,
+        bool                TplMemoryIncrement,
+        std::uint16_t       TplTransferCount,
+        bool                TplCyclicMode,
+        Priority            TplPriority,
+        bool                TplTransmissionErrorIrq,
+        bool                TplHalfTransmissionIrq,
+        bool                TplFullTransmissionIrq,
+        bool                TplEnableDma,
+        bool                TplAllowTrucatingTransfer,
         typename            TplPeripheralPointerType,
         typename            TplMemoryPointerType
     >
@@ -253,14 +402,50 @@ namespace Peripheral::Dma {
     __attribute__ ((always_inline))
     initGenericCt(
         const TplPeripheralPointerType peripheralPointer,
-        const TplMemoryPointerType memoryPointer) -> void {
+        const TplMemoryPointerType memoryPointer
+    ) -> void {
+        constexpr auto isHwTrigger          = idIsHwTrigger(TplRequesterId);
+        constexpr auto isMemoryToMemory     = TplDirection == Direction::MemoryToMemory;
         constexpr auto isCyclic             = Soc::Reg::boolToRegisterFieldEnum<TplCyclicMode,           Cfgr::CIRC_RW_CyclicMode>();
         constexpr auto irqTransmissionError = Soc::Reg::boolToRegisterFieldEnum<TplTransmissionErrorIrq, Cfgr::TEIE_RW_TransmissionErrorInteruptEnable>();
         constexpr auto irqHalfTransmission  = Soc::Reg::boolToRegisterFieldEnum<TplHalfTransmissionIrq,  Cfgr::HTIE_RW_HalfTransmissionInteruptEnable>();
         constexpr auto irqFullTransmission  = Soc::Reg::boolToRegisterFieldEnum<TplFullTransmissionIrq,  Cfgr::TCIE_RW_TransmissionCompletionInteruptEnable>();
         constexpr auto isEnabled            = Soc::Reg::boolToRegisterFieldEnum<TplEnableDma,            Cfgr::EN_RW_ChannelEnable>();
 
-        Soc::Reg::Access::writeCtAddrVal<addressCntr(TplRequesterId), static_cast<std::uint32_t>(TplSizeOfTransmission)>();
+        if constexpr (TplDirection == Direction::MemoryToMemory) {
+            static_assert(isHwTrigger == false, "MemomryToMemory mode can't be triggered by HW requester ID");
+            static_assert(TplCyclicMode == false, "MemoryToMemory mode can't be used with Cyclic mode");
+        }
+
+        if constexpr (TplTransferCount == 0U) {
+            static_assert(TplPeripheralIncrement == false && TplMemoryIncrement == false,
+                "Can't increment source and/or destination when doing single transfers (TplTransferCount==0)"
+            );
+        }
+
+        // Allow manually "override" these alignment asserts with TplAllowTrucatingTransfer if the truncatitation is intentional
+        if constexpr (TplAllowTrucatingTransfer == false) {
+
+            // MemoryToMemory      MEM2MEM=1, DIR=x  PADDR (source) => MADDR (destination)
+            static_assert(
+                TplDirection == Direction::MemoryToMemory &&
+                comparePAddressWithMAddressAlignment<TplPeripheralAlignment, TplMemoryAlignment>() <= 0,
+                "In MemoryToMemory mode, the PADDR (source) needs to have same or smaller alignment than MADDR (destination), or data truncation will happen");
+
+            // MemoryToPeripheral, MEM2MEM=0, DIR=1  MADDR (source) => PADDR (destination)
+            static_assert(
+                TplDirection == Direction::MemoryToPeripheral &&
+                comparePAddressWithMAddressAlignment<TplPeripheralAlignment, TplMemoryAlignment>() >= 0,
+                "In MemoryToPeripheral mode, the MADDR (source) needs to have same or smaller alignment than PADDR (destination), or data truncation will happen");
+
+            // PeripheralToMemory, MEM2MEM=0, DIR=0  PADDR (source) => MADDR (destination)
+            static_assert(
+                TplDirection == Direction::MemoryToMemory &&
+                comparePAddressWithMAddressAlignment<TplPeripheralAlignment, TplMemoryAlignment>() <= 0,
+                "In PeripheralToMemory mode, the PADDR (source) needs to have same or smaller alignment than MADDR (destination), or data truncation will happen");
+        }
+
+        Soc::Reg::Access::writeCtAddrVal<addressCntr(TplRequesterId), static_cast<std::uint32_t>(TplTransferCount)>();
         Soc::Reg::Access::writeCtAddr<addressPaddr(TplRequesterId)>(reinterpret_cast<std::uint32_t>(peripheralPointer));
         Soc::Reg::Access::writeCtAddr<addressMaddr(TplRequesterId)>(reinterpret_cast<std::uint32_t>(memoryPointer));
 
@@ -268,6 +453,7 @@ namespace Peripheral::Dma {
             addressCfgr(TplRequesterId),
             Soc::Reg::Combine::enumsToUint32<
                 TplDirection,
+                isMemoryToMemory,
                 TplPriority,
                 TplMemoryAlignment,
                 TplMemoryIncrement,
