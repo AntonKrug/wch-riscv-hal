@@ -160,7 +160,7 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/system/memory_map/concepts.h
         ${CMAKE_SOURCE_DIR}/src/system/memory_map/peripheral_addresses.h
         ${CMAKE_SOURCE_DIR}/src/system/register/access_ct.h
-        ${CMAKE_SOURCE_DIR}/src/system/register/access_primitives_ct.h
+        ${CMAKE_SOURCE_DIR}/src/system/register/access_primitives.h
         ${CMAKE_SOURCE_DIR}/src/system/register/combine.h
         ${CMAKE_SOURCE_DIR}/src/system/register/concept.h
         ${CMAKE_SOURCE_DIR}/src/system/register/field_access_privilege.h
