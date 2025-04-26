@@ -133,9 +133,6 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/peripheral/base_addr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/afio.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/afio/pcfr1.h
-        ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/dma/cfgr.h
-        ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/dma/intfcr.h
-        ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/dma/intfr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/rcc/ahbpcenr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/rcc/apb1pcenr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/rcc/apb1prstr.h
@@ -145,12 +142,14 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/rcc/ctlr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/rcc/intr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/rcc/rstsckr.h
-        ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/utils/dma.h
-        ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/dma.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/gpio.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/rcc.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/timer.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/usart.h
+        ${CMAKE_SOURCE_DIR}/src/peripheral/common/dma.h
+        ${CMAKE_SOURCE_DIR}/src/peripheral/common/dma/field/cfgr.h
+        ${CMAKE_SOURCE_DIR}/src/peripheral/common/dma/field/intfcr.h
+        ${CMAKE_SOURCE_DIR}/src/peripheral/common/dma/field/intfr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/concept.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/obtain_reg_metadata.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/util.h

@@ -6,9 +6,9 @@
 
 #include <type_traits>
 
-#include "field/dma/cfgr.h"
-#include "field/dma/intfcr.h"
-#include "field/dma/intfr.h"
+#include "dma/field/cfgr.h"
+#include "dma/field/intfcr.h"
+#include "dma/field/intfr.h"
 #include "system/register/access_primitives.h"
 #include "system/register/util.h"
 

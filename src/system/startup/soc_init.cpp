@@ -11,7 +11,7 @@
 #include "peripheral/ch32v00x/rcc.h"
 #include "utils/literals/timer.h"
 #include "system/register/access_ct.h"
-#include "peripheral/ch32v00x/dma.h"
+#include "peripheral/common/dma.h"
 // #include "dma_experiment_buffer.h"
 
 extern "C" {

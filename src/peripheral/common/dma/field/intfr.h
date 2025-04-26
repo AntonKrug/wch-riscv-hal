@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <tuple>
 
-#include "system/register/field_access_privilege.h"
+#include "../../../../system/register/field_access_privilege.h"
 
 namespace Peripheral::Dma {
 
