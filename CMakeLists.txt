@@ -132,6 +132,7 @@ set(LINKER_SCRIPT_FINAL ${CMAKE_BINARY_DIR}/linker/WCH32Vxxx-for-current-soc-boo
 set (headers
         ${CMAKE_SOURCE_DIR}/src/peripheral/base_addr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/afio.h
+        ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/dma_channels.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/afio/pcfr1.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/rcc/ahbpcenr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/ch32v00x/field/rcc/apb1pcenr.h
