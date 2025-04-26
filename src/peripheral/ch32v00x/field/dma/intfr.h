@@ -21,7 +21,7 @@ namespace Peripheral::Dma {
             fieldAccess    = Soc::Reg::FieldAccessRight::ReadOnly,
 
             noInterrupt       = 0U << fieldBitOffset, // No interrupt occurred
-            interruptOccurred = fieldBitMask,        // Can be queried to find out which channel experienced IRQ before querying what type of IRQ happened
+            interruptOccurred = fieldBitMask,         // Can be queried to find out which channel experienced IRQ before querying what type of IRQ happened
         };
 
         enum class TCIF_RO_TransferCompleteInterruptFlag: std::uint32_t {
@@ -30,7 +30,7 @@ namespace Peripheral::Dma {
             fieldAccess    = Soc::Reg::FieldAccessRight::ReadOnly,
 
             noInterrupt       = 0U << fieldBitOffset, // No interrupt occurred
-            interruptOccurred = fieldBitMask,        // Transmission was completed
+            interruptOccurred = fieldBitMask,         // Transmission was completed
         };
 
         enum class HTIF_RO_HalfTransferInterruptFlag: std::uint32_t {
@@ -39,7 +39,7 @@ namespace Peripheral::Dma {
             fieldAccess    = Soc::Reg::FieldAccessRight::ReadOnly,
 
             noInterrupt       = 0U << fieldBitOffset, // No interrupt occurred
-            interruptOccurred = fieldBitMask,        // Transmission transferred more than half of the content specified in CNT register
+            interruptOccurred = fieldBitMask,         // Transmission transferred more than half of the content specified in CNT register
         };
 
         enum class TEIF_RO_TransferErrorInterruptFlag: std::uint32_t {
@@ -48,7 +48,7 @@ namespace Peripheral::Dma {
             fieldAccess    = Soc::Reg::FieldAccessRight::ReadOnly,
 
             noInterrupt       = 0U << fieldBitOffset, // No interrupt occurred
-            interruptOccurred = fieldBitMask,        // Transmission experienced error, disabled channel (EN=disabled in CFGR register)
+            interruptOccurred = fieldBitMask,         // Transmission experienced error, disabled channel (EN=disabled in CFGR register)
         };
 
         constexpr static std::tuple<
