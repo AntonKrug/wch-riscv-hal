@@ -5,6 +5,7 @@
 #pragma once
 
 #include <cstdint>
+#include <vector>
 
 namespace Peripheral::Dma {
 
@@ -48,6 +49,16 @@ namespace Peripheral::Dma {
         Tim2Ch2HwTrigger  = 0x017U, // DMA1 ch7
         Tim2Ch4HwTrigger  = 0x017U, // DMA1 ch7
         Dma1Ch7SwTrigger  = 0x117U, // DMA1 ch7
+    };
+
+    constexpr std::vector<Id> swTriggers {
+        Id::Dma1Ch1SwTrigger,
+        Id::Dma1Ch2SwTrigger,
+        Id::Dma1Ch3SwTrigger,
+        Id::Dma1Ch4SwTrigger,
+        Id::Dma1Ch5SwTrigger,
+        Id::Dma1Ch6SwTrigger,
+        Id::Dma1Ch7SwTrigger
     };
 
 }
