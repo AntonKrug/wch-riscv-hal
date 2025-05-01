@@ -31,7 +31,7 @@ namespace Riscv::Concepts {
 
     // Confirm the CSR's address is within the 12-bit range
     template<auto CsrAddress>
-    concept IsCsrValidAddressRange = (CsrAddress >= 0 && CsrAddress < (1u<<12));
+    concept IsCsrValidAddressRange = (CsrAddress >= 0U && CsrAddress < (1U << 12U));
 
 
     // Confirm one of the QingKe CSRs was used and it's address

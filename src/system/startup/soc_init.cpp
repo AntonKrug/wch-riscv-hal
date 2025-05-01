@@ -66,7 +66,7 @@ extern "C" {
 
             // Zero data in RAM, word (4 bytes) at a time
             do {
-                *zero_ram_ptr++ = 0;
+                *zero_ram_ptr++ = 0U;
             } while (zero_ram_ptr < zero_ram_end);
         #endif
     }

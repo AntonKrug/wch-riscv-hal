@@ -106,14 +106,14 @@ namespace Soc::Reg {
         constexpr auto maskForbiddenToWrite   = 0xffffffffu ^ maskAllowedToBeWritten;
 
         static_assert(
-            ValueToBeWritten != 0u || maskGoingToWritten != 0u,
+            ValueToBeWritten != 0U || maskGoingToWritten != 0U,
             "Both value-to-be-set and their mask are empty, this indicates badly described register field");
 
         static_assert(
             (maskForbiddenToWrite & maskGoingToWritten) == 0,
             "Some bit[s]/field[s] were going to be written into register which were not writable. It's either bug in SoC's register field description, or in the application. Check if possibly you are setting a RO field.");
 
-        if constexpr (maskGoingToWritten == 0xffffffffu || maskGoingToWritten == maskAllowedToBeWritten) {
+        if constexpr (maskGoingToWritten == 0xffffffffU || maskGoingToWritten == maskAllowedToBeWritten) {
             // Either whole register is going to be set, or whole writable part of the register,
             // therefore no need to be clearing the register before setting it,
             // we can just write the whole register directly
@@ -127,7 +127,7 @@ namespace Soc::Reg {
             }
 
             // if nothing to set then ommit setting
-            if constexpr (ValueToBeWritten > 0) {
+            if constexpr (ValueToBeWritten > 0U) {
                 actualValue |= ValueToBeWritten;
             }
             Soc::Reg::Access::writeCtAddr<BaseAddress + regOffset>(actualValue);
@@ -196,10 +196,10 @@ namespace Soc::Reg {
         constexpr auto regFieldsTuple         = Peripheral::RegFieldTuple::fromRegFieldType<RegFieldTypeHead>();
         constexpr auto maskToClear            = Soc::Reg::Combine::fieldTypeMasksToUint32<RegFieldTypeHead, RegFieldTypeTails...>();
         constexpr auto maskAllowedToBeWritten = Soc::Reg::Combine::writableMaskFromTupleType<decltype(regFieldsTuple)>();
-        constexpr auto maskForbiddenToWrite   = 0xffffffffu ^ maskAllowedToBeWritten;
+        constexpr auto maskForbiddenToWrite   = 0xffffffffU ^ maskAllowedToBeWritten;
 
         static_assert(
-            maskToClear != 0u,
+            maskToClear != 0U,
             "Going not clear anything, this indicates badly described register field");
 
         static_assert(

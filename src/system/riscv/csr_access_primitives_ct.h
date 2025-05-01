@@ -49,9 +49,9 @@ namespace Riscv::Csr::AccessCt {
     constexpr auto
     __attribute__ ((always_inline))
     clearUint32() -> void {
-        if constexpr (ClearValueUint32 == 0u) {
+        if constexpr (ClearValueUint32 == 0U) {
             // nothing to clear, nothing has to be done here
-        } else if constexpr (ClearValueUint32 == 0xffffffff) {
+        } else if constexpr (ClearValueUint32 == 0xffffffffU) {
             // if the clear is full, meaning to clear whole register, it's
             // faster to do a write with 0 instead
             __asm__ volatile(
@@ -59,7 +59,7 @@ namespace Riscv::Csr::AccessCt {
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr))
             );
-        } else if constexpr (ClearValueUint32 < (1u<<5)) {
+        } else if constexpr (ClearValueUint32 < (1U << 5U)) {
             // is small enough, use the 5-bit immediate instruction instead
             // https://gcc.gnu.org/onlinedocs/gcc/Machine-Constraints.html
             __asm__ volatile(
@@ -87,9 +87,9 @@ namespace Riscv::Csr::AccessCt {
     constexpr auto
     __attribute__ ((always_inline))
     setUint32() -> void {
-        if constexpr (SetValueUint32 == 0u) {
+        if constexpr (SetValueUint32 == 0U) {
             // nothing to set, nothing has to be done here
-        } else if constexpr (SetValueUint32 < (1u<<5)) {
+        } else if constexpr (SetValueUint32 < (1U << 5U)) {
             // is small enough, use the 5-bit immediate instruction instead
             // https://gcc.gnu.org/onlinedocs/gcc/Machine-Constraints.html
             __asm__ volatile(
@@ -117,14 +117,14 @@ namespace Riscv::Csr::AccessCt {
     constexpr auto
     __attribute__ ((always_inline))
     writeUint32() -> void {
-        if constexpr (ValueUint32 == 0) {
+        if constexpr (ValueUint32 == 0U) {
             // if writtin zero we can use r0 aka x0 register
             __asm__ volatile(
                 "csrw %0, x0"  // x0(zero) register
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr))
             );
-        } else if constexpr (ValueUint32<(1u<<5)) {
+        } else if constexpr (ValueUint32 < (1U << 5U)) {
             // csrwI instruction can take 5-bit imediate value
             // https://gcc.gnu.org/onlinedocs/gcc/Machine-Constraints.html
             __asm__ volatile(
@@ -153,12 +153,12 @@ namespace Riscv::Csr::AccessCt {
     __attribute__ ((always_inline))
     clearAndSetUint32() -> void {
         // ReSharper disable CppTooWideScopeInitStatement
-        constexpr bool isClearSmall   = ClearValueUint32 <  (1u<<5);
-        constexpr bool isClearZero    = ClearValueUint32 == 0;
-        constexpr bool isClearFull    = ClearValueUint32 == 0xffffffff;
+        constexpr bool isClearSmall   = ClearValueUint32 <  (1U << 5U);
+        constexpr bool isClearZero    = ClearValueUint32 == 0U;
+        constexpr bool isClearFull    = ClearValueUint32 == 0xffffffffU;
 
-        constexpr bool isSetSmall     = SetValueUint32   <  (1u<<5);
-        constexpr bool isSetZero      = SetValueUint32   == 0;
+        constexpr bool isSetSmall     = SetValueUint32   <  (1U << 5U);
+        constexpr bool isSetZero      = SetValueUint32   == 0U;
 
         constexpr bool isClearSetSame = ClearValueUint32 == SetValueUint32;
         // ReSharper restore CppTooWideScopeInitStatement
