@@ -169,6 +169,8 @@ extern "C" {
 
     }
 
+    [[noreturn]] extern void userMain(void);
+
     // https://gcc.gnu.org/onlinedocs/gcc-14.2.0/gcc/Optimize-Options.html
     inline
     void
@@ -211,6 +213,19 @@ extern "C" {
         resetAndStabilizeClocksToGoodKnownState();
         trimHsiClockCalibration();
         // configureNewClocks();
+
+        // Enter the end-user main function by setting up the RA
+        // and just exit function instead calling it and deepening
+        // the callstack
+        userMain();
+
+
+        // Optionally we could do extra safty that if main ever exits, we could then
+        // halt the system permanently but use [[noreturn]] on main and make sure
+        // that's achieved within the main itself. Also then we do not need to
+        // call main() directly and already shrink the callstack, instead we can
+        // RA pointer trick and just return from init function
+        // systemGenericCommonHalt();
     }
 
 

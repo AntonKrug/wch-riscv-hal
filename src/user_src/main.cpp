@@ -16,9 +16,26 @@ using namespace Peripheral;
 
 // TODO: section check of IRQ being aligned
 
+// void irqHandler() {
+//     while (true) {
+//
+//     }
+// }
 
+extern "C" {
+    [[noreturn]] void userMain(void) {
+        while (true) {
+
+        }
+    }
+
+}
+
+
+// [[noreturn]] and make it infinite loop or do on system level?
+// https://gcc.gnu.org/bugzilla/show_bug.cgi?id=80515
 // NOLINTBEGIN(readability-static-accessed-through-instance)
-int main(int argc, char *argv[]) {
+[[noreturn]] void userMain2(void) {
     char a[3] ="hi";
     a[0] = a[0] + 1;
     // prepare_system_for_main();
@@ -79,8 +96,8 @@ int main(int argc, char *argv[]) {
 
     // return ans.executeExact();
 
-    while (1) {
+    while (true) {
 
-    }
+    };
 }
 // NOLINTEND(readability-static-accessed-through-instance)
