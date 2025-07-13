@@ -51,7 +51,8 @@ namespace Peripheral::Dma {
         Dma1Ch7SwTrigger  = 0x117U, // DMA1 ch7
     };
 
-    constexpr std::vector<Id> swTriggers {
+    // https://stackoverflow.com/questions/33241909/cannot-create-constexpr-stdvector
+    constexpr Id swTriggers[] {
         Id::Dma1Ch1SwTrigger,
         Id::Dma1Ch2SwTrigger,
         Id::Dma1Ch3SwTrigger,
