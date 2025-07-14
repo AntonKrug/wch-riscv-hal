@@ -41,6 +41,7 @@
 
 #include "system/soc_types.h"
 #include "system/memory_map/peripheral_addresses.h"
+#include "peripheral/ch32v00x/dma_channels.h"
 
 
 namespace Soc {
@@ -60,45 +61,45 @@ namespace Soc {
 
         static constexpr Types::UartInstance<
             Soc::PeripheralAddreses::usart1,
-            0b00,             // Pin mapping variant
-            Gpio.D.GetPin(4), // D4 = Ck
-            Gpio.D.GetPin(5), // D5 = Tx
-            Gpio.D.GetPin(6), // D6 = Rx
-            Gpio.D.GetPin(3), // D3 = Cts
-            Gpio.C.GetPin(2)> // C2 = Rts
+            0b00U,             // Pin mapping variant
+            Gpio.D.GetPin(4U), // D4 = Ck
+            Gpio.D.GetPin(5U), // D5 = Tx
+            Gpio.D.GetPin(6U), // D6 = Rx
+            Gpio.D.GetPin(3U), // D3 = Cts
+            Gpio.C.GetPin(2U)> // C2 = Rts
         Channel1Mapping0 = {};
 
 
         static constexpr Types::UartInstance<
             Soc::PeripheralAddreses::usart1,
-            0b01,             // Pin mapping variant
-            Gpio.D.GetPin(7), // D7 = Ck
-            Gpio.D.GetPin(0), // D0 = Tx
-            Gpio.D.GetPin(1), // D1 = Rx
-            Gpio.C.GetPin(3), // C3 = Cts
-            Gpio.C.GetPin(2)> // C2 = Rts
+            0b01U,             // Pin mapping variant
+            Gpio.D.GetPin(7U), // D7 = Ck
+            Gpio.D.GetPin(0U), // D0 = Tx
+            Gpio.D.GetPin(1U), // D1 = Rx
+            Gpio.C.GetPin(3U), // C3 = Cts
+            Gpio.C.GetPin(2U)> // C2 = Rts
         Channel1Mapping1 = {};
 
 
         static constexpr Types::UartInstance<
             Soc::PeripheralAddreses::usart1,
-            0b01,             // Pin mapping variant
-            Gpio.D.GetPin(7), // D7 = Ck
-            Gpio.D.GetPin(6), // D6 = Tx
-            Gpio.D.GetPin(5), // D5 = Rx
-            Gpio.C.GetPin(6), // C6 = Cts
-            Gpio.C.GetPin(7)> // C7 = Rts
+            0b01U,             // Pin mapping variant
+            Gpio.D.GetPin(7U), // D7 = Ck
+            Gpio.D.GetPin(6U), // D6 = Tx
+            Gpio.D.GetPin(5U), // D5 = Rx
+            Gpio.C.GetPin(6U), // C6 = Cts
+            Gpio.C.GetPin(7U)> // C7 = Rts
         Channel1Mapping2 = {};
 
 
         static constexpr Types::UartInstance<
             Soc::PeripheralAddreses::usart1,
-            0b01,             // Pin mapping variant
-            Gpio.C.GetPin(5), // C5 = Ck
-            Gpio.C.GetPin(0), // C0 = Tx
-            Gpio.C.GetPin(1), // C1 = Rx
-            Gpio.C.GetPin(6), // C6 = Cts
-            Gpio.C.GetPin(7)> // C7 = Rts
+            0b01U,             // Pin mapping variant
+            Gpio.C.GetPin(5U), // C5 = Ck
+            Gpio.C.GetPin(0U), // C0 = Tx
+            Gpio.C.GetPin(1U), // C1 = Rx
+            Gpio.C.GetPin(6U), // C6 = Cts
+            Gpio.C.GetPin(7U)> // C7 = Rts
         Channel1Mapping3 = {};
 
 
