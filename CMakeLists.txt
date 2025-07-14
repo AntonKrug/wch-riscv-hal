@@ -192,7 +192,7 @@ set (headers
 
 
 set (sources
-        ${CMAKE_SOURCE_DIR}/src/system/ch32v003/interrupt_vector_table.cpp
+        ${CMAKE_SOURCE_DIR}/src/system/ch32v003/interrupts.cpp
         ${CMAKE_SOURCE_DIR}/src/user_src/main.cpp
         ${CMAKE_SOURCE_DIR}/src/system/startup/soc_init.cpp
 )
