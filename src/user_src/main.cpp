@@ -22,7 +22,21 @@ using namespace Peripheral;
 //     }
 // }
 
+
+namespace Soc::Irq {
+
+    void __attribute__((retain, used)) handlerSupplyVoltageDetection() {
+        using namespace Literals::Delay;
+        using namespace Literals::Timer;
+
+        Utils::delayMs(1.5_hour_to_ms);
+    }
+
+}
+
 extern "C" {
+
+
     [[noreturn]] void userMain(void) {
         while (true) {
 
