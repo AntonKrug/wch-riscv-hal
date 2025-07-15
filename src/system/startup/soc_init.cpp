@@ -113,27 +113,27 @@ extern "C" {
             Intr::HSIRDYC_WO_InternalHighSpeedReadyClear,
             Intr::LSIRDYC_WO_InternalLowSpeedReadyClear>();
 
-        peripheral::dma::noDuplicateId<
-            peripheral::dma::Id::Spi1RxHwTrigger,
-            peripheral::dma::Id::Tim2Ch1HwTrigger,
-            peripheral::dma::Id::Dma1Ch7SwTrigger
-        >();
-
-        uint32_t something;
-
-        peripheral::dma::initPeripheralToMemoryCt<
-            peripheral::dma::Id::Tim1Ch1HwTrigger,
-            0x100U,
-            peripheral::dma::PeripheralAlignment::bit32,
-            false,
-            true,
-            16U,
-            false,
-            peripheral::dma::Priority::low,
-            true,
-            false,
-            true,
-            true>(&something);
+        // peripheral::dma::noDuplicateId<
+        //     peripheral::dma::Id::Spi1RxHwTrigger,
+        //     peripheral::dma::Id::Tim2Ch1HwTrigger,
+        //     peripheral::dma::Id::Dma1Ch7SwTrigger
+        // >();
+        //
+        // uint32_t something;
+        //
+        // peripheral::dma::initPeripheralToMemoryCt<
+        //     peripheral::dma::Id::Tim1Ch1HwTrigger,
+        //     0x100U,
+        //     peripheral::dma::PeripheralAlignment::bit32,
+        //     false,
+        //     true,
+        //     16U,
+        //     false,
+        //     peripheral::dma::Priority::low,
+        //     true,
+        //     false,
+        //     true,
+        //     true>(&something);
     }
 
     inline
@@ -170,6 +170,9 @@ extern "C" {
     }
 
     [[noreturn]] extern void main_user(void);
+
+    extern unsigned int __main_user;   // NOLINT(*-reserved-identifier)
+
 
     // https://gcc.gnu.org/onlinedocs/gcc-14.2.0/gcc/Optimize-Options.html
     inline
@@ -213,11 +216,21 @@ extern "C" {
         reset_and_stabilize_clocks_to_good_known_state();
         trim_hsi_clock_calibration();
         // configure_new_clocks();
+        // void (*main_ptr)() = &main_user;
+
+
+        // csr::access_ct::writeUint32<csr::QingKeV2::mepc, reinterpret_cast<std::uint32_t>(main_ptr)>();
 
         // Enter the end-user main function by setting up the RA
         // and just exit function instead calling it and deepening
         // the callstack
-        main_user();
+        asm volatile (
+            "li t0, main_user\n"
+            "csrw mepc, t0\n"
+            "mret\n"
+        );
+
+        // main_user();
 
 
         // Optionally we could do extra safty that if main ever exits, we could then
