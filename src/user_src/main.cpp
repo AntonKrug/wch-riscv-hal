@@ -37,7 +37,8 @@ namespace soc::irq::handler {
 // [[noreturn]] and make it infinite loop or do on system level?
 // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=80515
 // NOLINTBEGIN(readability-static-accessed-through-instance)
-extern "C" [[noreturn]] void main_user(void) {
+extern "C" [[noreturn]] void __attribute__((section(".text.main_user")))
+main_user(void) {
     char a[3] ="hi";
     a[0] = a[0] + 1;
     // prepare_system_for_main();

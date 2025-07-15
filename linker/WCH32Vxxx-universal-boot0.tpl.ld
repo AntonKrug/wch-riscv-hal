@@ -85,6 +85,11 @@ SECTIONS
                            * require many instructions (which could affect vector table
                            * as they might be overlapping and we have only 4 bytes spare
                            * in the table to fit the the jump instruction) */
+    *(.text.main_user) /* making user's code main close to the handle_reset so the handle_reset
+                        * preparation for `mret` "jump" is close by */
+    {
+        PROVIDE(__main_user = .)
+    }
     *(.text*)             /* "gcc -ffunction-sections" */
 #ifdef SYSTEM_WCH_LINKER_GP_INSIDE_ROM
     . = ALIGN(SYSTEM_WCH_LINKER_LARGEST_TYPE_ALIGNMENT);          /* see system.h for details */
