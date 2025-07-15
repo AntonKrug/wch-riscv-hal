@@ -6,7 +6,7 @@
 
 #include <cstdint>
 
-namespace Soc::Reg::Access {
+namespace soc::reg::access {
 
     #pragma region Access primitive[s] when both Address & Value are compile-time known
 

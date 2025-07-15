@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <vector>
 
-namespace Peripheral::Dma {
+namespace peripheral::dma {
 
     enum class Id: std::uint32_t {
         // DMA1 ch1 triggers
@@ -52,7 +52,7 @@ namespace Peripheral::Dma {
     };
 
     // https://stackoverflow.com/questions/33241909/cannot-create-constexpr-stdvector
-    constexpr Id swTriggers[] {
+    constexpr Id sw_triggers[] {
         Id::Dma1Ch1SwTrigger,
         Id::Dma1Ch2SwTrigger,
         Id::Dma1Ch3SwTrigger,

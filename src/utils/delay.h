@@ -6,7 +6,7 @@
 
 #include <cstdint>
 
-namespace Utils {
+namespace utils {
 
 
      inline auto delayUs(const std::uint32_t us) -> void {

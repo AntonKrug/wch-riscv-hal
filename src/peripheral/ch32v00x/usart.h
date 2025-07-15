@@ -11,7 +11,7 @@
 
 // TODO usart baud rates and enum
 
-namespace Peripheral::Usart{
+namespace peripheral::usart{
 
 
     #pragma region Enums
@@ -24,7 +24,7 @@ namespace Peripheral::Usart{
     // small approach.
     // Alternative could be to use a library dedicated for this purpose:
     // https://github.com/dbj-systems/nothingbut
-    enum class BaseAddress : std::uint32_t;
+    enum class base_address : std::uint32_t;
 
 
     enum class BaudRate: std::uint32_t {
@@ -93,10 +93,10 @@ namespace Peripheral::Usart{
     #pragma region Declarations
 
 
-    template<BaseAddress TplBaseAddress>
+    template<base_address TplBaseAddress>
     struct Device {
     private:
-        template<BaseAddress TplRegisterBase>
+        template<base_address TplRegisterBase>
         struct RegistersType {
             constexpr static std::uint32_t RegisterBaseUint32     = static_cast<std::uint32_t>(TplRegisterBase);
             constexpr static std::uint32_t status                 = RegisterBaseUint32;         // R32_USART_STATR
@@ -109,7 +109,7 @@ namespace Peripheral::Usart{
         };
 
     public:
-        constexpr static BaseAddress                   baseAddress       = TplBaseAddress;
+        constexpr static base_address                   baseAddress       = TplBaseAddress;
         constexpr static std::uint32_t                 baseAddressUint32 = static_cast<std::uint32_t>(baseAddress);
         struct           RegistersType<TplBaseAddress> registers         = {};
     };
@@ -122,9 +122,9 @@ namespace Peripheral::Usart{
 
 
     template<long long int address>
-    requires Soc::MemConcept::IsValidPeripheralBaseAddress<address>
-    constexpr static auto MakeBaseAddress() -> BaseAddress {
-        return static_cast<BaseAddress>(address);
+    requires soc::mem_concept::IsValidPeripheralBaseAddress<address>
+    constexpr static auto MakeBaseAddress() -> base_address {
+        return static_cast<base_address>(address);
     };
 
 

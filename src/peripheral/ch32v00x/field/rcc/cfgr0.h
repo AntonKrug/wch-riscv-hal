@@ -12,16 +12,16 @@
 
 // TODO: different SoC might have more registers
 
-namespace Peripheral::Rcc {
+namespace peripheral::rcc {
 
     struct Cfgr0 {
         // Clock configuration
 
-        constexpr static std::uint32_t regMemOffset = 0x04U;
+        constexpr static std::uint32_t reg_mem_offset = 0x04U;
 
         enum class SW_RW_SystemClockSource: std::uint32_t {
             fieldBitMask = 0b11U, // not holding any settings or value, it's a bitmask for this specific field
-            fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
+            fieldAccess  = soc::reg::field_access_right::ReadWrite,
 
             hsi          = 0b00U, // default. internal high speed clock, is selected by HW when returning from standby and stop modes, or when HSE fails when CSSON is enabled
             hse          = 0b01U, // external high speed clock, HW might automatically switch to HSI in some scenarios, read HSI comment
@@ -32,7 +32,7 @@ namespace Peripheral::Rcc {
 
         enum class SWS_RO_SystemClockSourceStatus: std::uint32_t {
             fieldBitMask = 0b11U << 2U, // not holding any settings or value, it's a bitmask for this specific field
-            fieldAccess  = Soc::Reg::FieldAccessRight::ReadOnly,
+            fieldAccess  = soc::reg::field_access_right::ReadOnly,
 
             usingHsi     = 0b00U << 2U, // internal high speed clock used
             usingHse     = 0b01U << 2U, // external high speed clock used
@@ -44,7 +44,7 @@ namespace Peripheral::Rcc {
         //TODO: this register might change between SoCs
         enum class HPRE_RW_HbClockPrescaler: std::uint32_t { // To drive HCLK
             fieldBitMask    = 0b1'111U << 4U, // not holding any settings or value, it's a bitmask for this specific field
-            fieldAccess     = Soc::Reg::FieldAccessRight::ReadWrite,
+            fieldAccess     = soc::reg::field_access_right::ReadWrite,
 
             noPrescaler     = 0U,             // HCLK = SYSCLK (prescaler is off)
 
@@ -104,7 +104,7 @@ namespace Peripheral::Rcc {
 
         template<std::uint32_t SysClock, std::uint32_t DesiredHbClock>
         constexpr static auto getHbPrescalerWithOffset() -> std::uint32_t {
-            return Soc::Reg::rawValueOffsetToEnumsOffsetCt<
+            return soc::reg::rawValueOffsetToEnumsOffsetCt<
                 getHbPrescaler<SysClock, DesiredHbClock>(),
                 HPRE_RW_HbClockPrescaler>();
         }
@@ -117,7 +117,7 @@ namespace Peripheral::Rcc {
         enum class ADCPRE_RW_AnalogDigitalConverterClockPrescaler: std::uint32_t {
             // see getAcdDividerFromPrescalerFieldValue() for equation, lower 3-bits are threated differently than higher 2-bits
             fieldBitMask    = 0b11'111U << 11U, // not holding any settings or value, it's a bitmask for this specific field
-            fieldAccess     = Soc::Reg::FieldAccessRight::ReadWrite,
+            fieldAccess     = soc::reg::field_access_right::ReadWrite,
 
             divide2even     = 0b00'000U << 11U, // default ADC = HB / 2 (must be less than 24MHz)
             divide4odd      = 0b00'001U << 11U, // ADC = HB / 4 (must be less than 24MHz)
@@ -168,8 +168,8 @@ namespace Peripheral::Rcc {
             // lower=(divisor/(2(upper+1)))-1
             // if that is in lowers range and odd, then confirm our interated higher value matches
             // calculated higher = log2(divisor/(lower+1))−1
-            constexpr std::uint8_t lower3  = Value & 0b00'111U;
-            constexpr std::uint8_t higher2 = Value & 0b11'000U;
+            constexpr std::uint32_t lower3  = Value & 0b00'111U;
+            constexpr std::uint32_t higher2 = Value & 0b11'000U;
             if (lower3 % 2U) {
                 // Lower 3bits are even(0,2,4,6), ignore the higher 2bits and just produce 2+lower3 value (2,4,6,8)
                 return lower3 + 2U;
@@ -183,7 +183,7 @@ namespace Peripheral::Rcc {
         enum class PLLSRC_RW_InputClockSourceForPhaseLockedLoopGenerator: std::uint32_t {
             // see getAcdPrescaler() for equation
             fieldBitMask = 0b1U << 16U,  // not holding any settings or value, it's a bitmask for this specific field
-            fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
+            fieldAccess  = soc::reg::field_access_right::ReadWrite,
 
             hsi2x        = 0U,           // PLL = 2 * internal high speed clock, default, configure before enabling PLL (PLLCLK = 2*PLLSCR)
             hse2x        = fieldBitMask, // PLL = 2 * external high speed clock, configure before enabling PLL (PLLCLK = 2*PLLSCR)
@@ -192,7 +192,7 @@ namespace Peripheral::Rcc {
         //TODO: this register might change between SoCs
         enum class MCO_RW_MicrocontrollerClockPinOutput: std::uint32_t {
             fieldBitMask = 0b111U << 24U,  // not holding any settings or value, it's a bitmask for this specific field
-            fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
+            fieldAccess  = soc::reg::field_access_right::ReadWrite,
 
             noOutput     = 0b0'00U << 24U, // default, no clock is output
             noOutputAlt1 = 0b0'01U << 24U, // no clock is output
@@ -212,7 +212,7 @@ namespace Peripheral::Rcc {
             ADCPRE_RW_AnalogDigitalConverterClockPrescaler,
             PLLSRC_RW_InputClockSourceForPhaseLockedLoopGenerator,
             MCO_RW_MicrocontrollerClockPinOutput
-        > regFields = {};
+        > reg_fields = {};
 
     };
 

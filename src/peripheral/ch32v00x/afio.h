@@ -8,12 +8,12 @@
 
 #include "field/afio/pcfr1.h"
 
-namespace Peripheral::Afio {
+namespace peripheral::afio {
 
-    constexpr std::uint32_t baseAddr = 0x4001'0000U;
+    constexpr std::uint32_t base_addr = 0x4001'0000U;
 
-    namespace Concept {
-        template<typename RegField> concept IsPcfr1Field = Soc::Reg::IsSameAsOneFieldFromTuple<RegField, decltype(Pcfr1::regFields)>();
+    namespace concepts {
+        template<typename RegField> concept IsPcfr1Field = soc::reg::IsSameAsOneFieldFromTuple<RegField, decltype(Pcfr1::reg_fields)>();
 
         template<typename Reg>
         concept IsAnyRegField =
@@ -21,12 +21,12 @@ namespace Peripheral::Afio {
 
     }
 
-    namespace RegMemOffset {
-        template<Concept::IsPcfr1Field _> constexpr auto fromRegFieldType() { return Pcfr1::regMemOffset; }
+    namespace reg_mem_offset {
+        template<concepts::IsPcfr1Field _> constexpr auto fromRegFieldType() { return Pcfr1::reg_mem_offset; }
     }
 
-    namespace RegFieldTuple {
-        template<Concept::IsPcfr1Field _> constexpr auto fromRegFieldType() { return Pcfr1::regFields; }
+    namespace reg_field_tuple {
+        template<concepts::IsPcfr1Field _> constexpr auto fromRegFieldType() { return Pcfr1::reg_fields; }
     }
 
 }

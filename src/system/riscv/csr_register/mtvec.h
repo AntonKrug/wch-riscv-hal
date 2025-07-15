@@ -13,32 +13,32 @@
 #include "system/register/util.h"
 #include "system/register/combine.h"
 
-namespace Riscv::Csr::Mtvec {
+namespace riscv::csr::mtvec {
 
     enum class Mode0_RW_VectorizationEnable: std::uint32_t {
-        fieldBitMask             = 0b1u, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess              = Soc::Reg::FieldAccessRight::ReadWrite,
+        fieldBitMask             = 0b1U, // not holding any settings or value, it's a bitmask for this specific field
+        fieldAccess              = soc::reg::field_access_right::ReadWrite,
 
-        singleUnifiedTrapHandler = 0,   // all interupts handled by only single handler
-        vectorizedInterupts      = 0b1, // each interupt has dedicated memory location (BASEADDR + IRQ * 4) in the table, see Mode1
+        singleUnifiedTrapHandler = 0U,   // all interupts handled by only single handler
+        vectorizedInterupts      = 0b1U, // each interupt has dedicated memory location (BASEADDR + IRQ * 4) in the table, see Mode1
     };
 
     enum class Mode1_RW_VectorizedBehaviour: std::uint32_t {
-        fieldBitMask          = 0b1u << 1,     // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess           = Soc::Reg::FieldAccessRight::ReadWrite,
+        fieldBitMask          = 0b1U << 1,     // not holding any settings or value, it's a bitmask for this specific field
+        fieldAccess           = soc::reg::field_access_right::ReadWrite,
 
-        executeInstructions   = 0,            // use table for instructions, small relative jump instructions fit into, other instructions can be used too
+        executeInstructions   = 0U,            // use table for instructions, small relative jump instructions fit into, other instructions can be used too
         absoluteJumpAddresses = fieldBitMask, // use table for addresses, always jumping, but able to able to address any location
     };
 
     enum class BaseAddr_RW: std::uint32_t {
         // the address value needs to be 1k aligned (0x400)
-        fieldBitMask = 0b111111111111111111111111111111u << 2, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
+        fieldBitMask = 0b111111111111111111111111111111U << 2, // not holding any settings or value, it's a bitmask for this specific field
+        fieldAccess  = soc::reg::field_access_right::ReadWrite,
     };
 
     template<typename Field>
-    concept IsAnyField =
+    concept is_any_field =
         std::is_same_v<Field, Mode0_RW_VectorizationEnable> ||
         std::is_same_v<Field, Mode1_RW_VectorizedBehaviour> ||
         std::is_same_v<Field, BaseAddr_RW>;
@@ -56,13 +56,13 @@ namespace Riscv::Csr::Mtvec {
 
     template<std::uint32_t IrqVector, Mode0_RW_VectorizationEnable Mode0, Mode1_RW_VectorizedBehaviour Mode1>
     constexpr auto CalculateMtvecRawValue() -> std::uint32_t {
-        constexpr std::uint32_t irqVectorTableAddressSanitized =
+        constexpr std::uint32_t irq_vector_table_address_sanitized =
             CheckVectorBaseAddressAlignment<IrqVector>();
 
-        constexpr auto mtvecValue =
-            Soc::Reg::Combine::enumsToUint32<Mode0, Mode1>() + irqVectorTableAddressSanitized;
+        constexpr auto mtvec_value =
+            soc::reg::combine::enums_to_uint32<Mode0, Mode1>() + irq_vector_table_address_sanitized;
 
-        return mtvecValue;
+        return mtvec_value;
     }
 
 }

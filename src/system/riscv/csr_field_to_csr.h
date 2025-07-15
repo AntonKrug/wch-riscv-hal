@@ -8,24 +8,24 @@
 #include "concepts.h"
 
 
-namespace Riscv::Csr::AccessCt {
+namespace riscv::csr::access_ct {
 
 
-    template<Riscv::Csr::Intsyscr::IsAnyField... CsrFields>
+    template<riscv::csr::intsyscr::is_any_field... CsrFields>
     constexpr auto getCsrFromField(CsrFields... csrFields) {
-        return Riscv::Csr::QingKeV2::intsyscr;
+        return riscv::csr::QingKeV2::intsyscr;
     }
 
 
-    template<Riscv::Csr::Mtvec::IsAnyField... CsrFields>
+    template<riscv::csr::mtvec::is_any_field... CsrFields>
     constexpr auto getCsrFromField(CsrFields... csrFields) {
-        return Riscv::Csr::QingKeV2::mtvec;
+        return riscv::csr::QingKeV2::mtvec;
     }
 
 
-    template<Riscv::Csr::Mstatus::IsAnyField... CsrFields>
+    template<riscv::csr::mstatus::is_any_field... CsrFields>
     constexpr auto getCsrFromField(CsrFields... csrFields) {
-        return Riscv::Csr::QingKeV2::mstatus;
+        return riscv::csr::QingKeV2::mstatus;
     }
 
 

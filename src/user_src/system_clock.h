@@ -7,13 +7,13 @@
 #include "system/ch32v003/clocks.h"
 #include "utils/literals/timer.h"
 
-namespace UserConfig {
-    using namespace Literals::Timer;
+namespace user_config {
+    using namespace literals::timer;
 
     // you can specify clock frequency explicitly, but it might fail to meet clock constrains,
     // or describe it as fraction of the input clock which should more likely pass the constrains
     // see Rcc::Cfgr0 to see the constrains
-    constexpr std::uint32_t systemClock = 3_mhz_to_hz;
+    constexpr std::uint32_t system_clock = 3_mhz_to_hz;
     // constexpr std::uint32_t systemClock = Soc::Clocks::Hsi / 3;
 
     // RCC peripheral has Ctrl register, which has HSITRIM (InternalHighSpeedClockTrim) field
@@ -51,5 +51,5 @@ namespace UserConfig {
     // hsiTrim=29 coresponds to  780 kHz
     // hsiTrim=30 coresponds to  840 kHz
     // hsiTrim=31 coresponds to  900 kHz
-    constexpr std::uint8_t hsiTrim = 10;
+    constexpr std::uint8_t hsi_trim = 10;
 }

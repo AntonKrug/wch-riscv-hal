@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "concept.h"
+#include "concepts.h"
 #include "ch32v00x/rcc.h"
 
 // TODO: combine the CSR actions (registers are basic and CSR register on top)
@@ -16,10 +16,10 @@
 // template <typename HeadType, typename... TailTypes>
 // concept HeadSameAsTail = sizeof...(TailTypes) == 0 || (std::is_same_v<HeadType, TailTypes> && ...);
 
-namespace Peripheral::RegFieldTuple {
+namespace peripheral::reg_field_tuple {
 
-    template<Rcc::Concept::IsAnyRegField RegFieldType>
-    constexpr auto fromPeripheralRegFieldType() { return Rcc::RegFieldTuple::fromRegFieldType<RegFieldType>(); }
+    template<rcc::concepts::IsAnyRegField RegFieldType>
+    constexpr auto fromPeripheralRegFieldType() { return rcc::reg_field_tuple::fromRegFieldType<RegFieldType>(); }
 
     template<typename RegFieldType>
     constexpr auto fromRegFieldType() { return fromPeripheralRegFieldType<RegFieldType>(); }
@@ -29,10 +29,10 @@ namespace Peripheral::RegFieldTuple {
 
 }
 
-namespace Peripheral::RegMemOffset {
+namespace peripheral::reg_mem_offset {
 
-    template<Rcc::Concept::IsAnyRegField RegFieldType>
-    constexpr auto fromPeripheralRegFieldType() { return Rcc::RegMemOffset::fromRegFieldType<RegFieldType>(); }
+    template<rcc::concepts::IsAnyRegField RegFieldType>
+    constexpr auto fromPeripheralRegFieldType() { return rcc::reg_mem_offset::fromRegFieldType<RegFieldType>(); }
 
     template<typename RegField>
     constexpr auto fromRegFieldType() -> std::uint32_t { return fromPeripheralRegFieldType<RegField>(); }

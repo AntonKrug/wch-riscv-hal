@@ -29,7 +29,7 @@ extern "C" {
         always_inline,
         optimize("-Os"),
     ))
-    copyDataFromRomToRam() {
+    copy_data_from_rom_to_ram() {
         // Data ROM -> RAM copy
         #ifndef WCH_STARTUP_SKIP_DATA_SECTION_COPY
             // Get the address locations from the linker script
@@ -57,7 +57,7 @@ extern "C" {
         always_inline,
         optimize("-Os"),
     ))
-    zeroizeBss() {
+    zeroize_bss() {
         // BSS RAM zeroizing
         #ifndef WCH_STARTUP_SKIP_BSS_SECTION_ZEROIZING
             // Get the address locations from the linker script
@@ -80,9 +80,9 @@ extern "C" {
         always_inline,
         optimize("-Os"),
     ))
-    resetAndStabilizeClocksToGoodKnownState() {
-        using namespace Peripheral::Rcc;
-        using namespace Soc::Reg;
+    reset_and_stabilize_clocks_to_good_known_state() {
+        using namespace peripheral::rcc;
+        using namespace soc::reg;
 
         // Enable internal clock HSI on top of existing state -> it will need 6 clock cycles to apply
         setRegFieldsSipCt<
@@ -113,23 +113,23 @@ extern "C" {
             Intr::HSIRDYC_WO_InternalHighSpeedReadyClear,
             Intr::LSIRDYC_WO_InternalLowSpeedReadyClear>();
 
-        Peripheral::Dma::noDuplicateId<
-            Peripheral::Dma::Id::Spi1RxHwTrigger,
-            Peripheral::Dma::Id::Tim2Ch1HwTrigger,
-            Peripheral::Dma::Id::Dma1Ch7SwTrigger
+        peripheral::dma::noDuplicateId<
+            peripheral::dma::Id::Spi1RxHwTrigger,
+            peripheral::dma::Id::Tim2Ch1HwTrigger,
+            peripheral::dma::Id::Dma1Ch7SwTrigger
         >();
 
         uint32_t something;
 
-        Peripheral::Dma::initPeripheralToMemoryCt<
-            Peripheral::Dma::Id::Tim1Ch1HwTrigger,
+        peripheral::dma::initPeripheralToMemoryCt<
+            peripheral::dma::Id::Tim1Ch1HwTrigger,
             0x100U,
-            Peripheral::Dma::PeripheralAlignment::bit32,
+            peripheral::dma::PeripheralAlignment::bit32,
             false,
             true,
             16U,
             false,
-            Peripheral::Dma::Priority::low,
+            peripheral::dma::Priority::low,
             true,
             false,
             true,
@@ -142,11 +142,11 @@ extern "C" {
         always_inline,
         optimize("-Os"),
     ))
-    trimHsiClockCalibration() {
-        using namespace Peripheral::Rcc;
-        using namespace Soc::Reg;
+    trim_hsi_clock_calibration() {
+        using namespace peripheral::rcc;
+        using namespace soc::reg;
 
-        constexpr auto rawValue = Ctlr::produceRawTrimValueCt<UserConfig::hsiTrim>();
+        constexpr auto rawValue = Ctlr::produceRawTrimValueCt<user_config::hsi_trim>();
         setRegFieldsWithRawValueSipCt<rawValue, Ctlr::HSITRIM_RW_InternalHighSpeedClockTrim>();
     }
 
@@ -156,20 +156,20 @@ extern "C" {
         always_inline,
         optimize("-Os"),
     ))
-    configureNewClocks() {
-        using namespace Peripheral::Rcc;
+    configure_new_clocks() {
+        using namespace peripheral::rcc;
         //using namespace Literals::Timer;
-        using namespace Soc::Reg;
+        using namespace soc::reg;
 
         setRegFieldsSipCt<
-            Cfgr0::getHbPrescalerEnum<Soc::Clocks::Hsi, UserConfig::systemClock>()>();
+            Cfgr0::getHbPrescalerEnum<soc::clocks::hsi, user_config::system_clock>()>();
 
         // clearRegFieldTypesSipCt<
         //     Ahbpcenr::DMA1EN_RW_DirectMemoryAccess1Enable>();
 
     }
 
-    [[noreturn]] extern void userMain(void);
+    [[noreturn]] extern void main_user(void);
 
     // https://gcc.gnu.org/onlinedocs/gcc-14.2.0/gcc/Optimize-Options.html
     inline
@@ -179,45 +179,45 @@ extern "C" {
         optimize("-Os"),
     ))
     prepareSystemForMain() {
-        using namespace Riscv;
-        using namespace Peripheral;
+        using namespace riscv;
+        using namespace peripheral;
 
         // In case we are in soft-reset, disable (probably) pre-existing global interupt,
         // and prepare CSR fields so when "return from interupt" (which will do forcefully
         // at end of this method by invoking mret), then it will restore expected priviledge
         // mode and expected MIE state. Also returning with mret will allow us to have
         // shallower(less demanding on RAM) and cleaner callstack.
-        Csr::AccessCt::write<
-            Csr::Mstatus::Mie_MRW_MachineInteruptEnable::disable,
-            Csr::Mstatus::Mpp_MRW_MachinePreviousPriviledge::machine,
-            Csr::Mstatus::Mpie_MRW_MachinePreviousInteruptWasEnabled::enabled>();
+        csr::access_ct::write<
+            csr::mstatus::Mie_MRW_MachineInteruptEnable::disable,
+            csr::mstatus::Mpp_MRW_MachinePreviousPriviledge::machine,
+            csr::mstatus::Mpie_MRW_MachinePreviousInteruptWasEnabled::enabled>();
 
         // Initialize the bss and data sections
-        zeroizeBss();
-        copyDataFromRomToRam();
+        zeroize_bss();
+        copy_data_from_rom_to_ram();
 
         // Configure CPU behaviour
-        Csr::AccessCt::write<
-            Csr::Intsyscr::Hwstken_MRW_HardwarePrologueEpilogue::enable, //HW preamble and epilogue
-            Csr::Intsyscr::Inesten_MRW_InteruptNesting::enable>();
+        csr::access_ct::write<
+            csr::intsyscr::Hwstken_MRW_HardwarePrologueEpilogue::enable, //HW preamble and epilogue
+            csr::intsyscr::Inesten_MRW_InteruptNesting::enable>();
 
         // Configure trap/interupt behaviour
-        constexpr auto mtvecValue = Csr::Mtvec::CalculateMtvecRawValue<
+        constexpr auto mtvecValue = csr::mtvec::CalculateMtvecRawValue<
             SYSTEM_WCH_VECTOR_TABLE_ADDRESS,
-            Csr::Mtvec::Mode0_RW_VectorizationEnable::vectorizedInterupts,
-            Csr::Mtvec::Mode1_RW_VectorizedBehaviour::absoluteJumpAddresses>();
+            csr::mtvec::Mode0_RW_VectorizationEnable::vectorizedInterupts,
+            csr::mtvec::Mode1_RW_VectorizedBehaviour::absoluteJumpAddresses>();
 
-        Csr::AccessCt::writeUint32<Csr::QingKeV2::mtvec, mtvecValue>();
+        csr::access_ct::writeUint32<csr::QingKeV2::mtvec, mtvecValue>();
 
         // System clock configuration
-        resetAndStabilizeClocksToGoodKnownState();
-        trimHsiClockCalibration();
-        // configureNewClocks();
+        reset_and_stabilize_clocks_to_good_known_state();
+        trim_hsi_clock_calibration();
+        // configure_new_clocks();
 
         // Enter the end-user main function by setting up the RA
         // and just exit function instead calling it and deepening
         // the callstack
-        userMain();
+        main_user();
 
 
         // Optionally we could do extra safty that if main ever exits, we could then

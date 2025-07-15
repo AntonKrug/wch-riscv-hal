@@ -7,7 +7,7 @@
 #include <limits>
 #include <cassert>
 
-namespace Literals::HelperTemplates {
+namespace literals::helper_templates {
 
 
     template<

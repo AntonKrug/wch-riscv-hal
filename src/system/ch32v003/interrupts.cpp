@@ -4,49 +4,51 @@
 
 #include <array>
 
-namespace Soc::Irq {
+namespace soc::irq {
+    namespace handler {
 
-    // Not going to try save stack ((naked)), not going to intend to return
-    // from this [[noreturn]]. It is meant to be small infinite loop to intentionally
-    // get the CPU stuck when any problems or unimplemented IRQ occurs.
-    extern "C" [[noreturn]] void __attribute__((naked)) handlerDefault(void) {
-        while (true) {
+        // Not going to try save stack ((naked)), not going to intend to return
+        // from this [[noreturn]]. It is meant to be small infinite loop to intentionally
+        // get the CPU stuck when any problems or unimplemented IRQ occurs.
+        extern "C" [[noreturn]] void __attribute__((naked)) infinite_loop(void) {
+            while (true) {
+            }
         }
+
+        void __attribute__((weak, alias("infinite_loop"))) non_maskable();             // NMI
+        void __attribute__((weak, alias("infinite_loop"))) hard_fault();               // Abnormal events
+        void __attribute__((weak, alias("infinite_loop"))) system_timer();             // SysTick
+        void __attribute__((weak, alias("infinite_loop"))) software();                 // SW
+        void __attribute__((weak, alias("infinite_loop"))) window_timer();             // WWDG
+        void __attribute__((weak, alias("infinite_loop"))) supply_voltage_detection(); // PVD
+        void __attribute__((weak, alias("infinite_loop"))) flash_global();             // FLASH
+        void __attribute__((weak, alias("infinite_loop"))) reset_and_clock_control();  // RCC
+        void __attribute__((weak, alias("infinite_loop"))) exti_line0_to7();           // EXTI7_0
+        void __attribute__((weak, alias("infinite_loop"))) wake_up_handler();          // AWU
+
+        void __attribute__((weak, alias("infinite_loop"))) global_dma1_ch1();          // DMA1_CH1
+        void __attribute__((weak, alias("infinite_loop"))) global_dma1_ch2();          // DMA1_CH2
+        void __attribute__((weak, alias("infinite_loop"))) global_dma1_ch3();          // DMA1_CH3
+        void __attribute__((weak, alias("infinite_loop"))) global_dma1_ch4();          // DMA1_CH4
+        void __attribute__((weak, alias("infinite_loop"))) global_dma1_ch5();          // DMA1_CH5
+        void __attribute__((weak, alias("infinite_loop"))) global_dma1_ch6();          // DMA1_CH6
+        void __attribute__((weak, alias("infinite_loop"))) global_dma1_ch7();          // DMA1_CH7
+
+        void __attribute__((weak, alias("infinite_loop"))) analog_digital_converter(); // ADC
+
+        void __attribute__((weak, alias("infinite_loop"))) i2c1_event();               // I2C1_EV
+        void __attribute__((weak, alias("infinite_loop"))) i2c1_error();               // I2C1_ER
+
+        void __attribute__((weak, alias("infinite_loop"))) usart1();                   // USART1
+        void __attribute__((weak, alias("infinite_loop"))) spi1();                     // SPI1
+
+        void __attribute__((weak, alias("infinite_loop"))) tim1_brake();               // TIM1BRK
+        void __attribute__((weak, alias("infinite_loop"))) tim1_update();              // TIM1UP
+        void __attribute__((weak, alias("infinite_loop"))) tim1_triggers();            // TIM1TRG
+        void __attribute__((weak, alias("infinite_loop"))) tim1_compare();             // TIM1CC
+
+        void __attribute__((weak, alias("infinite_loop"))) tim2();                     // TIM2
     }
-
-    void __attribute__((weak, alias("handlerDefault"))) handlerNonMaskable();            // NMI
-    void __attribute__((weak, alias("handlerDefault"))) handlerHardFault();              // Abnormal events
-    void __attribute__((weak, alias("handlerDefault"))) handlerSystemTimer();            // SysTick
-    void __attribute__((weak, alias("handlerDefault"))) handlerSoftware();               // SW
-    void __attribute__((weak, alias("handlerDefault"))) handlerWindowTimer();            // WWDG
-    void __attribute__((weak, alias("handlerDefault"))) handlerSupplyVoltageDetection(); // PVD
-    void __attribute__((weak, alias("handlerDefault"))) handlerFlashGlobal();            // FLASH
-    void __attribute__((weak, alias("handlerDefault"))) handlerResetAndClockControl();   // RCC
-    void __attribute__((weak, alias("handlerDefault"))) handlerExtiLine0to7();           // EXTI7_0
-    void __attribute__((weak, alias("handlerDefault"))) handlerWakeUpHandler();          // AWU
-
-    void __attribute__((weak, alias("handlerDefault"))) handlerGlobalDma1Ch1();          // DMA1_CH1
-    void __attribute__((weak, alias("handlerDefault"))) handlerGlobalDma1Ch2();          // DMA1_CH2
-    void __attribute__((weak, alias("handlerDefault"))) handlerGlobalDma1Ch3();          // DMA1_CH3
-    void __attribute__((weak, alias("handlerDefault"))) handlerGlobalDma1Ch4();          // DMA1_CH4
-    void __attribute__((weak, alias("handlerDefault"))) handlerGlobalDma1Ch5();          // DMA1_CH5
-    void __attribute__((weak, alias("handlerDefault"))) handlerGlobalDma1Ch6();          // DMA1_CH6
-    void __attribute__((weak, alias("handlerDefault"))) handlerGlobalDma1Ch7();          // DMA1_CH7
-
-    void __attribute__((weak, alias("handlerDefault"))) handlerAnalogDigitalConverter(); // ADC
-
-    void __attribute__((weak, alias("handlerDefault"))) handlerI2C1event();              // I2C1_EV
-    void __attribute__((weak, alias("handlerDefault"))) handlerI2C1error();              // I2C1_ER
-
-    void __attribute__((weak, alias("handlerDefault"))) handlerUsart1();                 // USART1
-    void __attribute__((weak, alias("handlerDefault"))) handlerSpi1();                   // SPI1
-
-    void __attribute__((weak, alias("handlerDefault"))) handlerTim1brake();              // TIM1BRK
-    void __attribute__((weak, alias("handlerDefault"))) handlerTim1update();             // TIM1UP
-    void __attribute__((weak, alias("handlerDefault"))) handlerTim1triggers();           // TIM1TRG
-    void __attribute__((weak, alias("handlerDefault"))) handlerTim1compare();            // TIM1CC
-
-    void __attribute__((weak, alias("handlerDefault"))) handlerTim2();                   // TIM2
 
 
     // C style would be:
@@ -58,44 +60,44 @@ namespace Soc::Irq {
     using IrqHandler = void(* const)();
 
     __attribute__ ((retain, used, section(".init.irq_vector_table_plus_one")))
-    constexpr std::array<IrqHandler, 38U> handlersVectorTable = {
-        &handlerDefault,  // N/A
-        &handlerNonMaskable,
-        &handlerHardFault,
-        &handlerDefault,  // reserved
-        &handlerDefault,  // reserved
-        &handlerDefault,  // reserved
-        &handlerDefault,  // reserved
-        &handlerDefault,  // reserved
-        &handlerDefault,  // reserved
-        &handlerDefault,  // reserved
-        &handlerDefault,  // reserved
-        &handlerSystemTimer,
-        &handlerDefault,  // reserved
-        &handlerSoftware,
-        &handlerDefault,  // reserved
-        &handlerWindowTimer,
-        &handlerSupplyVoltageDetection,
-        &handlerFlashGlobal,
-        &handlerResetAndClockControl,
-        &handlerExtiLine0to7,
-        &handlerWakeUpHandler,
-        &handlerGlobalDma1Ch1,
-        &handlerGlobalDma1Ch2,
-        &handlerGlobalDma1Ch3,
-        &handlerGlobalDma1Ch4,
-        &handlerGlobalDma1Ch5,
-        &handlerGlobalDma1Ch6,
-        &handlerGlobalDma1Ch7,
-        &handlerAnalogDigitalConverter,
-        &handlerI2C1event,
-        &handlerI2C1error,
-        &handlerUsart1,
-        &handlerSpi1,
-        &handlerTim1brake,
-        &handlerTim1update,
-        &handlerTim1triggers,
-        &handlerTim1compare,
-        &handlerTim2
+    constexpr std::array<IrqHandler, 38U> handlers_vector_table = {
+        &handler::infinite_loop,  // N/A
+        &handler::non_maskable,
+        &handler::hard_fault,
+        &handler::infinite_loop,  // reserved
+        &handler::infinite_loop,  // reserved
+        &handler::infinite_loop,  // reserved
+        &handler::infinite_loop,  // reserved
+        &handler::infinite_loop,  // reserved
+        &handler::infinite_loop,  // reserved
+        &handler::infinite_loop,  // reserved
+        &handler::infinite_loop,  // reserved
+        &handler::system_timer,
+        &handler::infinite_loop,  // reserved
+        &handler::software,
+        &handler::infinite_loop,  // reserved
+        &handler::window_timer,
+        &handler::supply_voltage_detection,
+        &handler::flash_global,
+        &handler::reset_and_clock_control,
+        &handler::exti_line0_to7,
+        &handler::wake_up_handler,
+        &handler::global_dma1_ch1,
+        &handler::global_dma1_ch2,
+        &handler::global_dma1_ch3,
+        &handler::global_dma1_ch4,
+        &handler::global_dma1_ch5,
+        &handler::global_dma1_ch6,
+        &handler::global_dma1_ch7,
+        &handler::analog_digital_converter,
+        &handler::i2c1_event,
+        &handler::i2c1_error,
+        &handler::usart1,
+        &handler::spi1,
+        &handler::tim1_brake,
+        &handler::tim1_update,
+        &handler::tim1_triggers,
+        &handler::tim1_compare,
+        &handler::tim2
     };
 }

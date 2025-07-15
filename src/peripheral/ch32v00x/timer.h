@@ -4,7 +4,7 @@
 
 #pragma once
 
-namespace Peripheral::Timer {
+namespace peripheral::timer {
 
 
 }

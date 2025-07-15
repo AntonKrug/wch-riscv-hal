@@ -7,16 +7,16 @@
 // https://en.cppreference.com/w/cpp/language/constraints
 #include <concepts>
 
-namespace Soc::MemConcept {
+namespace soc::mem_concept {
 
-    template<long long int address>
+    template<long long int Address>
     concept IsValidPeripheralBaseAddress = (
-        address >= 0x4000'0000 &&
-        address <= 0x5005'0400 &&
-        (address % 0x400) == 0);  // Each periperal is aligned to 1k (0x400)
+        Address >= 0x4000'0000 &&
+        Address <= 0x5005'0400 &&
+        (Address % 0x400) == 0);  // Each periperal is aligned to 1k (0x400)
 
 
-    template<long long int address>
-    concept IsWordAlignedBaseAddress = ((address % 0x4) == 0);
+    template<long long int Address>
+    concept IsWordAlignedBaseAddress = ((Address % 0x4) == 0);
 
 }

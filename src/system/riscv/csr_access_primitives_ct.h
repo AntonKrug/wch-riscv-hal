@@ -21,30 +21,28 @@
 #include "concepts.h"
 
 
-namespace Riscv::Csr::AccessCt {
-
-
+namespace riscv::csr::access_ct {
     // TODO: replace with static assert that this function should be used from compile time section
-    template <auto Csr>
-    requires Riscv::Concepts::IsCsrEnumValid<Csr>
+    template<auto Csr>
+        requires riscv::concepts::is_csr_enum_valid<Csr>
     inline
     auto
     __attribute__ ((always_inline))
     readUint32() -> std::uint32_t {
-        std::uint32_t resultUin32t;
+        std::uint32_t result_uin32_t;
 
         __asm__ volatile(
             "csrr %0, %1"
-            : "=r"(resultUin32t)
+            : "=r"(result_uin32_t)
             : "i"(static_cast<std::uint16_t>(Csr)));
 
-        return resultUin32t;
+        return result_uin32_t;
     }
 
 
     // TODO: check if IsCsrValueCorrectRegisterType could be needed here, or can be avoided
-    template <auto Csr, std::uint32_t ClearValueUint32>
-    requires Riscv::Concepts::IsCsrEnumValid<Csr>
+    template<auto Csr, std::uint32_t ClearValueUint32>
+        requires riscv::concepts::is_csr_enum_valid<Csr>
     inline
     constexpr auto
     __attribute__ ((always_inline))
@@ -55,7 +53,7 @@ namespace Riscv::Csr::AccessCt {
             // if the clear is full, meaning to clear whole register, it's
             // faster to do a write with 0 instead
             __asm__ volatile(
-                "csrw %0, x0"   // write 0 is the same as clear all
+                "csrw %0, x0" // write 0 is the same as clear all
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr))
             );
@@ -66,7 +64,7 @@ namespace Riscv::Csr::AccessCt {
                 "csrci %0, %1"
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr)),
-                  "K"(ClearValueUint32)
+                "K"(ClearValueUint32)
             );
         } else {
             // use temporary registor instead of immediate
@@ -74,15 +72,15 @@ namespace Riscv::Csr::AccessCt {
                 "csrc %0, %1"
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr)),
-                  "r"(ClearValueUint32)
+                "r"(ClearValueUint32)
             );
         }
     }
 
 
     // All the Sets for various types
-    template <auto Csr, std::uint32_t SetValueUint32>
-    requires Riscv::Concepts::IsCsrEnumValid<Csr>
+    template<auto Csr, std::uint32_t SetValueUint32>
+        requires riscv::concepts::is_csr_enum_valid<Csr>
     inline
     constexpr auto
     __attribute__ ((always_inline))
@@ -96,7 +94,7 @@ namespace Riscv::Csr::AccessCt {
                 "csrsi %0, %1"
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr)),
-                  "K"(SetValueUint32)
+                "K"(SetValueUint32)
             );
         } else {
             // use temporary registor instead of immediate
@@ -104,15 +102,15 @@ namespace Riscv::Csr::AccessCt {
                 "csrs %0, %1"
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr)),
-                  "r"(SetValueUint32)
+                "r"(SetValueUint32)
             );
         }
     }
 
 
     // All the writes for various types
-    template <auto Csr, std::uint32_t ValueUint32>
-    requires Riscv::Concepts::IsCsrEnumValid<Csr>
+    template<auto Csr, std::uint32_t ValueUint32>
+        requires riscv::concepts::is_csr_enum_valid<Csr>
     inline
     constexpr auto
     __attribute__ ((always_inline))
@@ -120,7 +118,7 @@ namespace Riscv::Csr::AccessCt {
         if constexpr (ValueUint32 == 0U) {
             // if writtin zero we can use r0 aka x0 register
             __asm__ volatile(
-                "csrw %0, x0"  // x0(zero) register
+                "csrw %0, x0" // x0(zero) register
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr))
             );
@@ -131,14 +129,14 @@ namespace Riscv::Csr::AccessCt {
                 "csrwi %0, %1" // 5-bit immediate values only
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr)),
-                  "K"(ValueUint32)
+                "K"(ValueUint32)
             );
         } else {
             __asm__ volatile(
                 "csrw %0, %1" // value from a register
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr)),
-                  "r"(ValueUint32)
+                "r"(ValueUint32)
             );
         }
     }
@@ -146,74 +144,74 @@ namespace Riscv::Csr::AccessCt {
 
     // TODO: at higher level detect if all the writable fields were used and inject
     // the isClearFull to produce write instead
-    template <auto Csr, std::uint32_t ClearValueUint32, std::uint32_t SetValueUint32>
-    requires Riscv::Concepts::IsCsrEnumValid<Csr>
+    template<auto Csr, std::uint32_t ClearValueUint32, std::uint32_t SetValueUint32>
+        requires riscv::concepts::is_csr_enum_valid<Csr>
     inline
     constexpr auto
     __attribute__ ((always_inline))
     clearAndSetUint32() -> void {
         // ReSharper disable CppTooWideScopeInitStatement
-        constexpr bool isClearSmall   = ClearValueUint32 <  (1U << 5U);
-        constexpr bool isClearZero    = ClearValueUint32 == 0U;
-        constexpr bool isClearFull    = ClearValueUint32 == 0xffffffffU;
+        constexpr bool is_clear_small = ClearValueUint32 < (1U << 5U);
+        constexpr bool is_clear_zero  = ClearValueUint32 == 0U;
+        constexpr bool is_clear_full  = ClearValueUint32 == 0xffffffffU;
 
-        constexpr bool isSetSmall     = SetValueUint32   <  (1U << 5U);
-        constexpr bool isSetZero      = SetValueUint32   == 0U;
+        constexpr bool is_set_small = SetValueUint32 < (1U << 5U);
+        constexpr bool is_set_zero  = SetValueUint32 == 0U;
 
-        constexpr bool isClearSetSame = ClearValueUint32 == SetValueUint32;
+        constexpr bool is_clear_set_same = ClearValueUint32 == SetValueUint32;
         // ReSharper restore CppTooWideScopeInitStatement
 
-        if constexpr (isClearZero && isSetZero) {
+        if constexpr (is_clear_zero && is_set_zero) {
             // nothing to do, abort
             return;
         }
 
-        if constexpr (isClearZero || isClearSetSame) {
+        if constexpr (is_clear_zero || is_clear_set_same) {
             // nothing to clear, or setting the same value after clearning it:
             // then execute just the set
             setUint32<Csr, SetValueUint32>();
             return;
         }
 
-        if constexpr (isSetZero) {
+        if constexpr (is_set_zero) {
             // nothing to set, execute just the clear part.
             clearUint32<Csr, ClearValueUint32>();
             return;
         }
 
-        if constexpr (isClearFull) {
+        if constexpr (is_clear_full) {
             // no need to clear everything just to set it later, we can use write instead
             writeUint32<Csr, SetValueUint32>();
             return;
         }
 
         // Both clearing and setting has to be done, but do the minimum amount of instructions
-        if constexpr (isClearSmall && isSetSmall) {
+        if constexpr (is_clear_small && is_set_small) {
             __asm__ volatile(
                 "csrci %0, %1\n"
                 "csrsi %0, %2"
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr)),
-                  "K"(ClearValueUint32),
-                  "K"(SetValueUint32)
+                "K"(ClearValueUint32),
+                "K"(SetValueUint32)
             );
-        } else if constexpr (isClearSmall) {
+        } else if constexpr (is_clear_small) {
             __asm__ volatile(
                 "csrci %0, %1\n"
                 "csrs  %0, %2"
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr)),
-                  "K"(ClearValueUint32),
-                  "r"(SetValueUint32)
+                "K"(ClearValueUint32),
+                "r"(SetValueUint32)
             );
-        } else if constexpr (isSetSmall) {
+        } else if constexpr (is_set_small) {
             __asm__ volatile(
                 "csrc  %0, %1\n"
                 "csrsi %0, %2"
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr)),
-                  "r"(ClearValueUint32),
-                  "K"(SetValueUint32)
+                "r"(ClearValueUint32),
+                "K"(SetValueUint32)
             );
         } else {
             __asm__ volatile(
@@ -221,10 +219,9 @@ namespace Riscv::Csr::AccessCt {
                 "csrs %0, %2"
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr)),
-                  "r"(ClearValueUint32),
-                  "r"(SetValueUint32)
+                "r"(ClearValueUint32),
+                "r"(SetValueUint32)
             );
         }
     }
-
 }

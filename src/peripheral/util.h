@@ -4,8 +4,6 @@
 
 #pragma once
 
-namespace Peripheral::Util {
-
-
+namespace peripheral::util {
 }
 

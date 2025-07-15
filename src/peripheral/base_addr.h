@@ -8,11 +8,11 @@
 
 #include "ch32v00x/rcc.h"
 
-namespace Peripheral::BaseAddr {
+namespace peripheral::base_addr {
 
-    template<Peripheral::Rcc::Concept::IsAnyRegField RegFieldType>
+    template<peripheral::rcc::concepts::IsAnyRegField RegFieldType>
     constexpr auto fromRegFieldType() -> std::uint32_t {
-        return Peripheral::Rcc::baseAddr;
+        return peripheral::rcc::base_addr;
     }
 
     template<auto RegField>

@@ -44,63 +44,63 @@
 #include "peripheral/ch32v00x/dma_channels.h"
 
 
-namespace Soc {
+namespace soc {
 
 
 
-    static constexpr Types::GpioACD<
-        Soc::PeripheralAddreses::gpioA,
-        Soc::PeripheralAddreses::gpioC,
-        Soc::PeripheralAddreses::gpioD>
+    static constexpr types::GpioACD<
+        soc::peripheral_addreses::gpio_a,
+        soc::peripheral_addreses::gpio_c,
+        soc::peripheral_addreses::gpio_d>
     Gpio = {};
 
 
     // NOLINTBEGIN(readability-static-accessed-through-instance)
-    namespace Usart {
+    namespace usart {
 
 
-        static constexpr Types::UartInstance<
-            Soc::PeripheralAddreses::usart1,
+        static constexpr types::UartInstance<
+            soc::peripheral_addreses::usart1,
             0b00U,             // Pin mapping variant
-            Gpio.D.GetPin(4U), // D4 = Ck
-            Gpio.D.GetPin(5U), // D5 = Tx
-            Gpio.D.GetPin(6U), // D6 = Rx
-            Gpio.D.GetPin(3U), // D3 = Cts
-            Gpio.C.GetPin(2U)> // C2 = Rts
-        Channel1Mapping0 = {};
+            Gpio.D.get_pin(4U), // D4 = Ck
+            Gpio.D.get_pin(5U), // D5 = Tx
+            Gpio.D.get_pin(6U), // D6 = Rx
+            Gpio.D.get_pin(3U), // D3 = Cts
+            Gpio.C.get_pin(2U)> // C2 = Rts
+        channel1_mapping0 = {};
 
 
-        static constexpr Types::UartInstance<
-            Soc::PeripheralAddreses::usart1,
+        static constexpr types::UartInstance<
+            soc::peripheral_addreses::usart1,
             0b01U,             // Pin mapping variant
-            Gpio.D.GetPin(7U), // D7 = Ck
-            Gpio.D.GetPin(0U), // D0 = Tx
-            Gpio.D.GetPin(1U), // D1 = Rx
-            Gpio.C.GetPin(3U), // C3 = Cts
-            Gpio.C.GetPin(2U)> // C2 = Rts
-        Channel1Mapping1 = {};
+            Gpio.D.get_pin(7U), // D7 = Ck
+            Gpio.D.get_pin(0U), // D0 = Tx
+            Gpio.D.get_pin(1U), // D1 = Rx
+            Gpio.C.get_pin(3U), // C3 = Cts
+            Gpio.C.get_pin(2U)> // C2 = Rts
+        channel1_mapping1 = {};
 
 
-        static constexpr Types::UartInstance<
-            Soc::PeripheralAddreses::usart1,
+        static constexpr types::UartInstance<
+            soc::peripheral_addreses::usart1,
             0b01U,             // Pin mapping variant
-            Gpio.D.GetPin(7U), // D7 = Ck
-            Gpio.D.GetPin(6U), // D6 = Tx
-            Gpio.D.GetPin(5U), // D5 = Rx
-            Gpio.C.GetPin(6U), // C6 = Cts
-            Gpio.C.GetPin(7U)> // C7 = Rts
-        Channel1Mapping2 = {};
+            Gpio.D.get_pin(7U), // D7 = Ck
+            Gpio.D.get_pin(6U), // D6 = Tx
+            Gpio.D.get_pin(5U), // D5 = Rx
+            Gpio.C.get_pin(6U), // C6 = Cts
+            Gpio.C.get_pin(7U)> // C7 = Rts
+        channel1_mapping2 = {};
 
 
-        static constexpr Types::UartInstance<
-            Soc::PeripheralAddreses::usart1,
+        static constexpr types::UartInstance<
+            soc::peripheral_addreses::usart1,
             0b01U,             // Pin mapping variant
-            Gpio.C.GetPin(5U), // C5 = Ck
-            Gpio.C.GetPin(0U), // C0 = Tx
-            Gpio.C.GetPin(1U), // C1 = Rx
-            Gpio.C.GetPin(6U), // C6 = Cts
-            Gpio.C.GetPin(7U)> // C7 = Rts
-        Channel1Mapping3 = {};
+            Gpio.C.get_pin(5U), // C5 = Ck
+            Gpio.C.get_pin(0U), // C0 = Tx
+            Gpio.C.get_pin(1U), // C1 = Rx
+            Gpio.C.get_pin(6U), // C6 = Cts
+            Gpio.C.get_pin(7U)> // C7 = Rts
+        channel1_mapping3 = {};
 
 
         // struct Channel1 {

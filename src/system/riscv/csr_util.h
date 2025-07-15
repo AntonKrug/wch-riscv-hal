@@ -8,10 +8,10 @@
 
 #include "concepts.h"
 
-namespace Riscv::Csr {
+namespace riscv::csr {
 
     template<auto Csr>
-    requires Riscv::Concepts::IsQingKeCsrEnum<Csr>
+    requires riscv::concepts::is_qing_ke_csr_enum<Csr>
     constexpr auto toAddress() -> std::uint16_t {
         return static_cast<std::uint16_t>(Csr);
     }

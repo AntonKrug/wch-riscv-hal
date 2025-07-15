@@ -11,7 +11,7 @@
 
 #define WCH_OPTIMIZE_GPIO __attribute__ ((optimize("-Os")))
 
-namespace Peripheral::Gpio{
+namespace peripheral::gpio{
 
 
     #pragma region Enums
@@ -35,21 +35,21 @@ namespace Peripheral::Gpio{
 
 
     enum class PinMode: std::uint8_t {
-        inputAnalog                           = 0b00'00,
-        inputFloating                         = 0b01'00,
-        inputPullUpOrDown                     = 0b10'00, // up/down is set with OUTDR
-        outputPushPullNormalSpeed             = 0b00'01, // 10Mhz
-        outputOpenDrainNormalSpeed            = 0b01'01, // 10Mhz
-        alternateFunctionPushPullNormalSpeed  = 0b10'01, // 10Mhz
-        alternateFunctionOpenDrainNormalSpeed = 0b11'01, // 10Mhz
-        outputPushPullSlowSpeed               = 0b00'10, // 5Mhz
-        outputOpenDrainSlowSpeed              = 0b01'10, // 5Mhz
-        alternateFunctionPushPullSlowSpeed    = 0b10'10, // 5Mhz
-        alternateFunctionOpenDrainSlowSpeed   = 0b11'10, // 5Mhz
-        outputPushPullFastSpeed               = 0b00'11, // 50Mhz for all, expect 30Mhz for CH32V003
-        outputOpenDrainFastSpeed              = 0b01'11, // 50Mhz for all, expect 30Mhz for CH32V003
-        alternateFunctionPushPullFastSpeed    = 0b10'11, // 50Mhz for all, expect 30Mhz for CH32V003
-        alternateFunctionOpenDrainFastSpeed   = 0b11'11, // 50Mhz for all, expect 30Mhz for CH32V003
+        inputAnalog                           = 0b00'00U,
+        inputFloating                         = 0b01'00U,
+        inputPullUpOrDown                     = 0b10'00U, // up/down is set with OUTDR
+        outputPushPullNormalSpeed             = 0b00'01U, // 10Mhz
+        outputOpenDrainNormalSpeed            = 0b01'01U, // 10Mhz
+        alternateFunctionPushPullNormalSpeed  = 0b10'01U, // 10Mhz
+        alternateFunctionOpenDrainNormalSpeed = 0b11'01U, // 10Mhz
+        outputPushPullSlowSpeed               = 0b00'10U, // 5Mhz
+        outputOpenDrainSlowSpeed              = 0b01'10U, // 5Mhz
+        alternateFunctionPushPullSlowSpeed    = 0b10'10U, // 5Mhz
+        alternateFunctionOpenDrainSlowSpeed   = 0b11'10U, // 5Mhz
+        outputPushPullFastSpeed               = 0b00'11U, // 50Mhz for all, expect 30Mhz for CH32V003
+        outputOpenDrainFastSpeed              = 0b01'11U, // 50Mhz for all, expect 30Mhz for CH32V003
+        alternateFunctionPushPullFastSpeed    = 0b10'11U, // 50Mhz for all, expect 30Mhz for CH32V003
+        alternateFunctionOpenDrainFastSpeed   = 0b11'11U, // 50Mhz for all, expect 30Mhz for CH32V003
     };
 
 
@@ -60,16 +60,16 @@ namespace Peripheral::Gpio{
 
 
     struct SequenceEntity {
-        const BaseAddress portBaseAddress;
-        const std::array<std::uint8_t, 8> pinNumbers;
+        const BaseAddress port_base_address;
+        const std::array<std::uint8_t, 8U> pin_numbers;
         const ActuationType action;
         const int value;
     };
 
 
     struct Pins {
-        const BaseAddress portBaseAddress;
-        const std::array<std::uint8_t, 8> pinNumbers;
+        const BaseAddress port_base_address;
+        const std::array<std::uint8_t, 8U> pin_numbers;
 
         auto operator=(int value) const -> const Pins &; // NOLINT(*-unconventional-assign-operator)
 
@@ -97,25 +97,25 @@ namespace Peripheral::Gpio{
         struct RegistersType {
             constexpr static std::uint32_t RegisterBaseUint32 = static_cast<std::uint32_t>(TplRegisterBase);
             constexpr static std::uint32_t configuration      = RegisterBaseUint32;         // CFGLR, sometimes CFGHR
-            constexpr static std::uint32_t inputData          = RegisterBaseUint32 + 0x08;  // INDR
-            constexpr static std::uint32_t outputData         = RegisterBaseUint32 + 0x0C;  // OUTDR
-            constexpr static std::uint32_t setReset           = RegisterBaseUint32 + 0x10;  // BSHR
-            constexpr static std::uint32_t reset              = RegisterBaseUint32 + 0x14;  // BCR
-            constexpr static std::uint32_t configurationLock  = RegisterBaseUint32 + 0x18;  // LCKR
+            constexpr static std::uint32_t inputData          = RegisterBaseUint32 + 0x08U;  // INDR
+            constexpr static std::uint32_t outputData         = RegisterBaseUint32 + 0x0CU;  // OUTDR
+            constexpr static std::uint32_t setReset           = RegisterBaseUint32 + 0x10U;  // BSHR
+            constexpr static std::uint32_t reset              = RegisterBaseUint32 + 0x14U;  // BCR
+            constexpr static std::uint32_t configurationLock  = RegisterBaseUint32 + 0x18U;  // LCKR
         };
 
     public:
-        constexpr static BaseAddress baseAddress       = TplBaseAddress;
-        constexpr static std::uint32_t   baseAddressUint32 = static_cast<std::uint32_t>(TplBaseAddress);
+        constexpr static BaseAddress   base_address        = TplBaseAddress;
+        constexpr static std::uint32_t base_address_uint32 = static_cast<std::uint32_t>(TplBaseAddress);
 
-        struct RegistersType<TplBaseAddress> Registers = {};
+        struct RegistersType<TplBaseAddress> registers = {};
 
         // ReSharper disable once CppNonExplicitConversionOperator
         constexpr operator std::uint32_t() const; // NOLINT(*-explicit-constructor)
 
-        constexpr static auto GetPin(std::uint8_t pin) -> Pins;
+        constexpr static auto get_pin(std::uint8_t pin) -> Pins;
 
-        constexpr static auto GetPin(const std::array<std::uint8_t, 8> &pins) -> Pins;
+        constexpr static auto get_pin(const std::array<std::uint8_t, 8U> &pins) -> Pins;
     };
 
 
@@ -146,19 +146,19 @@ namespace Peripheral::Gpio{
 
     template<BaseAddress TplBaseAddress>
     WCH_OPTIMIZE_GPIO constexpr Port<TplBaseAddress>::operator std::uint32_t() const { // NOLINT(*-explicit-constructor)
-        return static_cast<uint32_t>(baseAddress);
+        return static_cast<uint32_t>(base_address);
     }
 
 
     template<BaseAddress TplBaseAddress>
-    WCH_OPTIMIZE_GPIO constexpr auto Port<TplBaseAddress>::GetPin(const std::uint8_t pin) -> Pins {
-        return Pins{baseAddress, {pin}};
+    WCH_OPTIMIZE_GPIO constexpr auto Port<TplBaseAddress>::get_pin(const std::uint8_t pin) -> Pins {
+        return Pins{base_address, {pin}};
     }
 
 
     template<BaseAddress TplBaseAddress>
-    WCH_OPTIMIZE_GPIO constexpr auto Port<TplBaseAddress>::GetPin(const std::array<std::uint8_t, 8> &pins) -> Pins {
-        return Pins{baseAddress, pins};
+    WCH_OPTIMIZE_GPIO constexpr auto Port<TplBaseAddress>::get_pin(const std::array<std::uint8_t, 8> &pins) -> Pins {
+        return Pins{base_address, pins};
     }
 
 
@@ -171,7 +171,7 @@ namespace Peripheral::Gpio{
     template<SequenceEntity... TplEntities>
     template<Pins TplPins>
     WCH_OPTIMIZE_GPIO constexpr auto Sequence<TplEntities...>::on() const {
-        constexpr SequenceEntity newEntity{TplPins.portBaseAddress, TplPins.pinNumbers, ActuationType::set, 1};
+        constexpr SequenceEntity newEntity{TplPins.port_base_address, TplPins.pin_numbers, ActuationType::set, 1};
         constexpr Sequence<newEntity, TplEntities ...> ans;
         return ans;
     }
@@ -180,7 +180,7 @@ namespace Peripheral::Gpio{
     template<SequenceEntity... TplEntities>
     template<Pins TplPins> // TODO support variadic
     WCH_OPTIMIZE_GPIO constexpr auto Sequence<TplEntities...>::off() const {
-        constexpr SequenceEntity newEntity{TplPins.portBaseAddress, TplPins.pinNumbers, ActuationType::set, 0};
+        constexpr SequenceEntity newEntity{TplPins.port_base_address, TplPins.pin_numbers, ActuationType::set, 0};
         constexpr Sequence<newEntity, TplEntities ...> ans;
         return ans;
     }
@@ -190,8 +190,8 @@ namespace Peripheral::Gpio{
     template<Pins TplPins, PinMode TplPinMode>
     WCH_OPTIMIZE_GPIO constexpr auto Sequence<TplEntities...>::mode() const {
         constexpr SequenceEntity newEntity{
-            TplPins.portBaseAddress,
-            TplPins.pinNumbers,
+            TplPins.port_base_address,
+            TplPins.pin_numbers,
             ActuationType::modeChange,
             static_cast<uint8_t>(TplPinMode)};
 
@@ -218,14 +218,14 @@ namespace Peripheral::Gpio{
 
 
     WCH_OPTIMIZE_GPIO inline auto Pins::operator=(const int value) const -> const Pins & { // NOLINT(*-unconventional-assign-operator)
-        auto *ptr = reinterpret_cast<std::uint8_t *>(portBaseAddress);
+        auto *ptr = reinterpret_cast<std::uint8_t *>(port_base_address);
         *ptr = value;
         return *this;
     }
 
 
     WCH_OPTIMIZE_GPIO inline auto Pins::SetOutputValue(const int value) const -> void {
-        auto *ptr = reinterpret_cast<std::uint8_t *>(portBaseAddress);
+        auto *ptr = reinterpret_cast<std::uint8_t *>(port_base_address);
         *ptr = value;
     }
 
@@ -240,8 +240,8 @@ namespace Peripheral::Gpio{
     template<PinMode TplPinMode>
     WCH_OPTIMIZE_GPIO constexpr auto Pins::mode() const {
         constexpr SequenceEntity newEntity{
-            portBaseAddress,
-            pinNumbers,
+            port_base_address,
+            pin_numbers,
             ActuationType::modeChange,
             static_cast<std::uint8_t>(TplPinMode)};
 
@@ -269,7 +269,7 @@ namespace Peripheral::Gpio{
 
 
     template<long long int address>
-    requires Soc::MemConcept::IsValidPeripheralBaseAddress<address>
+    requires soc::mem_concept::IsValidPeripheralBaseAddress<address>
     WCH_OPTIMIZE_GPIO constexpr static auto MakeBaseAddress() -> BaseAddress {
         return static_cast<BaseAddress>(address);
     };

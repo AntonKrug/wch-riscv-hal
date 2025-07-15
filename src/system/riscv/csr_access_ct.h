@@ -18,71 +18,71 @@
 #include "system/register/util.h"
 
 
-namespace Riscv::Csr::AccessCt {
+namespace riscv::csr::access_ct {
 
     #pragma region ClearSetWriteAbstracted
 
 
     template <auto Csr, auto... ClearFields>
-    requires Riscv::Concepts::IsCsrEnumValid<Csr> &&
-             Riscv::Concepts::SameCsrFieldEnumsAndMatchingParentCsr<Csr, ClearFields...>
+    requires riscv::concepts::is_csr_enum_valid<Csr> &&
+             riscv::concepts::same_csr_field_enums_and_matching_parent_csr<Csr, ClearFields...>
     inline
     constexpr auto
     __attribute__ ((always_inline))
     clear() -> void {
-        clearUint32<Csr, Soc::Reg::Combine::enumsToUint32<ClearFields...>()>();
+        clearUint32<Csr, soc::reg::combine::enums_to_uint32<ClearFields...>()>();
     }
 
 
     template <auto Csr, auto... SetFields>
-    requires Riscv::Concepts::IsCsrEnumValid<Csr> &&
-             Riscv::Concepts::SameCsrFieldEnumsAndMatchingParentCsr<Csr, SetFields...>
+    requires riscv::concepts::is_csr_enum_valid<Csr> &&
+             riscv::concepts::same_csr_field_enums_and_matching_parent_csr<Csr, SetFields...>
     inline
     constexpr auto
     __attribute__ ((always_inline))
     set() -> void {
-        setUint32<Csr, Soc::Reg::Combine::enumsToUint32<SetFields...>()>();
+        setUint32<Csr, soc::reg::combine::enums_to_uint32<SetFields...>()>();
     }
 
 
     template <auto Csr, auto... WriteFields>
-    requires Riscv::Concepts::IsCsrEnumValid<Csr> &&
-             Riscv::Concepts::SameCsrFieldEnumsAndMatchingParentCsr<Csr, WriteFields...>
+    requires riscv::concepts::is_csr_enum_valid<Csr> &&
+             riscv::concepts::same_csr_field_enums_and_matching_parent_csr<Csr, WriteFields...>
     inline
     constexpr auto
     __attribute__ ((always_inline))
     write() -> void {
-        writeUint32<Csr, Soc::Reg::Combine::enumsToUint32<WriteFields...>()>();
+        writeUint32<Csr, soc::reg::combine::enums_to_uint32<WriteFields...>()>();
     }
 
 
     template <auto Csr, auto... ClearFields, auto... SetFields>
-    requires Riscv::Concepts::IsCsrEnumValid<Csr> &&
-             Riscv::Concepts::SameCsrFieldEnumsAndMatchingParentCsr<Csr, ClearFields...> &&
-             Riscv::Concepts::SameCsrFieldEnumsAndMatchingParentCsr<Csr, SetFields...>
+    requires riscv::concepts::is_csr_enum_valid<Csr> &&
+             riscv::concepts::same_csr_field_enums_and_matching_parent_csr<Csr, ClearFields...> &&
+             riscv::concepts::same_csr_field_enums_and_matching_parent_csr<Csr, SetFields...>
     inline
     constexpr auto
     __attribute__ ((always_inline))
     clearSet() -> void {
         clearAndSetUint32<
             Csr,
-            Soc::Reg::Combine::enumsToUint32<ClearFields...>(),
-            Soc::Reg::Combine::enumsToUint32<SetFields...>()>();
+            soc::reg::combine::enums_to_uint32<ClearFields...>(),
+            soc::reg::combine::enums_to_uint32<SetFields...>()>();
     }
 
 
     // When only specific fields needs to be updated (it will for various types of updates to the minimum of instructions)
     template <auto Csr, auto... SetFields>
-    requires Riscv::Concepts::IsCsrEnumValid<Csr> &&
-             Riscv::Concepts::SameCsrFieldEnumsAndMatchingParentCsr<Csr, SetFields...>
+    requires riscv::concepts::is_csr_enum_valid<Csr> &&
+             riscv::concepts::same_csr_field_enums_and_matching_parent_csr<Csr, SetFields...>
     inline
     constexpr auto
     __attribute__ ((always_inline))
     setWithAutoClear() -> void {
-        constexpr std::uint32_t clearValueUint32 = Soc::Reg::Combine::fieldMasksToUint32<SetFields...>();
-        constexpr std::uint32_t setValueUint32   = (static_cast<std::uint32_t>(SetFields) | ...);
+        constexpr std::uint32_t clear_value_uint32 = soc::reg::combine::field_masks_to_uint32<SetFields...>();
+        constexpr std::uint32_t set_value_uint32   = (static_cast<std::uint32_t>(SetFields) | ...);
 
-        clearAndSetUint32<Csr, clearValueUint32, setValueUint32>();
+        clearAndSetUint32<Csr, clear_value_uint32, set_value_uint32>();
     }
 
 
@@ -93,35 +93,35 @@ namespace Riscv::Csr::AccessCt {
 
 
     template <auto... SetFields>
-    requires Riscv::Concepts::SameCsrFieldEnums<SetFields...>
+    requires riscv::concepts::same_csr_field_enums<SetFields...>
     inline
     constexpr auto
     __attribute__ ((always_inline))
     clear() -> void {
-        constexpr auto parentCsr = Riscv::Csr::AccessCt::getCsrFromField(SetFields...);
-        clear<parentCsr, SetFields...>();
+        constexpr auto parent_csr = riscv::csr::access_ct::getCsrFromField(SetFields...);
+        clear<parent_csr, SetFields...>();
     }
 
 
     template <auto... SetFields>
-    requires Riscv::Concepts::SameCsrFieldEnums<SetFields...>
+    requires riscv::concepts::same_csr_field_enums<SetFields...>
     inline
     constexpr auto
     __attribute__ ((always_inline))
     set() -> void {
-        constexpr auto parentCsr = Riscv::Csr::AccessCt::getCsrFromField(SetFields...);
-        set<parentCsr, SetFields...>();
+        constexpr auto parent_csr = riscv::csr::access_ct::getCsrFromField(SetFields...);
+        set<parent_csr, SetFields...>();
     }
 
 
     template <auto... WriteFields>
-    requires Riscv::Concepts::SameCsrFieldEnums<WriteFields...>
+    requires riscv::concepts::same_csr_field_enums<WriteFields...>
     inline
     constexpr auto
     __attribute__ ((always_inline))
     write() -> void {
-        constexpr auto parentCsr = Riscv::Csr::AccessCt::getCsrFromField(WriteFields...);
-        write<parentCsr, WriteFields...>();
+        constexpr auto parent_csr = riscv::csr::access_ct::getCsrFromField(WriteFields...);
+        write<parent_csr, WriteFields...>();
     }
 
 
@@ -130,13 +130,13 @@ namespace Riscv::Csr::AccessCt {
     // setting correct bits. If unecesary work is detected, it will be
     // ommited to not cause overhead.
     template <auto... SetWithClearFields>
-    requires Riscv::Concepts::SameCsrFieldEnums<SetWithClearFields...>
+    requires riscv::concepts::same_csr_field_enums<SetWithClearFields...>
     inline
     constexpr auto
     __attribute__ ((always_inline))
     setWithAutoClear() -> void {
-        constexpr auto parentCsr = Riscv::Csr::AccessCt::getCsrFromField(SetWithClearFields...);
-        setWithAutoClear<parentCsr,  SetWithClearFields...>();
+        constexpr auto parent_csr = riscv::csr::access_ct::getCsrFromField(SetWithClearFields...);
+        setWithAutoClear<parent_csr,  SetWithClearFields...>();
     }
 
 

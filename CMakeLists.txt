@@ -151,7 +151,7 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/peripheral/common/dma/field/cfgr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/common/dma/field/intfcr.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/common/dma/field/intfr.h
-        ${CMAKE_SOURCE_DIR}/src/peripheral/concept.h
+        ${CMAKE_SOURCE_DIR}/src/peripheral/concepts.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/obtain_reg_metadata.h
         ${CMAKE_SOURCE_DIR}/src/peripheral/util.h
         ${CMAKE_SOURCE_DIR}/src/system/CH32V003xxxx/soc_template.h
@@ -162,7 +162,7 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/system/register/access_ct.h
         ${CMAKE_SOURCE_DIR}/src/system/register/access_primitives.h
         ${CMAKE_SOURCE_DIR}/src/system/register/combine.h
-        ${CMAKE_SOURCE_DIR}/src/system/register/concept.h
+        ${CMAKE_SOURCE_DIR}/src/system/register/concepts.h
         ${CMAKE_SOURCE_DIR}/src/system/register/field_access_privilege.h
         ${CMAKE_SOURCE_DIR}/src/system/register/util.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/concepts.h

@@ -9,16 +9,16 @@
 
 #include "system/register/field_access_privilege.h"
 
-namespace Peripheral::Rcc {
+namespace peripheral::rcc {
 
     struct Ahbpcenr {
         // Advanced High-performance Bus peripheral clock enable
 
-        constexpr static std::uint32_t regMemOffset = 0x14U;
+        constexpr static std::uint32_t reg_mem_offset = 0x14U;
 
         enum class DMA1EN_RW_DirectMemoryAccess1Enable: std::uint32_t {
             fieldBitMask = 0b1U << 0, // not holding any settings or value, it's a bitmask for this specific field
-            fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
+            fieldAccess  = soc::reg::field_access_right::ReadWrite,
 
             noClock      = 0U,
             clockEnable  = fieldBitMask
@@ -26,7 +26,7 @@ namespace Peripheral::Rcc {
 
         enum class SRAMEN_RW_SramClockDuringSleepEnable: std::uint32_t {
             fieldBitMask = 0b1U << 2, // not holding any settings or value, it's a bitmask for this specific field
-            fieldAccess  = Soc::Reg::FieldAccessRight::ReadWrite,
+            fieldAccess  = soc::reg::field_access_right::ReadWrite,
 
             noClock      = 0U,          // The SRAM clock disabled during sleep
             clockEnable  = fieldBitMask // The SRAM clock enabled during sleep
@@ -35,7 +35,7 @@ namespace Peripheral::Rcc {
         constexpr static std::tuple<
             DMA1EN_RW_DirectMemoryAccess1Enable,
             SRAMEN_RW_SramClockDuringSleepEnable
-        > regFields = {};
+        > reg_fields = {};
     };
 
 }

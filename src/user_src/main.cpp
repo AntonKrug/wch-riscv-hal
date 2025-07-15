@@ -11,7 +11,7 @@
 #include "system/soc_types.h"
 #include "peripheral/ch32v00x/usart.h"
 
-using namespace Peripheral;
+using namespace peripheral;
 
 
 // TODO: section check of IRQ being aligned
@@ -23,33 +23,21 @@ using namespace Peripheral;
 // }
 
 
-namespace Soc::Irq {
+namespace soc::irq::handler {
 
-    void __attribute__((retain, used)) handlerSupplyVoltageDetection() {
-        using namespace Literals::Delay;
-        using namespace Literals::Timer;
-
-        Utils::delayMs(1.5_hour_to_ms);
+    void __attribute__((retain, used)) supply_voltage_detection() {
+        // using namespace literals::delay;
+        // using namespace literals::timer;
+        //
+        // utils::delayMs(1.5_hour_to_ms);
     }
 
 }
-
-extern "C" {
-
-
-    [[noreturn]] void userMain(void) {
-        while (true) {
-
-        }
-    }
-
-}
-
 
 // [[noreturn]] and make it infinite loop or do on system level?
 // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=80515
 // NOLINTBEGIN(readability-static-accessed-through-instance)
-[[noreturn]] void userMain2(void) {
+extern "C" [[noreturn]] void main_user(void) {
     char a[3] ="hi";
     a[0] = a[0] + 1;
     // prepare_system_for_main();
@@ -59,13 +47,13 @@ extern "C" {
     // std::cout << "Versiondssdds: " << firmwareBuildInfo::version << " date:dsdsdsds " << firmwareBuildInfo::date << " time: " << firmwareBuildInfo::time << std::endl;
 
     // Custom literals
-    using namespace Literals::Delay;
-    using namespace Literals::Timer;
-    using namespace Literals::Usart;
+    using namespace literals::delay;
+    using namespace literals::timer;
+    using namespace literals::usart;
 
     // constexpr auto timer = 100_ms_to_hz;
     // std::cout << timer << std::endl;
-    Utils::delayMs(1.5_hour_to_ms);
+    utils::delayMs(1.5_hour_to_ms);
     // constexpr auto timerFrequencySetting = 20_ns_to_hz;
     // auto something = Soc::Usart::Channel1Mapping0.device;
 
@@ -112,6 +100,6 @@ extern "C" {
 
     while (true) {
 
-    };
+    }
 }
 // NOLINTEND(readability-static-accessed-through-instance)

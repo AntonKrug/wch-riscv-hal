@@ -6,7 +6,7 @@
 
 #include <cstdint>
 
-namespace Soc::Reg::FieldAccessRight {
+namespace soc::reg::field_access_right {
 
     enum class AccessRightEnum: std::uint32_t {
         ReadOnly,
