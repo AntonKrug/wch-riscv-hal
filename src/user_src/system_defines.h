@@ -69,3 +69,6 @@
  * expected. However if in doubt, leaving these settings in defaults should
  * be good enough for most applications. */
 //#define SYSTEM_WCH_LINKER_GP_INSIDE_ROM
+
+//TODO: ***** do proper description and choose name
+#define SYSTEM_WCH_IRQ_VECTORIZED
