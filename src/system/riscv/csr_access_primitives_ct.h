@@ -67,7 +67,7 @@ namespace riscv::csr::access_ct {
                 "K"(ClearValueUint32)
             );
         } else {
-            // use temporary registor instead of immediate
+            // use temporary register instead of immediate
             __asm__ volatile(
                 "csrc %0, %1"
                 : // no output
@@ -97,7 +97,7 @@ namespace riscv::csr::access_ct {
                 "K"(SetValueUint32)
             );
         } else {
-            // use temporary registor instead of immediate
+            // use temporary register instead of immediate
             __asm__ volatile(
                 "csrs %0, %1"
                 : // no output
@@ -139,6 +139,21 @@ namespace riscv::csr::access_ct {
                 "r"(ValueUint32)
             );
         }
+    }
+
+    // TODO: ************ move to its own file, not CT variant - shouldn't say RT as it might still be CT
+    template<auto Csr>
+        requires riscv::concepts::is_csr_enum_valid<Csr>
+    inline
+    constexpr auto
+    __attribute__ ((always_inline))
+    write_uint32_rt(const std::uint32_t value_uint32) -> void {
+        __asm__ volatile(
+            "csrw %0, %1" // value from a register
+            : // no output
+            : "i"(static_cast<std::uint16_t>(Csr)),
+            "r"(value_uint32)
+        );
     }
 
 
