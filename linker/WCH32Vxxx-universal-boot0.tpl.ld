@@ -78,6 +78,12 @@ SECTIONS
   /* most (if not all) of the application code, and other constants*/
   .text : ALIGN(4)
   {
+    PROVIDE(__main_user = .);
+    *(.text.main_user) /* making user's code main function as close to the 0 as possible
+                        * when placed just after vector table we can calculate its position
+                        * at compile time more easily and allow easier jump to this from
+                        * hhandle_reset, as it's doing preparation for `mret` "jump" */
+
     *(.text.handle_reset) /* part of the HAL's init, setting up clock, gp, intializing
                            * (with zeros and values) variables. Make sure this section
                            * is at begining of the section so it the first entry instruction
@@ -85,11 +91,6 @@ SECTIONS
                            * require many instructions (which could affect vector table
                            * as they might be overlapping and we have only 4 bytes spare
                            * in the table to fit the the jump instruction) */
-    *(.text.main_user) /* making user's code main close to the handle_reset so the handle_reset
-                        * preparation for `mret` "jump" is close by */
-    {
-        PROVIDE(__main_user = .)
-    }
     *(.text*)             /* "gcc -ffunction-sections" */
 #ifdef SYSTEM_WCH_LINKER_GP_INSIDE_ROM
     . = ALIGN(SYSTEM_WCH_LINKER_LARGEST_TYPE_ALIGNMENT);          /* see system.h for details */
@@ -259,12 +260,12 @@ SECTIONS
 
   /* Callstack, local variables, saving register when calling IRQ, return addresses when returning from methods, */
   /* temporary values etc... */
-	.stack ORIGIN(RAM) + LENGTH(RAM) - SYSTEM_WCH_LINKER_STACK_SIZE : ALIGN(4)
-	{
-	    PROVIDE(__stack_start = . );
-	    . = . + SYSTEM_WCH_LINKER_STACK_SIZE;
-	    PROVIDE(__stack_end = .);
-	} >RAM
+  .stack ORIGIN(RAM) + LENGTH(RAM) - SYSTEM_WCH_LINKER_STACK_SIZE : ALIGN(4)
+  {
+    PROVIDE(__stack_start = . );
+    . = . + SYSTEM_WCH_LINKER_STACK_SIZE;
+    PROVIDE(__stack_end = .);
+  } >RAM
 
 
 }
