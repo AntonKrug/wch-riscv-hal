@@ -3,9 +3,19 @@
 //
 
 #include <array>
+#include "user_src/system_defines.h"
 
 namespace soc::irq {
+
     namespace handler {
+
+        // C style would be:
+        // constexpr void (* const irqhandlersVectorTable[])(void) =
+        // `irqHandlersVectorTable[]` the vector table is array
+        // `* const` function pointers, the pointers can't be changed later on runtime
+        // `void (* ... )(void)` function pointer with no arguments and no return
+        // `constexpr` content of the array must be compile-time known so we can put it into the flash
+        using HandlerType = void(* const)();
 
         // Not going to try save stack ((naked)), not going to intend to return
         // from this [[noreturn]]. It is meant to be small infinite loop to intentionally
@@ -14,6 +24,8 @@ namespace soc::irq {
             while (true) {
             }
         }
+
+#ifdef SYSTEM_WCH_IRQ_VECTORIZED
 
         void __attribute__((weak, alias("infinite_loop"))) non_maskable();             // NMI
         void __attribute__((weak, alias("infinite_loop"))) hard_fault();               // Abnormal events
@@ -48,19 +60,18 @@ namespace soc::irq {
         void __attribute__((weak, alias("infinite_loop"))) tim1_compare();             // TIM1CC
 
         void __attribute__((weak, alias("infinite_loop"))) tim2();                     // TIM2
+#else
+
+        void __attribute__((weak, alias("infinite_loop"))) unified();             // NMI
+
+#endif
+
     }
 
 
-    // C style would be:
-    // constexpr void (* const irqhandlersVectorTable[])(void) =
-    // `irqHandlersVectorTable[]` the vector table is array
-    // `* const` function pointers, the pointers can't be changed later on runtime
-    // `void (* ... )(void)` function pointer with no arguments and no return
-    // `constexpr` content of the array must be compile-time known so we can put it into the flash
-    using IrqHandler = void(* const)();
 
     __attribute__ ((retain, used, section(".init.irq_vector_table_plus_one")))
-    constexpr std::array<IrqHandler, 38U> handlers_vector_table = {
+    constexpr std::array<handler::HandlerType, 38U> handlers_vector_table = {
         &handler::infinite_loop,  // N/A
         &handler::non_maskable,
         &handler::hard_fault,
@@ -100,4 +111,5 @@ namespace soc::irq {
         &handler::tim1_compare,
         &handler::tim2
     };
+
 }
