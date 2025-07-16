@@ -7,6 +7,7 @@
 #include "system/riscv/csr_register/intsyscr.h"
 #include "user_src/system.h"
 #include "user_src/system_clock.h"
+#include "user_src/system_defines.h"
 #include "system/riscv/concepts.h"
 #include "peripheral/ch32v00x/rcc.h"
 #include "utils/literals/timer.h"
@@ -17,10 +18,10 @@
 extern "C" {
 
     // DATA section symbols
-    extern unsigned int __data_rom_start; // NOLINT(*-reserved-identifier)
-    extern unsigned int __data_rom_end;   // NOLINT(*-reserved-identifier)
-    extern unsigned int __data_ram_start; // NOLINT(*-reserved-identifier)
-    extern unsigned int __data_ram_end;   // NOLINT(*-reserved-identifier)
+    extern const unsigned int __data_rom_start; // NOLINT(*-reserved-identifier)
+    extern const unsigned int __data_rom_end;   // NOLINT(*-reserved-identifier)
+    extern const unsigned int __data_ram_start; // NOLINT(*-reserved-identifier)
+    extern const unsigned int __data_ram_end;   // NOLINT(*-reserved-identifier)
 
 
     inline
@@ -36,7 +37,7 @@ extern "C" {
             //const unsigned int* rom_end = &__data_rom_end;
             const unsigned int* data_ram_end = &__data_ram_end;
             const unsigned int* data_rom_ptr = &__data_rom_start;
-            unsigned int*       data_ram_ptr = &__data_ram_start;
+            auto                data_ram_ptr = const_cast<unsigned int*>(&__data_ram_start);
 
             // Copy data from ROM to RAM, word (4 bytes) at a time
             do {
@@ -47,8 +48,8 @@ extern "C" {
 
 
     // BSS section symbols
-    extern unsigned int __block_started_by_symbol;     // NOLINT(*-reserved-identifier)
-    extern unsigned int __block_started_by_symbol_end; // NOLINT(*-reserved-identifier)
+    extern const unsigned int __block_started_by_symbol;     // NOLINT(*-reserved-identifier)
+    extern const unsigned int __block_started_by_symbol_end; // NOLINT(*-reserved-identifier)
 
 
     inline
@@ -62,7 +63,7 @@ extern "C" {
         #ifndef WCH_STARTUP_SKIP_BSS_SECTION_ZEROIZING
             // Get the address locations from the linker script
             const unsigned int* zero_ram_end = &__block_started_by_symbol_end;
-            unsigned int*       zero_ram_ptr = &__block_started_by_symbol;
+            auto                zero_ram_ptr = const_cast<unsigned int*>(&__block_started_by_symbol);
 
             // Zero data in RAM, word (4 bytes) at a time
             do {
@@ -171,7 +172,7 @@ extern "C" {
 
     [[noreturn]] extern void main_user(void);
 
-    extern unsigned int __main_user;   // NOLINT(*-reserved-identifier)
+    extern const unsigned int __main_user;   // NOLINT(*-reserved-identifier)
 
 
     // https://gcc.gnu.org/onlinedocs/gcc-14.2.0/gcc/Optimize-Options.html
@@ -205,33 +206,47 @@ extern "C" {
             csr::intsyscr::Inesten_MRW_InteruptNesting::enable>();
 
         // Configure trap/interupt behaviour
-        constexpr auto mtvecValue = csr::mtvec::CalculateMtvecRawValue<
+#ifdef SYSTEM_WCH_IRQ_VECTORIZED
+        constexpr auto mtvec_value = csr::mtvec::CalculateMtvecRawValue<
             SYSTEM_WCH_VECTOR_TABLE_ADDRESS,
             csr::mtvec::Mode0_RW_VectorizationEnable::vectorizedInterupts,
             csr::mtvec::Mode1_RW_VectorizedBehaviour::absoluteJumpAddresses>();
+#else
+        constexpr auto mtvec_value = csr::mtvec::CalculateMtvecRawValue<
+            SYSTEM_WCH_VECTOR_TABLE_ADDRESS,
+            csr::mtvec::Mode0_RW_VectorizationEnable::singleUnifiedTrapHandler,
+            csr::mtvec::Mode1_RW_VectorizedBehaviour::executeInstructions>();
+#endif
 
-        csr::access_ct::writeUint32<csr::QingKeV2::mtvec, mtvecValue>();
+        csr::access_ct::writeUint32<csr::QingKeV2::mtvec, mtvec_value>();
 
         // System clock configuration
         reset_and_stabilize_clocks_to_good_known_state();
         trim_hsi_clock_calibration();
-        // configure_new_clocks();
-        // void (*main_ptr)() = &main_user;
+        configure_new_clocks();
 
 
-        // csr::access_ct::writeUint32<csr::QingKeV2::mepc, reinterpret_cast<std::uint32_t>(main_ptr)>();
 
         // Enter the end-user main function by setting up the RA
         // and just exit function instead calling it and deepening
         // the callstack
-        asm volatile (
-            "li t0, main_user\n"
-            "csrw mepc, t0\n"
-            "mret\n"
-        );
 
-        // main_user();
+        // auto address = static_cast<std::uint8_t>(__main_user);
+        // we do not know the value of __main_user yet, and it's not consexpr
+        // https://stackoverflow.com/questions/30208685/how-to-declare-constexpr-extern
+        // even if it's not runtime value but doing it the official way wouldn't work
+        // csr::access_ct::writeUint32<csr::QingKeV2::mepc, __main_user>();
+        // Nor:
+        // void (*main_ptr)() = &main_user;
+        // csr::access_ct::writeUint32<csr::QingKeV2::mepc, reinterpret_cast<std::uint32_t>(main_ptr)>();
 
+        // Setting up machine exception program counter to point to our main user function.
+        // Returning like from interupt/excerption, similar as jumping but this makes
+        // class stack to not show the system init functions and allows smaller SP usage
+        csr::access_ct::write_uint32_rt<csr::QingKeV2::mepc>(__main_user);
+        // csr::access_ct::writeUint32<csr::QingKeV2::mepc, 0x1c>();
+
+        __asm__ volatile("mret\n");
 
         // Optionally we could do extra safty that if main ever exits, we could then
         // halt the system permanently but use [[noreturn]] on main and make sure
