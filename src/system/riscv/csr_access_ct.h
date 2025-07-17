@@ -63,8 +63,8 @@ namespace riscv::csr::access_ct {
     inline
     constexpr auto
     __attribute__ ((always_inline))
-    clearSet() -> void {
-        clearAndSetUint32<
+    clear_set() -> void {
+        clear_and_set_uint32<
             Csr,
             soc::reg::combine::enums_to_uint32<ClearFields...>(),
             soc::reg::combine::enums_to_uint32<SetFields...>()>();
@@ -78,11 +78,11 @@ namespace riscv::csr::access_ct {
     inline
     constexpr auto
     __attribute__ ((always_inline))
-    setWithAutoClear() -> void {
+    set_with_auto_clear() -> void {
         constexpr std::uint32_t clear_value_uint32 = soc::reg::combine::field_masks_to_uint32<SetFields...>();
         constexpr std::uint32_t set_value_uint32   = (static_cast<std::uint32_t>(SetFields) | ...);
 
-        clearAndSetUint32<Csr, clear_value_uint32, set_value_uint32>();
+        clear_and_set_uint32<Csr, clear_value_uint32, set_value_uint32>();
     }
 
 
@@ -134,9 +134,9 @@ namespace riscv::csr::access_ct {
     inline
     constexpr auto
     __attribute__ ((always_inline))
-    setWithAutoClear() -> void {
+    set_with_auto_clear() -> void {
         constexpr auto parent_csr = riscv::csr::access_ct::getCsrFromField(SetWithClearFields...);
-        setWithAutoClear<parent_csr,  SetWithClearFields...>();
+        set_with_auto_clear<parent_csr,  SetWithClearFields...>();
     }
 
 
