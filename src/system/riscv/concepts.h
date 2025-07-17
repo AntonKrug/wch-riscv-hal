@@ -38,7 +38,7 @@ namespace riscv::concepts {
 
         template<auto CsrAddress>
         concept is_csr_writable_address = (
-                (CsrAddress & riscv::csr::maskReadWrite) != static_cast<std::uint16_t>(riscv::csr::ReadWrite::readOnly));
+                (CsrAddress & riscv::csr::mask_read_write) != static_cast<std::uint16_t>(riscv::csr::ReadWrite::read_only));
 
 
         template<auto CsrValue>

@@ -13,15 +13,15 @@ namespace riscv::csr {
     // 9:8   bits => 00=unpriviledged 01=supervisor 10=hypervisor 11=machine
 
 
-    constexpr std::uint16_t maskReadWrite  = 0b11'00'0000'0000U;
-    constexpr std::uint16_t maskPriviledge = 0b00'11'0000'0000U;
+    constexpr std::uint16_t mask_read_write  = 0b11'00'0000'0000U;
+    constexpr std::uint16_t mask_priviledge  = 0b00'11'0000'0000U;
 
 
     enum class ReadWrite: std::uint16_t {
-        readWrite1 = 0b00'00'0000'0000U,
-        readWrite2 = 0b01'00'0000'0000U,
-        readWrite3 = 0b10'00'0000'0000U,
-        readOnly   = 0b11'00'0000'0000U
+        read_write1 = 0b00'00'0000'0000U,
+        read_write2 = 0b01'00'0000'0000U,
+        read_write3 = 0b10'00'0000'0000U,
+        read_only   = 0b11'00'0000'0000U
     };
 
 

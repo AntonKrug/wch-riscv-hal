@@ -208,7 +208,7 @@ extern "C" {
 
         // Configure trap/interupt behaviour
 #ifdef SYSTEM_WCH_IRQ_VECTORIZED
-        constexpr auto mtvec_value = csr::mtvec::CalculateMtvecRawValue<
+        constexpr auto mtvec_value = csr::mtvec::calculate_mtvec_raw_value<
             SYSTEM_WCH_VECTOR_TABLE_ADDRESS,
             csr::mtvec::Mode0_RW_VectorizationEnable::vectorizedInterupts,
             csr::mtvec::Mode1_RW_VectorizedBehaviour::absoluteJumpAddresses>();

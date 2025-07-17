@@ -98,7 +98,7 @@ namespace riscv::csr::access_ct {
     constexpr auto
     __attribute__ ((always_inline))
     clear() -> void {
-        constexpr auto parent_csr = riscv::csr::access_ct::getCsrFromField(SetFields...);
+        constexpr auto parent_csr = riscv::csr::access_ct::get_csr_from_field(SetFields...);
         clear<parent_csr, SetFields...>();
     }
 
@@ -109,7 +109,7 @@ namespace riscv::csr::access_ct {
     constexpr auto
     __attribute__ ((always_inline))
     set() -> void {
-        constexpr auto parent_csr = riscv::csr::access_ct::getCsrFromField(SetFields...);
+        constexpr auto parent_csr = riscv::csr::access_ct::get_csr_from_field(SetFields...);
         set<parent_csr, SetFields...>();
     }
 
@@ -120,7 +120,7 @@ namespace riscv::csr::access_ct {
     constexpr auto
     __attribute__ ((always_inline))
     write() -> void {
-        constexpr auto parent_csr = riscv::csr::access_ct::getCsrFromField(WriteFields...);
+        constexpr auto parent_csr = riscv::csr::access_ct::get_csr_from_field(WriteFields...);
         write<parent_csr, WriteFields...>();
     }
 
@@ -135,7 +135,7 @@ namespace riscv::csr::access_ct {
     constexpr auto
     __attribute__ ((always_inline))
     set_with_auto_clear() -> void {
-        constexpr auto parent_csr = riscv::csr::access_ct::getCsrFromField(SetWithClearFields...);
+        constexpr auto parent_csr = riscv::csr::access_ct::get_csr_from_field(SetWithClearFields...);
         set_with_auto_clear<parent_csr,  SetWithClearFields...>();
     }
 

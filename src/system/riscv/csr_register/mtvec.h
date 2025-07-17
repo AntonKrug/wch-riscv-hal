@@ -24,7 +24,7 @@ namespace riscv::csr::mtvec {
     };
 
     enum class Mode1_RW_VectorizedBehaviour: std::uint32_t {
-        fieldBitMask          = 0b1U << 1,     // not holding any settings or value, it's a bitmask for this specific field
+        fieldBitMask          = 0b1U << 1U,     // not holding any settings or value, it's a bitmask for this specific field
         fieldAccess           = soc::reg::field_access_right::ReadWrite,
 
         executeInstructions   = 0U,            // use table for instructions, small relative jump instructions fit into, other instructions can be used too
@@ -44,7 +44,7 @@ namespace riscv::csr::mtvec {
         std::is_same_v<Field, BaseAddr_RW>;
 
     template<auto Address>
-    constexpr auto CheckVectorBaseAddressAlignment() -> std::uint32_t {
+    constexpr auto check_vector_base_address_alignment() -> std::uint32_t {
         static_assert(Address >= 0,         "Address must be positive number.");
         static_assert(Address % 0x400 == 0, "Address must be aligned to 1K boundary (0x400).");
         static_assert(
@@ -55,9 +55,9 @@ namespace riscv::csr::mtvec {
     }
 
     template<std::uint32_t IrqVector, Mode0_RW_VectorizationEnable Mode0, Mode1_RW_VectorizedBehaviour Mode1>
-    constexpr auto CalculateMtvecRawValue() -> std::uint32_t {
+    constexpr auto calculate_mtvec_raw_value() -> std::uint32_t {
         constexpr std::uint32_t irq_vector_table_address_sanitized =
-            CheckVectorBaseAddressAlignment<IrqVector>();
+            check_vector_base_address_alignment<IrqVector>();
 
         constexpr auto mtvec_value =
             soc::reg::combine::enums_to_uint32<Mode0, Mode1>() + irq_vector_table_address_sanitized;
