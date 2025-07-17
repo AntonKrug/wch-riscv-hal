@@ -167,6 +167,7 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/system/register/util.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/concepts.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access_ct.h
+        ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access_primitives.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_access_primitives_ct.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_field_to_csr.h
         ${CMAKE_SOURCE_DIR}/src/system/riscv/csr_register/intsyscr.h
