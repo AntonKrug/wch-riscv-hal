@@ -73,11 +73,11 @@ add_custom_command(
         # CH32V303xCxx, CH32V307xCxx, CH32V317xCxx, CH32V203RBT6 and CH32V208xBxx .
         # With this approach you can swap between all the SoCs in WCH family while
         # having to maintain just single generic data-driven linker script template.
-        DEPENDS user_src/system.h
+        DEPENDS user_src/platform_configuration/system.h
         COMMENT "Pre-processing the linker script"
 )
 
-add_custom_target(pre_processed_linker_script DEPENDS ${LINKER_SCRIPT_FINAL} user_src/system.h)
+add_custom_target(pre_processed_linker_script DEPENDS ${LINKER_SCRIPT_FINAL} user_src/platform_configuration/system.h)
 add_dependencies(${BINARY_FIRST_PASS} pre_processed_linker_script)
 target_link_options(${BINARY_FIRST_PASS} PRIVATE -T ${LINKER_SCRIPT_FINAL})
 target_compile_options(${BINARY_FIRST_PASS} PRIVATE -Wno-packed-bitfield-compat)

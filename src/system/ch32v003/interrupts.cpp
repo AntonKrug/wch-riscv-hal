@@ -3,7 +3,7 @@
 //
 
 #include <array>
-#include "user_src/system_defines.h"
+#include "user_src/platform_configuration/system_defines.h"
 
 namespace soc::irq {
 

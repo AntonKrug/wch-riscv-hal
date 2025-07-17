@@ -178,10 +178,10 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/system/soc_types.h
         ${CMAKE_SOURCE_DIR}/src/system/startup/generated_startup_configuration.h
         ${CMAKE_SOURCE_DIR}/src/user_src/firmware_build_info.h
-        ${CMAKE_SOURCE_DIR}/src/user_src/system.h
-        ${CMAKE_SOURCE_DIR}/src/user_src/system_clock.h
-        ${CMAKE_SOURCE_DIR}/src/user_src/system_defines.h
-        ${CMAKE_SOURCE_DIR}/src/user_src/system_soc.h
+        ${CMAKE_SOURCE_DIR}/src/user_src/platform_configuration/system.h
+        ${CMAKE_SOURCE_DIR}/src/user_src/platform_configuration/system_clock.h
+        ${CMAKE_SOURCE_DIR}/src/user_src/platform_configuration/system_defines.h
+        ${CMAKE_SOURCE_DIR}/src/user_src/platform_configuration/system_soc.h
         ${CMAKE_SOURCE_DIR}/src/utils/delay.h
         ${CMAKE_SOURCE_DIR}/src/utils/firmware_build_info.h
         ${CMAKE_SOURCE_DIR}/src/utils/literals/all.h

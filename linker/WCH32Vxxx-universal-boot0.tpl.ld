@@ -35,7 +35,8 @@
 /* DO NOT DIRECTLY EDIT THIS FILE, but edit the included header file,
    it contains comments how to tweak this linker script too */
 
-#include "user_src/system.h" /* This for the c pre-processor, open user_src/system.h file to see details */
+/* This for the c pre-processor, open/edit user_src/platform_configuration/system.h file to see details */
+#include "user_src/platform_configuration/system.h"
 
 
 OUTPUT_ARCH("riscv")
