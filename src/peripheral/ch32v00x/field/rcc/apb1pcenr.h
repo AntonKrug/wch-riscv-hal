@@ -17,7 +17,7 @@ namespace peripheral::rcc {
         constexpr static std::uint32_t reg_mem_offset = 0x1cU;
 
         enum class TIM2EN_RW_Timer2ClockEnable: std::uint32_t {
-            fieldBitMask = 0b1U << 0, // not holding any settings or value, it's a bitmask for this specific field
+            fieldBitMask = 0b1U << 0U, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = soc::reg::field_access_right::ReadWrite,
 
             noClock      = 0U,          // Clock signal is NOT feed to this peripheral
@@ -25,7 +25,7 @@ namespace peripheral::rcc {
         };
 
         enum class WWDGEN_RW_WindowWatchdogClockEnable: std::uint32_t {
-            fieldBitMask = 0b1U << 11, // not holding any settings or value, it's a bitmask for this specific field
+            fieldBitMask = 0b1U << 11U, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = soc::reg::field_access_right::ReadWrite,
 
             noClock      = 0U,          // Clock signal is NOT feed to this peripheral
@@ -33,7 +33,7 @@ namespace peripheral::rcc {
         };
 
         enum class I2C1EN_RW_InterIntegratedCircuitClockEnable: std::uint32_t {
-            fieldBitMask = 0b1U << 21, // not holding any settings or value, it's a bitmask for this specific field
+            fieldBitMask = 0b1U << 21U, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = soc::reg::field_access_right::ReadWrite,
 
             noClock      = 0U,          // Clock signal is NOT feed to this peripheral
@@ -41,7 +41,7 @@ namespace peripheral::rcc {
         };
 
         enum class PWREN_RW_PowerInterfaceModuleClockEnable: std::uint32_t {
-            fieldBitMask = 0b1U << 28, // not holding any settings or value, it's a bitmask for this specific field
+            fieldBitMask = 0b1U << 28U, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = soc::reg::field_access_right::ReadWrite,
 
             noClock      = 0U,          // Clock signal is NOT feed to this peripheral

@@ -157,7 +157,7 @@ namespace peripheral::gpio{
 
 
     template<BaseAddress TplBaseAddress>
-    WCH_OPTIMIZE_GPIO constexpr auto Port<TplBaseAddress>::get_pin(const std::array<std::uint8_t, 8> &pins) -> Pins {
+    WCH_OPTIMIZE_GPIO constexpr auto Port<TplBaseAddress>::get_pin(const std::array<std::uint8_t, 8U> &pins) -> Pins {
         return Pins{base_address, pins};
     }
 
@@ -171,7 +171,7 @@ namespace peripheral::gpio{
     template<SequenceEntity... TplEntities>
     template<Pins TplPins>
     WCH_OPTIMIZE_GPIO constexpr auto Sequence<TplEntities...>::on() const {
-        constexpr SequenceEntity newEntity{TplPins.port_base_address, TplPins.pin_numbers, ActuationType::set, 1};
+        constexpr SequenceEntity newEntity{TplPins.port_base_address, TplPins.pin_numbers, ActuationType::set, 1U};
         constexpr Sequence<newEntity, TplEntities ...> ans;
         return ans;
     }
@@ -180,7 +180,7 @@ namespace peripheral::gpio{
     template<SequenceEntity... TplEntities>
     template<Pins TplPins> // TODO support variadic
     WCH_OPTIMIZE_GPIO constexpr auto Sequence<TplEntities...>::off() const {
-        constexpr SequenceEntity newEntity{TplPins.port_base_address, TplPins.pin_numbers, ActuationType::set, 0};
+        constexpr SequenceEntity newEntity{TplPins.port_base_address, TplPins.pin_numbers, ActuationType::set, 0U};
         constexpr Sequence<newEntity, TplEntities ...> ans;
         return ans;
     }
@@ -204,7 +204,7 @@ namespace peripheral::gpio{
     WCH_OPTIMIZE_GPIO constexpr int Sequence<TplEntities...>::executeExact() const {
         int sum = 0;
         for (auto action : actuations) {
-            sum += action.pinNumbers[0];
+            sum += action.pinNumbers[0U];
         }
 
         return sum;

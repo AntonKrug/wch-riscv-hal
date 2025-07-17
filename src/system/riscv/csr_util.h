@@ -12,7 +12,7 @@ namespace riscv::csr {
 
     template<auto Csr>
     requires riscv::concepts::is_qing_ke_csr_enum<Csr>
-    constexpr auto toAddress() -> std::uint16_t {
+    constexpr auto to_address() -> std::uint16_t {
         return static_cast<std::uint16_t>(Csr);
     }
 

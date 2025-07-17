@@ -26,7 +26,7 @@ namespace peripheral::afio {
         };
 
         enum class I2C1_RM_RW_InterIntegratedCircuit1Remapping: std::uint32_t {
-            fieldBitMask   = 0b1U << 1, // not holding any settings or value, it's a bitmask for this specific field
+            fieldBitMask   = 0b1U << 1U, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess    = soc::reg::field_access_right::ReadWrite,
 
             defaultMap     = 0U,           // SCL/PB6 SD/PB7
@@ -34,7 +34,7 @@ namespace peripheral::afio {
         };
 
         enum class USART1_RM_RW_UniversalSynchronousAsynchronousReceiverTransmitter1Remapping: std::uint32_t {
-            fieldBitMask   = 0b1U << 2, // not holding any settings or value, it's a bitmask for this specific field
+            fieldBitMask   = 0b1U << 2U, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess    = soc::reg::field_access_right::ReadWrite,
 
             defaultMap     = 0U,           // TX/PA9 RX/PA10
@@ -42,7 +42,7 @@ namespace peripheral::afio {
         };
 
         enum class TIM1_RM_RW_Timmer1Remapping: std::uint32_t {
-            fieldBitMask    = 0b11U << 6, // not holding any settings or value, it's a bitmask for this specific field
+            fieldBitMask    = 0b11U << 6U, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess     = soc::reg::field_access_right::ReadWrite,
 
             defaultMap      = 0b00U, // ETR/PC5 CH1/PD2 CH2/PA1 CH3/PC3 CH4/PC4 BKIN/PC2 CH1N/PD0 CH2N/PA2 CH3N/PD1

@@ -28,7 +28,7 @@ namespace peripheral::rcc {
         };
 
         enum class HSIRDY_RO_InternalHighSpeedClockReady: std::uint32_t {
-            fieldBitMask   = 0b1U << 1,    // not holding any settings or value, it's a bitmask for this specific field
+            fieldBitMask   = 0b1U << 1U,    // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess    = soc::reg::field_access_right::ReadOnly,
 
             notReady       = 0U,           // HSI not ready/stable yet, wait for a bit longer
@@ -70,7 +70,7 @@ namespace peripheral::rcc {
             // HSITRIM=30 coresponds to  840 kHz
             // HSITRIM=31 coresponds to  900 kHz
 
-            fieldBitMask = 0b11111U << 3, // not holding any settings or value, it's a bitmask for this specific field
+            fieldBitMask = 0b11111U << 3U, // not holding any settings or value, it's a bitmask for this specific field
             fieldAccess  = soc::reg::field_access_right::ReadWrite,
         };
 

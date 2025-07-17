@@ -148,8 +148,8 @@ extern "C" {
         using namespace peripheral::rcc;
         using namespace soc::reg;
 
-        constexpr auto rawValue = Ctlr::produceRawTrimValueCt<user_config::hsi_trim>();
-        setRegFieldsWithRawValueSipCt<rawValue, Ctlr::HSITRIM_RW_InternalHighSpeedClockTrim>();
+        constexpr auto raw_value = Ctlr::produceRawTrimValueCt<user_config::hsi_trim>();
+        setRegFieldsWithRawValueSipCt<raw_value, Ctlr::HSITRIM_RW_InternalHighSpeedClockTrim>();
     }
 
     inline
@@ -244,6 +244,12 @@ extern "C" {
         // Setting up machine exception program counter to point to our main user function.
         // Returning like from interupt/excerption, similar as jumping but this makes
         // class stack to not show the system init functions and allows smaller SP usage
+        // If the __main_user 2046 bytes away from the begining of the memory (0), then
+        // it can be optimized and the __main_user address loaded directly with a
+        // LW instruction and 12-bit imediate operand (-2048 to 2047) and save
+        // one opcode. If the __main_user would be max 28 then it would fit
+        // into 5-bit operand and the imedetiate variant of CSR write, saving
+        // yet another instruction.
         csr::access::write_uint32<csr::QingKeV2::mepc>(__main_user);
         // csr::access_ct::writeUint32<csr::QingKeV2::mepc, 0x1c>();
 
