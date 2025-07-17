@@ -14,8 +14,6 @@
 //https://msyksphinz-self.github.io/riscv-isadoc/html/rvi.html#csrrwi
 //https://uim.fei.stuba.sk/wp-content/uploads/2018/02/riscv-spec-2022.pdf
 
-#pragma once
-
 #include <cstdint>
 
 #include "concepts.h"
@@ -28,7 +26,7 @@ namespace riscv::csr::access_ct {
     inline
     auto
     __attribute__ ((always_inline))
-    readUint32() -> std::uint32_t {
+    read_uint32() -> std::uint32_t {
         std::uint32_t result_uin32_t;
 
         __asm__ volatile(
@@ -46,7 +44,7 @@ namespace riscv::csr::access_ct {
     inline
     constexpr auto
     __attribute__ ((always_inline))
-    clearUint32() -> void {
+    clear_uint32() -> void {
         if constexpr (ClearValueUint32 == 0U) {
             // nothing to clear, nothing has to be done here
         } else if constexpr (ClearValueUint32 == 0xffffffffU) {
@@ -84,7 +82,7 @@ namespace riscv::csr::access_ct {
     inline
     constexpr auto
     __attribute__ ((always_inline))
-    setUint32() -> void {
+    set_uint32() -> void {
         if constexpr (SetValueUint32 == 0U) {
             // nothing to set, nothing has to be done here
         } else if constexpr (SetValueUint32 < (1U << 5U)) {
@@ -114,7 +112,7 @@ namespace riscv::csr::access_ct {
     inline
     constexpr auto
     __attribute__ ((always_inline))
-    writeUint32() -> void {
+    write_uint32() -> void {
         if constexpr (ValueUint32 == 0U) {
             // if writtin zero we can use r0 aka x0 register
             __asm__ volatile(
@@ -141,22 +139,6 @@ namespace riscv::csr::access_ct {
         }
     }
 
-    // TODO: ************ move to its own file, not CT variant - shouldn't say RT as it might still be CT
-    template<auto Csr>
-        requires riscv::concepts::is_csr_enum_valid<Csr>
-    inline
-    constexpr auto
-    __attribute__ ((always_inline))
-    write_uint32_rt(const std::uint32_t value_uint32) -> void {
-        __asm__ volatile(
-            "csrw %0, %1" // value from a register
-            : // no output
-            : "i"(static_cast<std::uint16_t>(Csr)),
-            "r"(value_uint32)
-        );
-    }
-
-
     // TODO: at higher level detect if all the writable fields were used and inject
     // the isClearFull to produce write instead
     template<auto Csr, std::uint32_t ClearValueUint32, std::uint32_t SetValueUint32>
@@ -164,7 +146,7 @@ namespace riscv::csr::access_ct {
     inline
     constexpr auto
     __attribute__ ((always_inline))
-    clearAndSetUint32() -> void {
+    clear_and_set_uint32() -> void {
         // ReSharper disable CppTooWideScopeInitStatement
         constexpr bool is_clear_small = ClearValueUint32 < (1U << 5U);
         constexpr bool is_clear_zero  = ClearValueUint32 == 0U;
@@ -184,19 +166,19 @@ namespace riscv::csr::access_ct {
         if constexpr (is_clear_zero || is_clear_set_same) {
             // nothing to clear, or setting the same value after clearning it:
             // then execute just the set
-            setUint32<Csr, SetValueUint32>();
+            set_uint32<Csr, SetValueUint32>();
             return;
         }
 
         if constexpr (is_set_zero) {
             // nothing to set, execute just the clear part.
-            clearUint32<Csr, ClearValueUint32>();
+            clear_uint32<Csr, ClearValueUint32>();
             return;
         }
 
         if constexpr (is_clear_full) {
             // no need to clear everything just to set it later, we can use write instead
-            writeUint32<Csr, SetValueUint32>();
+            write_uint32<Csr, SetValueUint32>();
             return;
         }
 

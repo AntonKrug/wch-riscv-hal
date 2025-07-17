@@ -30,7 +30,7 @@ namespace riscv::csr::access_ct {
     constexpr auto
     __attribute__ ((always_inline))
     clear() -> void {
-        clearUint32<Csr, soc::reg::combine::enums_to_uint32<ClearFields...>()>();
+        clear_uint32<Csr, soc::reg::combine::enums_to_uint32<ClearFields...>()>();
     }
 
 
@@ -41,7 +41,7 @@ namespace riscv::csr::access_ct {
     constexpr auto
     __attribute__ ((always_inline))
     set() -> void {
-        setUint32<Csr, soc::reg::combine::enums_to_uint32<SetFields...>()>();
+        set_uint32<Csr, soc::reg::combine::enums_to_uint32<SetFields...>()>();
     }
 
 
@@ -52,7 +52,7 @@ namespace riscv::csr::access_ct {
     constexpr auto
     __attribute__ ((always_inline))
     write() -> void {
-        writeUint32<Csr, soc::reg::combine::enums_to_uint32<WriteFields...>()>();
+        write_uint32<Csr, soc::reg::combine::enums_to_uint32<WriteFields...>()>();
     }
 
 

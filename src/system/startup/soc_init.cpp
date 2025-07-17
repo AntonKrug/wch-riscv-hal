@@ -3,6 +3,7 @@
 //
 
 #include "generated_startup_configuration.h"
+#include "system/riscv/csr_access_primitives.h"
 #include "system/riscv/csr_access_ct.h"
 #include "system/riscv/csr_register/intsyscr.h"
 #include "user_src/system.h"
@@ -218,7 +219,7 @@ extern "C" {
             csr::mtvec::Mode1_RW_VectorizedBehaviour::executeInstructions>();
 #endif
 
-        csr::access_ct::writeUint32<csr::QingKeV2::mtvec, mtvec_value>();
+        csr::access_ct::write_uint32<csr::QingKeV2::mtvec, mtvec_value>();
 
         // System clock configuration
         reset_and_stabilize_clocks_to_good_known_state();
@@ -243,7 +244,7 @@ extern "C" {
         // Setting up machine exception program counter to point to our main user function.
         // Returning like from interupt/excerption, similar as jumping but this makes
         // class stack to not show the system init functions and allows smaller SP usage
-        csr::access_ct::write_uint32_rt<csr::QingKeV2::mepc>(__main_user);
+        csr::access::write_uint32<csr::QingKeV2::mepc>(__main_user);
         // csr::access_ct::writeUint32<csr::QingKeV2::mepc, 0x1c>();
 
         __asm__ volatile("mret\n");
