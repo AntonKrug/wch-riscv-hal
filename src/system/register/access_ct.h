@@ -14,6 +14,10 @@
 
 constexpr std::uint32_t full32_bit_reg = 0xffffffffU;
 
+/* Sip - Single instance peripheral -> ones with fixed address
+ * Mip - Multi instance peripheral -> ones which have multiple different instances of the same peripheral and the
+ *                                    instance base address needs to be considered */
+
 namespace soc::reg {
 
     #pragma region isReg
@@ -183,6 +187,8 @@ namespace soc::reg {
     #pragma endregion
 
     #pragma region ClearReg
+
+    // TODO fields vs field
 
     // TODO: requirements/concepts for arguments
     template<std::uint32_t BaseAddress, typename RegFieldTypeHead, typename... RegFieldTypeTails>
