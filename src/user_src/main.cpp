@@ -79,11 +79,11 @@ main_user(void) {
     //     .portA = Rcc::ModuleClock::on,
     // };
 
-    constexpr auto swio  = soc::Gpio.D.get_pin<1U>();
+    // constexpr auto swio  = soc::Gpio.D.get_pin<1U>();
     // swio.sequence().executeExact();
 
 
-    swio.mode_output_ct<gpio::PinOutputSlewRateCt::normal, false, gpio::PinOutputDrive::push_pull>();
+    // swio.mode_output_ct<gpio::PinOutputSlewRateCt::normal, false, gpio::PinOutputDrive::push_pull>();
 
     // GPIO experiments
     // constexpr auto tdi  = soc::Gpio.A.get_pin(0);
