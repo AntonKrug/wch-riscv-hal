@@ -37,6 +37,7 @@ namespace soc::irq::handler {
 // [[noreturn]] and make it infinite loop or do on system level?
 // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=80515
 // NOLINTBEGIN(readability-static-accessed-through-instance)
+// TODO: idea for names: user_main, firmware_main, main_user_application
 extern "C" [[noreturn]] void __attribute__((retain, used, section(".text.main_user")))
 main_user(void) {
     char a[3] ="hi";
@@ -78,15 +79,20 @@ main_user(void) {
     //     .portA = Rcc::ModuleClock::on,
     // };
 
+    constexpr auto swio  = soc::Gpio.D.get_pin<1U>();
+    // swio.sequence().executeExact();
+
+
+    swio.mode_output_ct<gpio::PinOutputSlewRateCt::normal, false, gpio::PinOutputDrive::push_pull>();
 
     // GPIO experiments
-    // constexpr auto tdi  = Soc::Gpio.A.GetPin(0);
+    // constexpr auto tdi  = soc::Gpio.A.get_pin(0);
     // constexpr auto tms  = Soc::Gpio.A.GetPin(1);
     // constexpr auto tdo  = Soc::Gpio.A.GetPin(2);
     // constexpr auto data = Soc::Gpio.C.GetPin({ 2, 4, 5, 7 });
     // // data = argc;
     //
-    // // auto var = tdi.mode<Driver::Gpio::PinMode::outputPushPull>().on<tdi>().commitExact();
+    // auto var = tdi.mode<peripheral::gpio::PinMode::inputPullUpOrDown>().on<tdi>().commitExact();
     // Gpio::PinsSet<tdi, tdo, tms>() = 11;
     //
     // constexpr Gpio::Sequence<> changes;

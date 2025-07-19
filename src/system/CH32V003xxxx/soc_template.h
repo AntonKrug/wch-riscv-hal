@@ -62,44 +62,44 @@ namespace soc {
         static constexpr types::UartInstance<
             soc::peripheral_addreses::usart1,
             0b00U,             // Pin mapping variant
-            Gpio.D.get_pin(4U), // D4 = Ck
-            Gpio.D.get_pin(5U), // D5 = Tx
-            Gpio.D.get_pin(6U), // D6 = Rx
-            Gpio.D.get_pin(3U), // D3 = Cts
-            Gpio.C.get_pin(2U)> // C2 = Rts
+            Gpio.D.get_pin<4U>(), // D4 = Ck
+            Gpio.D.get_pin<5U>(), // D5 = Tx
+            Gpio.D.get_pin<6U>(), // D6 = Rx
+            Gpio.D.get_pin<3U>(), // D3 = Cts
+            Gpio.C.get_pin<2U>()> // C2 = Rts
         channel1_mapping0 = {};
 
 
         static constexpr types::UartInstance<
             soc::peripheral_addreses::usart1,
             0b01U,             // Pin mapping variant
-            Gpio.D.get_pin(7U), // D7 = Ck
-            Gpio.D.get_pin(0U), // D0 = Tx
-            Gpio.D.get_pin(1U), // D1 = Rx
-            Gpio.C.get_pin(3U), // C3 = Cts
-            Gpio.C.get_pin(2U)> // C2 = Rts
+            Gpio.D.get_pin<7U>(), // D7 = Ck
+            Gpio.D.get_pin<0U>(), // D0 = Tx
+            Gpio.D.get_pin<1U>(), // D1 = Rx
+            Gpio.C.get_pin<3U>(), // C3 = Cts
+            Gpio.C.get_pin<2U>()> // C2 = Rts
         channel1_mapping1 = {};
 
 
         static constexpr types::UartInstance<
             soc::peripheral_addreses::usart1,
             0b01U,             // Pin mapping variant
-            Gpio.D.get_pin(7U), // D7 = Ck
-            Gpio.D.get_pin(6U), // D6 = Tx
-            Gpio.D.get_pin(5U), // D5 = Rx
-            Gpio.C.get_pin(6U), // C6 = Cts
-            Gpio.C.get_pin(7U)> // C7 = Rts
+            Gpio.D.get_pin<7U>(), // D7 = Ck
+            Gpio.D.get_pin<6U>(), // D6 = Tx
+            Gpio.D.get_pin<5U>(), // D5 = Rx
+            Gpio.C.get_pin<6U>(), // C6 = Cts
+            Gpio.C.get_pin<7U>()> // C7 = Rts
         channel1_mapping2 = {};
 
 
         static constexpr types::UartInstance<
             soc::peripheral_addreses::usart1,
             0b01U,             // Pin mapping variant
-            Gpio.C.get_pin(5U), // C5 = Ck
-            Gpio.C.get_pin(0U), // C0 = Tx
-            Gpio.C.get_pin(1U), // C1 = Rx
-            Gpio.C.get_pin(6U), // C6 = Cts
-            Gpio.C.get_pin(7U)> // C7 = Rts
+            Gpio.C.get_pin<5U>(), // C5 = Ck
+            Gpio.C.get_pin<0U>(), // C0 = Tx
+            Gpio.C.get_pin<1U>(), // C1 = Rx
+            Gpio.C.get_pin<6U>(), // C6 = Cts
+            Gpio.C.get_pin<7U>()> // C7 = Rts
         channel1_mapping3 = {};
 
 

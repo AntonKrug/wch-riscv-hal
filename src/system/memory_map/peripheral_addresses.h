@@ -10,11 +10,11 @@ namespace soc::peripheral_addreses {
 
 
     // General Purpose Input/Output
-    constexpr static auto gpio_a  = peripheral::gpio::MakeBaseAddress<0x4001'0800>();;
-    constexpr static auto gpio_b  = peripheral::gpio::MakeBaseAddress<0x4001'0C00>();;
-    constexpr static auto gpio_c  = peripheral::gpio::MakeBaseAddress<0x4001'1000>();;
-    constexpr static auto gpio_d  = peripheral::gpio::MakeBaseAddress<0x4001'1400>();
-    constexpr static auto gpio_e  = peripheral::gpio::MakeBaseAddress<0x4001'1800>();;
+    constexpr static auto gpio_a  = peripheral::gpio::make_base_address<0x4001'0800>();;
+    constexpr static auto gpio_b  = peripheral::gpio::make_base_address<0x4001'0C00>();;
+    constexpr static auto gpio_c  = peripheral::gpio::make_base_address<0x4001'1000>();;
+    constexpr static auto gpio_d  = peripheral::gpio::make_base_address<0x4001'1400>();
+    constexpr static auto gpio_e  = peripheral::gpio::make_base_address<0x4001'1800>();;
 
 
     // Universal Synchronous Asynchronous Receiver Transmitter
