@@ -82,7 +82,11 @@ set(TARGET_ARCH_AND_ABI "-march=rv32ic -mabi=ilp32")
 #set(CMAKE_CXX_FLAGS "-march=rv32i -mabi=ilp32 -v -msave-restore -fno-common -fdata-sections -ffunction-sections -fsigned-char -fmessage-length=0 -fno-exceptions -fno-threadsafe-statics -fno-use-cxa-atexit -fno-rtti")
 #_GLIBCXX_USE_CXX11_ABI=1 or _GLIBCXX_USE_CXX11_ABI=2
 
-set(MY_COMPILER_FLAGS_COMMON "-Wunused -Wuninitialized -msave-restore -msmall-data-limit=0 -fmax-errors=10 -fno-common -fdata-sections -ffunction-sections -fsigned-char -fmessage-length=0")
+# -msave-restore vs  -mno-save-restore
+# https://gcc.gnu.org/onlinedocs/gcc/RISC-V-Options.html
+#Do or don’t use smaller but slower prologue and epilogue code that uses library function calls. The default is to use fast inline prologues and epilogues.
+#set(MY_COMPILER_FLAGS_COMMON "-Wunused -Wuninitialized -msave-restore -msmall-data-limit=0 -fmax-errors=10 -fno-common -fdata-sections -ffunction-sections -fsigned-char -fmessage-length=0")
+set(MY_COMPILER_FLAGS_COMMON "-Wunused -Wuninitialized -mno-save-restore -msmall-data-limit=0 -fmax-errors=10 -fno-common -fdata-sections -ffunction-sections -fsigned-char -fmessage-length=0")
 set(MY_COMPILER_FLAGS_CPP    "-fno-exceptions -fno-threadsafe-statics -fno-use-cxa-atexit -fno-rtti -Wabi-tag -D_GLIBCXX_USE_CXX11_ABI=2")
 set(MY_LINKER_FLAGS          "-nostartfiles -flto -mrelax -nostdlib -fno-builtin-memcpy -Xlinker --gc-sections --specs=nano.specs --specs=nosys.specs")
 
