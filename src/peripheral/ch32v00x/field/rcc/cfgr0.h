@@ -76,7 +76,7 @@ namespace peripheral::rcc {
         }
 
         template<std::uint32_t SysClock, std::uint32_t DesiredHbClock>
-        constexpr static auto getHbPrescaler() -> std::uint8_t {
+        constexpr static auto get_hb_prescaler() -> std::uint8_t {
             static_assert(
                 DesiredHbClock <= SysClock,
                 "DesiredHbClock must be smaller or the same as SysClock");
@@ -98,20 +98,20 @@ namespace peripheral::rcc {
                 // poor's man log2
                 constexpr std::uint8_t count = log2_int(ratioWhole);
                 static_assert( (1U << count) == ratioWhole, "The SysClock/DesiredHbClock needs to be either smaller ratio, or a power of 2");
-                return count + 7U;
+                return static_cast<std::uint32_t>(count) + 7U;
             }
         }
 
         template<std::uint32_t SysClock, std::uint32_t DesiredHbClock>
-        constexpr static auto getHbPrescalerWithOffset() -> std::uint32_t {
+        constexpr static auto get_hb_prescaler_with_offset() -> std::uint32_t {
             return soc::reg::rawValueOffsetToEnumsOffsetCt<
-                getHbPrescaler<SysClock, DesiredHbClock>(),
+                get_hb_prescaler<SysClock, DesiredHbClock>(),
                 HPRE_RW_HbClockPrescaler>();
         }
 
         template<std::uint32_t SysClock, std::uint32_t DesiredHbClock>
-        constexpr static auto getHbPrescalerEnum() -> HPRE_RW_HbClockPrescaler {
-            return static_cast<HPRE_RW_HbClockPrescaler>(getHbPrescalerWithOffset<SysClock, DesiredHbClock>());
+        constexpr static auto get_hb_prescaler_enum() -> HPRE_RW_HbClockPrescaler {
+            return static_cast<HPRE_RW_HbClockPrescaler>(get_hb_prescaler_with_offset<SysClock, DesiredHbClock>());
         }
 
         enum class ADCPRE_RW_AnalogDigitalConverterClockPrescaler: std::uint32_t {

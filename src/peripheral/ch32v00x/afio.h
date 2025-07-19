@@ -13,7 +13,7 @@ namespace peripheral::afio {
     constexpr std::uint32_t base_addr = 0x4001'0000U;
 
     namespace concepts {
-        template<typename RegField> concept IsPcfr1Field = soc::reg::IsSameAsOneFieldFromTuple<RegField, decltype(Pcfr1::reg_fields)>();
+        template<typename RegField> concept IsPcfr1Field = soc::reg::is_same_as_one_field_from_tuple<RegField, decltype(Pcfr1::reg_fields)>();
 
         template<typename Reg>
         concept IsAnyRegField =
