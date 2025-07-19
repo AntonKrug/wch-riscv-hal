@@ -44,6 +44,18 @@ namespace soc::reg::access {
         *(reinterpret_cast<volatile std::uint32_t *>(TplAddress))=value;
     }
 
+    template<std::uint32_t TplAddress, std::uint32_t TplCtValue, std::uint32_t TplMask>
+    inline auto
+    __attribute__ ((
+        always_inline,
+        optimize("-Os"),
+    ))
+    writeMaskedCtAddrVal() -> void {
+        const auto orig = readCtAddr<TplAddress>();
+        constexpr std::uint32_t to_keep = 0xffffffffU ^ TplMask;
+        writeCtAddr<TplAddress>((orig & to_keep) | TplCtValue);
+    }
+
     #pragma endregion
 
     #pragma region Access primitives when nothing compile-time known
