@@ -6,9 +6,11 @@
 
 #include <array>
 #include <cstdint>
+#include <tuple>
 
 #include "usart.h"
 #include "system/memory_map/concepts.h"
+#include "system/register/access_primitives.h"
 
 #define WCH_OPTIMIZE_GPIO __attribute__ ((optimize("-Os"))) // NOLINT
 
@@ -78,6 +80,8 @@ namespace peripheral::gpio{
         const BaseAddress port_base_address;
         const std::array<std::uint8_t, 8U> pin_numbers;
 
+        constexpr Pins(BaseAddress port_base_address, std::array<std::uint8_t, 8U> pins_number);
+
         const Pins &operator=(std::uint8_t value) const;
 
         template<std::uint8_t ModeRawValue>
@@ -88,6 +92,8 @@ namespace peripheral::gpio{
 
         template<PinOutputSlewRateCt SlewRate, bool IsMultiplexingAlternateFunction, PinOutputDrive Drive>
         constexpr void mode_output_ct() const;
+
+        constexpr std::uint32_t pin_mask();
     };
 
 
@@ -143,7 +149,7 @@ namespace peripheral::gpio{
     template<BaseAddress TplBaseAddress>
     template<std::uint8_t Pin>
     WCH_OPTIMIZE_GPIO constexpr Pins Port<TplBaseAddress>::get_pin() {
-        return Pins{base_address, {Pin}};
+        return Pins(base_address,  {Pin});
     }
 
 
@@ -159,6 +165,9 @@ namespace peripheral::gpio{
 
     #pragma region Definition - Pins
 
+    constexpr Pins::Pins(const BaseAddress port_base_address, const std::array<std::uint8_t, 8U> pins_number)
+        : port_base_address(port_base_address), pin_numbers(pins_number) {
+    }
 
     WCH_OPTIMIZE_GPIO inline const Pins &Pins::operator=(const std::uint8_t value) const {
         auto *ptr = reinterpret_cast<std::uint8_t *>(port_base_address); // NOLINT
@@ -168,8 +177,7 @@ namespace peripheral::gpio{
 
     template<std::uint8_t ModeRawValue>
     constexpr void Pins::mode_generic_raw_ct() const {
-        auto *ptr = reinterpret_cast<std::uint8_t *>(port_base_address); // NOLINT
-
+        soc::reg::access::writeCtAddrVal<static_cast<std::uint32_t>(port_base_address), ModeRawValue>();
     }
 
     template<PinInputDrive InputDrive>
@@ -187,6 +195,15 @@ namespace peripheral::gpio{
 
         mode_generic_raw_ct<raw_value>();
     }
+
+
+    constexpr std::uint32_t Pins::pin_mask() {
+        // constexpr std::uint32_t mask = std::apply([](auto... pin) {
+        //     return ((1 << pin) | ...);
+        // }, pins_number);
+        return 1U << pin_numbers[0U];
+    }
+
 
 
     // WCH_OPTIMIZE_GPIO inline auto Pins::SetOutputValue(const int value) const -> void {
