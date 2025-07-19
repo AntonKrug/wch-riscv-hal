@@ -118,16 +118,9 @@ namespace peripheral::gpio{
         // ReSharper disable once CppNonExplicitConversionOperator
         constexpr operator std::uint32_t() const; // NOLINT(*-explicit-constructor)
 
-        // constexpr static Pins get_pin(std::uint8_t pin);
-
         template<std::uint8_t TplPin>
         constexpr static Pin<TplBaseAddress, TplPin> get_pin();
 
-        // template<std::uint8_t TplPin>
-        // constexpr static Pins<TplBaseAddress, {TplPin}> get_pin();
-
-
-        // constexpr static Pins get_pin(const std::array<std::uint8_t, 8U> &pins);
     };
 
 
@@ -147,33 +140,11 @@ namespace peripheral::gpio{
         return Pin<TplBaseAddress, TplPin>{};
     }
 
-    // template<BaseAddress TplBaseAddress>
-    // WCH_OPTIMIZE_GPIO constexpr Pins Port<TplBaseAddress>::get_pin(const std::uint8_t pin) {
-    //     return Pins{base_address, {pin}};
-    // }
-
-    // template<BaseAddress TplBaseAddress>
-    // template<std::uint8_t Pin>
-    // WCH_OPTIMIZE_GPIO constexpr Pins Port<TplBaseAddress>::get_pin() {
-    //     return Pins(base_address,  {Pin});
-    // }
-
-
-    /// TODO: fold and variadic template get multiple pins
-    // template<BaseAddress TplBaseAddress>
-    // WCH_OPTIMIZE_GPIO constexpr Pins Port<TplBaseAddress>::get_pin(const std::array<std::uint8_t, 8U> &pins) {
-    //     return Pins{base_address, pins};
-    // }
-
-
     #pragma endregion
 
 
     #pragma region Definition - Pins
 
-    // constexpr Pins::Pins(const BaseAddress port_base_address, const std::array<std::uint8_t, 8U> pins_number)
-    //     : port_base_address(port_base_address), pin_numbers(pins_number) {
-    // }
 
     template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
     WCH_OPTIMIZE_GPIO inline const Pin<TplBaseAddress, TplPinNumber> & Pin<TplBaseAddress, TplPinNumber>::operator=(std::uint8_t value) const {
@@ -182,19 +153,6 @@ namespace peripheral::gpio{
         return *this;
     }
 
-    // template<BaseAddress TplBaseAddress, std::array<std::uint8_t, 8U> TplPinNumbers>
-    // WCH_OPTIMIZE_GPIO inline const
-    // Pin<TplBaseAddress, TplPinNumbers> & Pin<TplBaseAddress, TplPinNumbers>::operator=(std::uint8_t value) const {
-    //     auto *ptr = reinterpret_cast<std::uint8_t *>(port_base_address); // NOLINT
-    //     *ptr = value;
-    //     return *this;
-    // }
-
-    // WCH_OPTIMIZE_GPIO inline const Pins &Pins::operator=(const std::uint8_t value) const {
-    //     auto *ptr = reinterpret_cast<std::uint8_t *>(port_base_address); // NOLINT
-    //     *ptr = value;
-    //     return *this;
-    // }
 
     template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
     template<std::uint8_t TplModeRawValue>
@@ -202,16 +160,6 @@ namespace peripheral::gpio{
         soc::reg::access::writeCtAddrVal<static_cast<std::uint32_t>(port_base_address), TplModeRawValue>();
     }
 
-    // template<BaseAddress TplBaseAddress, std::array<std::uint8_t, 8U> TplPinNumbers>
-    // template<std::uint8_t ModeRawValue>
-    // WCH_OPTIMIZE_GPIO constexpr void Pin<TplBaseAddress, TplPinNumbers>::mode_generic_raw_ct() const {
-    //     soc::reg::access::writeCtAddrVal<static_cast<std::uint32_t>(port_base_address), ModeRawValue>();
-    // }
-
-    // template<std::uint8_t ModeRawValue>
-    // constexpr void Pins::mode_generic_raw_ct() const {
-    //     soc::reg::access::writeCtAddrVal<static_cast<std::uint32_t>(port_base_address), ModeRawValue>();
-    // }
 
     template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
     template<PinInputDrive TplDrive>
@@ -220,18 +168,6 @@ namespace peripheral::gpio{
         mode_generic_raw_ct<raw_value>();
     }
 
-    // template<BaseAddress TplBaseAddress, std::array<std::uint8_t, 8U> TplPinNumbers>
-    // template<PinInputDrive TplDrive>
-    // WCH_OPTIMIZE_GPIO constexpr void Pin<TplBaseAddress, TplPinNumbers>::mode_input_ct() const {
-    //     constexpr auto raw_value = static_cast<std::uint8_t>(TplDrive) << pin_drive_bit_offset; // NOLINT
-    //     mode_generic_raw_ct<raw_value>();
-    // }
-
-    // template<PinInputDrive InputDrive>
-    // constexpr void Pins::mode_input_ct() const {
-    //     constexpr auto raw_value = static_cast<std::uint8_t>(InputDrive) << pin_drive_bit_offset; // NOLINT
-    //     mode_generic_raw_ct<raw_value>();
-    // }
 
     template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
     template<PinOutputSlewRateCt TplSlewRate, bool TplIsMultiplexingAlternateFunction, PinOutputDrive TplDrive>
@@ -244,57 +180,11 @@ namespace peripheral::gpio{
         mode_generic_raw_ct<raw_value>();
     }
 
-    // template<BaseAddress TplBaseAddress, std::array<std::uint8_t, 8U> TplPinNumbers>
-    // template<PinOutputSlewRateCt TplSlewRate, bool TplIsMultiplexingAlternateFunction, PinOutputDrive TplDrive>
-    // constexpr void Pin<TplBaseAddress, TplPinNumbers>::mode_output_ct() const {
-    //     constexpr std::uint8_t raw_value =
-    //         static_cast<std::uint8_t>(TplSlewRate) |  // NOLINT
-    //         static_cast<std::uint8_t>(TplDrive) << pin_drive_bit_offset | // NOLINT
-    //         (TplIsMultiplexingAlternateFunction == true) ? 1U << pin_output_multiplexing_bit_offset : 0U; // NOLINT
-    //
-    //     mode_generic_raw_ct<raw_value>();
-    // }
-
-    // template<BaseAddress TplBaseAddress>
-    // template<std::uint8_t TplPin>
-    // constexpr Pins<TplBaseAddress, {TplPin}> Port<TplBaseAddress>::get_pin() {
-    // }
-
-
-
-    // template<PinOutputSlewRateCt SlewRate, bool IsMultiplexingAlternateFunction, PinOutputDrive Drive>
-    // constexpr void Pins::mode_output_ct() const {
-    //     constexpr std::uint8_t raw_value =
-    //         static_cast<std::uint8_t>(SlewRate) |  // NOLINT
-    //         static_cast<std::uint8_t>(Drive) << pin_drive_bit_offset | // NOLINT
-    //         (IsMultiplexingAlternateFunction == true) ? 1U << pin_output_multiplexing_bit_offset : 0U; // NOLINT
-    //
-    //     mode_generic_raw_ct<raw_value>();
-    // }
 
     template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
     constexpr std::uint32_t Pin<TplBaseAddress, TplPinNumber>::pin_mask() {
         return 1U << pin_number; // NOLINT
     }
-
-    // template<BaseAddress TplBaseAddress, std::array<std::uint8_t, 8> TplPinNumbers>
-    // constexpr std::uint32_t Pin<TplBaseAddress, TplPinNumbers>::pin_mask() {
-    //     return 1U << pin_number[0U];
-    // }
-
-    // constexpr std::uint32_t Pins::pin_mask() {
-    //     // constexpr std::uint32_t mask = std::apply([](auto... pin) {
-    //     //     return ((1 << pin) | ...);
-    //     // }, pins_number);
-    //     return 1U << pin_numbers[0U];
-    // }
-
-
-
-    // WCH_OPTIMIZE_GPIO inline auto Pins::SetOutputValue(const int value) const -> void {
-    //     auto *ptr = reinterpret_cast<std::uint8_t *>(port_base_address);
-    //     *ptr = value;
-    // }
 
 
     #pragma endregion
