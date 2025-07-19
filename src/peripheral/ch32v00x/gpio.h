@@ -96,7 +96,7 @@ namespace peripheral::gpio{
         template<BaseAddress TplRegisterBase>
         struct RegistersType {
             constexpr static std::uint32_t RegisterBaseUint32 = static_cast<std::uint32_t>(TplRegisterBase);
-            constexpr static std::uint32_t configuration      = RegisterBaseUint32;         // CFGLR, sometimes CFGHR
+            constexpr static std::uint32_t configuration      = RegisterBaseUint32;          // CFGLR, sometimes CFGHR
             constexpr static std::uint32_t inputData          = RegisterBaseUint32 + 0x08U;  // INDR
             constexpr static std::uint32_t outputData         = RegisterBaseUint32 + 0x0CU;  // OUTDR
             constexpr static std::uint32_t setReset           = RegisterBaseUint32 + 0x10U;  // BSHR
