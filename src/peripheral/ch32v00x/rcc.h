@@ -52,6 +52,7 @@ namespace peripheral::rcc {
         template<concepts::IsApb2prstrField _> constexpr auto fromRegFieldType() { return Apb2prstr::reg_mem_offset; }
         template<concepts::IsApb1prstrField _> constexpr auto fromRegFieldType() { return Apb1prstr::reg_mem_offset; }
         template<concepts::IsAhbpcenrField _>  constexpr auto fromRegFieldType() { return Ahbpcenr::reg_mem_offset; }
+        template<concepts::IsApb2pcenrField _> constexpr auto fromRegFieldType() { return Apb2pcenr::reg_mem_offset; }
         template<concepts::IsApb1pcenrField _> constexpr auto fromRegFieldType() { return Apb1pcenr::reg_mem_offset; }
         template<concepts::IsRstsckrField _>   constexpr auto fromRegFieldType() { return Rstsckr::reg_mem_offset; }
     }
@@ -63,8 +64,9 @@ namespace peripheral::rcc {
         template<concepts::IsApb2prstrField _> constexpr auto fromRegFieldType() { return Apb2prstr::reg_fields; }
         template<concepts::IsApb1prstrField _> constexpr auto fromRegFieldType() { return Apb1prstr::reg_fields; }
         template<concepts::IsAhbpcenrField _>  constexpr auto fromRegFieldType() { return Ahbpcenr::reg_fields; }
+        template<concepts::IsApb2pcenrField _> constexpr auto fromRegFieldType() { return Apb2pcenr::reg_fields; }
         template<concepts::IsApb1pcenrField _> constexpr auto fromRegFieldType() { return Apb1pcenr::reg_fields; }
-        template<concepts::IsRstsckrField _>   constexpr auto fromRegFieldType() { return rcc::Rstsckr::reg_fields; }
+        template<concepts::IsRstsckrField _>   constexpr auto fromRegFieldType() { return Rstsckr::reg_fields; }
     }
 
 }

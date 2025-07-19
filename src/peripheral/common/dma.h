@@ -208,7 +208,7 @@ namespace peripheral::dma {
 
         constexpr auto destinationAlignment = pointerToMemorySizeAlignment<TplDestinationPointerType>();
 
-        static_assert(isHwTrigger == true, "PeripheralToMemory Requester ID can't be triggered by SW requester ID, enabing EN field will not start transmission, but wait for HW event requester");
+        static_assert(isHwTrigger == true, "PeripheralToMemory Requester ID can't be triggered by SW requester ID, enabling EN field will not start transmission, but wait for HW event requester");
 
         if constexpr (TplTransferCount == 0U) {
             static_assert(TplSourceIncrement == false && TplDestinationIncrement == false,
