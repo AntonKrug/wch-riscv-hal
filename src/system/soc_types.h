@@ -28,18 +28,18 @@ namespace soc::types {
     template<
         peripheral::usart::base_address TplBaseAddress,
         std::uint8_t TplMapping,
-        peripheral::gpio::Pins TplCk,
-        peripheral::gpio::Pins TplTx,
-        peripheral::gpio::Pins TplRx,
-        peripheral::gpio::Pins TplCts,
-        peripheral::gpio::Pins TplRts>
+        peripheral::gpio::Pin TplCk,
+        peripheral::gpio::Pin TplTx,
+        peripheral::gpio::Pin TplRx,
+        peripheral::gpio::Pin TplCts,
+        peripheral::gpio::Pin TplRts>
     struct UartInstance {
-        constexpr static std::uint8_t           mapping = TplMapping;
-        constexpr static peripheral::gpio::Pins ck      = TplCk;
-        constexpr static peripheral::gpio::Pins tx      = TplTx;
-        constexpr static peripheral::gpio::Pins rx      = TplRx;
-        constexpr static peripheral::gpio::Pins cts     = TplCts;
-        constexpr static peripheral::gpio::Pins rts     = TplRts;
+        constexpr static std::uint8_t          mapping = TplMapping;
+        constexpr static peripheral::gpio::Pin ck      = TplCk;
+        constexpr static peripheral::gpio::Pin tx      = TplTx;
+        constexpr static peripheral::gpio::Pin rx      = TplRx;
+        constexpr static peripheral::gpio::Pin cts     = TplCts;
+        constexpr static peripheral::gpio::Pin rts     = TplRts;
 
         constexpr static peripheral::usart::Device<TplBaseAddress> device = {};
     };

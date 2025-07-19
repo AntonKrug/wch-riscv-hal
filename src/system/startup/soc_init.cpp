@@ -162,6 +162,7 @@ extern "C" {
         soc::reg::setRegFieldsSipCt<
             peripheral::rcc::Apb2pcenr::IOPDEN_RW_InputOutputPortDClockEnable::clockEnable>();
 
+        // TODO: user controled GPIO setup
         // Enable SWIO support on RCC
         // PORT D1 as input
         // clear GPIOD_CFGLR 7-6 CNF1 mode (pullup/down...) and 5-4 MODE1 (input/output + speed)

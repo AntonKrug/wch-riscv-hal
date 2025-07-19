@@ -62,7 +62,7 @@ namespace soc {
         static constexpr types::UartInstance<
             soc::peripheral_addreses::usart1,
             0b00U,             // Pin mapping variant
-            Gpio.D.get_pin<{4U}>(), // D4 = Ck
+            Gpio.D.get_pin<4U>(), // D4 = Ck
             Gpio.D.get_pin<5U>(), // D5 = Tx
             Gpio.D.get_pin<6U>(), // D6 = Rx
             Gpio.D.get_pin<3U>(), // D3 = Cts
