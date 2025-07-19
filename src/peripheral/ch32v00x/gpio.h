@@ -12,7 +12,7 @@
 #include "system/memory_map/concepts.h"
 #include "system/register/access_primitives.h"
 
-#define WCH_OPTIMIZE_GPIO __attribute__ ((optimize("-Os"))) // NOLINT
+#define WCH_OPTIMIZE_GPIO __attribute__ ((always_inline, optimize("-Os"))) // NOLINT
 
 namespace peripheral::gpio{
 
@@ -198,8 +198,8 @@ namespace peripheral::gpio{
 
     template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
     template<std::uint8_t TplModeRawValue>
-    WCH_OPTIMIZE_GPIO constexpr void Pin<TplBaseAddress, TplPinNumber>::mode_generic_raw_ct() {
-        // soc::reg::access::writeCtAddrVal<static_cast<std::uint32_t>(port_base_address), TplModeRawValue>();
+    WCH_OPTIMIZE_GPIO inline constexpr void Pin<TplBaseAddress, TplPinNumber>::mode_generic_raw_ct() {
+        soc::reg::access::writeCtAddrVal<static_cast<std::uint32_t>(port_base_address), TplModeRawValue>();
     }
 
     // template<BaseAddress TplBaseAddress, std::array<std::uint8_t, 8U> TplPinNumbers>
@@ -215,7 +215,7 @@ namespace peripheral::gpio{
 
     template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
     template<PinInputDrive TplDrive>
-    WCH_OPTIMIZE_GPIO constexpr void Pin<TplBaseAddress, TplPinNumber>::mode_input_ct() {
+    WCH_OPTIMIZE_GPIO inline constexpr void Pin<TplBaseAddress, TplPinNumber>::mode_input_ct() {
         constexpr auto raw_value = static_cast<std::uint8_t>(TplDrive) << pin_drive_bit_offset; // NOLINT
         mode_generic_raw_ct<raw_value>();
     }
@@ -235,7 +235,7 @@ namespace peripheral::gpio{
 
     template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
     template<PinOutputSlewRateCt TplSlewRate, bool TplIsMultiplexingAlternateFunction, PinOutputDrive TplDrive>
-    WCH_OPTIMIZE_GPIO constexpr void Pin<TplBaseAddress, TplPinNumber>::mode_output_ct() {
+    WCH_OPTIMIZE_GPIO inline constexpr void Pin<TplBaseAddress, TplPinNumber>::mode_output_ct() {
         constexpr std::uint8_t raw_value =
             static_cast<std::uint8_t>(TplSlewRate) |  // NOLINT
             static_cast<std::uint8_t>(TplDrive) << pin_drive_bit_offset | // NOLINT
