@@ -158,13 +158,33 @@ extern "C" {
         always_inline,
         optimize("-Os"),
     ))
+    configure_swio_pin_d1() {
+        soc::reg::setRegFieldsSipCt<
+            peripheral::rcc::Apb2pcenr::IOPDEN_RW_InputOutputPortDClockEnable::clockEnable>();
+
+        // Enable SWIO support on RCC
+        // PORT D1 as input
+        // clear GPIOD_CFGLR 7-6 CNF1 mode (pullup/down...) and 5-4 MODE1 (input/output + speed)
+        // then set INPUT & pull-up/down mode
+        // GPIOD_BSHR -> write BS1=1 to clear OUTDR bit for BS1
+    }
+
+    inline
+    void
+    __attribute__ ((
+        always_inline,
+        optimize("-Os"),
+    ))
     configure_new_clocks() {
         using namespace peripheral::rcc;
-        //using namespace Literals::Timer;
         using namespace soc::reg;
 
         setRegFieldsSipCt<
-            Cfgr0::getHbPrescalerEnum<soc::clocks::hsi, user_config::system_clock>()>();
+            Cfgr0::get_hb_prescaler_enum<
+                soc::clocks::hsi,
+                user_config::system_clock
+            >()
+        >();
 
         // clearRegFieldTypesSipCt<
         //     Ahbpcenr::DMA1EN_RW_DirectMemoryAccess1Enable>();
@@ -224,6 +244,7 @@ extern "C" {
         // System clock configuration
         reset_and_stabilize_clocks_to_good_known_state();
         trim_hsi_clock_calibration();
+        configure_swio_pin_d1();
         configure_new_clocks();
 
 
