@@ -14,7 +14,10 @@ namespace user_config {
     // or describe it as fraction of the input clock which should more likely pass the constraints
     // see Rcc::Cfgr0 to see the constraints
     // constexpr std::uint32_t system_clock = 3_mhz_to_hz;
-    constexpr std::uint32_t system_clock = soc::clocks::hsi / 3; // for v003 the HSI=24Mhz -> 24/3 = 8Mhz
+    constexpr std::uint32_t system_clock = soc::clocks::hsi / 3U; // for v003 the HSI=24Mhz -> 24/3 = 8Mhz
+
+    // And if we want we can make check even on the fractional clocks to be exact
+    static_assert(system_clock == 8_mhz_to_hz, "My system clock must be 8Mhz");
 
     // RCC peripheral has Ctrl register, which has HSITRIM (InternalHighSpeedClockTrim) field
     // It's able to be superimposed on top of HSICAL[7:0] to adjust HSI frequency.
