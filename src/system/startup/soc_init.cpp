@@ -164,7 +164,7 @@ extern "C" {
 
         constexpr auto swio  = soc::Gpio.D.get_pin<1U>();
         swio.mode_input_ct<peripheral::gpio::PinInputDrive::pull_up_pull_down>();
-        // swio = 0U;
+        swio = 0U;
 
         // TODO: user controled GPIO setup
         // Enable SWIO support on RCC
@@ -249,9 +249,8 @@ extern "C" {
         // System clock configuration
         reset_and_stabilize_clocks_to_good_known_state();
         trim_hsi_clock_calibration();
-        configure_swio_pin_d1();
         configure_new_clocks();
-
+        configure_swio_pin_d1();
 
 
         // Enter the end-user main function by setting up the RA
