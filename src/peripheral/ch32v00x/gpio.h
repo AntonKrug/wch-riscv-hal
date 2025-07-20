@@ -70,6 +70,8 @@ namespace peripheral::gpio{
         pull_up_pull_down = 0b10U  // Driven by OUTDR value // NOLINT
     };
 
+    constexpr std::uint8_t pin_configuration_bit_offset = 4U; // NOLINT
+
     #pragma endregion
 
 
@@ -77,6 +79,19 @@ namespace peripheral::gpio{
 
     template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
     struct Pin {   // NOLINT
+    private:
+        template<BaseAddress TplRegisterBase>
+        struct Registers {
+            constexpr static std::uint32_t register_base_uint32 = static_cast<std::uint32_t>(TplRegisterBase);
+            constexpr static std::uint32_t configuration        = register_base_uint32;          // CFGLR, sometimes CFGHR
+            constexpr static std::uint32_t input_data           = register_base_uint32 + 0x08U;  // INDR
+            constexpr static std::uint32_t output_data          = register_base_uint32 + 0x0CU;  // OUTDR
+            constexpr static std::uint32_t set_reset            = register_base_uint32 + 0x10U;  // BSHR
+            constexpr static std::uint32_t reset                = register_base_uint32 + 0x14U;  // BCR
+            constexpr static std::uint32_t configuration_lock   = register_base_uint32 + 0x18U;  // LCKR
+        };
+
+    public:
         constexpr static std::uint32_t port_base_address = static_cast<std::uint32_t>(TplBaseAddress);
         constexpr static std::uint8_t  pin_number        = TplPinNumber;
 
@@ -97,30 +112,11 @@ namespace peripheral::gpio{
 
     template<BaseAddress TplBaseAddress>
     struct Port {
-    private:
-        // template<BaseAddress TplRegisterBase>
-        // struct RegistersType {
-        //     constexpr static std::uint32_t register_base_uint32 = static_cast<std::uint32_t>(TplRegisterBase);
-        //     constexpr static std::uint32_t configuration        = register_base_uint32;          // CFGLR, sometimes CFGHR
-        //     constexpr static std::uint32_t input_data           = register_base_uint32 + 0x08U;  // INDR
-        //     constexpr static std::uint32_t output_data          = register_base_uint32 + 0x0CU;  // OUTDR
-        //     constexpr static std::uint32_t set_reset            = register_base_uint32 + 0x10U;  // BSHR
-        //     constexpr static std::uint32_t reset                = register_base_uint32 + 0x14U;  // BCR
-        //     constexpr static std::uint32_t configuration_lock   = register_base_uint32 + 0x18U;  // LCKR
-        // };
-
-    public:
         constexpr static BaseAddress   base_address        = TplBaseAddress;
         constexpr static std::uint32_t base_address_uint32 = static_cast<std::uint32_t>(TplBaseAddress);
 
-        // struct RegistersType<TplBaseAddress> registers = {};
-
-        // ReSharper disable once CppNonExplicitConversionOperator
-        // constexpr operator std::uint32_t() const; // NOLINT(*-explicit-constructor)
-
         template<std::uint8_t TplPin>
         constexpr static Pin<TplBaseAddress, TplPin> get_pin();
-
     };
 
 
@@ -129,10 +125,6 @@ namespace peripheral::gpio{
 
     #pragma region Definition - Port
 
-    // template<BaseAddress TplBaseAddress>
-    // WCH_OPTIMIZE_GPIO constexpr Port<TplBaseAddress>::operator std::uint32_t() const { // NOLINT(*-explicit-constructor)
-    //     return static_cast<uint32_t>(base_address);
-    // }
 
     template<BaseAddress TplBaseAddress>
     template<std::uint8_t TplPin>
@@ -148,7 +140,7 @@ namespace peripheral::gpio{
 
     template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
     WCH_OPTIMIZE_GPIO inline const Pin<TplBaseAddress, TplPinNumber> & Pin<TplBaseAddress, TplPinNumber>::operator=(const std::uint8_t value) const {
-        soc::reg::access::writeCtAddr<port_base_address>(value);
+        soc::reg::access::writeCtAddr<Registers<TplBaseAddress>::output_data>(value);
         return *this;
     }
 
@@ -171,12 +163,12 @@ namespace peripheral::gpio{
     template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
     template<PinOutputSlewRateCt TplSlewRate, bool TplIsMultiplexingAlternateFunction, PinOutputDrive TplDrive>
     WCH_OPTIMIZE_GPIO inline constexpr void Pin<TplBaseAddress, TplPinNumber>::mode_output_ct() {
-        constexpr std::uint8_t raw_value =
+        constexpr std::uint32_t raw_value =
             static_cast<std::uint8_t>(TplSlewRate) |  // NOLINT
             static_cast<std::uint8_t>(TplDrive) << pin_drive_bit_offset | // NOLINT
             (TplIsMultiplexingAlternateFunction == true) ? 1U << pin_output_multiplexing_bit_offset : 0U; // NOLINT
 
-        mode_generic_raw_ct<raw_value>();
+        mode_generic_raw_ct<raw_value << (TplPinNumber * pin_configuration_bit_offset)>();
     }
 
 
