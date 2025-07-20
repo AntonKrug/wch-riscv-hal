@@ -98,25 +98,25 @@ namespace peripheral::gpio{
     template<BaseAddress TplBaseAddress>
     struct Port {
     private:
-        template<BaseAddress TplRegisterBase>
-        struct RegistersType {
-            constexpr static std::uint32_t register_base_uint32 = static_cast<std::uint32_t>(TplRegisterBase);
-            constexpr static std::uint32_t configuration        = register_base_uint32;          // CFGLR, sometimes CFGHR
-            constexpr static std::uint32_t input_data           = register_base_uint32 + 0x08U;  // INDR
-            constexpr static std::uint32_t output_data          = register_base_uint32 + 0x0CU;  // OUTDR
-            constexpr static std::uint32_t set_reset            = register_base_uint32 + 0x10U;  // BSHR
-            constexpr static std::uint32_t reset                = register_base_uint32 + 0x14U;  // BCR
-            constexpr static std::uint32_t configuration_lock   = register_base_uint32 + 0x18U;  // LCKR
-        };
+        // template<BaseAddress TplRegisterBase>
+        // struct RegistersType {
+        //     constexpr static std::uint32_t register_base_uint32 = static_cast<std::uint32_t>(TplRegisterBase);
+        //     constexpr static std::uint32_t configuration        = register_base_uint32;          // CFGLR, sometimes CFGHR
+        //     constexpr static std::uint32_t input_data           = register_base_uint32 + 0x08U;  // INDR
+        //     constexpr static std::uint32_t output_data          = register_base_uint32 + 0x0CU;  // OUTDR
+        //     constexpr static std::uint32_t set_reset            = register_base_uint32 + 0x10U;  // BSHR
+        //     constexpr static std::uint32_t reset                = register_base_uint32 + 0x14U;  // BCR
+        //     constexpr static std::uint32_t configuration_lock   = register_base_uint32 + 0x18U;  // LCKR
+        // };
 
     public:
         constexpr static BaseAddress   base_address        = TplBaseAddress;
         constexpr static std::uint32_t base_address_uint32 = static_cast<std::uint32_t>(TplBaseAddress);
 
-        struct RegistersType<TplBaseAddress> registers = {};
+        // struct RegistersType<TplBaseAddress> registers = {};
 
         // ReSharper disable once CppNonExplicitConversionOperator
-        constexpr operator std::uint32_t() const; // NOLINT(*-explicit-constructor)
+        // constexpr operator std::uint32_t() const; // NOLINT(*-explicit-constructor)
 
         template<std::uint8_t TplPin>
         constexpr static Pin<TplBaseAddress, TplPin> get_pin();
@@ -129,10 +129,10 @@ namespace peripheral::gpio{
 
     #pragma region Definition - Port
 
-    template<BaseAddress TplBaseAddress>
-    WCH_OPTIMIZE_GPIO constexpr Port<TplBaseAddress>::operator std::uint32_t() const { // NOLINT(*-explicit-constructor)
-        return static_cast<uint32_t>(base_address);
-    }
+    // template<BaseAddress TplBaseAddress>
+    // WCH_OPTIMIZE_GPIO constexpr Port<TplBaseAddress>::operator std::uint32_t() const { // NOLINT(*-explicit-constructor)
+    //     return static_cast<uint32_t>(base_address);
+    // }
 
     template<BaseAddress TplBaseAddress>
     template<std::uint8_t TplPin>
@@ -147,9 +147,8 @@ namespace peripheral::gpio{
 
 
     template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
-    WCH_OPTIMIZE_GPIO inline const Pin<TplBaseAddress, TplPinNumber> & Pin<TplBaseAddress, TplPinNumber>::operator=(std::uint8_t value) const {
-        auto *ptr = reinterpret_cast<std::uint8_t *>(port_base_address); // NOLINT
-        *ptr = value;
+    WCH_OPTIMIZE_GPIO inline const Pin<TplBaseAddress, TplPinNumber> & Pin<TplBaseAddress, TplPinNumber>::operator=(const std::uint8_t value) const {
+        soc::reg::access::writeCtAddr<port_base_address>(value);
         return *this;
     }
 
