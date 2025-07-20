@@ -1,8 +1,10 @@
 set architecture riscv:rv32
-set remotetimeout unlimited
+set remotetimeout 15
 set mem inaccessible-by-default off
 
 target remote localhost:3333
 
 layout asm
 layout regs
+
+load
