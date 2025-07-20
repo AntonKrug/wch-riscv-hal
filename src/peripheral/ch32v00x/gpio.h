@@ -156,7 +156,7 @@ namespace peripheral::gpio{
     template<PinInputDrive TplDrive>
     WCH_OPTIMIZE_GPIO inline constexpr void Pin<TplBaseAddress, TplPinNumber>::mode_input_ct() {
         constexpr auto raw_value = static_cast<std::uint8_t>(TplDrive) << pin_drive_bit_offset; // NOLINT
-        mode_generic_raw_ct<raw_value>();
+        mode_generic_raw_ct<raw_value << (TplPinNumber * pin_configuration_bit_offset)>();
     }
 
 
