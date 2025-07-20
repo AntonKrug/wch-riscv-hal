@@ -59,6 +59,7 @@ main_user(void) {
     // constexpr auto timerFrequencySetting = 20_ns_to_hz;
     // auto something = Soc::Usart::Channel1Mapping0.device;
 
+
     // UART div calculations
     // This should fail as they are close frequencies
     // constexpr auto div11 = Usart::calculateUsartDivCT<2_mhz_to_hz, 1_mbaud>();
@@ -78,6 +79,17 @@ main_user(void) {
     // Rcc::PeripheralBus2ClockEnable b {
     //     .portA = Rcc::ModuleClock::on,
     // };
+
+
+    constexpr auto led  = soc::Gpio.D.get_pin<0U>();
+    led.mode_output_ct<gpio::PinOutputSlewRateCt::fast, false, gpio::PinOutputDrive::push_pull>();
+    while (true) {
+        led = 1U;
+        utils::delayMs(1.5_hour_to_ms);
+        led = 0U;
+        utils::delayMs(1.5_hour_to_ms);
+    }
+
 
     // constexpr auto swio  = soc::Gpio.D.get_pin<1U>();
     // swio.sequence().executeExact();
