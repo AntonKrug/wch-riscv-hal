@@ -9,6 +9,7 @@
 #include "user_src/platform_configuration/system.h"
 #include "user_src/platform_configuration/system_clock.h"
 #include "user_src/platform_configuration/system_defines.h"
+#include "user_src/platform_configuration/system_irq.h"
 #include "system/riscv/concepts.h"
 #include "peripheral/ch32v00x/rcc.h"
 #include "utils/literals/timer.h"
@@ -198,7 +199,8 @@ extern "C" {
 
     [[noreturn]] extern void main_user(void);
 
-    extern const unsigned int __main_user;   // NOLINT(*-reserved-identifier)
+    // the provided linker script is not compile time known, use calculated value instead
+    // extern const unsigned int __main_user;   // NOLINT(*-reserved-identifier)
 
 
     // https://gcc.gnu.org/onlinedocs/gcc-14.2.0/gcc/Optimize-Options.html
@@ -275,7 +277,9 @@ extern "C" {
         // one opcode. If the __main_user would be max 28 then it would fit
         // into 5-bit operand and the imedetiate variant of CSR write, saving
         // yet another instruction.
-        csr::access::write_uint32<csr::QingKeV2::mepc>(__main_user);
+        // csr::access::write_uint32<csr::QingKeV2::mepc>(__main_user);
+        // csr::access::write_uint32<>(__main_user);
+        csr::access_ct::write_uint32<csr::QingKeV2::mepc, soc::irq::memory_after_vector_table>();
         // csr::access_ct::writeUint32<csr::QingKeV2::mepc, 0x1c>();
 
         __asm__ volatile("mret\n");
