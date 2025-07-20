@@ -3,7 +3,9 @@
 //
 
 #include <array>
+
 #include "user_src/platform_configuration/system_defines.h"
+#include "user_src/platform_configuration/system_irq.h"
 
 namespace soc::irq {
 
@@ -70,10 +72,8 @@ namespace soc::irq {
 
     }
 
-
-
     __attribute__ ((retain, used, section(".init.irq_vector_table_plus_one")))
-    constexpr std::array<handler::HandlerType, 38U> handlers_vector_table = {
+    constexpr std::array<handler::HandlerType, handlers_vector_table_size> handlers_vector_table = {
         &handler::infinite_loop,  // N/A
         &handler::non_maskable,
         &handler::hard_fault,

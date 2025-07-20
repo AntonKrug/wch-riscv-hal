@@ -185,6 +185,7 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/user_src/platform_configuration/system.h
         ${CMAKE_SOURCE_DIR}/src/user_src/platform_configuration/system_clock.h
         ${CMAKE_SOURCE_DIR}/src/user_src/platform_configuration/system_defines.h
+        ${CMAKE_SOURCE_DIR}/src/user_src/platform_configuration/system_irq.h
         ${CMAKE_SOURCE_DIR}/src/user_src/platform_configuration/system_soc.h
         ${CMAKE_SOURCE_DIR}/src/utils/delay.h
         ${CMAKE_SOURCE_DIR}/src/utils/firmware_build_info.h
