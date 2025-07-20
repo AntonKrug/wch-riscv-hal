@@ -17,7 +17,7 @@ namespace soc::reg::access {
         optimize("-Os"),
     ))
     writeCtAddrVal() -> void {
-        *(reinterpret_cast<volatile std::uint32_t *>(TplAddress))=TplCtValue;
+        *(reinterpret_cast<volatile std::uint32_t *>(TplAddress))=TplCtValue; // NOLINT
     }
 
     #pragma endregion
@@ -31,7 +31,7 @@ namespace soc::reg::access {
         optimize("-Os"),
     ))
     readCtAddr() -> std::uint32_t {
-        return *reinterpret_cast<volatile std::uint32_t *>(TplAddress);
+        return *reinterpret_cast<volatile std::uint32_t *>(TplAddress); // NOLINT
     }
 
     template<std::uint32_t TplAddress>
@@ -41,7 +41,7 @@ namespace soc::reg::access {
         optimize("-Os"),
     ))
     writeCtAddr(const std::uint32_t value) -> void {
-        *(reinterpret_cast<volatile std::uint32_t *>(TplAddress))=value;
+        *(reinterpret_cast<volatile std::uint32_t *>(TplAddress))=value; // NOLINT
     }
 
     template<std::uint32_t TplAddress, std::uint32_t TplCtValue, std::uint32_t TplMask>
@@ -66,7 +66,7 @@ namespace soc::reg::access {
         optimize("-Os"),
     ))
     read(const std::uint32_t address) -> std::uint32_t {
-        return *reinterpret_cast<volatile std::uint32_t *>(address);
+        return *reinterpret_cast<volatile std::uint32_t *>(address); // NOLINT
     }
 
     inline auto
@@ -75,7 +75,7 @@ namespace soc::reg::access {
         optimize("-Os"),
     ))
     write(const std::uint32_t address, const std::uint32_t value) -> void {
-        *(reinterpret_cast<volatile std::uint32_t *>(address))=value;
+        *(reinterpret_cast<volatile std::uint32_t *>(address))=value; // NOLINT
     }
 
     #pragma endregion
