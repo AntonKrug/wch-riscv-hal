@@ -1,0 +1,1 @@
+renode.exe -e "path add @C:/Users/Fredy/CLionProjects/wch-riscv-hal/renode" -e "include @cpu/qing-ke-v2.repl"

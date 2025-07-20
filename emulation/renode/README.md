@@ -1,0 +1,2 @@
+- download and install renode.io
+- renode -e "path add @/path-to-this-folder/" 
