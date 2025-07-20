@@ -18,8 +18,10 @@ namespace soc::irq {
         using HandlerType = void(* const)();
 
         // Not going to try save stack ((naked)), not going to intend to return
-        // from this [[noreturn]]. It is meant to be small infinite loop to intentionally
-        // get the CPU stuck when any problems or unimplemented IRQ occurs.
+        // from this [[noreturn]]. It is meant to be small (single instruction)
+        // infinite loop to intentionally get the CPU stuck when any problems
+        // or unimplemented IRQ occurs. Without wasting footprint on prologue
+        // or epilogue.
         extern "C" [[noreturn]] void __attribute__((naked)) infinite_loop(void) {
             while (true) {
             }
