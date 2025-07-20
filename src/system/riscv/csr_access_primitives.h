@@ -4,6 +4,8 @@
 
 #pragma once
 
+// https://stackoverflow.com/questions/14449141/the-difference-between-asm-asm-volatile-and-clobbering-memory
+
 #include <cstdint>
 
 #include "concepts.h"
@@ -21,6 +23,7 @@ namespace riscv::csr::access {
             : // no output
             : "i"(static_cast<std::uint16_t>(Csr)),
             "r"(value_uint32)
+            : "memory"
         );
     }
 

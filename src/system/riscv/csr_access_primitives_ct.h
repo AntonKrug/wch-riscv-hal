@@ -13,6 +13,7 @@
 //https://gcc.gnu.org/onlinedocs/gcc-12.4.0/gcc/Machine-Constraints.html
 //https://msyksphinz-self.github.io/riscv-isadoc/html/rvi.html#csrrwi
 //https://uim.fei.stuba.sk/wp-content/uploads/2018/02/riscv-spec-2022.pdf
+//https://stackoverflow.com/questions/14449141/the-difference-between-asm-asm-volatile-and-clobbering-memory
 
 #include <cstdint>
 
@@ -32,8 +33,9 @@ namespace riscv::csr::access_ct {
         __asm__ volatile(
             "csrr %0, %1"
             : "=r"(result_uin32_t)
-            : "i"(static_cast<std::uint16_t>(Csr)));
-
+            : "i"(static_cast<std::uint16_t>(Csr))
+            : "memory"
+        );
         return result_uin32_t;
     }
 
@@ -54,6 +56,7 @@ namespace riscv::csr::access_ct {
                 "csrw %0, x0" // write 0 is the same as clear all
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr))
+                : "memory"
             );
         } else if constexpr (ClearValueUint32 < (1U << 5U)) {
             // is small enough, use the 5-bit immediate instruction instead
@@ -63,6 +66,7 @@ namespace riscv::csr::access_ct {
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr)),
                 "K"(ClearValueUint32)
+                : "memory"
             );
         } else {
             // use temporary register instead of immediate
@@ -71,6 +75,7 @@ namespace riscv::csr::access_ct {
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr)),
                 "r"(ClearValueUint32)
+                : "memory"
             );
         }
     }
@@ -93,6 +98,7 @@ namespace riscv::csr::access_ct {
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr)),
                 "K"(SetValueUint32)
+                : "memory"
             );
         } else {
             // use temporary register instead of immediate
@@ -101,6 +107,7 @@ namespace riscv::csr::access_ct {
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr)),
                 "r"(SetValueUint32)
+                : "memory"
             );
         }
     }
@@ -119,6 +126,7 @@ namespace riscv::csr::access_ct {
                 "csrw %0, x0" // x0(zero) register
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr))
+                : "memory"
             );
         } else if constexpr (ValueUint32 < (1U << 5U)) {
             // csrwI instruction can take 5-bit imediate value
@@ -128,6 +136,7 @@ namespace riscv::csr::access_ct {
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr)),
                 "K"(ValueUint32)
+                : "memory"
             );
         } else {
             __asm__ volatile(
@@ -135,6 +144,7 @@ namespace riscv::csr::access_ct {
                 : // no output
                 : "i"(static_cast<std::uint16_t>(Csr)),
                 "r"(ValueUint32)
+                : "memory"
             );
         }
     }
