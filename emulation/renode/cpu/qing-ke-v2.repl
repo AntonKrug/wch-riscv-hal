@@ -1,0 +1,17 @@
+flash: Memory.MappedMemory @ sysbus 0x0
+    size: 0x4000  // 16KiB
+
+ram: Memory.MappedMemory @ sysbus 0x20000000
+    size: 0x800
+
+cpu: CPU.RiscV32 @ sysbus
+    cpuType: "rv32ic"
+    timeProvider: rcc
+
+// Reset and Clock control
+rcc: IRQControllers.CoreLevelInterruptor  @ sysbus 0x40021000
+    frequency: 8000000
+    [0, 1] -> cpu@[3, 7]
+
+gpio: Memory.MappedMemory @ sysbus 0x40010800
+    size: 0x1000
