@@ -6,9 +6,7 @@
 
 #include <array>
 #include <cstdint>
-#include <tuple>
 
-#include "usart.h"
 #include "system/memory_map/concepts.h"
 #include "system/register/access_primitives.h"
 
@@ -106,7 +104,9 @@ namespace peripheral::gpio{
         template<PinOutputSlewRateCt TplSlewRate, bool TplIsMultiplexingAlternateFunction, PinOutputDrive TplDrive>
         static constexpr void mode_output_ct();
 
-        static constexpr std::uint32_t pin_mask();
+        static constexpr std::uint32_t pin_mask_outdr();
+
+        static constexpr std::uint32_t pin_mask_outdr_inverted();
     };
 
 
@@ -140,7 +140,8 @@ namespace peripheral::gpio{
 
     template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
     WCH_OPTIMIZE_GPIO inline const Pin<TplBaseAddress, TplPinNumber> & Pin<TplBaseAddress, TplPinNumber>::operator=(const std::uint8_t value) const {
-        soc::reg::access::writeCtAddr<Registers<TplBaseAddress>::output_data>(value);
+        const auto old_value = soc::reg::access::readCtAddr<Registers<TplBaseAddress>::output_data>();
+        soc::reg::access::writeCtAddr<Registers<TplBaseAddress>::output_data>((old_value & pin_mask_outdr_inverted()) | value);
         return *this;
     }
 
@@ -155,6 +156,7 @@ namespace peripheral::gpio{
     template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
     template<PinInputDrive TplDrive>
     WCH_OPTIMIZE_GPIO inline constexpr void Pin<TplBaseAddress, TplPinNumber>::mode_input_ct() {
+        const auto old_value = soc::reg::access::readCtAddr<Registers<TplBaseAddress>::configuration>();
         constexpr auto raw_value = static_cast<std::uint8_t>(TplDrive) << pin_drive_bit_offset; // NOLINT
         mode_generic_raw_ct<raw_value << (TplPinNumber * pin_configuration_bit_offset)>();
     }
@@ -173,12 +175,17 @@ namespace peripheral::gpio{
 
 
     template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
-    constexpr std::uint32_t Pin<TplBaseAddress, TplPinNumber>::pin_mask() {
+    constexpr std::uint32_t Pin<TplBaseAddress, TplPinNumber>::pin_mask_outdr() {
         return 1U << pin_number; // NOLINT
     }
 
+    template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
+    constexpr std::uint32_t Pin<TplBaseAddress, TplPinNumber>::pin_mask_outdr_inverted() {
+        return 0xFFFF'FFFFU ^ pin_mask_outdr();
+    }
 
-    #pragma endregion
+
+#pragma endregion
 
 
     #pragma region Defintion - other
