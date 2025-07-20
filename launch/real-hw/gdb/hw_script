@@ -4,7 +4,15 @@ set mem inaccessible-by-default off
 
 target remote localhost:3333
 
-layout asm
-layout regs
+#layout asm
+#layout regs
+
+#layout src
+#layout split
+
+layout split
 
 load
+
+b main_user
+c
