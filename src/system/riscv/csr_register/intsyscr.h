@@ -45,11 +45,11 @@ namespace riscv::csr::intsyscr {
         fieldAccess  = soc::reg::field_access_right::ReadWrite,
 
         disable      = 0U,           // disable HW prologue and epilogue (see intsyscr.h for more details)
-        enable       = fieldBitMask, // enable HW prologoue and epiloge (see intsyscr.h for more details)
+        enable       = fieldBitMask, // enable HW prologue and epilogue (see intsyscr.h for more details)
     };
 
     enum class Inesten_MRW_InteruptNesting: std::uint32_t {
-        // Enable nesting of intreupts together with PFIC settings the IRQs can get different
+        // Enable nesting of interrupts together with PFIC settings the IRQs can get different
         // priorities and dictating order of execution.
         fieldBitMask = 0b1U << 1, // not holding any settings or value, it's a bitmask for this specific field
         fieldAccess  = soc::reg::field_access_right::ReadWrite,
@@ -62,7 +62,7 @@ namespace riscv::csr::intsyscr {
         fieldBitMask = 0b1U << 2,     // not holding any settings or value, it's a bitmask for this specific field
         fieldAccess  = soc::reg::field_access_right::ReadWrite,
 
-        disble       = 0U,           // Keeping EABI disabled, the way WCH recomends
+        disble       = 0U,           // Keeping EABI disabled, the way WCH recommends
         enable       = fieldBitMask, // WCH noted that this shouldn't be enabled, and left in the default disabled state
     };
 
