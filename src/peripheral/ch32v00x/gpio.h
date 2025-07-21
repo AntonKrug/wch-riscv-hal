@@ -213,7 +213,7 @@ namespace peripheral::gpio{
     template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
     WCH_OPTIMIZE_GPIO inline const Pin<TplBaseAddress, TplPinNumber> & Pin<TplBaseAddress, TplPinNumber>::operator=(const std::uint8_t value) const {
         const auto old_value = soc::reg::access::readCtAddr<register_address_output_data>();
-        const auto new_value = (old_value & mask_pin_data_keep) | register_pindata_shift(value);
+        const auto new_value = (old_value & mask_pin_data_inverted) | register_pindata_shift(value);
         soc::reg::access::writeCtAddr<register_address_output_data>(new_value);
         return *this;
     }
@@ -225,7 +225,7 @@ namespace peripheral::gpio{
     }
 
     template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
-    constexpr void Pin<TplBaseAddress, TplPinNumber>::mode_generic_raw(const std::uint8_t mode_raw_value) {
+    WCH_OPTIMIZE_GPIO inline constexpr void Pin<TplBaseAddress, TplPinNumber>::mode_generic_raw(const std::uint8_t mode_raw_value) {
         soc::reg::access::writeCtAddr<register_address_configuration>(mode_raw_value);
     }
 
