@@ -1,0 +1,28 @@
+set architecture riscv:rv32
+#set tdesc filename openocd/regs_rv32e.xml  # OpenOCD will still send g packed with 32 registers so this doesn't work on current OpenOCD builds
+set remotetimeout 15
+set mem inaccessible-by-default off
+
+define regs
+  info registers ra sp gp tp t0 t1 t2 fp s1 a0 a1 a2 a3 a4 a5
+end
+
+define sys
+  info registers ra gp tp
+  x /12x $sp
+end
+
+target remote localhost:3333
+
+layout asm
+layout regs
+
+#layout src
+#layout split
+
+#layout split
+
+load
+
+b main_user
+#c
