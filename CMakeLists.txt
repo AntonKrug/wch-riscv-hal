@@ -73,9 +73,12 @@ set(CMAKE_STRIP        "${TOOLCHAIN_PATH_BIN}/${MY_TOOLCHAIN_CROSS_PREFIX}strip$
 #set(CMAKE_C_COMPILER_ABI_INFO 1)
 #set(CMAKE_CXX_COMPILER_ABI_INFO 1)
 
-set(TARGET_ARCH_AND_ABI "-march=rv32ic -mabi=ilp32")
+#set(TARGET_ARCH_AND_ABI "-march=rv32ic -mabi=ilp32")
 #For WCH toolchain and CHV32V003
-#set(TARGET_ARCH_AND_ABI "-march=rv32ecxw -mabi=ilp32e")
+# assembly was using gcc.exe (not g++ like the rest) for ASM compilation on few files, but then no extra CMAKE_ASM_FLAGS
+# were set so that was default to rv32i and then switching to rv32e was causing mismatch between object files and
+# linker was failing
+set(TARGET_ARCH_AND_ABI "-march=rv32ecxw -mabi=ilp32e")
 
 
 #set(CMAKE_C_FLAGS "-march=rv32i -mabi=ilp32 -v -msave-restore -fno-common -fdata-sections -ffunction-sections -fsigned-char -fmessage-length=0")
@@ -92,6 +95,7 @@ set(MY_LINKER_FLAGS          "-nostartfiles -flto -mrelax -nostdlib -fno-builtin
 
 set(CMAKE_C_FLAGS   "${TARGET_ARCH_AND_ABI} ${MY_COMPILER_FLAGS_COMMON} -mrelax -flto -fno-builtin -fno-builtin-memcpy -ffreestanding") # C compiler used only for soc_init.c disabling builtin so memcpy is not used
 set(CMAKE_CXX_FLAGS "${TARGET_ARCH_AND_ABI} ${MY_COMPILER_FLAGS_COMMON} ${MY_COMPILER_FLAGS_CPP}")
+set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} ${TARGET_ARCH_AND_ABI}")
 
 
 #@	riscv-none-embed-objcopy -O ihex "CH32V003F4P6-2.elf" "CH32V003F4P6-2.hex"
