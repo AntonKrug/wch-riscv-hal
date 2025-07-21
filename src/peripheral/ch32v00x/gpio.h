@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include <array>
 #include <cstdint>
 
 #include "system/memory_map/concepts.h"
@@ -12,8 +11,11 @@
 
 #define WCH_OPTIMIZE_GPIO __attribute__ ((always_inline, optimize("-Os"))) // NOLINT
 
+// TODO // NOLINT(*-dynamic-static-initializers) for whole file
+
 namespace peripheral::gpio{
 
+    constexpr std::uint32_t full_of_ones = 0xffff'ffffU; // TODO: move these to some common 'lib' with inversion and static casting and shifting and masking and setting, oneOffHot
 
     #pragma region Enums and constants
 
@@ -68,45 +70,79 @@ namespace peripheral::gpio{
         pull_up_pull_down = 0b10U  // Driven by OUTDR value // NOLINT
     };
 
-    constexpr std::uint8_t pin_configuration_bit_offset = 4U; // NOLINT
-
     #pragma endregion
 
 
     #pragma region Declarations
 
+    template<BaseAddress TplRegisterBase>
+    struct Registers {
+        constexpr static std::uint32_t register_base_uint32 = static_cast<std::uint32_t>(TplRegisterBase);
+        constexpr static std::uint32_t configuration        = register_base_uint32;          // CFGLR, sometimes CFGHR
+        constexpr static std::uint32_t input_data           = register_base_uint32 + 0x08U;  // INDR
+        constexpr static std::uint32_t output_data          = register_base_uint32 + 0x0CU;  // OUTDR
+        constexpr static std::uint32_t set_reset            = register_base_uint32 + 0x10U;  // BSHR
+        constexpr static std::uint32_t reset                = register_base_uint32 + 0x14U;  // BCR
+        constexpr static std::uint32_t configuration_lock   = register_base_uint32 + 0x18U;  // LCKR
+    };
+
     template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
     struct Pin {   // NOLINT
     private:
-        template<BaseAddress TplRegisterBase>
-        struct Registers {
-            constexpr static std::uint32_t register_base_uint32 = static_cast<std::uint32_t>(TplRegisterBase);
-            constexpr static std::uint32_t configuration        = register_base_uint32;          // CFGLR, sometimes CFGHR
-            constexpr static std::uint32_t input_data           = register_base_uint32 + 0x08U;  // INDR
-            constexpr static std::uint32_t output_data          = register_base_uint32 + 0x0CU;  // OUTDR
-            constexpr static std::uint32_t set_reset            = register_base_uint32 + 0x10U;  // BSHR
-            constexpr static std::uint32_t reset                = register_base_uint32 + 0x14U;  // BCR
-            constexpr static std::uint32_t configuration_lock   = register_base_uint32 + 0x18U;  // LCKR
-        };
+        // Registers addresses
+        constexpr static std::uint32_t register_base_uint32                = static_cast<std::uint32_t>(TplBaseAddress); // NOLINT(*-dynamic-static-initializers)
+        constexpr static std::uint32_t register_address_configuration      = register_base_uint32;          // CFGLR, sometimes CFGHR
+        constexpr static std::uint32_t register_address_input_data         = register_base_uint32 + 0x08U;  // INDR
+        constexpr static std::uint32_t register_address_output_data        = register_base_uint32 + 0x0CU;  // OUTDR
+        constexpr static std::uint32_t register_address_set_reset          = register_base_uint32 + 0x10U;  // BSHR
+        constexpr static std::uint32_t register_address_reset              = register_base_uint32 + 0x14U;  // BCR
+        constexpr static std::uint32_t register_address_configuration_lock = register_base_uint32 + 0x18U;  // LCKR
 
-    public:
-        constexpr static std::uint32_t port_base_address = static_cast<std::uint32_t>(TplBaseAddress);
-        constexpr static std::uint8_t  pin_number        = TplPinNumber;
+        // Generic mask
+        template<std::uint32_t TplNonInvertedValue>
+        static constexpr std::uint32_t register_mask_invert();
 
-        const Pin &operator=(std::uint8_t value) const;
+        // Masks and conversions for configuration register
+        template<std::uint8_t TplUnshiftedValue>
+        static constexpr std::uint32_t register_configuration_shift();
 
+        constexpr static std::uint32_t mask_configuration_keep     = register_configuration_shift<0b1111U>();  // NOLINT(*-dynamic-static-initializers)
+        constexpr static std::uint32_t mask_configuration_inverted = register_mask_invert<mask_configuration_keep>(); // NOLINT(*-dynamic-static-initializers)
+
+        // Masks and conversions for Input, Output, Reset (not Reset/Set), Port Lock registers
+        template<std::uint8_t TplUnshiftedValue>
+        static constexpr std::uint32_t register_pindata_shift_ct();
+
+        static constexpr std::uint32_t register_pindata_shift(std::uint32_t unshifted_value);
+
+        constexpr static std::uint32_t mask_pin_data_keep     = register_pindata_shift_ct<0b1U>();       // NOLINT(*-dynamic-static-initializers)
+        constexpr static std::uint32_t mask_pin_data_inverted = register_mask_invert<mask_pin_data_keep>();   // NOLINT(*-dynamic-static-initializers)
+
+        // Masks and conversions for Reset/Set register
+        template<bool TplIsReset, bool TplIsSet>
+        static constexpr std::uint32_t register_reset_set_shift_ct();
+
+        constexpr static std::uint32_t mask_reset_set_keep     = register_reset_set_shift_ct<true, true>(); // NOLINT(*-dynamic-static-initializers)
+        constexpr static std::uint32_t mask_reset_set_inverted = register_mask_invert<mask_reset_set_keep>();   // NOLINT(*-dynamic-static-initializers)
+
+        // Helper methods
         template<std::uint8_t TplModeRawValue>
         static constexpr void mode_generic_raw_ct();
+
+        static constexpr void mode_generic_raw(std::uint8_t mode_raw_value);
+
+    public:
+        constexpr static std::uint32_t port_base_address = static_cast<std::uint32_t>(TplBaseAddress); // NOLINT(*-dynamic-static-initializers)
+        constexpr static std::uint8_t  pin_number        = TplPinNumber; // NOLINT(*-dynamic-static-initializers)
+
+        // Pin methods
+        const Pin &operator=(std::uint8_t value) const;
 
         template<PinInputDrive TplDrive>
         static constexpr void mode_input_ct();
 
         template<PinOutputSlewRateCt TplSlewRate, bool TplIsMultiplexingAlternateFunction, PinOutputDrive TplDrive>
         static constexpr void mode_output_ct();
-
-        static constexpr std::uint32_t pin_mask_outdr();
-
-        static constexpr std::uint32_t pin_mask_outdr_inverted();
     };
 
 
@@ -134,56 +170,82 @@ namespace peripheral::gpio{
 
     #pragma endregion
 
+    #pragma region Defintion - Pins - mask generators - shiters - etc
+
+    template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
+    template<std::uint8_t TplUnshiftedValue>
+    WCH_OPTIMIZE_GPIO inline constexpr std::uint32_t Pin<TplBaseAddress, TplPinNumber>::register_configuration_shift() {
+        // 2-bit for
+        // 2-bit for
+        return static_cast<std::uint32_t>(TplUnshiftedValue) << static_cast<std::uint32_t>(4U * TplPinNumber);
+    }
+
+    template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
+    template<std::uint8_t TplUnshiftedValue>
+    constexpr std::uint32_t Pin<TplBaseAddress, TplPinNumber>::register_pindata_shift_ct() {
+        return static_cast<std::uint32_t>(TplUnshiftedValue) << static_cast<std::uint32_t>(TplPinNumber);
+    }
+
+    template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
+    WCH_OPTIMIZE_GPIO inline constexpr std::uint32_t Pin<TplBaseAddress, TplPinNumber>::register_pindata_shift(const std::uint32_t unshifted_value) {
+        return unshifted_value << static_cast<std::uint32_t>(TplPinNumber);
+    }
+
+    template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
+    template<bool TplIsReset, bool TplIsSet>
+    WCH_OPTIMIZE_GPIO inline constexpr std::uint32_t Pin<TplBaseAddress, TplPinNumber>::register_reset_set_shift_ct() {
+        constexpr auto reset = (TplIsReset == true) ? (static_cast<std::uint32_t>(0b1U) << 16U) : 0U;
+        constexpr auto set = (TplIsSet == true) ? 0b1U : 0U;
+        return ( reset | set )  << static_cast<std::uint32_t>(TplPinNumber);
+    }
+
+    template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
+    template<std::uint32_t TplNonInvertedValue>
+    WCH_OPTIMIZE_GPIO inline constexpr std::uint32_t Pin<TplBaseAddress, TplPinNumber>::register_mask_invert() {
+        return full_of_ones ^ TplNonInvertedValue;
+    }
+
+    #pragma endregion
 
     #pragma region Definition - Pins
 
 
     template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
     WCH_OPTIMIZE_GPIO inline const Pin<TplBaseAddress, TplPinNumber> & Pin<TplBaseAddress, TplPinNumber>::operator=(const std::uint8_t value) const {
-        const auto old_value = soc::reg::access::readCtAddr<Registers<TplBaseAddress>::output_data>();
-        soc::reg::access::writeCtAddr<Registers<TplBaseAddress>::output_data>((old_value & pin_mask_outdr_inverted()) | value);
+        const auto old_value = soc::reg::access::readCtAddr<register_address_output_data>();
+        const auto new_value = (old_value & mask_pin_data_keep) | register_pindata_shift(value);
+        soc::reg::access::writeCtAddr<register_address_output_data>(new_value);
         return *this;
     }
-
 
     template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
     template<std::uint8_t TplModeRawValue>
     WCH_OPTIMIZE_GPIO inline constexpr void Pin<TplBaseAddress, TplPinNumber>::mode_generic_raw_ct() {
-        soc::reg::access::writeCtAddrVal<static_cast<std::uint32_t>(port_base_address), TplModeRawValue>();
+        soc::reg::access::writeCtAddrVal<register_address_configuration, TplModeRawValue>();
     }
 
+    template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
+    constexpr void Pin<TplBaseAddress, TplPinNumber>::mode_generic_raw(const std::uint8_t mode_raw_value) {
+        soc::reg::access::writeCtAddr<register_address_configuration>(mode_raw_value);
+    }
 
     template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
     template<PinInputDrive TplDrive>
     WCH_OPTIMIZE_GPIO inline constexpr void Pin<TplBaseAddress, TplPinNumber>::mode_input_ct() {
-        const auto old_value = soc::reg::access::readCtAddr<Registers<TplBaseAddress>::configuration>();
-        constexpr auto raw_value = static_cast<std::uint8_t>(TplDrive) << pin_drive_bit_offset; // NOLINT
-        mode_generic_raw_ct<raw_value << (TplPinNumber * pin_configuration_bit_offset)>();
+        const auto old_value = soc::reg::access::readCtAddr<register_address_configuration>();
+        constexpr auto drive = static_cast<std::uint32_t>(TplDrive);
+        mode_generic_raw((old_value & mask_configuration_inverted) | register_configuration_shift<drive>());
     }
-
 
     template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
     template<PinOutputSlewRateCt TplSlewRate, bool TplIsMultiplexingAlternateFunction, PinOutputDrive TplDrive>
     WCH_OPTIMIZE_GPIO inline constexpr void Pin<TplBaseAddress, TplPinNumber>::mode_output_ct() {
-        constexpr std::uint32_t raw_value =
-            static_cast<std::uint8_t>(TplSlewRate) |  // NOLINT
-            static_cast<std::uint8_t>(TplDrive) << pin_drive_bit_offset | // NOLINT
-            (TplIsMultiplexingAlternateFunction == true) ? 1U << pin_output_multiplexing_bit_offset : 0U; // NOLINT
-
-        mode_generic_raw_ct<raw_value << (TplPinNumber * pin_configuration_bit_offset)>();
+        const auto old_value = soc::reg::access::readCtAddr<register_address_configuration>();
+        constexpr auto slew = static_cast<std::uint32_t>(TplSlewRate);
+        constexpr auto drive = static_cast<std::uint32_t>(TplDrive) << static_cast<std::uint32_t>(pin_drive_bit_offset);
+        constexpr auto multiplexing = (TplIsMultiplexingAlternateFunction == true) ? static_cast<std::uint32_t>(1U) << static_cast<std::uint32_t>(pin_output_multiplexing_bit_offset) : 0U;
+        mode_generic_raw((old_value & mask_configuration_inverted) | register_configuration_shift<slew | drive | multiplexing>());
     }
-
-
-    template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
-    constexpr std::uint32_t Pin<TplBaseAddress, TplPinNumber>::pin_mask_outdr() {
-        return 1U << pin_number; // NOLINT
-    }
-
-    template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
-    constexpr std::uint32_t Pin<TplBaseAddress, TplPinNumber>::pin_mask_outdr_inverted() {
-        return 0xFFFF'FFFFU ^ pin_mask_outdr();
-    }
-
 
 #pragma endregion
 
