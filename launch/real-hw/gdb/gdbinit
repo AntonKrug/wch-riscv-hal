@@ -10,6 +10,7 @@ end
 define sys
   info registers ra gp tp
   x /12x $sp
+  info registers mepc mstatus
 end
 
 target remote localhost:3333
