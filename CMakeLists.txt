@@ -78,7 +78,10 @@ set(CMAKE_STRIP        "${TOOLCHAIN_PATH_BIN}/${MY_TOOLCHAIN_CROSS_PREFIX}strip$
 # assembly was using gcc.exe (not g++ like the rest) for ASM compilation on few files, but then no extra CMAKE_ASM_FLAGS
 # were set so that was default to rv32i and then switching to rv32e was causing mismatch between object files and
 # linker was failing
-set(TARGET_ARCH_AND_ABI "-march=rv32ecxw -mabi=ilp32e")
+#set(TARGET_ARCH_AND_ABI "-march=rv32ecxw -mabi=ilp32e")
+
+# without XW the assembler gdb and tools work better as they recognize instructions
+set(TARGET_ARCH_AND_ABI "-march=rv32ec_zicsr_zbb -mabi=ilp32e")
 
 
 #set(CMAKE_C_FLAGS "-march=rv32i -mabi=ilp32 -v -msave-restore -fno-common -fdata-sections -ffunction-sections -fsigned-char -fmessage-length=0")
