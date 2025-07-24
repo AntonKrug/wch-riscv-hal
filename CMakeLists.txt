@@ -168,7 +168,7 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/system/CH32V003xxxx/soc_template.h
         ${CMAKE_SOURCE_DIR}/src/system/ch32v003/clocks.h
         ${CMAKE_SOURCE_DIR}/src/system/gpio/config_fusion.h
-        ${CMAKE_SOURCE_DIR}/src/system/gpio/config_entity.h
+        ${CMAKE_SOURCE_DIR}/src/system/gpio/op.h
         ${CMAKE_SOURCE_DIR}/src/system/gpio/concepts.h
         ${CMAKE_SOURCE_DIR}/src/system/linker_utils.h
         ${CMAKE_SOURCE_DIR}/src/system/memory_map/concepts.h

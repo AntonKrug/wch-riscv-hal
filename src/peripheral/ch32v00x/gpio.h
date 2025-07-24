@@ -8,7 +8,7 @@
 
 #include "system/memory_map/concepts.h"
 #include "system/register/access_primitives.h"
-#include "system/gpio/config_entity.h"
+#include "system/gpio/op.h"
 
 #define WCH_OPTIMIZE_GPIO __attribute__ ((always_inline, optimize("-Os"))) // NOLINT
 

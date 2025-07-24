@@ -24,7 +24,7 @@ using namespace peripheral;
 // }
 
 #include "system/gpio/concepts.h"
-#include "system/gpio/config_entity.h"
+#include "system/gpio/op.h"
 
 struct FakeLcdDriver { // NOLINT
 private:

@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "config_entity.h"
+#include "op.h"
 
 namespace soc::gpio {
 
