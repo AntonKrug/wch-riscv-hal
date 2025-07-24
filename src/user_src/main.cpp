@@ -22,6 +22,33 @@ using namespace peripheral;
 //     }
 // }
 
+#include "system/gpio/concepts.h"
+#include "system/gpio/action_entity.h"
+
+struct FakeLcdDriver { // NOLINT
+private:
+    template<soc::gpio::Enrollable TplActionType>
+    static constexpr auto configure_pins_helper() {
+        constexpr soc::gpio::ActionEntity action {
+            0U,
+            0U,
+            0U,
+            10U,
+            1U
+        };
+
+        return TplActionType{}.template enroll<action>();
+    }
+
+public:
+    template<auto TplEnrollable>
+    static constexpr auto configure_pins() {
+        return configure_pins_helper<decltype(TplEnrollable)>();
+    }
+
+};
+
+
 
 namespace soc::irq::handler {
 

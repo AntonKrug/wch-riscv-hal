@@ -167,6 +167,9 @@ set (headers
         ${CMAKE_SOURCE_DIR}/src/peripheral/util.h
         ${CMAKE_SOURCE_DIR}/src/system/CH32V003xxxx/soc_template.h
         ${CMAKE_SOURCE_DIR}/src/system/ch32v003/clocks.h
+        ${CMAKE_SOURCE_DIR}/src/system/gpio/action.h
+        ${CMAKE_SOURCE_DIR}/src/system/gpio/action_entity.h
+        ${CMAKE_SOURCE_DIR}/src/system/gpio/concepts.h
         ${CMAKE_SOURCE_DIR}/src/system/linker_utils.h
         ${CMAKE_SOURCE_DIR}/src/system/memory_map/concepts.h
         ${CMAKE_SOURCE_DIR}/src/system/memory_map/peripheral_addresses.h
