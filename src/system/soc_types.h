@@ -19,9 +19,9 @@ namespace soc::types {
         peripheral::gpio::BaseAddress TplBaseAddressC,
         peripheral::gpio::BaseAddress TplBaseAddressD>
     struct GpioACD {
-        constexpr static peripheral::gpio::Port<TplBaseAddressA> A = {};
-        constexpr static peripheral::gpio::Port<TplBaseAddressC> C = {};
-        constexpr static peripheral::gpio::Port<TplBaseAddressD> D = {};
+        constexpr static peripheral::gpio::Port<TplBaseAddressA> a = {};
+        constexpr static peripheral::gpio::Port<TplBaseAddressC> c = {};
+        constexpr static peripheral::gpio::Port<TplBaseAddressD> d = {};
     };
 
 

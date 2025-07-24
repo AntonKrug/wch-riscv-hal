@@ -163,7 +163,7 @@ extern "C" {
         soc::reg::setRegFieldsSipCt<
             peripheral::rcc::Apb2pcenr::IOPDEN_RW_InputOutputPortDClockEnable::clockEnable>();
 
-        constexpr auto swio  = soc::Gpio.D.get_pin<1U>();
+        constexpr auto swio  = soc::GpioPort.d.get_pin<1U>();
         swio.mode_input_ct<peripheral::gpio::PinInputDrive::pull_up_pull_down>();
         swio = 0U;
 
