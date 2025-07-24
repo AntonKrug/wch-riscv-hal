@@ -10,7 +10,7 @@
 #include "firmware_build_info.h"
 #include "system/soc_types.h"
 #include "peripheral/ch32v00x/usart.h"
-#include "system/gpio/action.h"
+#include "system/gpio/config_fusion.h"
 
 using namespace peripheral;
 
@@ -24,13 +24,13 @@ using namespace peripheral;
 // }
 
 #include "system/gpio/concepts.h"
-#include "system/gpio/action_entity.h"
+#include "system/gpio/config_entity.h"
 
 struct FakeLcdDriver { // NOLINT
 private:
     template<soc::gpio::Enrollable TplActionType>
     [[nodiscard]] static constexpr auto configure_pins_helper() {
-        constexpr soc::gpio::ActionEntity action {
+        constexpr soc::gpio::ConfigEntity action {
             0U,
             0U,
             0U,
@@ -72,13 +72,13 @@ main_user(void) {
     a[0] = a[0] + 1;
     // prepare_system_for_main();
 
-    constexpr soc::gpio::Action action;
-    constexpr soc::gpio::ActionEntity action_entity {0,0,0,0,0};
+    constexpr soc::gpio::ConfigFusion action;
+    constexpr soc::gpio::ConfigEntity action_entity {0,0,0,0,0};
 
     constexpr auto b = action.enroll<action_entity>();
     constexpr auto c = FakeLcdDriver::configure_pins<b>();
 
-    soc::gpio::apply_action_to_register<action_entity>();
+    soc::gpio::apply_config_entity_to_register<action_entity>();
 
 
     // Firmware build info

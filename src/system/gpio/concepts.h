@@ -4,13 +4,13 @@
 
 #pragma once
 
-#include "action_entity.h"
+#include "config_entity.h"
 
 namespace soc::gpio {
 
     template <typename  T>
     concept Enrollable = requires(T t) {  // NOLINT
-        { t.template enroll<ActionEntity{}>() };
+        { t.template enroll<ConfigEntity{}>() };
     };
 
 }
