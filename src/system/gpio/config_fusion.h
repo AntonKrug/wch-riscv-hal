@@ -13,18 +13,19 @@
 
 namespace soc::gpio {
 
-    template<ConfigEntity... TplConfigEntities>
+    template<Op... TplOps>
     struct ConfigFusion { // NOLINT
     private:
 
-        static constexpr std::size_t actions_count = sizeof...(TplConfigEntities);
+        static constexpr std::size_t ops_count = sizeof...(TplOps);
 
     public:
-        static constexpr std::array<int, actions_count> entities = {TplConfigEntities...};
+        static constexpr std::array<int, ops_count> ops = {TplOps...};
 
-        template<ConfigEntity TplConfigEntity>
+        // add/commit/enroll alternative name
+        template<Op TplOp>
         [[nodiscard]] static constexpr auto enroll() {
-            return ConfigFusion<TplConfigEntities..., TplConfigEntity>{};
+            return ConfigFusion<TplOps..., TplOp>{};
         }
     };
 

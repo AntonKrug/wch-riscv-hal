@@ -30,7 +30,7 @@ struct FakeLcdDriver { // NOLINT
 private:
     template<soc::gpio::Enrollable TplActionType>
     [[nodiscard]] static constexpr auto configure_pins_helper() {
-        constexpr soc::gpio::ConfigEntity action {
+        constexpr soc::gpio::Op action {
             0U,
             0U,
             0U,
@@ -72,13 +72,13 @@ main_user(void) {
     a[0] = a[0] + 1;
     // prepare_system_for_main();
 
-    constexpr soc::gpio::ConfigFusion action;
-    constexpr soc::gpio::ConfigEntity action_entity {0,0,0,0,0};
+    constexpr soc::gpio::ConfigFusion fusion;
+    constexpr soc::gpio::Op op {0,0,0,0,0};
 
-    constexpr auto b = action.enroll<action_entity>();
+    constexpr auto b = fusion.enroll<op>();
     // constexpr auto c = FakeLcdDriver::configure_pins<b>();
 
-    soc::gpio::apply_config_entity_to_register<action_entity>();
+    soc::gpio::execute_op<op>();
 
 
     // Firmware build info

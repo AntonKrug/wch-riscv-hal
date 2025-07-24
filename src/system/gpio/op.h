@@ -12,7 +12,7 @@ namespace soc::gpio {
 
     // alternative names Spec, Directive, Op
 
-    struct ConfigEntity { // NOLINT
+    struct Op { // NOLINT
         std::uint32_t address;     // address to apply the value to
         std::uint32_t value;       // value to be applied
         std::uint32_t mask;        // bitmask of what part of the value is the desired value
@@ -22,20 +22,20 @@ namespace soc::gpio {
     };
 
 
-    template<ConfigEntity TplConfigEntity>
-    constexpr void apply_config_entity_to_register() {
-        if constexpr (TplConfigEntity.writable == TplConfigEntity.mask) {
+    template<Op TplOp>
+    constexpr void execute_op() {
+        if constexpr (TplOp.writable == TplOp.mask) {
             // call what can be written is already enrolled, we do not need to read the register
             // before and can blindly and more efficiently write to it
 
-            soc::reg::access::writeCtAddrVal<TplConfigEntity.address, TplConfigEntity.value>();
+            soc::reg::access::writeCtAddrVal<TplOp.address, TplOp.value>();
         } else {
             // we need to read original register first, apply clean out the mask content and
             // then apply this new value to it
 
-            const auto old_value = soc::reg::access::readCtAddr<TplConfigEntity.address>();
-            constexpr std::uint32_t mask_inverted = 0xffff'ffffU ^ TplConfigEntity.mask;
-            soc::reg::access::writeCtAddr<TplConfigEntity.address>(TplConfigEntity.value | (old_value & mask_inverted));
+            const auto old_value = soc::reg::access::readCtAddr<TplOp.address>();
+            constexpr std::uint32_t mask_inverted = 0xffff'ffffU ^ TplOp.mask;
+            soc::reg::access::writeCtAddr<TplOp.address>(TplOp.value | (old_value & mask_inverted));
         }
     }
 

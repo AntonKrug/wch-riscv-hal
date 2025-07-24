@@ -10,7 +10,7 @@ namespace soc::gpio {
 
     template <typename  T>
     concept Enrollable = requires(T t) {  // NOLINT
-        { t.template enroll<ConfigEntity{}>() };
+        { t.template enroll<Op{}>() };
     };
 
 }
