@@ -17,17 +17,13 @@ namespace soc::gpio {
     private:
 
         static constexpr std::size_t actions_count = sizeof...(TplActions);
-        static constexpr std::array<int, actions_count> entities = {TplActions...};
-
-        template<ActionEntity TplAction, std::size_t... Index>
-        [[nodiscard]] static constexpr auto enroll_helper(std::index_sequence<Index...>) {
-            return Action<entities[Index], TplAction>{};
-        }
 
     public:
+        static constexpr std::array<int, actions_count> entities = {TplActions...};
+
         template<ActionEntity TplAction>
         [[nodiscard]] static constexpr auto enroll() {
-            return enroll_helper<TplAction>(std::make_index_sequence<actions_count>{});
+            return Action<TplActions..., TplAction>{};
         }
     };
 
