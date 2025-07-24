@@ -10,6 +10,8 @@
 
 namespace soc::gpio {
 
+    // alternative names Spec, Directive, Op
+
     struct ConfigEntity { // NOLINT
         std::uint32_t address;     // address to apply the value to
         std::uint32_t value;       // value to be applied

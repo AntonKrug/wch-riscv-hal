@@ -8,6 +8,7 @@
 
 #include "system/memory_map/concepts.h"
 #include "system/register/access_primitives.h"
+#include "system/gpio/config_entity.h"
 
 #define WCH_OPTIMIZE_GPIO __attribute__ ((always_inline, optimize("-Os"))) // NOLINT
 
@@ -98,6 +99,8 @@ namespace peripheral::gpio{
         constexpr static std::uint32_t register_address_reset              = register_base_uint32 + 0x14U;  // BCR
         constexpr static std::uint32_t register_address_configuration_lock = register_base_uint32 + 0x18U;  // LCKR
 
+        constexpr static std::uint32_t port_number = (register_address_configuration - 0x4001'0800U) / 0x400U;
+
         // Generic mask
         template<std::uint32_t TplNonInvertedValue>
         static constexpr std::uint32_t register_mask_invert();
@@ -139,7 +142,13 @@ namespace peripheral::gpio{
         const Pin &operator=(std::uint8_t value) const;
 
         template<PinInputDrive TplDrive>
+        static constexpr soc::gpio::ConfigEntity mode_input_op_ct();
+
+        template<PinInputDrive TplDrive>
         static constexpr void mode_input_ct();
+
+        template<PinOutputSlewRateCt TplSlewRate, bool TplIsMultiplexingAlternateFunction, PinOutputDrive TplDrive>
+        static constexpr soc::gpio::ConfigEntity mode_output_op_ct();
 
         template<PinOutputSlewRateCt TplSlewRate, bool TplIsMultiplexingAlternateFunction, PinOutputDrive TplDrive>
         static constexpr void mode_output_ct();
@@ -147,7 +156,7 @@ namespace peripheral::gpio{
 
 
     template<BaseAddress TplBaseAddress>
-    struct Port {
+    struct Port { // NOLINT
         constexpr static BaseAddress   base_address        = TplBaseAddress;
         constexpr static std::uint32_t base_address_uint32 = static_cast<std::uint32_t>(TplBaseAddress);
 
@@ -231,20 +240,48 @@ namespace peripheral::gpio{
 
     template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
     template<PinInputDrive TplDrive>
+    WCH_OPTIMIZE_GPIO inline constexpr soc::gpio::ConfigEntity Pin<TplBaseAddress, TplPinNumber>::mode_input_op_ct() {
+        return {
+            .address     = register_address_configuration,
+            .value       = register_configuration_shift<static_cast<std::uint32_t>(TplDrive)>(),
+            .mask        = register_configuration_shift<mask_configuration_keep>(),
+            .writable    = full_of_ones,
+            .port_number = port_number
+        };
+    }
+
+    template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
+    template<PinInputDrive TplDrive>
     WCH_OPTIMIZE_GPIO inline constexpr void Pin<TplBaseAddress, TplPinNumber>::mode_input_ct() {
-        const auto old_value = soc::reg::access::readCtAddr<register_address_configuration>();
-        constexpr auto drive = static_cast<std::uint32_t>(TplDrive);
-        mode_generic_raw((old_value & mask_configuration_inverted) | register_configuration_shift<drive>());
+        constexpr auto op = mode_input_op_ct<TplDrive>();
+        soc::gpio::apply_config_entity_to_register<op>();
     }
 
     template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
     template<PinOutputSlewRateCt TplSlewRate, bool TplIsMultiplexingAlternateFunction, PinOutputDrive TplDrive>
-    WCH_OPTIMIZE_GPIO inline constexpr void Pin<TplBaseAddress, TplPinNumber>::mode_output_ct() {
-        const auto old_value = soc::reg::access::readCtAddr<register_address_configuration>();
+    WCH_OPTIMIZE_GPIO inline constexpr soc::gpio::ConfigEntity Pin<TplBaseAddress, TplPinNumber>::mode_output_op_ct() {
         constexpr auto slew = static_cast<std::uint32_t>(TplSlewRate);
         constexpr auto drive = static_cast<std::uint32_t>(TplDrive) << static_cast<std::uint32_t>(pin_drive_bit_offset);
-        constexpr auto multiplexing = (TplIsMultiplexingAlternateFunction == true) ? static_cast<std::uint32_t>(1U) << static_cast<std::uint32_t>(pin_output_multiplexing_bit_offset) : 0U;
-        mode_generic_raw((old_value & mask_configuration_inverted) | register_configuration_shift<slew | drive | multiplexing>());
+        constexpr auto multiplexing =
+            (TplIsMultiplexingAlternateFunction == true) ?
+            static_cast<std::uint32_t>(1U) << static_cast<std::uint32_t>(pin_output_multiplexing_bit_offset) :
+            0U;
+
+        return {
+            .address =  register_address_configuration,
+            .value = register_configuration_shift<slew | drive | multiplexing>(),
+            .mask = register_configuration_shift<mask_configuration_keep>(),
+            .writable = full_of_ones,
+            .port_number =  port_number
+        };
+    }
+
+
+    template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
+    template<PinOutputSlewRateCt TplSlewRate, bool TplIsMultiplexingAlternateFunction, PinOutputDrive TplDrive>
+    WCH_OPTIMIZE_GPIO inline constexpr void Pin<TplBaseAddress, TplPinNumber>::mode_output_ct() {
+        constexpr auto op = mode_output_op_ct<TplSlewRate, TplIsMultiplexingAlternateFunction, TplDrive>();
+        soc::gpio::apply_config_entity_to_register<op>();
     }
 
 #pragma endregion
