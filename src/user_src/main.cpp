@@ -76,7 +76,7 @@ main_user(void) {
     constexpr soc::gpio::ConfigEntity action_entity {0,0,0,0,0};
 
     constexpr auto b = action.enroll<action_entity>();
-    constexpr auto c = FakeLcdDriver::configure_pins<b>();
+    // constexpr auto c = FakeLcdDriver::configure_pins<b>();
 
     soc::gpio::apply_config_entity_to_register<action_entity>();
 
@@ -118,7 +118,7 @@ main_user(void) {
     // };
 
 
-    constexpr auto led  = soc::Gpio.D.get_pin<0U>();
+    constexpr auto led  = soc::GpioPort.d.get_pin<0U>();
     led.mode_output_ct<gpio::PinOutputSlewRateCt::fast, false, gpio::PinOutputDrive::push_pull>();
     while (true) {
         led = 1U;
@@ -128,28 +128,28 @@ main_user(void) {
     }
 
 
-    // constexpr auto swio  = soc::Gpio.D.get_pin<1U>();
+    // constexpr auto swio  = soc::GpioPort.D.get_pin<1U>();
     // swio.sequence().executeExact();
 
 
     // swio.mode_output_ct<gpio::PinOutputSlewRateCt::normal, false, gpio::PinOutputDrive::push_pull>();
 
     // GPIO experiments
-    // constexpr auto tdi  = soc::Gpio.A.get_pin(0);
-    // constexpr auto tms  = Soc::Gpio.A.GetPin(1);
-    // constexpr auto tdo  = Soc::Gpio.A.GetPin(2);
-    // constexpr auto data = Soc::Gpio.C.GetPin({ 2, 4, 5, 7 });
+    // constexpr auto tdi  = soc::GpioPort.A.get_pin(0);
+    // constexpr auto tms  = Soc::GpioPort.A.GetPin(1);
+    // constexpr auto tdo  = Soc::GpioPort.A.GetPin(2);
+    // constexpr auto data = Soc::GpioPort.C.GetPin({ 2, 4, 5, 7 });
     // // data = argc;
     //
     // auto var = tdi.mode<peripheral::gpio::PinMode::inputPullUpOrDown>().on<tdi>().commitExact();
-    // Gpio::PinsSet<tdi, tdo, tms>() = 11;
+    // GpioPort::PinsSet<tdi, tdo, tms>() = 11;
     //
-    // constexpr Gpio::Sequence<> changes;
-    // constexpr auto ans = changes.mode<tdi, Gpio::PinMode::inputPullUpOrDown>().off<tdo>().on<tdi>().on<data>();
+    // constexpr GpioPort::Sequence<> changes;
+    // constexpr auto ans = changes.mode<tdi, GpioPort::PinMode::inputPullUpOrDown>().off<tdo>().on<tdi>().on<data>();
 
     //changes.on<tdi>().commitExact();
     //constexpr auto ans = changes.on<tdi>();
-    //return tdi.mode<Driver::Gpio::PinMode::outputOpenDrain>().on<tdi>().commitExact();
+    //return tdi.mode<Driver::GpioPort::PinMode::outputOpenDrain>().on<tdi>().commitExact();
     //constexpr auto b = tdi.actuate().on<tdo>().commitExact();
 
     // return ans.executeExact();

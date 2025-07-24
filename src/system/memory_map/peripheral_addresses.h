@@ -6,7 +6,7 @@
 
 #include "system/soc_types.h"
 
-namespace soc::peripheral_addreses {
+namespace soc::peripheral_addresses {
 
 
     // General Purpose Input/Output
