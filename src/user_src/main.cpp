@@ -10,6 +10,7 @@
 #include "firmware_build_info.h"
 #include "system/soc_types.h"
 #include "peripheral/ch32v00x/usart.h"
+#include "system/gpio/action.h"
 
 using namespace peripheral;
 
@@ -70,6 +71,15 @@ main_user(void) {
     char a[3] ="hi";
     a[0] = a[0] + 1;
     // prepare_system_for_main();
+
+    constexpr soc::gpio::Action action;
+    constexpr soc::gpio::ActionEntity action_entity {0,0,0,0,0};
+
+    constexpr auto b = action.enroll<action_entity>();
+    constexpr auto c = FakeLcdDriver::configure_pins<b>();
+
+    soc::gpio::apply_action_to_register<action_entity>();
+
 
     // Firmware build info
     // std::cout << "Version: " << firmwareBuildInfo::version << " date: " << firmwareBuildInfo::date << " time: " << firmwareBuildInfo::time << std::endl;
