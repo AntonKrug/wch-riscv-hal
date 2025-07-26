@@ -155,13 +155,13 @@ namespace peripheral::gpio{
     };
 
 
-    template<BaseAddress TplBaseAddress, std::uint32_t TplPortNumer>
+    template<BaseAddress TplBaseAddress, std::uint32_t TplPortNumber>
     struct Port { // NOLINT
         constexpr static BaseAddress   base_address        = TplBaseAddress;
         constexpr static std::uint32_t base_address_uint32 = static_cast<std::uint32_t>(TplBaseAddress);
 
         template<std::uint8_t TplPin>
-        constexpr static Pin<TplBaseAddress, TplPortNumer, TplPin> get_pin();
+        constexpr static Pin<TplBaseAddress, TplPortNumber, TplPin> get_pin();
     };
 
 
