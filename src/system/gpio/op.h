@@ -25,7 +25,13 @@ namespace soc::gpio {
 
     template<Op TplOp>
     constexpr void execute_op() {
-        if constexpr (TplOp.writable == TplOp.mask) {
+        if constexpr (TplOp.set_reset_address != 0U) {
+            // there is set/reset alternative address for this operation
+            // and we do not need to read, mask and write on this op
+            // when we can convert to a op which doesn't destroy original
+            // content in the peripheral registers
+            // TODO: implement this
+        } else if constexpr (TplOp.writable == TplOp.mask) {
             // call what can be written is already enrolled, we do not need to read the register
             // before and can blindly and more efficiently write to it
 
