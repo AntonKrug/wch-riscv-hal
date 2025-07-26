@@ -42,7 +42,15 @@ namespace soc::gpio {
 
     template<Op TplOp>
     constexpr void execute_op() {
-        if constexpr (TplOp.bit_set_reset_address != 0U) {
+        if constexpr (TplOp.writable == TplOp.mask) {
+            // Call what can be written is already enrolled, we do not need to read the register
+            // before and can blindly and more efficiently write to it. Prefer this even if we
+            // have possibility of using the bit set/reset register instead, as here using
+            // 8bit literal to write to register will be easier for RISCV than using 24bit/32bit
+            // literal needed for set/reset register.
+
+            soc::reg::access::writeCtAddrVal<TplOp.address, TplOp.value>();
+        } else  if constexpr (TplOp.bit_set_reset_address != 0U) {
             // There is set/reset alternative address for this operation. We do not need to read,
             // mask the value and write on this exact op when we can convert it slightly an op
             // which doesn't destroy all original content in the peripheral registers as it can
@@ -50,11 +58,6 @@ namespace soc::gpio {
             constexpr std::uint32_t bit_set_clear_value = convert_write_value_to_bit_set_clear<TplOp.value>();
 
             soc::reg::access::writeCtAddrVal<TplOp.bit_set_reset_address, bit_set_clear_value>();
-        } else if constexpr (TplOp.writable == TplOp.mask) {
-            // call what can be written is already enrolled, we do not need to read the register
-            // before and can blindly and more efficiently write to it
-
-            soc::reg::access::writeCtAddrVal<TplOp.address, TplOp.value>();
         } else {
             // we need to read original register first, apply clean out the mask content and
             // then apply this new value to it
