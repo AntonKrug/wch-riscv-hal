@@ -87,7 +87,7 @@ namespace peripheral::gpio{
         constexpr static std::uint32_t configuration_lock   = register_base_uint32 + 0x18U;  // LCKR
     };
 
-    template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
+    template<BaseAddress TplBaseAddress, std::uint32_t TplPortNumer, std::uint8_t TplPinNumber>
     struct Pin {   // NOLINT
     private:
         // Registers addresses
@@ -99,7 +99,7 @@ namespace peripheral::gpio{
         constexpr static std::uint32_t register_address_reset              = register_base_uint32 + 0x14U;  // BCR
         constexpr static std::uint32_t register_address_configuration_lock = register_base_uint32 + 0x18U;  // LCKR
 
-        constexpr static std::uint32_t port_number = (register_address_configuration - 0x4001'0800U) / 0x400U;
+        constexpr static std::uint32_t port_number = TplPortNumer;
 
         // Generic mask
         template<std::uint32_t TplNonInvertedValue>
@@ -155,13 +155,13 @@ namespace peripheral::gpio{
     };
 
 
-    template<BaseAddress TplBaseAddress>
+    template<BaseAddress TplBaseAddress, std::uint32_t TplPortNumer>
     struct Port { // NOLINT
         constexpr static BaseAddress   base_address        = TplBaseAddress;
         constexpr static std::uint32_t base_address_uint32 = static_cast<std::uint32_t>(TplBaseAddress);
 
         template<std::uint8_t TplPin>
-        constexpr static Pin<TplBaseAddress, TplPin> get_pin();
+        constexpr static Pin<TplBaseAddress, TplPortNumer, TplPin> get_pin();
     };
 
 
@@ -171,46 +171,46 @@ namespace peripheral::gpio{
     #pragma region Definition - Port
 
 
-    template<BaseAddress TplBaseAddress>
+    template<BaseAddress TplBaseAddress, std::uint32_t TplPortNumer>
     template<std::uint8_t TplPin>
-    WCH_OPTIMIZE_GPIO constexpr Pin<TplBaseAddress, TplPin> Port<TplBaseAddress>::get_pin() {
-        return Pin<TplBaseAddress, TplPin>{};
+    WCH_OPTIMIZE_GPIO constexpr Pin<TplBaseAddress, TplPortNumer, TplPin> Port<TplBaseAddress, TplPortNumer>::get_pin() {
+        return Pin<TplBaseAddress, TplPortNumer, TplPin>{};
     }
 
     #pragma endregion
 
     #pragma region Defintion - Pins - mask generators - shiters - etc
 
-    template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
+    template<BaseAddress TplBaseAddress, std::uint32_t TplPortNumer, std::uint8_t TplPinNumber>
     template<std::uint8_t TplUnshiftedValue>
-    WCH_OPTIMIZE_GPIO inline constexpr std::uint32_t Pin<TplBaseAddress, TplPinNumber>::register_configuration_shift() {
+    WCH_OPTIMIZE_GPIO inline constexpr std::uint32_t Pin<TplBaseAddress, TplPortNumer, TplPinNumber>::register_configuration_shift() {
         // 2-bit for
         // 2-bit for
         return static_cast<std::uint32_t>(TplUnshiftedValue) << static_cast<std::uint32_t>(4U * TplPinNumber);
     }
 
-    template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
+    template<BaseAddress TplBaseAddress, std::uint32_t TplPortNumer, std::uint8_t TplPinNumber>
     template<std::uint8_t TplUnshiftedValue>
-    constexpr std::uint32_t Pin<TplBaseAddress, TplPinNumber>::register_pindata_shift_ct() {
+    constexpr std::uint32_t Pin<TplBaseAddress, TplPortNumer, TplPinNumber>::register_pindata_shift_ct() {
         return static_cast<std::uint32_t>(TplUnshiftedValue) << static_cast<std::uint32_t>(TplPinNumber);
     }
 
-    template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
-    WCH_OPTIMIZE_GPIO inline constexpr std::uint32_t Pin<TplBaseAddress, TplPinNumber>::register_pindata_shift(const std::uint32_t unshifted_value) {
+    template<BaseAddress TplBaseAddress, std::uint32_t TplPortNumer, std::uint8_t TplPinNumber>
+    WCH_OPTIMIZE_GPIO inline constexpr std::uint32_t Pin<TplBaseAddress, TplPortNumer, TplPinNumber>::register_pindata_shift(const std::uint32_t unshifted_value) {
         return unshifted_value << static_cast<std::uint32_t>(TplPinNumber);
     }
 
-    template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
+    template<BaseAddress TplBaseAddress, std::uint32_t TplPortNumer, std::uint8_t TplPinNumber>
     template<bool TplIsReset, bool TplIsSet>
-    WCH_OPTIMIZE_GPIO inline constexpr std::uint32_t Pin<TplBaseAddress, TplPinNumber>::register_reset_set_shift_ct() {
+    WCH_OPTIMIZE_GPIO inline constexpr std::uint32_t Pin<TplBaseAddress, TplPortNumer, TplPinNumber>::register_reset_set_shift_ct() {
         constexpr auto reset = (TplIsReset == true) ? (static_cast<std::uint32_t>(0b1U) << 16U) : 0U;
         constexpr auto set = (TplIsSet == true) ? 0b1U : 0U;
         return ( reset | set )  << static_cast<std::uint32_t>(TplPinNumber);
     }
 
-    template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
+    template<BaseAddress TplBaseAddress, std::uint32_t TplPortNumer, std::uint8_t TplPinNumber>
     template<std::uint32_t TplNonInvertedValue>
-    WCH_OPTIMIZE_GPIO inline constexpr std::uint32_t Pin<TplBaseAddress, TplPinNumber>::register_mask_invert() {
+    WCH_OPTIMIZE_GPIO inline constexpr std::uint32_t Pin<TplBaseAddress, TplPortNumer, TplPinNumber>::register_mask_invert() {
         return full_of_ones ^ TplNonInvertedValue;
     }
 
@@ -219,47 +219,48 @@ namespace peripheral::gpio{
     #pragma region Definition - Pins
 
 
-    template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
-    WCH_OPTIMIZE_GPIO inline const Pin<TplBaseAddress, TplPinNumber> & Pin<TplBaseAddress, TplPinNumber>::operator=(const std::uint8_t value) const {
+    template<BaseAddress TplBaseAddress, std::uint32_t TplPortNumer, std::uint8_t TplPinNumber>
+    WCH_OPTIMIZE_GPIO inline const Pin<TplBaseAddress, TplPortNumer, TplPinNumber> & Pin<TplBaseAddress, TplPortNumer, TplPinNumber>::operator=(const std::uint8_t value) const {
         const auto old_value = soc::reg::access::readCtAddr<register_address_output_data>();
         const auto new_value = (old_value & mask_pin_data_inverted) | register_pindata_shift(value);
         soc::reg::access::writeCtAddr<register_address_output_data>(new_value);
         return *this;
     }
 
-    template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
+    template<BaseAddress TplBaseAddress, std::uint32_t TplPortNumer, std::uint8_t TplPinNumber>
     template<std::uint8_t TplModeRawValue>
-    WCH_OPTIMIZE_GPIO inline constexpr void Pin<TplBaseAddress, TplPinNumber>::mode_generic_raw_ct() {
+    WCH_OPTIMIZE_GPIO inline constexpr void Pin<TplBaseAddress, TplPortNumer, TplPinNumber>::mode_generic_raw_ct() {
         soc::reg::access::writeCtAddrVal<register_address_configuration, TplModeRawValue>();
     }
 
-    template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
-    WCH_OPTIMIZE_GPIO inline constexpr void Pin<TplBaseAddress, TplPinNumber>::mode_generic_raw(const std::uint8_t mode_raw_value) {
+    template<BaseAddress TplBaseAddress, std::uint32_t TplPortNumer, std::uint8_t TplPinNumber>
+    WCH_OPTIMIZE_GPIO inline constexpr void Pin<TplBaseAddress, TplPortNumer, TplPinNumber>::mode_generic_raw(const std::uint8_t mode_raw_value) {
         soc::reg::access::writeCtAddr<register_address_configuration>(mode_raw_value);
     }
 
-    template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
+    template<BaseAddress TplBaseAddress, std::uint32_t TplPortNumer, std::uint8_t TplPinNumber>
     template<PinInputDrive TplDrive>
-    WCH_OPTIMIZE_GPIO inline constexpr soc::gpio::Op Pin<TplBaseAddress, TplPinNumber>::mode_input_op_ct() {
+    WCH_OPTIMIZE_GPIO inline constexpr soc::gpio::Op Pin<TplBaseAddress, TplPortNumer, TplPinNumber>::mode_input_op_ct() {
         return {
-            .address     = register_address_configuration,
-            .value       = register_configuration_shift<static_cast<std::uint32_t>(TplDrive)>(),
-            .mask        = register_configuration_shift<mask_configuration_keep>(),
-            .writable    = full_of_ones,
-            .port_number = port_number
+            .address           = register_address_configuration,
+            .set_reset_address = 0U,
+            .value             = register_configuration_shift<static_cast<std::uint32_t>(TplDrive)>(),
+            .mask              = register_configuration_shift<mask_configuration_keep>(),
+            .writable          = full_of_ones,
+            .port_number       = TplPortNumer
         };
     }
 
-    template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
+    template<BaseAddress TplBaseAddress, std::uint32_t TplPortNumer, std::uint8_t TplPinNumber>
     template<PinInputDrive TplDrive>
-    WCH_OPTIMIZE_GPIO inline constexpr void Pin<TplBaseAddress, TplPinNumber>::mode_input_ct() {
+    WCH_OPTIMIZE_GPIO inline constexpr void Pin<TplBaseAddress, TplPortNumer, TplPinNumber>::mode_input_ct() {
         constexpr auto op = mode_input_op_ct<TplDrive>();
         soc::gpio::execute_op<op>();
     }
 
-    template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
+    template<BaseAddress TplBaseAddress, std::uint32_t TplPortNumer, std::uint8_t TplPinNumber>
     template<PinOutputSlewRateCt TplSlewRate, bool TplIsMultiplexingAlternateFunction, PinOutputDrive TplDrive>
-    WCH_OPTIMIZE_GPIO inline constexpr soc::gpio::Op Pin<TplBaseAddress, TplPinNumber>::mode_output_op_ct() {
+    WCH_OPTIMIZE_GPIO inline constexpr soc::gpio::Op Pin<TplBaseAddress, TplPortNumer, TplPinNumber>::mode_output_op_ct() {
         constexpr auto slew = static_cast<std::uint32_t>(TplSlewRate);
         constexpr auto drive = static_cast<std::uint32_t>(TplDrive) << static_cast<std::uint32_t>(pin_drive_bit_offset);
         constexpr auto multiplexing =
@@ -268,18 +269,19 @@ namespace peripheral::gpio{
             0U;
 
         return {
-            .address =  register_address_configuration,
-            .value = register_configuration_shift<slew | drive | multiplexing>(),
-            .mask = register_configuration_shift<mask_configuration_keep>(),
-            .writable = full_of_ones,
-            .port_number =  port_number
+            .address           =  register_address_configuration,
+            .set_reset_address = 0U,
+            .value             = register_configuration_shift<slew | drive | multiplexing>(),
+            .mask              = register_configuration_shift<mask_configuration_keep>(),
+            .writable          = full_of_ones,
+            .port_number       = TplPortNumer
         };
     }
 
 
-    template<BaseAddress TplBaseAddress, std::uint8_t TplPinNumber>
+    template<BaseAddress TplBaseAddress, std::uint32_t TplPortNumer, std::uint8_t TplPinNumber>
     template<PinOutputSlewRateCt TplSlewRate, bool TplIsMultiplexingAlternateFunction, PinOutputDrive TplDrive>
-    WCH_OPTIMIZE_GPIO inline constexpr void Pin<TplBaseAddress, TplPinNumber>::mode_output_ct() {
+    WCH_OPTIMIZE_GPIO inline constexpr void Pin<TplBaseAddress, TplPortNumer, TplPinNumber>::mode_output_ct() {
         constexpr auto op = mode_output_op_ct<TplSlewRate, TplIsMultiplexingAlternateFunction, TplDrive>();
         soc::gpio::execute_op<op>();
     }
