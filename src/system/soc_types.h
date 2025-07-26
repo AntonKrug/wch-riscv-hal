@@ -5,7 +5,7 @@
 #pragma once
 
 
-#include "peripheral/ch32v00x/gpio.h"
+#include "peripheral/common/gpio_port.h"
 #include "peripheral/ch32v00x/usart.h"
 #include "peripheral/ch32v00x/rcc.h"
 
