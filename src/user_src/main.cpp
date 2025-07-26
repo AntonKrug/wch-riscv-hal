@@ -78,7 +78,7 @@ main_user(void) {
     constexpr auto op = p0.mode_output_op_ct<gpio::PinOutputSlewRateCt::normal, false, gpio::PinOutputDrive::push_pull>();
 
     constexpr auto b = fusion.enroll<op>();
-    // constexpr auto c = FakeLcdDriver::configure_pins<b>();
+    constexpr auto c = FakeLcdDriver::configure_pins<b>();
 
     soc::gpio::execute_op<op>();
 
