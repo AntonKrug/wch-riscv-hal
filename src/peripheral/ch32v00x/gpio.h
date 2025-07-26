@@ -242,12 +242,12 @@ namespace peripheral::gpio{
     template<PinInputDrive TplDrive>
     WCH_OPTIMIZE_GPIO inline constexpr soc::gpio::Op Pin<TplBaseAddress, TplPortNumber, TplPinNumber>::mode_input_op_ct() {
         return {
-            .address           = register_address_configuration,
-            .set_reset_address = 0U,
-            .value             = register_configuration_shift<static_cast<std::uint32_t>(TplDrive)>(),
-            .mask              = register_configuration_shift<mask_configuration_keep>(),
-            .writable          = full_of_ones,
-            .port_number       = TplPortNumber
+            .address               = register_address_configuration,
+            .bit_set_reset_address = 0U,
+            .value                 = register_configuration_shift<static_cast<std::uint32_t>(TplDrive)>(),
+            .mask                  = register_configuration_shift<mask_configuration_keep>(),
+            .writable              = full_of_ones,
+            .port_number           = TplPortNumber
         };
     }
 
@@ -269,12 +269,12 @@ namespace peripheral::gpio{
             0U;
 
         return {
-            .address           =  register_address_configuration,
-            .set_reset_address = 0U,
-            .value             = register_configuration_shift<slew | drive | multiplexing>(),
-            .mask              = register_configuration_shift<mask_configuration_keep>(),
-            .writable          = full_of_ones,
-            .port_number       = TplPortNumber
+            .address               =  register_address_configuration,
+            .bit_set_reset_address = 0U,
+            .value                 = register_configuration_shift<slew | drive | multiplexing>(),
+            .mask                  = register_configuration_shift<mask_configuration_keep>(),
+            .writable              = full_of_ones,
+            .port_number           = TplPortNumber
         };
     }
 
