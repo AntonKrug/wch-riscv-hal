@@ -10,7 +10,7 @@
 #include "firmware_build_info.h"
 #include "system/soc_types.h"
 #include "peripheral/ch32v00x/usart.h"
-#include "system/gpio/config_fusion.h"
+#include "system/gpio/op_fusion.h"
 
 using namespace peripheral;
 
@@ -72,7 +72,7 @@ main_user(void) {
     a[0] = a[0] + 1;
     // prepare_system_for_main();
 
-    constexpr soc::gpio::ConfigFusion fusion;
+    constexpr soc::gpio::OpFusion fusion;
 
     constexpr auto p0 = soc::GpioPort.a.get_pin<0>();
     constexpr auto op = p0.mode_output_op_ct<gpio::PinOutputSlewRateCt::normal, false, gpio::PinOutputDrive::push_pull>();

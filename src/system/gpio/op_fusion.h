@@ -14,7 +14,7 @@
 namespace soc::gpio {
 
     template<Op... TplOps>
-    struct ConfigFusion { // NOLINT
+    struct OpFusion { // NOLINT
     private:
 
         static constexpr std::size_t ops_count = sizeof...(TplOps);
@@ -25,7 +25,7 @@ namespace soc::gpio {
         // add/commit/enroll alternative name
         template<Op TplOp>
         [[nodiscard]] static constexpr auto enroll() {
-            return ConfigFusion<TplOps..., TplOp>{};
+            return OpFusion<TplOps..., TplOp>{};
         }
     };
 
