@@ -211,7 +211,7 @@ namespace peripheral::dma {
         static_assert(isHwTrigger == true, "PeripheralToMemory Requester ID can't be triggered by SW requester ID, enabling EN field will not start transmission, but wait for HW event requester");
 
         if constexpr (TplTransferCount == 0U) {
-            static_assert(TplSourceIncrement == false && TplDestinationIncrement == false,
+            static_assert(!TplSourceIncrement && !TplDestinationIncrement,
                 "Can't increment source and/or destination when doing single transfers (TplTransferCount==0)"
             );
         }
@@ -273,7 +273,7 @@ namespace peripheral::dma {
         static_assert(isHwTrigger == true, "MemoryToPeripheral Requester ID can't be triggered by SW requester ID, enabing EN field will not start transmission, but wait for HW event requester");
 
         if constexpr (TplTransferCount == 0U) {
-            static_assert(TplSourceIncrement == false && TplDestinationIncrement == false,
+            static_assert(!TplSourceIncrement && !TplDestinationIncrement,
                 "Can't increment source and/or destination when doing single transfers (TplTransferCount==0)"
             );
         }
@@ -337,7 +337,7 @@ namespace peripheral::dma {
         static_assert(isHwTrigger == false, "MemomryToMemory mode can't be triggered by HW requester ID, it will be triggered instanly as EN field is enabled");
 
         if constexpr (TplTransferCount == 0U) {
-            static_assert(TplSourceIncrement == false && TplDestinationIncrement == false,
+            static_assert(!TplSourceIncrement && !TplDestinationIncrement,
                 "Can't increment source and/or destination when doing single transfers (TplTransferCount==0)"
             );
         }
@@ -383,7 +383,7 @@ namespace peripheral::dma {
         bool                TplHalfTransmissionIrq,
         bool                TplFullTransmissionIrq,
         bool                TplEnableDma,
-        bool                TplAllowTrucatingTransfer,
+        bool                TplAllowTruncatingTransfer,
         typename            TplPeripheralPointerType,
         typename            TplMemoryPointerType
     >
@@ -404,18 +404,18 @@ namespace peripheral::dma {
         constexpr AddressCt<TplRequesterId> addresses;
 
         if constexpr (TplDirection == Direction::MemoryToMemory) {
-            static_assert(isHwTrigger == false, "MemomryToMemory mode can't be triggered by HW requester ID, it will be triggered instanly as EN field is enabled");
-            static_assert(TplCyclicMode == false, "MemoryToMemory mode can't be used with Cyclic mode");
+            static_assert(!isHwTrigger, "MemomryToMemory mode can't be triggered by HW requester ID, it will be triggered instanly as EN field is enabled");
+            static_assert(!TplCyclicMode, "MemoryToMemory mode can't be used with Cyclic mode");
         }
 
         if constexpr (TplTransferCount == 0U) {
-            static_assert(TplPeripheralIncrement == false && TplMemoryIncrement == false,
+            static_assert(!TplPeripheralIncrement  && !TplMemoryIncrement,
                 "Can't increment source and/or destination when doing single transfers (TplTransferCount==0)"
             );
         }
 
-        // Allow manually "override" these alignment asserts with TplAllowTrucatingTransfer if the truncatitation is intentional
-        if constexpr (TplAllowTrucatingTransfer == false) {
+        // Allow manually "override" these alignment asserts with TplAllowTruncatingTransfer if the truncatitation is intentional
+        if constexpr (!TplAllowTruncatingTransfer) {
 
             // MemoryToMemory      MEM2MEM=1, DIR=x  PADDR (source) => MADDR (destination)
             static_assert(
