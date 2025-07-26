@@ -19,6 +19,8 @@ namespace soc::gpio {
         std::uint32_t mask;                  // bitmask of what part of the value is the desired value
         std::uint32_t writable;              // bitmask of the whole register to know what is writable at that address
         std::uint32_t port_number;           // to tell apart portA from B without need to check address
+
+        // TODO: making it execute of struct would be better
     };
 
     // GPIOx_OUTDR register layout converted to GPIOx_BSHR register layout

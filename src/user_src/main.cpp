@@ -80,6 +80,10 @@ main_user(void) {
     constexpr auto b = fusion.enroll<op>();
     constexpr auto c = FakeLcdDriver::configure_pins<b>();
 
+    // constexpr auto up = p0.write_op_ct<1U>();
+    // p0.write_op_ct<1U>();
+
+    // soc::gpio::execute_op<up>();
     soc::gpio::execute_op<op>();
 
 

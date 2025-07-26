@@ -86,17 +86,30 @@ namespace peripheral::gpio{
         // Pin methods
         const Pin& operator=(std::uint8_t value) const; // NOLINT(*-unconventional-assign-operator) we are returning Pin& https://www.reddit.com/r/cpp_questions/comments/12wamum/clangtidy_operator_should_return_myclass/
 
+        // Modes
         template<PinInputDrive TplDrive>
-        static constexpr soc::gpio::Op mode_input_op_ct();
+        [[nodiscard]] static constexpr soc::gpio::Op mode_input_op_ct();
 
         template<PinInputDrive TplDrive>
         static constexpr void mode_input_ct();
 
         template<PinOutputSlewRateCt TplSlewRate, bool TplIsMultiplexingAlternateFunction, PinOutputDrive TplDrive>
-        static constexpr soc::gpio::Op mode_output_op_ct();
+        [[nodiscard]] static constexpr soc::gpio::Op mode_output_op_ct();
 
         template<PinOutputSlewRateCt TplSlewRate, bool TplIsMultiplexingAlternateFunction, PinOutputDrive TplDrive>
         static constexpr void mode_output_ct();
+
+        // Writes
+        template<std::uint32_t TplValue>
+        [[nodiscard]] static constexpr soc::gpio::Op write_op_ct();
+
+        [[nodiscard]] static constexpr soc::gpio::Op output_high_op_ct();
+
+        [[nodiscard]] static constexpr soc::gpio::Op output_low_op_ct();
+
+        [[nodiscard]] static constexpr soc::gpio::Op input_pull_up_op_ct();
+
+        [[nodiscard]] static constexpr soc::gpio::Op input_pull_down_op_ct();
     };
 
     #pragma endregion
@@ -209,7 +222,42 @@ namespace peripheral::gpio{
         soc::gpio::execute_op<op>();
     }
 
-    #pragma endregion
+    template<BaseAddress TplBaseAddress, std::uint32_t TplPortNumber, std::uint8_t TplPinNumber>
+    template<std::uint32_t TplValue>
+    WCH_OPTIMIZE_GPIO_PIN inline constexpr soc::gpio::Op Pin<TplBaseAddress, TplPortNumber, TplPinNumber>::write_op_ct() {
+        static_assert(TplValue <= 1U, "Single pin value must be 0 or 1");
+
+        return {
+            .address               = register_address_output_data,
+            .bit_set_reset_address = register_address_set_reset,  // if we can use set/reset register if we want
+            .value                 = register_pin_data_shift_ct<TplValue>(),
+            .mask                  = register_pin_data_shift_ct<0b1U>(),
+            .writable              = 0b1111'1111U, // Only 8pins in output data port
+            .port_number           = TplPortNumber
+        };
+    }
+
+    template<BaseAddress TplBaseAddress, std::uint32_t TplPortNumber, std::uint8_t TplPinNumber>
+    WCH_OPTIMIZE_GPIO_PIN inline constexpr soc::gpio::Op Pin<TplBaseAddress, TplPortNumber, TplPinNumber>::output_high_op_ct() {
+        return write_op_ct<1U>();
+    }
+
+    template<BaseAddress TplBaseAddress, std::uint32_t TplPortNumber, std::uint8_t TplPinNumber>
+    WCH_OPTIMIZE_GPIO_PIN inline constexpr soc::gpio::Op Pin<TplBaseAddress, TplPortNumber, TplPinNumber>::output_low_op_ct() {
+        return write_op_ct<0U>();
+    }
+
+    template<BaseAddress TplBaseAddress, std::uint32_t TplPortNumber, std::uint8_t TplPinNumber>
+    WCH_OPTIMIZE_GPIO_PIN inline constexpr soc::gpio::Op Pin<TplBaseAddress, TplPortNumber, TplPinNumber>::input_pull_up_op_ct() {
+        return write_op_ct<1U>();
+    }
+
+    template<BaseAddress TplBaseAddress, std::uint32_t TplPortNumber, std::uint8_t TplPinNumber>
+    WCH_OPTIMIZE_GPIO_PIN inline constexpr soc::gpio::Op Pin<TplBaseAddress, TplPortNumber, TplPinNumber>::input_pull_down_op_ct() {
+        return write_op_ct<0U>();
+    }
+
+#pragma endregion
 
 
     #pragma region Defintion - other
