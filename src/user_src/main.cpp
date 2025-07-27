@@ -28,7 +28,7 @@ using namespace peripheral;
 
 struct FakeLcdDriver { // NOLINT
 private:
-    template<soc::gpio::Enrollable TplActionType>
+    template<soc::gpio::EnrollableType TplActionType>
     [[nodiscard]] static constexpr auto configure_pins_helper() {
         constexpr soc::gpio::Op action {
             0U,
@@ -43,6 +43,7 @@ private:
 
 public:
     template<auto TplEnrollable>
+    requires soc::gpio::Enrollable<TplEnrollable>
     [[nodiscard]] static constexpr auto configure_pins() {
         return configure_pins_helper<decltype(TplEnrollable)>();
     }

@@ -20,7 +20,7 @@ namespace soc::gpio {
         static constexpr std::size_t ops_count = sizeof...(TplOps);
 
     public:
-        static constexpr std::array<int, ops_count> ops = {TplOps...};
+        static constexpr std::array<Op, ops_count> ops = {TplOps...};
 
         // add/commit/enroll alternative name
         template<Op TplOp>
