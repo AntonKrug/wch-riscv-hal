@@ -8,17 +8,7 @@
 
 #include "system/register/access_ct.h"
 
-// execute_op needs template ct because write reg needs it, write reg needs it because it's like C macro
-// for the execute_op be inside Op, all Op needs to be constexpr, for that it needs to be static
-// and for us to be able to different values and have many instance of Op with different values even
-// when it Op is all static we can use templates to generate many different variants, but then
-// when we have many similar types of Op, then op funsion needs to take a arguments which are
-// OP-like (with concept) and can't store a `auto` type as array where each entry could be different
-// type, so operations like `replace` need to be replaced as folds instead for loops on a array
-
 namespace soc::gpio {
-
-    // alternative names Spec, Directive, Op
 
     struct Op { // NOLINT
         std::uint32_t address;               // address to apply the value to
@@ -27,23 +17,6 @@ namespace soc::gpio {
         std::uint32_t mask;                  // bitmask of what part of the value is the desired value
         std::uint32_t writable;              // bitmask of the whole register to know what is writable at that address
         std::uint32_t port_number;           // to tell apart portA from B without need to check address
-
-        // TODO: making it execute of struct would be better
-    };
-
-    template<std::uint32_t TplAddr>
-    struct Op2 { // NOLINT
-        std::uint32_t address = TplAddr;               // address to apply the value to
-        std::uint32_t bit_set_reset_address = TplAddr; // alternative adddress to use to apply set/reset mechanism
-        std::uint32_t value = TplAddr;                 // value to be applied
-        std::uint32_t mask = TplAddr;                  // bitmask of what part of the value is the desired value
-        std::uint32_t writable = TplAddr;              // bitmask of the whole register to know what is writable at that address
-        std::uint32_t port_number = TplAddr;           // to tell apart portA from B without need to check address
-
-        constexpr static void execute() {
-            // aaa
-        }
-
     };
 
     // GPIOx_OUTDR register layout converted to GPIOx_BSHR register layout

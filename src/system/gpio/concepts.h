@@ -8,26 +8,11 @@
 
 namespace soc::gpio {
 
-#pragma region Execute
-
-    template<typename TplOpInstanceType>
-    concept ExecutableOpType = requires(TplOpInstanceType op_instance) {  // NOLINT
-        { TplOpInstanceType::execute() };
-    };
-
-    template<auto TplOpInstance>
-    concept ExecutableOp = ExecutableOpType<decltype(TplOpInstance)>; // NOLINT
-
-    template<auto... TplOpInstance>
-    concept ExecutableOpAll = (ExecutableOp<TplOpInstance> && ...); // NOLINT
-
-#pragma endregion
-
 #pragma region Enroll
 
     template<typename TplOpFusionInstanceType>
     concept EnrollableType = requires(TplOpFusionInstanceType op_fusion_chain) {  // NOLINT
-        { op_fusion_chain.template enroll<Op2<ANY_VALUE>>() };
+        { op_fusion_chain.template enroll<Op{}>() };
     };
 
     template<auto TplFusionInstance>

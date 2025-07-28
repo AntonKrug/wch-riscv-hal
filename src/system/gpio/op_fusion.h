@@ -9,17 +9,13 @@
 #include "concepts.h"
 
 
-// name ideas config chain, crafter compositor, batch, fusion, fuser, flow, optimizer, pipeline, process, reducer, meld, forge,
-
 namespace soc::gpio {
 
-    template<auto... TplOps>
-    requires ExecutableOpAll<TplOps...>
+    template<Op... TplOps>
     struct OpFusion { // NOLINT
 
         // add/commit/enroll alternative name
-        template<auto TplOp>
-        requires ExecutableOp<TplOp>
+        template<Op TplOp>
         [[nodiscard]] static constexpr auto enroll() {
             return OpFusion<TplOps..., TplOp>{};
         }
