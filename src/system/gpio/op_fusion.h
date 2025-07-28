@@ -19,7 +19,7 @@ namespace soc::gpio {
 
         template<std::uint32_t TplAddress>
         static constexpr int find_op_index_with_address() {
-            int ret = -1;
+            int ret = -1; // -1 will be returned if nothing is found
 
             for (std::size_t i=0U; i<op_count; i++) {
                 if (data[i].address == TplAddress) {
@@ -42,8 +42,21 @@ namespace soc::gpio {
         [[nodiscard]] static constexpr auto enroll() { // NOLINT
             if constexpr (constexpr int index = find_op_index_with_address<TplOp.address>(); index >= 0) {
 
-                // Found existing Op on the same address, combine and replace_at it
+                // Found existing Op on the same address, combine them into one and replace the old Op
                 constexpr auto old_op = data[index];
+
+                static_assert(
+                    old_op.bit_set_reset_address == TplOp.bit_set_reset_address,
+                    "old and new OP doesn't mach even in fields where they should (bit_set_reset_address)");
+
+                static_assert(
+                    old_op.writable == TplOp.writable,
+                    "old and new OP doesn't mach even in fields where they should (writable)");
+
+                static_assert(
+                    old_op.port_number == TplOp.port_number,
+                    "old and new OP doesn't mach even in fields where they should (port_number)");
+
                 constexpr Op new_op{
                     .address = TplOp.address,
                     .bit_set_reset_address = TplOp.bit_set_reset_address,
