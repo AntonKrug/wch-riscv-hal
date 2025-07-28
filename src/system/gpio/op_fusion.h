@@ -13,6 +13,7 @@ namespace soc::gpio {
 
     template<Op... TplOps>
     struct OpFusion { // NOLINT
+
     private:
         static constexpr std::size_t              op_count = sizeof...(TplOps); // NOLINT(*-dynamic-static-initializers)
         static constexpr std::array<Op, op_count> data     = { TplOps... };     // NOLINT(*-dynamic-static-initializers)
@@ -45,6 +46,7 @@ namespace soc::gpio {
                 // Found existing Op on the same address, combine them into one and replace the old Op
                 constexpr auto old_op = data[index];
 
+                // Confirm that we will not change state of values we expect to not change
                 static_assert(
                     old_op.bit_set_reset_address == TplOp.bit_set_reset_address,
                     "old and new OP doesn't mach even in fields where they should (bit_set_reset_address)");
