@@ -12,7 +12,7 @@ namespace soc::gpio {
 
     template<typename TplOpInstanceType>
     concept ExecutableOpType = requires(TplOpInstanceType op_instance) {  // NOLINT
-        { op_instance.execute() };
+        { TplOpInstanceType::execute() };
     };
 
     template<auto TplOpInstance>
@@ -27,7 +27,7 @@ namespace soc::gpio {
 
     template<typename TplOpFusionInstanceType>
     concept EnrollableType = requires(TplOpFusionInstanceType op_fusion_chain) {  // NOLINT
-        { op_fusion_chain.template enroll<Op{}>() };
+        { op_fusion_chain.template enroll<Op2<ANY_VALUE>>() };
     };
 
     template<auto TplFusionInstance>

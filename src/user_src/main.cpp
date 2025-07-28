@@ -30,15 +30,8 @@ struct FakeLcdDriver { // NOLINT
 private:
     template<soc::gpio::EnrollableType TplActionType>
     [[nodiscard]] static constexpr auto configure_pins_helper() {
-        constexpr soc::gpio::Op action {
-            0U,
-            0U,
-            0U,
-            10U,
-            1U
-        };
-
-        return TplActionType{}.template enroll<action>();
+        constexpr soc::gpio::Op2<10U> op;
+        return TplActionType{}.template enroll<op>();
     }
 
 public:
@@ -78,7 +71,9 @@ main_user(void) {
     constexpr auto p0 = soc::GpioPort.a.get_pin<0>();
     constexpr auto op = p0.mode_output_op_ct<gpio::PinOutputSlewRateCt::normal, false, gpio::PinOutputDrive::push_pull>();
 
-    constexpr auto b = fusion.enroll<op>();
+    constexpr soc::gpio::Op2<10U> op2;
+
+    constexpr auto b = fusion.enroll<op2>();
     constexpr auto c = FakeLcdDriver::configure_pins<b>();
 
     // constexpr auto up = p0.write_op_ct<1U>();
