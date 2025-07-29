@@ -41,6 +41,14 @@ namespace soc::gpio {
 
         template<Op TplOp>
         [[nodiscard]] static constexpr auto enroll() { // NOLINT
+            static_assert(
+                (TplOp.value & ~TplOps.mask) == 0,
+                "Op value is attempting to write outside its own mask"); // might consider removing this check for more lazier setting/clearing of register
+
+            static_assert(
+                (~TplOp.writable & TplOps.mask) == 0,
+                "Op mask is proposing a write outside the writable region of the register"); // if removed it could allow lazier usage
+
             if constexpr (constexpr int index = find_op_index_with_address<TplOp.address>(); index >= 0) {
 
                 // Found existing Op on the same address, combine them into one and replace the old Op
@@ -49,15 +57,15 @@ namespace soc::gpio {
                 // Confirm that we will not change state of values we expect to not change
                 static_assert(
                     old_op.bit_set_reset_address == TplOp.bit_set_reset_address,
-                    "old and new OP doesn't mach even in fields where they should (bit_set_reset_address)");
+                    "Old and new OP doesn't mach in fields where they should (bit_set_reset_address)");
 
                 static_assert(
                     old_op.writable == TplOp.writable,
-                    "old and new OP doesn't mach even in fields where they should (writable)");
+                    "Old and new OP doesn't mach in fields where they should (writable)");
 
                 static_assert(
                     old_op.port_number == TplOp.port_number,
-                    "old and new OP doesn't mach even in fields where they should (port_number)");
+                    "Old and new OP doesn't mach in fields where they should (port_number)");
 
                 constexpr Op new_op{
                     .address = TplOp.address,
