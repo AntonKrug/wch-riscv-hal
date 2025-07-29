@@ -42,11 +42,11 @@ namespace soc::gpio {
         template<Op TplOp>
         [[nodiscard]] static constexpr auto enroll() { // NOLINT
             static_assert(
-                (TplOp.value & ~TplOps.mask) == 0,
+                (TplOp.value & ~TplOp.mask) == 0U,
                 "Op value is attempting to write outside its own mask"); // might consider removing this check for more lazier setting/clearing of register
 
             static_assert(
-                (~TplOp.writable & TplOps.mask) == 0,
+                (~TplOp.writable & TplOp.mask) == 0U,
                 "Op mask is proposing a write outside the writable region of the register"); // if removed it could allow lazier usage
 
             if constexpr (constexpr int index = find_op_index_with_address<TplOp.address>(); index >= 0) {
@@ -84,5 +84,12 @@ namespace soc::gpio {
             }
         }
     };
+
+    // TODO: replace constexpr to consteval
+    template<Op... TplOps>
+    constexpr void execute_ops() {
+        (execute_op<TplOps>(), ...);
+    }
+
 
 }
