@@ -75,6 +75,7 @@ main_user(void) {
 
     constexpr auto b = fusion.enroll<op2>();
     constexpr auto c = FakeLcdDriver::configure_pins<b>();
+    c.execute();
 
     // constexpr auto up = p0.write_op_ct<1U>();
     // p0.write_op_ct<1U>();

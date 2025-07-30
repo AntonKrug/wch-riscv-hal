@@ -83,13 +83,13 @@ namespace soc::gpio {
                 return OpFusion<TplOps..., TplOp>{};
             }
         }
-    };
 
-    // TODO: replace constexpr to consteval
-    template<Op... TplOps>
-    constexpr void execute_ops() {
-        (execute_op<TplOps>(), ...);
-    }
+        // TODO: replace constexpr to consteval
+        constexpr static void execute() {
+            (execute_op<TplOps>(), ...);
+        }
+
+    };
 
 
 }
