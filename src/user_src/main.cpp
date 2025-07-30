@@ -10,7 +10,7 @@
 #include "firmware_build_info.h"
 #include "system/soc_types.h"
 #include "peripheral/ch32v00x/usart.h"
-#include "system/gpio/op_fusion.h"
+#include "system/gpio/ops_fusion.h"
 
 using namespace peripheral;
 
@@ -66,22 +66,21 @@ main_user(void) {
     a[0] = a[0] + 1;
     // prepare_system_for_main();
 
-    constexpr soc::gpio::OpFusion fusion;
-
     constexpr auto p0 = soc::GpioPort.a.get_pin<0>();
-    constexpr auto op = p0.mode_output_op_ct<gpio::PinOutputSlewRateCt::normal, false, gpio::PinOutputDrive::push_pull>();
+    constexpr soc::gpio::OpsFusion f1;
 
-    constexpr soc::gpio::Op op2{};
+    constexpr auto f2 = FakeLcdDriver::configure_pins<f1>();
 
-    constexpr auto b = fusion.enroll<op2>();
-    constexpr auto c = FakeLcdDriver::configure_pins<b>();
-    c.execute();
+    f2
+        .enroll<p0.mode_output_op_ct<gpio::PinOutputSlewRateCt::normal, false, gpio::PinOutputDrive::push_pull>()>()
+        .enroll<p0.output_high_op_ct()>()
+        .execute();
 
     // constexpr auto up = p0.write_op_ct<1U>();
     // p0.write_op_ct<1U>();
 
     // soc::gpio::execute_op<up>();
-    soc::gpio::execute_op<op>();
+    // soc::gpio::execute_op<op>();
 
 
     // Firmware build info

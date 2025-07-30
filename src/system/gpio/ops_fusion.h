@@ -12,7 +12,7 @@
 namespace soc::gpio {
 
     template<Op... TplOps>
-    struct OpFusion { // NOLINT
+    struct OpsFusion { // NOLINT
 
     private:
         static constexpr std::size_t              op_count = sizeof...(TplOps); // NOLINT(*-dynamic-static-initializers)
@@ -34,7 +34,7 @@ namespace soc::gpio {
 
         template <std::size_t TplIndex, Op TplNewOp, std::size_t... TplIndexes>
         static constexpr auto replace_at(std::index_sequence<TplIndexes...>) {
-            return OpFusion<(TplIndexes == TplIndex ? TplNewOp : data[TplIndexes])...>{};
+            return OpsFusion<(TplIndexes == TplIndex ? TplNewOp : data[TplIndexes])...>{};
         }
 
     public:
@@ -80,7 +80,7 @@ namespace soc::gpio {
             } else {
 
                 // No existing entry found, lets just add it as a new entry
-                return OpFusion<TplOps..., TplOp>{};
+                return OpsFusion<TplOps..., TplOp>{};
             }
         }
 
