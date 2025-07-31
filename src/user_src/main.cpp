@@ -90,7 +90,7 @@ main_user(void) {
     f1
         .enroll<p0.output_high_op_ct()>()
         // .enroll_ops_tuple<FakeLcdDriver::configure_pins_ops_tuple()>()
-        .merge(f0)
+        .enroll(FakeLcdDriver::configure_pins<f1>())
         .execute();
 
     // constexpr auto up = p0.write_op_ct<1U>();

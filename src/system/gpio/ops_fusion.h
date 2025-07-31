@@ -96,21 +96,21 @@ namespace soc::gpio {
         // }
 
         // empty fusion merge
-        static constexpr auto merge(const OpsFusion<> other_ops_fuson) {
+        static constexpr auto enroll(const OpsFusion<> other_ops_fuson) {
             return OpsFusion<(TplOps, ...)>{};
         }
 
         // single Op fusion to be merged
         template <Op TplOp>
-        static constexpr auto merge(const OpsFusion<TplOp> other_ops_fuson) {
+        static constexpr auto enroll(const OpsFusion<TplOp> other_ops_fuson) {
             return enroll<TplOp>();
         }
 
         // multiple Ops fusion to be merged
         template <Op TplOpsHead, Op... TplOpsTail>
-        static constexpr auto merge(const OpsFusion<TplOpsHead, TplOpsTail...> other_ops_fuson) {
+        static constexpr auto enroll(const OpsFusion<TplOpsHead, TplOpsTail...> other_ops_fuson) {
             constexpr auto first_merge = enroll<TplOpsHead>();
-            return first_merge.template merge<TplOpsTail...>();
+            return first_merge.template enroll<TplOpsTail...>();
         }
 
         // TODO: replace constexpr to consteval
