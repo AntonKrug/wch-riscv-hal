@@ -23,17 +23,17 @@ using namespace peripheral;
 //     }
 // }
 
-#include "system/gpio/concepts.h"
+// #include "system/gpio/concepts.h"
 #include "system/gpio/op.h"
 
 struct FakeLcdDriver { // NOLINT
 
     [[nodiscard]] static constexpr auto configure_pins() {
         constexpr soc::gpio::OpsFusion fusion;
-        constexpr auto led = soc::GpioPort.a.get_pin<0U>(); // NOLINT(*-static-accessed-through-instance)
-        constexpr auto op = led.mode_input_op_ct<gpio::PinInputDrive::floating>(); // NOLINT(*-static-accessed-through-instance)
+        constexpr auto led = decltype(decltype(soc::GpioPort)::a)::get_pin<0U>();
+        constexpr auto op = decltype(led)::mode_input_op_ct<gpio::PinInputDrive::floating>();
 
-        return fusion.enroll<op>(); // NOLINT(*-static-accessed-through-instance)
+        return decltype(fusion)::enroll<op>(); // fusion.enroll would give errors
     }
 
 };
