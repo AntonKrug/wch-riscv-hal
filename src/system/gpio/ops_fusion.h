@@ -54,6 +54,11 @@ namespace soc::gpio {
                 // Found existing Op on the same address, combine them into one and replace the old Op
                 constexpr auto old_op = data[index];
 
+                // Do we overwrite previous Ops?
+                static_assert(
+                    (old_op.mask & TplOp.mask) == 0U,
+                    "Conflict, trying to enroll Op which would overwrite previously enroled Op action/state. Does your driver tries to use the same port as application? And is your application using all unique/unused ports?");
+
                 // Confirm that we will not change state of values we expect to not change
                 static_assert(
                     old_op.bit_set_reset_address == TplOp.bit_set_reset_address,
