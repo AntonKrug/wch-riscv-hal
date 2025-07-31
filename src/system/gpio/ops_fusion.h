@@ -84,40 +84,34 @@ namespace soc::gpio {
             }
         }
 
-        template <typename TplOpsTuple, std::size_t... Is>
-        [[nodiscard]] static constexpr auto enroll_ops_tuple_impl(TplOpsTuple&& tuple, std::index_sequence<Is...>) {
-            enroll(std::get<Is>(std::forward<TplOpsTuple>(tuple))...);
-        }
-
-        template <typename TplOpsTuple>
-        [[nodiscard]] static constexpr auto enroll_ops_tuple(TplOpsTuple&& tuple) {
-            constexpr auto size = std::tuple_size_v<std::decay_t<TplOpsTuple>>;
-            return enroll_ops_tuple_impl(std::forward<TplOpsTuple>(tuple), std::make_index_sequence<size>{});
-        }
+        // template <typename TplOpsTuple, std::size_t... Is>
+        // [[nodiscard]] static constexpr auto enroll_ops_tuple_impl(TplOpsTuple&& tuple, std::index_sequence<Is...>) {
+        //     enroll(std::get<Is>(std::forward<TplOpsTuple>(tuple))...);
+        // }
+        //
+        // template <typename TplOpsTuple>
+        // [[nodiscard]] static constexpr auto enroll_ops_tuple(TplOpsTuple&& tuple) {
+        //     constexpr auto size = std::tuple_size_v<std::decay_t<TplOpsTuple>>;
+        //     return enroll_ops_tuple_impl(std::forward<TplOpsTuple>(tuple), std::make_index_sequence<size>{});
+        // }
 
         // empty fusion merge
         static constexpr auto merge(const OpsFusion<> other_ops_fuson) {
             return OpsFusion<(TplOps, ...)>{};
         }
 
-        // // single Op fusion merge
-        // template <Op TplOtherOp>
-        // static constexpr auto merge(const OpsFusion<TplOtherOp> other_ops_fuson) {
-        //     return enroll<TplOtherOp>();
-        // }
-        //
-        // // multiple Ops fusion to be merged
-        // template <Op TplOpsHead, Op... TplOpsTail>
-        // static constexpr auto merge(const OpsFusion<TplOpsHead, TplOpsTail...> other_ops_fuson) {
-        //     return merge<TplOpsTail...>();
-        // }
-
-        // multiple Ops fusion to be merged
-        template <Op... TplOtherOps>
-        static constexpr auto merge(const OpsFusion<TplOtherOps...> other_ops_fuson) {
-            return OpsFusion<TplOps..., TplOtherOps...>{};
+        // single Op fusion to be merged
+        template <Op TplOp>
+        static constexpr auto merge(const OpsFusion<TplOp> other_ops_fuson) {
+            return enroll<TplOp>();
         }
 
+        // multiple Ops fusion to be merged
+        template <Op TplOpsHead, Op... TplOpsTail>
+        static constexpr auto merge(const OpsFusion<TplOpsHead, TplOpsTail...> other_ops_fuson) {
+            constexpr auto first_merge = enroll<TplOpsHead>();
+            return first_merge.template merge<TplOpsTail...>();
+        }
 
         // TODO: replace constexpr to consteval
         constexpr static void execute() {
