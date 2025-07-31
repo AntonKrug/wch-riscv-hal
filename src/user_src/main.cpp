@@ -30,7 +30,9 @@ struct FakeLcdDriver { // NOLINT
 private:
     template<soc::gpio::EnrollableType TplActionType>
     [[nodiscard]] static constexpr auto configure_pins_helper() {
-        constexpr soc::gpio::Op op{};
+        constexpr auto led = soc::GpioPort.a.get_pin<0U>();
+        constexpr auto op = led.mode_input_op_ct<gpio::PinInputDrive::floating>();
+        // constexpr soc::gpio::Op op{};
         return TplActionType{}.template enroll<op>();
     }
 
@@ -39,6 +41,17 @@ public:
     requires soc::gpio::Enrollable<TplEnrollable>
     [[nodiscard]] static constexpr auto configure_pins() {
         return configure_pins_helper<decltype(TplEnrollable)>();
+    }
+
+    [[nodiscard]] static constexpr auto configure_pins_ops_tuple() {
+        return std::make_tuple(
+            soc::gpio::Op{
+                10U
+            },
+            soc::gpio::Op {
+                20U
+            }
+        );
     }
 
 };
@@ -67,13 +80,17 @@ main_user(void) {
     // prepare_system_for_main();
 
     constexpr auto p0 = soc::GpioPort.a.get_pin<0>();
+    constexpr soc::gpio::OpsFusion f0;
     constexpr soc::gpio::OpsFusion f1;
 
-    constexpr auto f2 = FakeLcdDriver::configure_pins<f1>();
+    // constexpr auto other_fusion = f0.enroll<p0.mode_output_op_ct<gpio::PinOutputSlewRateCt::normal, false, gpio::PinOutputDrive::push_pull>()>();
 
-    f2
-        .enroll<p0.mode_output_op_ct<gpio::PinOutputSlewRateCt::normal, false, gpio::PinOutputDrive::push_pull>()>()
+    // constexpr auto f2 = FakeLcdDriver::configure_pins<f1>();
+
+    f1
         .enroll<p0.output_high_op_ct()>()
+        // .enroll_ops_tuple<FakeLcdDriver::configure_pins_ops_tuple()>()
+        .merge(f0)
         .execute();
 
     // constexpr auto up = p0.write_op_ct<1U>();
