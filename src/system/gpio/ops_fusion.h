@@ -84,34 +84,27 @@ namespace soc::gpio {
             }
         }
 
-        // template <typename TplOpsTuple, std::size_t... Is>
-        // [[nodiscard]] static constexpr auto enroll_ops_tuple_impl(TplOpsTuple&& tuple, std::index_sequence<Is...>) {
-        //     enroll(std::get<Is>(std::forward<TplOpsTuple>(tuple))...);
-        // }
-        //
-        // template <typename TplOpsTuple>
-        // [[nodiscard]] static constexpr auto enroll_ops_tuple(TplOpsTuple&& tuple) {
-        //     constexpr auto size = std::tuple_size_v<std::decay_t<TplOpsTuple>>;
-        //     return enroll_ops_tuple_impl(std::forward<TplOpsTuple>(tuple), std::make_index_sequence<size>{});
-        // }
+#pragma region Op fusion merging (enroll with OpsFusion instead of Op as argument)
 
-        // empty fusion merge
-        static constexpr auto enroll(const OpsFusion<> other_ops_fuson) {
+        // empty Op fusion enroll
+        [[nodiscard]] static constexpr auto enroll(const OpsFusion<> other_ops_fuson) {
             return OpsFusion<(TplOps, ...)>{};
         }
 
-        // single Op fusion to be merged
+        // single Op fusion to be enrolled
         template <Op TplOp>
-        static constexpr auto enroll(const OpsFusion<TplOp> other_ops_fuson) {
+        [[nodiscard]] static constexpr auto enroll(const OpsFusion<TplOp> other_ops_fuson) {
             return enroll<TplOp>();
         }
 
         // multiple Ops fusion to be merged
         template <Op TplOpsHead, Op... TplOpsTail>
-        static constexpr auto enroll(const OpsFusion<TplOpsHead, TplOpsTail...> other_ops_fuson) {
+        [[nodiscard]] static constexpr auto enroll(const OpsFusion<TplOpsHead, TplOpsTail...> other_ops_fuson) {
             constexpr auto first_merge = enroll<TplOpsHead>();
             return first_merge.template enroll<TplOpsTail...>();
         }
+
+#pragma endregion
 
         // TODO: replace constexpr to consteval
         constexpr static void execute() {
