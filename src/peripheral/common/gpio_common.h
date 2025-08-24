@@ -2,6 +2,8 @@
 // Created by Fredy on 7/26/2025.
 //
 
+// TOO: Assert that only PinOutputSlewRateCt fast is used with CH32V00X 2,4,6,7, they can use only 1 speed as output
+
 #pragma once
 
 #include <cstdint>
@@ -24,21 +26,25 @@ namespace peripheral::gpio {
 
 
     enum class PinConfiguration: std::uint8_t { // NOLINT
-        inputAnalog                           = 0b00'00U, // input mode for analog peripherals such as ADC // NOLINT
-        inputFloating                         = 0b01'00U, // input high-Z mode NOLINT
-        inputPullUpOrDown                     = 0b10'00U, // input up/down is set with OUTDR // NOLINT
-        outputPushPullNormalSpeed             = 0b00'01U, // 10Mhz // NOLINT
-        outputOpenDrainNormalSpeed            = 0b01'01U, // 10Mhz // NOLINT
-        alternateFunctionPushPullNormalSpeed  = 0b10'01U, // 10Mhz // NOLINT
-        alternateFunctionOpenDrainNormalSpeed = 0b11'01U, // 10Mhz // NOLINT
-        outputPushPullSlowSpeed               = 0b00'10U, // 5Mhz // NOLINT
-        outputOpenDrainSlowSpeed              = 0b01'10U, // 5Mhz // NOLINT
-        alternateFunctionPushPullSlowSpeed    = 0b10'10U, // 5Mhz // NOLINT
-        alternateFunctionOpenDrainSlowSpeed   = 0b11'10U, // 5Mhz // NOLINT
-        outputPushPullFastSpeed               = 0b00'11U, // 50Mhz for all, expect 30Mhz for CH32V003 // NOLINT
-        outputOpenDrainFastSpeed              = 0b01'11U, // 50Mhz for all, expect 30Mhz for CH32V003 // NOLINT
-        alternateFunctionPushPullFastSpeed    = 0b10'11U, // 50Mhz for all, expect 30Mhz for CH32V003 // NOLINT
-        alternateFunctionOpenDrainFastSpeed   = 0b11'11U, // 50Mhz for all, expect 30Mhz for CH32V003 // NOLINT
+        input_analog                            = 0b00'00U, // input mode for analog peripherals such as ADC
+        input_floating                          = 0b01'00U, // input high-Z mode, the default after reset
+        input_pull_up_or_down                   = 0b10'00U, // input up/down is set with OUTDR
+
+        output_push_pull_slow_rate              = 0b00'10U, // 5Mhz
+        output_open_drain_slow_rate             = 0b01'10U, // 5Mhz
+        alternate_output_push_pull_slow_rate    = 0b10'10U, // 5Mhz
+        alternate_output_open_drain_slow_rate   = 0b11'10U, // 5Mhz
+
+        output_push_pull_normal_rate            = 0b00'01U, // 10Mhz
+        output_open_drain_normal_rate           = 0b01'01U, // 10Mhz
+        alternate_output_push_pull_normal_rate  = 0b10'01U, // 10Mhz
+        alternate_output_open_drain_normal_rate = 0b11'01U, // 10Mhz
+
+        // 2,4,6, 7 support only fast rate for output
+        output_push_pull_fast_rate              = 0b00'11U, // 50Mhz for all, expect 30Mhz for CH32V00X, 3, 2, 4, 6, 7
+        output_open_drain_fast_rate             = 0b01'11U, // 50Mhz for all, expect 30Mhz for CH32V00X, 3, 2, 4, 6, 7
+        alternate_output_push_pull_fast_rate    = 0b10'11U, // 50Mhz for all, expect 30Mhz for CH32V00X, 3, 2, 4, 6, 7
+        alternate_output_open_drain_fast_rate   = 0b11'11U, // 50Mhz for all, expect 30Mhz for CH32V00X, 3, 2, 4, 6, 7
     };
 
     // the drive offsets for input and output are the same
@@ -47,7 +53,7 @@ namespace peripheral::gpio {
     enum class PinOutputSlewRateCt: std::uint8_t { // NOLINT
         slow   = 0b10U, // 5MHz for all, except 2MHz for CH32V003 // NOLINT
         normal = 0b01U, // 10MHz // NOLINT
-        fast   = 0b11U  // 50MHz for all, except 30MHz for CH32V003 // NOLINT
+        fast   = 0b11U  // 50MHz for all, except 30MHz for CH32V00X, 3, 2, 4, 6, 7 (only supported mode for 2, 4, 6, 7) // NOLINT
     };
 
     constexpr std::uint8_t pin_output_multiplexing_bit_offset = 3U; // NOLINT
