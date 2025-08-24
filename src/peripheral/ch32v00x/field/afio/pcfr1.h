@@ -2,6 +2,8 @@
 // Created by anton on 18/02/2025.
 //
 
+//TODO: not finished - 003 different from 002,004,006,007
+
 #pragma once
 
 #include <cstdint>
@@ -53,7 +55,9 @@ namespace peripheral::afio {
 
         constexpr static std::tuple<
             SPI1_RM_RW_SerialPeripheralInterface1Remapping,
-            I2C1_RM_RW_InterIntegratedCircuit1Remapping
+            I2C1_RM_RW_InterIntegratedCircuit1Remapping,
+            USART1_RM_RW_UniversalSynchronousAsynchronousReceiverTransmitter1Remapping,
+            TIM1_RM_RW_Timmer1Remapping
         > reg_fields = {};
 
     };
