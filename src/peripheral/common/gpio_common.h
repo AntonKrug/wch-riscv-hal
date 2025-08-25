@@ -47,6 +47,11 @@ namespace peripheral::gpio {
         alternate_output_open_drain_fast_rate   = 0b11'11U, // 50Mhz for all, expect 30Mhz for CH32V00X, 3, 2, 4, 6, 7
     };
 
+    // pin mode state after reset (valid value for all current chips)
+    constexpr std::uint8_t pin_configuration_after_reset = static_cast<std::uint8_t>(PinConfiguration::input_floating);
+
+    constexpr std::uint8_t pin_configuration_bits_size = 4U;
+
     // the drive offsets for input and output are the same
     constexpr std::uint16_t pin_drive_bit_offset = 2U;
 
