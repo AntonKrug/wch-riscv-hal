@@ -13,28 +13,28 @@
 #include "system/register/util.h"
 #include "system/register/combine.h"
 
-namespace riscv::csr::mtvec {
+namespace riscv::csr::mtvec { // NOLINT
 
-    enum class Mode0_RW_VectorizationEnable: std::uint32_t {
-        fieldBitMask             = 0b1U, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess              = soc::reg::field_access_right::ReadWrite,
+    enum class Mode0_RW_VectorizationEnable: std::uint32_t { // NOLINT
+        field_bit_mask              = 0b1U, // not holding any settings or value, it's a bitmask for this specific field
+        field_access                = soc::reg::field_access_right::ReadWrite,
 
-        singleUnifiedTrapHandler = 0U,   // all interupts handled by only single handler
-        vectorizedInterupts      = 0b1U, // each interupt has dedicated memory location (BASEADDR + IRQ * 4) in the table, see Mode1
+        single_unified_trap_handler = 0U,   // all interrupts handled by only single handler
+        vectorized_interrupts       = 0b1U, // each interrupt has dedicated memory location (BASEADDR + IRQ * 4) in the table, see Mode1
     };
 
-    enum class Mode1_RW_VectorizedBehaviour: std::uint32_t {
-        fieldBitMask          = 0b1U << 1U,     // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess           = soc::reg::field_access_right::ReadWrite,
+    enum class Mode1_RW_VectorizedBehaviour: std::uint32_t { // NOLINT
+        field_bit_mask          = 0b1U << 1U,     // not holding any settings or value, it's a bitmask for this specific field
+        field_access            = soc::reg::field_access_right::ReadWrite,
 
-        executeInstructions   = 0U,            // use table for instructions, small relative jump instructions fit into, other instructions can be used too
-        absoluteJumpAddresses = fieldBitMask, // use table for addresses, always jumping, but able to able to address any location
+        execute_instructions    = 0U,             // use table for instructions, small relative jump instructions fit into, other instructions can be used too
+        absolute_jump_addresses = field_bit_mask, // use table for addresses, always jumping, but able to able to address any location
     };
 
-    enum class BaseAddr_RW: std::uint32_t {
+    enum class BaseAddr_RW: std::uint32_t { // NOLINT
         // the address value needs to be 1k aligned (0x400)
-        fieldBitMask = 0b111111111111111111111111111111U << 2, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = soc::reg::field_access_right::ReadWrite,
+        field_bit_mask = 0b111111111111111111111111111111U << 2, // not holding any settings or value, it's a bitmask for this specific field
+        field_access  = soc::reg::field_access_right::ReadWrite,
     };
 
     template<typename Field>

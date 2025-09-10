@@ -15,11 +15,13 @@ namespace soc::gpio {
     struct OpsFusion { // NOLINT
 
     private:
+        // Holding data for easier reading/parsing, but mutating values needs to be done with
+        // recursion and variadic argument packing
         static constexpr std::size_t              op_count = sizeof...(TplOps); // NOLINT(*-dynamic-static-initializers)
         static constexpr std::array<Op, op_count> data     = { TplOps... };     // NOLINT(*-dynamic-static-initializers)
 
         template<std::uint32_t TplAddress>
-        static constexpr int find_op_index_with_address() {
+        static constexpr int find_op_index_with_address_ct() {
             int ret = -1; // -1 will be returned if nothing is found
 
             for (std::size_t i=0U; i<op_count; i++) {
@@ -33,9 +35,25 @@ namespace soc::gpio {
         }
 
         template <std::size_t TplIndex, Op TplNewOp, std::size_t... TplIndexes>
-        static constexpr auto replace_at(std::index_sequence<TplIndexes...>) {
+        static constexpr auto replace_at_ct(std::index_sequence<TplIndexes...>) {
             return OpsFusion<(TplIndexes == TplIndex ? TplNewOp : data[TplIndexes])...>{};
         }
+
+        template <std::size_t TplStartIndex>
+        [[nodiscard]] static constexpr auto find_partial_mode_op_and_fill_with_reset_value() {
+            for (std::size_t i=TplStartIndex; i<op_count; ++i) {
+                if ((data[i].mode_operation == true) && (data[i].mask != peripheral::gpio::full_of_ones)) {
+                    // constexpr auto sub_operation = find_partial_mode_op_and_fill_with_reset_value<i+1U>();
+                }
+            }
+
+            return OpsFusion<TplOps...>{};
+        }
+
+        // template <>
+        // [[nodiscard]] static constexpr auto find_partial_mode_op_and_fill_with_reset_value<op_count>() {
+        //     return OpsFusion<TplOps...>{};
+        // }
 
     public:
 
@@ -49,7 +67,7 @@ namespace soc::gpio {
                 (~TplOp.writable & TplOp.mask) == 0U,
                 "Op mask is proposing a write outside the writable region of the register"); // if removed it could allow lazier usage
 
-            if constexpr (constexpr int index = find_op_index_with_address<TplOp.address>(); index >= 0) {
+            if constexpr (constexpr int index = find_op_index_with_address_ct<TplOp.address>(); index >= 0) {
 
                 // Found existing Op on the same address, combine them into one and replace the old Op
                 constexpr auto old_op = data[index];
@@ -57,7 +75,7 @@ namespace soc::gpio {
                 // Do we overwrite previous Ops?
                 static_assert(
                     (old_op.mask & TplOp.mask) == 0U,
-                    "Conflict, trying to enroll Op which would overwrite previously enroled Op action/state. Does your driver tries to use the same port as application? And is your application using all unique/unused ports?");
+                    "Conflict, trying to enroll Op which would overwrite previously enrolled Op action/state. Does your driver tries to use the same port as application? And is your application using all unique/unused ports?");
 
                 // Confirm that we will not change state of values we expect to not change
                 static_assert(
@@ -88,6 +106,12 @@ namespace soc::gpio {
                 return OpsFusion<TplOps..., TplOp>{};
             }
         }
+
+        static constexpr int fill_partial_mode_ops_with_reset_values() {
+
+            return -1;
+        }
+
 
 #pragma region Op fusion merging (enroll with OpsFusion instead of Op as argument)
 

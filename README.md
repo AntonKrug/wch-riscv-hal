@@ -12,3 +12,15 @@
         - C:\progs\wch-gcc-12\bin\riscv-wch-elf-g++.exe
     - Cmake
       - Create DEBUG profile and add -DCMAKE_VERBOSE_MAKEFILE=ON for troubleshooting
+
+# Suppressed checks
+
+## MISRA 2008
+- `-clion-misra-cpp2008-5-0-11` The plain char type shall only be used for the storage and use of character values
+  - Doesn't recognize `std::uint8_t` even in the cases where it's matching the underlying HW concept/register and treats `std::uint8_t` as plain `char`
+- `-clion-misra-cpp2008-6-6-5` A function shall have a single point of exit at the end of function
+  - Could make some code more nested code and harder to read as not always is possible to set the return value in a variable and keep changing until hitting single return
+
+## MISRA 2023
+- `-clion-misra-cpp2023-17-8-1` Function templates shall not be explicitly specialized
+  - It's necessary for compile-time recursion-based for-loop-style iterations 

@@ -55,22 +55,22 @@ namespace peripheral::gpio {
     constexpr std::uint16_t pin_drive_bit_offset = 2U;
 
     enum class PinOutputSlewRateCt: std::uint8_t { // NOLINT
-        slow   = 0b10U, // 5MHz for all, except 2MHz for CH32V003 // NOLINT
-        normal = 0b01U, // 10MHz // NOLINT
-        fast   = 0b11U  // 50MHz for all, except 30MHz for CH32V00X, 3, 2, 4, 6, 7 (only supported mode for 2, 4, 6, 7) // NOLINT
+        slow   = 0b10U, // 5MHz for all, except 2MHz for CH32V003
+        normal = 0b01U, // 10MHz
+        fast   = 0b11U  // 50MHz for all, except 30MHz for CH32V00X, 3, 2, 4, 6, 7 (only supported mode for 2, 4, 6, 7)
     };
 
     constexpr std::uint8_t pin_output_multiplexing_bit_offset = 3U; // NOLINT
 
     enum class PinOutputDrive: std::uint8_t { // NOLINT
-        push_pull  = 0b0U, // Driven by OUTDR value NOLINT
-        open_drain = 0b1U, // NOLINT
+        push_pull  = 0b0U, // Driven by OUTDR value
+        open_drain = 0b1U,
     };
 
     enum class PinInputDrive: std::uint8_t { // NOLINT
-        analog            = 0b00U, // For analog peripherals such as ADC // NOLINT
-        floating          = 0b01U, // High-Z mode // NOLINT
-        pull_up_pull_down = 0b10U  // Driven by OUTDR value // NOLINT
+        analog            = 0b00U, // For analog peripherals such as ADC
+        floating          = 0b01U, // High-Z mode
+        pull_up_pull_down = 0b10U  // Driven by OUTDR value
     };
 
     #pragma endregion

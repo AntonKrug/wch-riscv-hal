@@ -9,57 +9,57 @@
 
 namespace peripheral::dma {
 
-    enum class Id: std::uint32_t {
+    enum class Id: std::uint32_t { // NOLINT
         // DMA1 ch1 triggers
-        Adc1HwTrigger     = 0x011U, // DMA1 ch1
-        Tim2Ch3HwTrigger  = 0x011U, // DMA1 ch1
-        Dma1Ch1SwTrigger  = 0x111U, // DMA1 ch1
+        adc1_hw_trigger     = 0x011U, // DMA1 ch1
+        tim2_ch3_hw_trigger  = 0x011U, // DMA1 ch1
+        dma1_ch1_sw_trigger  = 0x111U, // DMA1 ch1
 
         // DMA1 ch2 triggers
-        Spi1RxHwTrigger   = 0x012U, // DMA1 ch2
-        Tim1Ch1HwTrigger  = 0x012U, // DMA1 ch2
-        Tim2UpHwTrigger   = 0x012U, // DMA1 ch2
-        Dma1Ch2SwTrigger  = 0x112U, // DMA1 ch2
+        spi1_rx_hw_trigger   = 0x012U, // DMA1 ch2
+        tim1_ch1_hw_trigger  = 0x012U, // DMA1 ch2
+        tim2_up_hw_trigger   = 0x012U, // DMA1 ch2
+        dma1_ch2_sw_trigger  = 0x112U, // DMA1 ch2
 
         // DMA1 ch3 triggers
-        Spi1TxHwTrigger   = 0x013U, // DMA1 ch3
-        Tim1Ch2HwTrigger  = 0x013U, // DMA1 ch3
-        Dma1Ch3SwTrigger  = 0x113U, // DMA1 ch3
+        spi1_tx_hw_trigger   = 0x013U, // DMA1 ch3
+        tim1_ch2_hw_trigger  = 0x013U, // DMA1 ch3
+        dma1_ch3_sw_trigger  = 0x113U, // DMA1 ch3
 
         // DMA1 ch4 triggers
-        Usart1TxHwTrigger = 0x014U, // DMA1 ch4
-        Tim1Ch4HwTrigger  = 0x014U, // DMA1 ch4
-        Tim1TrigHwTrigger = 0x014U, // DMA1 ch4
-        Tim1ComHwTrigger  = 0x014U, // DMA1 ch4
-        Dma1Ch4SwTrigger  = 0x114U, // DMA1 ch4
+        usart1_tx_hw_trigger = 0x014U, // DMA1 ch4
+        tim1_ch4_hw_trigger  = 0x014U, // DMA1 ch4
+        tim1_trig_hw_trigger = 0x014U, // DMA1 ch4
+        tim1_com_hw_trigger  = 0x014U, // DMA1 ch4
+        dma1_ch4_sw_trigger  = 0x114U, // DMA1 ch4
 
         // DMA1 ch5 triggers
-        Usart1RxHwTrigger = 0x015U, // DMA1 ch5
-        Tim1UpHwTrigger   = 0x015U, // DMA1 ch5
-        Tim2Ch1HwTrigger  = 0x015U, // DMA1 ch5
-        Dma1Ch5SwTrigger  = 0x115U, // DMA1 ch5
+        usart1_rx_hw_trigger = 0x015U, // DMA1 ch5
+        tim1_up_hw_trigger   = 0x015U, // DMA1 ch5
+        tim2_ch1_hw_trigger  = 0x015U, // DMA1 ch5
+        dma1_ch5_sw_trigger  = 0x115U, // DMA1 ch5
 
         // DMA1 ch6 triggers
-        I2c1TxHwTrigger   = 0x016U, // DMA1 ch6
-        Tim1Ch3HwTrigger  = 0x016U, // DMA1 ch6
-        Dma1Ch6SwTrigger  = 0x116U, // DMA1 ch6
+        i2c1_tx_hw_trigger   = 0x016U, // DMA1 ch6
+        tim1_ch3_hw_trigger  = 0x016U, // DMA1 ch6
+        dma1_ch6_sw_trigger  = 0x116U, // DMA1 ch6
 
         // DMA1 ch7 triggers
-        I2cRxHwTrigger    = 0x017U, // DMA1 ch7
-        Tim2Ch2HwTrigger  = 0x017U, // DMA1 ch7
-        Tim2Ch4HwTrigger  = 0x017U, // DMA1 ch7
-        Dma1Ch7SwTrigger  = 0x117U, // DMA1 ch7
+        i2c_rx_hw_trigger    = 0x017U, // DMA1 ch7
+        tim2_ch2_hw_trigger  = 0x017U, // DMA1 ch7
+        tim2_ch4_hw_trigger  = 0x017U, // DMA1 ch7
+        dma1_ch7_sw_trigger  = 0x117U, // DMA1 ch7
     };
 
     // https://stackoverflow.com/questions/33241909/cannot-create-constexpr-stdvector
     constexpr Id sw_triggers[] {
-        Id::Dma1Ch1SwTrigger,
-        Id::Dma1Ch2SwTrigger,
-        Id::Dma1Ch3SwTrigger,
-        Id::Dma1Ch4SwTrigger,
-        Id::Dma1Ch5SwTrigger,
-        Id::Dma1Ch6SwTrigger,
-        Id::Dma1Ch7SwTrigger
+        Id::dma1_ch1_sw_trigger,
+        Id::dma1_ch2_sw_trigger,
+        Id::dma1_ch3_sw_trigger,
+        Id::dma1_ch4_sw_trigger,
+        Id::dma1_ch5_sw_trigger,
+        Id::dma1_ch6_sw_trigger,
+        Id::dma1_ch7_sw_trigger
     };
 
 }

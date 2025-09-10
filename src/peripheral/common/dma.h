@@ -161,8 +161,8 @@ namespace peripheral::dma {
         PeripheralAlignment TplPeripheralAlignment,
         MemoryAlignment     TplMemoryAlignment>
     constexpr auto comparePAddressWithMAddressAlignment() -> std::int32_t {
-        constexpr auto p_align = static_cast<std::uint32_t>(TplPeripheralAlignment) >> static_cast<std::uint32_t>(PeripheralAlignment::fieldBitOffset);
-        constexpr auto m_align = static_cast<std::uint32_t>(TplMemoryAlignment) >> static_cast<std::uint32_t>(MemoryAlignment::fieldBitOffset);
+        constexpr auto p_align = static_cast<std::uint32_t>(TplPeripheralAlignment) >> static_cast<std::uint32_t>(PeripheralAlignment::field_bit_offset);
+        constexpr auto m_align = static_cast<std::uint32_t>(TplMemoryAlignment) >> static_cast<std::uint32_t>(MemoryAlignment::field_bit_offset);
         if (p_align > m_align) {
             return 1;
         } else if (p_align < m_align) {
@@ -200,9 +200,9 @@ namespace peripheral::dma {
         constexpr auto sourceIncrement      = soc::reg::bool_to_register_field_enum<TplSourceIncrement,      Cfgr::PINC_RW_PeripheralAddressIncrementMode>();
         constexpr auto destinationIncrement = soc::reg::bool_to_register_field_enum<TplDestinationIncrement, Cfgr::MINC_RW_MemoryAddressIncrementMode>();
         constexpr auto isCyclic             = soc::reg::bool_to_register_field_enum<TplCyclicMode,           Cfgr::CIRC_RW_CyclicMode>();
-        constexpr auto irqTransmissionError = soc::reg::bool_to_register_field_enum<TplTransmissionErrorIrq, Cfgr::TEIE_RW_TransmissionErrorInteruptEnable>();
-        constexpr auto irqHalfTransmission  = soc::reg::bool_to_register_field_enum<TplHalfTransmissionIrq,  Cfgr::HTIE_RW_HalfTransmissionInteruptEnable>();
-        constexpr auto irqFullTransmission  = soc::reg::bool_to_register_field_enum<TplFullTransmissionIrq,  Cfgr::TCIE_RW_TransmissionCompletionInteruptEnable>();
+        constexpr auto irqTransmissionError = soc::reg::bool_to_register_field_enum<TplTransmissionErrorIrq, Cfgr::TEIE_RW_TransmissionErrorInterruptEnable>();
+        constexpr auto irqHalfTransmission  = soc::reg::bool_to_register_field_enum<TplHalfTransmissionIrq,  Cfgr::HTIE_RW_HalfTransmissionInterruptEnable>();
+        constexpr auto irqFullTransmission  = soc::reg::bool_to_register_field_enum<TplFullTransmissionIrq,  Cfgr::TCIE_RW_TransmissionCompletionInterruptEnable>();
         constexpr auto isEnabled            = soc::reg::bool_to_register_field_enum<TplEnableDma,            Cfgr::EN_RW_ChannelEnable>();
         constexpr AddressCt<TplRequesterId> addresses;
 
@@ -230,7 +230,7 @@ namespace peripheral::dma {
                 destinationIncrement,
                 sourceIncrement,
                 isCyclic,
-                Cfgr::DIR_RW_DataTransferDirection::readFromPeripheral,
+                Cfgr::DIR_RW_DataTransferDirection::read_from_peripheral,
                 irqTransmissionError,
                 irqHalfTransmission,
                 irqFullTransmission,
@@ -262,9 +262,9 @@ namespace peripheral::dma {
         constexpr auto sourceIncrement      = soc::reg::bool_to_register_field_enum<TplSourceIncrement,      Cfgr::PINC_RW_PeripheralAddressIncrementMode>();
         constexpr auto destinationIncrement = soc::reg::bool_to_register_field_enum<TplDestinationIncrement, Cfgr::MINC_RW_MemoryAddressIncrementMode>();
         constexpr auto isCyclic             = soc::reg::bool_to_register_field_enum<TplCyclicMode,           Cfgr::CIRC_RW_CyclicMode>();
-        constexpr auto irqTransmissionError = soc::reg::bool_to_register_field_enum<TplTransmissionErrorIrq, Cfgr::TEIE_RW_TransmissionErrorInteruptEnable>();
-        constexpr auto irqHalfTransmission  = soc::reg::bool_to_register_field_enum<TplHalfTransmissionIrq,  Cfgr::HTIE_RW_HalfTransmissionInteruptEnable>();
-        constexpr auto irqFullTransmission  = soc::reg::bool_to_register_field_enum<TplFullTransmissionIrq,  Cfgr::TCIE_RW_TransmissionCompletionInteruptEnable>();
+        constexpr auto irqTransmissionError = soc::reg::bool_to_register_field_enum<TplTransmissionErrorIrq, Cfgr::TEIE_RW_TransmissionErrorInterruptEnable>();
+        constexpr auto irqHalfTransmission  = soc::reg::bool_to_register_field_enum<TplHalfTransmissionIrq,  Cfgr::HTIE_RW_HalfTransmissionInterruptEnable>();
+        constexpr auto irqFullTransmission  = soc::reg::bool_to_register_field_enum<TplFullTransmissionIrq,  Cfgr::TCIE_RW_TransmissionCompletionInterruptEnable>();
         constexpr auto isEnabled            = soc::reg::bool_to_register_field_enum<TplEnableDma,            Cfgr::EN_RW_ChannelEnable>();
         constexpr AddressCt<TplRequesterId> addresses;
 
@@ -292,7 +292,7 @@ namespace peripheral::dma {
                 destinationIncrement,
                 sourceIncrement,
                 isCyclic,
-                Cfgr::DIR_RW_DataTransferDirection::readFromMemory,
+                Cfgr::DIR_RW_DataTransferDirection::read_from_memory,
                 irqTransmissionError,
                 irqHalfTransmission,
                 irqFullTransmission,
@@ -324,9 +324,9 @@ namespace peripheral::dma {
         constexpr auto isHwTrigger          = IdHelperCt<TplRequesterId>::isHwTrigger;
         constexpr auto sourceIncrement      = soc::reg::bool_to_register_field_enum<TplSourceIncrement,      Cfgr::PINC_RW_PeripheralAddressIncrementMode>();
         constexpr auto destinationIncrement = soc::reg::bool_to_register_field_enum<TplDestinationIncrement, Cfgr::MINC_RW_MemoryAddressIncrementMode>();
-        constexpr auto irqTransmissionError = soc::reg::bool_to_register_field_enum<TplTransmissionErrorIrq, Cfgr::TEIE_RW_TransmissionErrorInteruptEnable>();
-        constexpr auto irqHalfTransmission  = soc::reg::bool_to_register_field_enum<TplHalfTransmissionIrq,  Cfgr::HTIE_RW_HalfTransmissionInteruptEnable>();
-        constexpr auto irqFullTransmission  = soc::reg::bool_to_register_field_enum<TplFullTransmissionIrq,  Cfgr::TCIE_RW_TransmissionCompletionInteruptEnable>();
+        constexpr auto irqTransmissionError = soc::reg::bool_to_register_field_enum<TplTransmissionErrorIrq, Cfgr::TEIE_RW_TransmissionErrorInterruptEnable>();
+        constexpr auto irqHalfTransmission  = soc::reg::bool_to_register_field_enum<TplHalfTransmissionIrq,  Cfgr::HTIE_RW_HalfTransmissionInterruptEnable>();
+        constexpr auto irqFullTransmission  = soc::reg::bool_to_register_field_enum<TplFullTransmissionIrq,  Cfgr::TCIE_RW_TransmissionCompletionInterruptEnable>();
         // When enabling channel in MemoryToMemory mode, it will start transition instantly
         constexpr auto isEnabled            = soc::reg::bool_to_register_field_enum<TplEnableDma,            Cfgr::EN_RW_ChannelEnable>();
         constexpr AddressCt<TplRequesterId> addresses;
@@ -360,7 +360,7 @@ namespace peripheral::dma {
                 destinationIncrement,
                 sourceIncrement,
                 Cfgr::CIRC_RW_CyclicMode::disable,
-                Cfgr::DIR_RW_DataTransferDirection::readFromPeripheral,
+                Cfgr::DIR_RW_DataTransferDirection::read_from_peripheral,
                 irqTransmissionError,
                 irqHalfTransmission,
                 irqFullTransmission,
@@ -397,9 +397,9 @@ namespace peripheral::dma {
         constexpr auto isHwTrigger          = IdHelperCt<TplRequesterId>::isHwTrigger;
         constexpr auto isMemoryToMemory     = TplDirection == Direction::MemoryToMemory;
         constexpr auto isCyclic             = soc::reg::bool_to_register_field_enum<TplCyclicMode,           Cfgr::CIRC_RW_CyclicMode>();
-        constexpr auto irqTransmissionError = soc::reg::bool_to_register_field_enum<TplTransmissionErrorIrq, Cfgr::TEIE_RW_TransmissionErrorInteruptEnable>();
-        constexpr auto irqHalfTransmission  = soc::reg::bool_to_register_field_enum<TplHalfTransmissionIrq,  Cfgr::HTIE_RW_HalfTransmissionInteruptEnable>();
-        constexpr auto irqFullTransmission  = soc::reg::bool_to_register_field_enum<TplFullTransmissionIrq,  Cfgr::TCIE_RW_TransmissionCompletionInteruptEnable>();
+        constexpr auto irqTransmissionError = soc::reg::bool_to_register_field_enum<TplTransmissionErrorIrq, Cfgr::TEIE_RW_TransmissionErrorInterruptEnable>();
+        constexpr auto irqHalfTransmission  = soc::reg::bool_to_register_field_enum<TplHalfTransmissionIrq,  Cfgr::HTIE_RW_HalfTransmissionInterruptEnable>();
+        constexpr auto irqFullTransmission  = soc::reg::bool_to_register_field_enum<TplFullTransmissionIrq,  Cfgr::TCIE_RW_TransmissionCompletionInterruptEnable>();
         constexpr auto isEnabled            = soc::reg::bool_to_register_field_enum<TplEnableDma,            Cfgr::EN_RW_ChannelEnable>();
         constexpr AddressCt<TplRequesterId> addresses;
 

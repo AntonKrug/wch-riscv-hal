@@ -10,11 +10,11 @@
 namespace riscv::csr {
     // https://five-embeddev.com/riscv-priv-isa-manual/Priv-v1.12/priv-csrs.html
     // 11:10 bits => 00/01/10=read&write 11=read-only
-    // 9:8   bits => 00=unpriviledged 01=supervisor 10=hypervisor 11=machine
+    // 9:8   bits => 00=unprivileged 01=supervisor 10=hypervisor 11=machine
 
 
     constexpr std::uint16_t mask_read_write  = 0b11'00'0000'0000U;
-    constexpr std::uint16_t mask_priviledge  = 0b00'11'0000'0000U;
+    constexpr std::uint16_t mask_privileged  = 0b00'11'0000'0000U;
 
 
     enum class ReadWrite: std::uint16_t {
@@ -25,11 +25,11 @@ namespace riscv::csr {
     };
 
 
-    enum class Priviledge: std::uint16_t {
-        unpriviledged = 0b00'00'0000'0000U,
-        supervisor    = 0b00'01'0000'0000U,
-        hypervisor    = 0b00'10'0000'0000U,
-        machine       = 0b00'11'0000'0000U
+    enum class Privilege: std::uint16_t {
+        unprivileged = 0b00'00'0000'0000U,
+        supervisor   = 0b00'01'0000'0000U,
+        hypervisor   = 0b00'10'0000'0000U,
+        machine      = 0b00'11'0000'0000U
     };
 
 
@@ -124,13 +124,13 @@ namespace riscv::csr {
         dscratch0    = 0b01'11'1011'0010U, // 0x7B2 DRW debug scratch register 0
         dscratch1    = 0b01'11'1011'0011U, // 0x7B3 DRW debug scratch register 1
 
-        // Unpriviledged - WCH vendor exclusive
-        gintenr      = 0b10'00'0000'0000U, // 0x800 URW global interupt enable
-        intsyscr     = 0b10'00'0000'0100U, // 0x804 URW interupt system control
+        // Unprivileged - WCH vendor exclusive
+        gintenr      = 0b10'00'0000'0000U, // 0x800 URW global interrupt enable
+        intsyscr     = 0b10'00'0000'0100U, // 0x804 URW interrupt system control
 
         // Machine - WCH vendor exclusive
         corecfgr     = 0b10'11'0000'0000U, // 0xBC0 MRW microprocessor configuration
-        inestcr      = 0b10'11'0000'0001U, // 0xBC1 MRW interupt nested control
+        inestcr      = 0b10'11'0000'0001U, // 0xBC1 MRW interrupt nested control
     };
 
 
@@ -187,7 +187,7 @@ namespace riscv::csr {
         pmpaddr14    = 0b00'11'1011'0000U + 14U,
         pmpaddr15    = 0b00'11'1011'0000U + 15U,
 
-        // Unpriviledged floating point
+        // Unprivileged floating point
         fflags       = 0b00'00'0000'0001U, // URW floating point accrued exception
         frm          = 0b00'00'0000'0010U, // URW floating point dynamic rounding mode
         fcsr         = 0b00'00'0000'0011U, // URW floating point control + status (frm + fflags)
@@ -198,14 +198,14 @@ namespace riscv::csr {
         dscratch0    = 0b01'11'1011'0010U, // 0x7B2 DRW debug scratch register 0
         dscratch1    = 0b01'11'1011'0011U, // 0x7B3 DRW debug scratch register 1
 
-        // Unpriviledged - WCH vendor exclusive
-        gintenr      = 0b10'00'0000'0000U, // 0x800 URW global interupt enable
-        intsyscr     = 0b10'00'0000'0100U, // 0x804 URW interupt system control
+        // Unprivileged - WCH vendor exclusive
+        gintenr      = 0b10'00'0000'0000U, // 0x800 URW global interrupt enable
+        intsyscr     = 0b10'00'0000'0100U, // 0x804 URW interrupt system control
 
         // Machine - WCH vendor exclusive
         corecfgr     = 0b10'11'0000'0000U, // 0xBC0 MRW microprocessor configuration
         cstrcr       = 0b10'11'0000'0010U, // 0xBC2 MRW cache policy configuration
-        cpmpocr      = 0b10'11'0000'0011U, // 0xBC3 MRW cache policy overrrides PMP control
+        cpmpocr      = 0b10'11'0000'0011U, // 0xBC3 MRW cache policy overrides PMP control
         cmcr         = 0b10'11'1101'0000U, // 0xBD0 MWO cache operation control
         cinfor       = 0b11'11'1100'0000U, // 0xFC0 MRO cache information
     };

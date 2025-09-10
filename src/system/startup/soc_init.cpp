@@ -161,7 +161,7 @@ extern "C" {
     ))
     configure_swio_pin_d1() {
         soc::reg::setRegFieldsSipCt<
-            peripheral::rcc::Apb2pcenr::IOPDEN_RW_InputOutputPortDClockEnable::clockEnable>();
+            peripheral::rcc::Apb2pcenr::IOPDEN_RW_InputOutputPortDClockEnable::clock_enable>();
 
         constexpr auto swio  = soc::GpioPort.d.get_pin<1U>();
         swio.mode_input_ct<peripheral::gpio::PinInputDrive::pull_up_pull_down>();
@@ -214,15 +214,15 @@ extern "C" {
         using namespace riscv;
         using namespace peripheral;
 
-        // In case we are in soft-reset, disable (probably) pre-existing global interupt,
-        // and prepare CSR fields so when "return from interupt" (which will do forcefully
+        // In case we are in soft-reset, disable (probably) pre-existing global interrupt,
+        // and prepare CSR fields so when "return from interrupt" (which will do forcefully
         // at end of this method by invoking mret), then it will restore expected priviledge
         // mode and expected MIE state. Also returning with mret will allow us to have
         // shallower(less demanding on RAM) and cleaner callstack.
         csr::access_ct::write<
-            csr::mstatus::Mie_MRW_MachineInteruptEnable::disable,
-            csr::mstatus::Mpp_MRW_MachinePreviousPriviledge::machine,
-            csr::mstatus::Mpie_MRW_MachinePreviousInteruptWasEnabled::enabled>();
+            csr::mstatus::Mie_MRW_MachineInterruptEnable::disable,
+            csr::mstatus::Mpp_MRW_MachinePreviousPrivilege::machine,
+            csr::mstatus::Mpie_MRW_MachinePreviousInterruptWasEnabled::enabled>();
 
         // Initialize the bss and data sections
         zeroize_bss();
@@ -231,14 +231,14 @@ extern "C" {
         // Configure CPU behaviour
         csr::access_ct::write<
             csr::intsyscr::Hwstken_MRW_HardwarePrologueEpilogue::enable, //HW preamble and epilogue
-            csr::intsyscr::Inesten_MRW_InteruptNesting::enable>();
+            csr::intsyscr::Inesten_MRW_InterruptNesting::enable>();
 
-        // Configure trap/interupt behaviour
+        // Configure trap/interrupt behaviour
 #ifdef SYSTEM_WCH_IRQ_VECTORIZED
         constexpr auto mtvec_value = csr::mtvec::calculate_mtvec_raw_value<
             SYSTEM_WCH_VECTOR_TABLE_ADDRESS,
-            csr::mtvec::Mode0_RW_VectorizationEnable::vectorizedInterupts,
-            csr::mtvec::Mode1_RW_VectorizedBehaviour::absoluteJumpAddresses>();
+            csr::mtvec::Mode0_RW_VectorizationEnable::vectorized_interrupts,
+            csr::mtvec::Mode1_RW_VectorizedBehaviour::absolute_jump_addresses>();
 #else
         constexpr auto mtvec_value = csr::mtvec::CalculateMtvecRawValue<
             SYSTEM_WCH_VECTOR_TABLE_ADDRESS,
@@ -269,13 +269,13 @@ extern "C" {
         // csr::access_ct::writeUint32<csr::QingKeV2::mepc, reinterpret_cast<std::uint32_t>(main_ptr)>();
 
         // Setting up machine exception program counter to point to our main user function.
-        // Returning like from interupt/excerption, similar as jumping but this makes
+        // Returning like from interrupt/excerption, similar as jumping but this makes
         // class stack to not show the system init functions and allows smaller SP usage
-        // If the __main_user 2046 bytes away from the begining of the memory (0), then
+        // If the __main_user 2046 bytes away from the beginning of the memory (0), then
         // it can be optimized and the __main_user address loaded directly with a
-        // LW instruction and 12-bit imediate operand (-2048 to 2047) and save
+        // LW instruction and 12-bit immediate operand (-2048 to 2047) and save
         // one opcode. If the __main_user would be max 28 then it would fit
-        // into 5-bit operand and the imedetiate variant of CSR write, saving
+        // into 5-bit operand and the immediate variant of CSR write, saving
         // yet another instruction.
         // csr::access::write_uint32<csr::QingKeV2::mepc>(__main_user);
         // csr::access::write_uint32<>(__main_user);
@@ -284,9 +284,9 @@ extern "C" {
 
         __asm__ volatile("mret\n");
 
-        // Optionally we could do extra safty that if main ever exits, we could then
+        // Optionally we could do extra safety that if main ever exits, we could then
         // halt the system permanently but use [[noreturn]] on main and make sure
-        // that's achieved within the main itself. Also then we do not need to
+        // that's achieved within the main itself. Also, then we do not need to
         // call main() directly and already shrink the callstack, instead we can
         // RA pointer trick and just return from init function
         // systemGenericCommonHalt();

@@ -15,13 +15,13 @@
 #include "system/register/util.h"
 #include "system/register/field_access_privilege.h"
 
-namespace riscv::csr::intsyscr {
+namespace riscv::csr::intsyscr { // NOLINT
 
-    enum class Hwstken_MRW_HardwarePrologueEpilogue: std::uint32_t {
+    enum class Hwstken_MRW_HardwarePrologueEpilogue: std::uint32_t { // NOLINT
         // Hardware prologue and epilogue on IRQs, on low-end devices (QingKeV2 like CH32V003)
         // it saves footprint, but doesn't improve performance (or can make it worse) and might
-        // waste more stack than necesary. On higher-end device it has shadow registers without
-        // wasting stack and improves performance as well. Nesting is possible upto 2 levels
+        // waste more stack than necessary. On higher-end device it has shadow registers without
+        // wasting stack and improves performance as well. Nesting is possible up to 2 levels
         // deep. One problem is that this is non-standard and requires WCH toolchain and changing
         //  __attribute__((interrupt()))
         //  on all handlers to:
@@ -41,35 +41,35 @@ namespace riscv::csr::intsyscr {
         // only applied to the handlers of these IRQs. On some applications might
         // worth investigating how the footprint and runtime behavior changes between using
         // HPE or not. Because blindly enabling the HPE might negatively impact the application.
-        fieldBitMask = 0b1U, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = soc::reg::field_access_right::ReadWrite,
+        field_bit_mask = 0b1U, // not holding any settings or value, it's a bitmask for this specific field
+        field_access   = soc::reg::field_access_right::ReadWrite,
 
-        disable      = 0U,           // disable HW prologue and epilogue (see intsyscr.h for more details)
-        enable       = fieldBitMask, // enable HW prologue and epilogue (see intsyscr.h for more details)
+        disable        = 0U,           // disable HW prologue and epilogue (see intsyscr.h for more details)
+        enable         = field_bit_mask, // enable HW prologue and epilogue (see intsyscr.h for more details)
     };
 
-    enum class Inesten_MRW_InteruptNesting: std::uint32_t {
+    enum class Inesten_MRW_InterruptNesting: std::uint32_t {
         // Enable nesting of interrupts together with PFIC settings the IRQs can get different
         // priorities and dictating order of execution.
-        fieldBitMask = 0b1U << 1, // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = soc::reg::field_access_right::ReadWrite,
+        field_bit_mask = 0b1U << 1, // not holding any settings or value, it's a bitmask for this specific field
+        field_access   = soc::reg::field_access_right::ReadWrite,
 
-        disable      = 0U,
-        enable       = fieldBitMask,
+        disable        = 0U,
+        enable         = field_bit_mask,
     };
 
     enum class Eabien_MRW_EmbeddedAbi: std::uint32_t {
-        fieldBitMask = 0b1U << 2,     // not holding any settings or value, it's a bitmask for this specific field
-        fieldAccess  = soc::reg::field_access_right::ReadWrite,
+        field_bit_mask = 0b1U << 2,      // not holding any settings or value, it's a bitmask for this specific field
+        field_access   = soc::reg::field_access_right::ReadWrite,
 
-        disble       = 0U,           // Keeping EABI disabled, the way WCH recommends
-        enable       = fieldBitMask, // WCH noted that this shouldn't be enabled, and left in the default disabled state
+        disable        = 0U,             // Keeping EABI disabled, the way WCH recommends
+        enable         = field_bit_mask, // WCH noted that this shouldn't be enabled, and left in the default disabled state
     };
 
     template<typename CsrField>
     concept is_any_field =
         std::is_same_v<CsrField, Hwstken_MRW_HardwarePrologueEpilogue> ||
-        std::is_same_v<CsrField, Inesten_MRW_InteruptNesting> ||
+        std::is_same_v<CsrField, Inesten_MRW_InterruptNesting> ||
         std::is_same_v<CsrField, Eabien_MRW_EmbeddedAbi>;
 
 

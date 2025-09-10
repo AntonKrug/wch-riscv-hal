@@ -12,11 +12,12 @@ namespace soc::gpio {
 
     struct Op { // NOLINT
         std::uint32_t address;               // address to apply the value to
-        std::uint32_t bit_set_reset_address; // alternative adddress to use to apply set/reset mechanism
+        std::uint32_t bit_set_reset_address; // alternative address to use to apply set/reset mechanism
         std::uint32_t value;                 // value to be applied
         std::uint32_t mask;                  // bitmask of what part of the value is the desired value
         std::uint32_t writable;              // bitmask of the whole register to know what is writable at that address
         std::uint32_t port_number;           // to tell apart portA from B without need to check address
+        bool          mode_operation;        // to tell if this operation is changing the pin's mode
     };
 
     // GPIOx_OUTDR register layout converted to GPIOx_BSHR register layout

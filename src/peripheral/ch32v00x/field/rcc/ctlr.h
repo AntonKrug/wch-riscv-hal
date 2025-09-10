@@ -12,30 +12,30 @@
 
 namespace peripheral::rcc {
 
-    struct Ctlr {
+    struct Ctlr { // NOLINT
         // Clock control
 
         constexpr static std::uint32_t reg_mem_offset = 0x00U;
 
         // TODO: check other cpus
         // TODO: RW/RO and other access modes as enum
-        enum class HSION_RW_InternalHighSpeedClockEnable: std::uint32_t {
-            fieldBitMask = 0b1U,         // not holding any settings or value, it's a bitmask for this specific field
-            fieldAccess  = soc::reg::field_access_right::ReadWrite,
+        enum class HSION_RW_InternalHighSpeedClockEnable: std::uint32_t { // NOLINT
+            field_bit_mask = 0b1U,         // not holding any settings or value, it's a bitmask for this specific field
+            field_access   = soc::reg::field_access_right::ReadWrite,
 
-            disable      = 0U,           // after disabling HSI, it takes 6 cycles to propagate the change
-            enable       = fieldBitMask, // HSI can set by HW as well (when waking up from standby or when expierencing failure while using HSE). v003=24Mhz, x033/x035=48Mhz others=8Mhz
+            disable        = 0U,           // after disabling HSI, it takes 6 cycles to propagate the change
+            enable         = field_bit_mask, // HSI can set by HW as well (when waking up from standby or when experiencing failure while using HSE). v003=24Mhz, x033/x035=48Mhz others=8Mhz
         };
 
-        enum class HSIRDY_RO_InternalHighSpeedClockReady: std::uint32_t {
-            fieldBitMask   = 0b1U << 1U,    // not holding any settings or value, it's a bitmask for this specific field
-            fieldAccess    = soc::reg::field_access_right::ReadOnly,
+        enum class HSIRDY_RO_InternalHighSpeedClockReady: std::uint32_t { // NOLINT
+            field_bit_mask   = 0b1U << 1U,    // not holding any settings or value, it's a bitmask for this specific field
+            field_access     = soc::reg::field_access_right::ReadOnly,
 
-            notReady       = 0U,           // HSI not ready/stable yet, wait for a bit longer
-            readyAndStable = fieldBitMask, // HSI can set by HW as well (when waking up from standby or when expierencing failure while using HSE)
+            not_ready        = 0U,           // HSI not ready/stable yet, wait for a bit longer
+            ready_and_stable = field_bit_mask, // HSI can set by HW as well (when waking up from standby or when experiencing failure while using HSE)
         };
 
-        enum class HSITRIM_RW_InternalHighSpeedClockTrim: std::uint32_t {
+        enum class HSITRIM_RW_InternalHighSpeedClockTrim: std::uint32_t { // NOLINT
             // Able to superimpose on top of HSICAL[7:0] to adjust HSI frequency. Range is 0-31 60kHz steps, value 16 is the default midpoint
             // HSITRIM=0  coresponds to -960 kHz
             // HSITRIM=1  coresponds to -900 kHz
@@ -70,67 +70,67 @@ namespace peripheral::rcc {
             // HSITRIM=30 coresponds to  840 kHz
             // HSITRIM=31 coresponds to  900 kHz
 
-            fieldBitMask = 0b11111U << 3U, // not holding any settings or value, it's a bitmask for this specific field
-            fieldAccess  = soc::reg::field_access_right::ReadWrite,
+            field_bit_mask = 0b11111U << 3U, // not holding any settings or value, it's a bitmask for this specific field
+            field_access   = soc::reg::field_access_right::ReadWrite,
         };
 
-        template<std::uint8_t Trim>
+        template<std::uint8_t TplTrim>
         constexpr static auto produceRawTrimValueCt() -> std::uint32_t {
-            static_assert(Trim < 32U, "Trim is 5-bits, the value must be in range 0-31");
-            return Trim << soc::reg::enum_bit_mask_offset_ct<HSITRIM_RW_InternalHighSpeedClockTrim>();
+            static_assert(TplTrim < 32U, "TplTrim is 5-bits, the value must be in range 0-31");
+            return TplTrim << soc::reg::enum_bit_mask_offset_ct<HSITRIM_RW_InternalHighSpeedClockTrim>();
         }
 
-        enum class HSICAL_RO_InternalHighSpeedClockCalibration: std::uint32_t {
-            fieldBitMask = 0b11111111U << 8U, // not holding any settings or value, it's a bitmask for this specific field
-            fieldAccess  = soc::reg::field_access_right::ReadOnly,
+        enum class HSICAL_RO_InternalHighSpeedClockCalibration: std::uint32_t { // NOLINT
+            field_bit_mask = 0b11111111U << 8U, // not holding any settings or value, it's a bitmask for this specific field
+            field_access   = soc::reg::field_access_right::ReadOnly,
         };
 
-        enum class HSEON_RW_ExternalHighSpeedClockEnable: std::uint32_t {
-            fieldBitMask = 0b1U << 16U,   // not holding any settings or value, it's a bitmask for this specific field
-            fieldAccess  = soc::reg::field_access_right::ReadWrite,
+        enum class HSEON_RW_ExternalHighSpeedClockEnable: std::uint32_t { // NOLINT
+            field_bit_mask = 0b1U << 16U,   // not holding any settings or value, it's a bitmask for this specific field
+            field_access   = soc::reg::field_access_right::ReadWrite,
 
-            disable      = 0U,           // default, changes take 6 cycles to apply
-            enable       = fieldBitMask, // changes take 6 cycles to apply. turned off when entering standby mode,
+            disable        = 0U,           // default, changes take 6 cycles to apply
+            enable         = field_bit_mask, // changes take 6 cycles to apply. turned off when entering standby mode,
         };
 
-        enum class HSERDY_RO_ExternalHighSpeedClockReady: std::uint32_t {
-            fieldBitMask   = 0b1U << 17U,  // not holding any settings or value, it's a bitmask for this specific field
-            fieldAccess    = soc::reg::field_access_right::ReadOnly,
+        enum class HSERDY_RO_ExternalHighSpeedClockReady: std::uint32_t { // NOLINT
+            field_bit_mask   = 0b1U << 17U,  // not holding any settings or value, it's a bitmask for this specific field
+            field_access     = soc::reg::field_access_right::ReadOnly,
 
-            notReady       = 0U,           // default, HSE not ready/stable yet, wait for a bit longer
-            readyAndStable = fieldBitMask, // HSE will be turned off when entering standby mode
+            not_ready        = 0U,           // default, HSE not ready/stable yet, wait for a bit longer
+            ready_and_stable = field_bit_mask, // HSE will be turned off when entering standby mode
         };
 
-        enum class HSEBYP_RW_ExternalHighSpeedClockBypass: std::uint32_t {
-            fieldBitMask           = 0b1U << 18U,  // not holding any settings or value, it's a bitmask for this specific field
-            fieldAccess            = soc::reg::field_access_right::ReadWrite,
+        enum class HSEBYP_RW_ExternalHighSpeedClockBypass: std::uint32_t { // NOLINT
+            field_bit_mask           = 0b1U << 18U,  // not holding any settings or value, it's a bitmask for this specific field
+            field_access             = soc::reg::field_access_right::ReadWrite,
 
-            useCeramicResonator    = 0U,           // default, resonate oscillator connected to the external pins, configure this while HSEON is off
-            bypassCeramicResonator = fieldBitMask, // consume digital clock signal on external pin, configure this while HSEON is off
+            use_ceramic_resonator    = 0U,           // default, resonate oscillator connected to the external pins, configure this while HSEON is off
+            bypass_ceramic_resonator = field_bit_mask, // consume digital clock signal on external pin, configure this while HSEON is off
         };
 
-        enum class CSSON_RW_ClockSafety: std::uint32_t {
-            fieldBitMask = 0b1U << 19U,  // not holding any settings or value, it's a bitmask for this specific field
-            fieldAccess  = soc::reg::field_access_right::ReadWrite,
+        enum class CSSON_RW_ClockSafety: std::uint32_t { // NOLINT
+            field_bit_mask = 0b1U << 19U,  // not holding any settings or value, it's a bitmask for this specific field
+            field_access   = soc::reg::field_access_right::ReadWrite,
 
-            noProtection = 0U,           // disable protection HSE issues will not cause IRQ or flags to be set
-            protectHse   = fieldBitMask, // when HSERDY=1 triggers CSSF and NMI IRQ when HSE abnormal, when HSERDY=0 disable protection
+            no_protection  = 0U,           // disable protection HSE issues will not cause IRQ or flags to be set
+            protect_hse    = field_bit_mask, // when HSERDY=1 triggers CSSF and NMI IRQ when HSE abnormal, when HSERDY=0 disable protection
         };
 
-        enum class PLLON_RW_PhaseLockedLoopEnable: std::uint32_t {
-            fieldBitMask = 0b1U << 24U,  // not holding any settings or value, it's a bitmask for this specific field
-            fieldAccess  = soc::reg::field_access_right::ReadWrite,
+        enum class PLLON_RW_PhaseLockedLoopEnable: std::uint32_t { // NOLINT
+            field_bit_mask = 0b1U << 24U,  // not holding any settings or value, it's a bitmask for this specific field
+            field_access   = soc::reg::field_access_right::ReadWrite,
 
-            disable      = 0U,           // clock generator is off
-            enable       = fieldBitMask, // clock generator is on, but will be disabled when entering standby
+            disable        = 0U,           // clock generator is off
+            enable         = field_bit_mask, // clock generator is on, but will be disabled when entering standby
         };
 
-        enum class PLLRDY_RO_PhaseLockedLoopReady: std::uint32_t {
-            fieldBitMask   = 0b1U << 25U,  // not holding any settings or value, it's a bitmask for this specific field
-            fieldAccess    = soc::reg::field_access_right::ReadOnly,
+        enum class PLLRDY_RO_PhaseLockedLoopReady: std::uint32_t { // NOLINT
+            field_bit_mask   = 0b1U << 25U,  // not holding any settings or value, it's a bitmask for this specific field
+            field_access     = soc::reg::field_access_right::ReadOnly,
 
-            notReady       = 0U,           // PLL clock lock NOT achieved yet, wait for a bit longer
-            readyAndStable = fieldBitMask, // PLL clock lock achieved
+            not_ready        = 0U,           // PLL clock lock NOT achieved yet, wait for a bit longer
+            ready_and_stable = field_bit_mask, // PLL clock lock achieved
         };
 
         //TODO: v2x/v3x has pll2on,pll2rdy,pll3on,pll3rdy

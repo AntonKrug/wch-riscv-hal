@@ -50,7 +50,7 @@ namespace riscv::concepts {
         template<typename CsrField>
         concept field_enum_which_contains_field_bit_mask = requires
         {
-                { CsrField::fieldBitMask };
+                { CsrField::field_bit_mask };
         };
 
 

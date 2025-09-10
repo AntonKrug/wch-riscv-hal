@@ -22,24 +22,24 @@ namespace soc::reg::combine {
     template <auto... FieldValues>
     requires (concepts::field_with_bit_mask<FieldValues> && ...)
     constexpr auto field_masks_to_uint32() -> std::uint32_t {
-        return (static_cast<std::uint32_t>(decltype(FieldValues)::fieldBitMask) | ...);
+        return (static_cast<std::uint32_t>(decltype(FieldValues)::field_bit_mask) | ...);
     }
 
     template <concepts::field_type_with_bit_mask... FieldTypes>
     constexpr auto field_type_masks_to_uint32() -> std::uint32_t {
-        return (static_cast<std::uint32_t>(FieldTypes::fieldBitMask) | ...);
+        return (static_cast<std::uint32_t>(FieldTypes::field_bit_mask) | ...);
     }
 
     #pragma region Field Bitmask and Field Access
 
     template<typename Tuple, std::size_t Index>
     constexpr auto bitmask_from_tuple_type_index() -> std::uint32_t {
-        return static_cast<std::uint32_t>(std::tuple_element_t<Index, Tuple>::fieldBitMask);
+        return static_cast<std::uint32_t>(std::tuple_element_t<Index, Tuple>::field_bit_mask);
     }
 
     template<typename Tuple, std::size_t Index>
     constexpr auto writable_from_tuple_type_index() -> bool {
-        return field_access_right::isWritable<static_cast<std::uint32_t>(std::tuple_element_t<Index, Tuple>::fieldAccess)>();
+        return field_access_right::isWritable<static_cast<std::uint32_t>(std::tuple_element_t<Index, Tuple>::field_bit_mask)>();
     }
 
     template<typename Tuple, std::size_t... Indices>

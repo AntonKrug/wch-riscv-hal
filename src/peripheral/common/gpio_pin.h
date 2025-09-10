@@ -54,7 +54,7 @@ namespace peripheral::gpio{
         template<std::uint8_t TplUnshiftedValue>
         static constexpr std::uint32_t register_configuration_shift();
 
-        constexpr static std::uint32_t mask_configuration_keep     = register_configuration_shift<0b1111U>();  // NOLINT(*-dynamic-static-initializers)
+        constexpr static std::uint32_t mask_configuration_keep     = register_configuration_shift<0b1111U>();
         constexpr static std::uint32_t mask_configuration_inverted = register_mask_invert<mask_configuration_keep>(); // NOLINT(*-dynamic-static-initializers)
 
         // Masks and conversions for Input, Output, Reset (not Reset/Set), Port Lock registers
@@ -183,7 +183,8 @@ namespace peripheral::gpio{
             .value                 = register_configuration_shift<static_cast<std::uint32_t>(TplDrive)>(),
             .mask                  = register_configuration_shift<mask_configuration_keep>(),
             .writable              = full_of_ones,
-            .port_number           = TplPortNumber
+            .port_number           = TplPortNumber,
+            .mode_operation        = true
         };
     }
 
@@ -210,7 +211,8 @@ namespace peripheral::gpio{
             .value                 = register_configuration_shift<slew | drive | multiplexing>(),
             .mask                  = register_configuration_shift<mask_configuration_keep>(),
             .writable              = full_of_ones,
-            .port_number           = TplPortNumber
+            .port_number           = TplPortNumber,
+            .mode_operation        = true
         };
     }
 
@@ -233,7 +235,8 @@ namespace peripheral::gpio{
             .value                 = register_pin_data_shift_ct<TplValue>(),
             .mask                  = register_pin_data_shift_ct<0b1U>(),
             .writable              = 0b1111'1111U, // Only 8pins in output data port
-            .port_number           = TplPortNumber
+            .port_number           = TplPortNumber,
+            .mode_operation        = false
         };
     }
 

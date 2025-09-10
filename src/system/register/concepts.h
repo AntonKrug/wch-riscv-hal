@@ -10,11 +10,11 @@ namespace soc::reg::concepts {
 
     template<typename RegFieldType>
     concept field_type_with_bit_mask = requires
-        { { RegFieldType::fieldBitMask }; };
+        { { RegFieldType::field_bit_mask }; };
 
     template<typename RegFieldType>
     concept field_type_with_access = requires
-        { { RegFieldType::fieldAccess }; };
+        { { RegFieldType::field_access }; };
 
     template<typename RegFieldType>
     concept field_type_with_mask_and_access =
@@ -30,7 +30,7 @@ namespace soc::reg::concepts {
 
     template<typename RegFieldType>
     concept field_type_with_field_bit_offset = requires
-    { { RegFieldType::fieldBitOffset }; };
+    { { RegFieldType::field_bit_offset }; };
 
     template<typename RegFieldType>
     concept field_type_with_enable_and_disable_values =
@@ -82,5 +82,5 @@ namespace soc::reg::concepts {
 
     // template<typename... CsrFields>
     // concept FieldEnumWhichContainsFieldsBitMask =
-    //     (... && requires { { CsrFields::fieldBitMask }; });
+    //     (... && requires { { CsrFields::field_bit_mask }; });
 }

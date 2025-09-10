@@ -25,7 +25,7 @@ namespace soc::reg {
     template<concepts::field_type_with_bit_mask EnumType>
     // requires concepts::FieldEnumWithFieldBitMask<decltype(EnumValue)>
     constexpr auto enum_bit_mask_offset_ct() -> std::uint8_t {
-        return bit_mask_offset_ct<static_cast<std::uint32_t>(EnumType::fieldBitMask)>();
+        return bit_mask_offset_ct<static_cast<std::uint32_t>(EnumType::field_bit_mask)>();
     }
 
     template<std::uint32_t RawValue, concepts::field_type_with_bit_mask EnumValue>
@@ -53,19 +53,19 @@ namespace soc::reg {
     template<concepts::field_type_with_bit_mask RegisterFieldType>
     inline constexpr auto
     __attribute__ ((always_inline))
-    raw_value_to_enum_value(const std::uint32_t registerValue) {
-        constexpr auto mask = static_cast<std::uint32_t>(RegisterFieldType::fieldBitMask);
-        return static_cast<RegisterFieldType>(mask & registerValue);
+    raw_value_to_enum_value(const std::uint32_t register_value) {
+        constexpr auto mask = static_cast<std::uint32_t>(RegisterFieldType::field_bit_mask);
+        return static_cast<RegisterFieldType>(mask & register_value);
     }
 
     template<concepts::field_type_with_bit_mask RegisterFieldType>
     inline constexpr auto
     __attribute__ ((always_inline))
-    raw_value_to_normalized_value(const std::uint32_t registerValue) -> std::uint32_t {
-        constexpr auto mask = static_cast<std::uint32_t>(RegisterFieldType::fieldBitMask);
+    raw_value_to_normalized_value(const std::uint32_t register_value) -> std::uint32_t {
+        constexpr auto mask = static_cast<std::uint32_t>(RegisterFieldType::field_bit_mask);
         constexpr auto offset = soc::reg::bit_mask_offset_ct<static_cast<std::uint32_t>(
-            RegisterFieldType::fieldBitMask)>();
-        return (registerValue & mask) >> offset;
+            RegisterFieldType::field_bit_mask)>();
+        return (register_value & mask) >> offset;
     }
 
 
