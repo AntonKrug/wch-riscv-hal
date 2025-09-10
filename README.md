@@ -15,30 +15,6 @@
 
 # Suppressions
 
-## Clion spell checking
-
-```xml
-<component name="ProjectDictionaryState">
-  <dictionary name="project">
-    <words>
-      <w>bshr</w>
-      <w>cfghr</w>
-      <w>cfglr</w>
-      <w>eabien</w>
-      <w>indr</w>
-      <w>inesten</w>
-      <w>intsyscr</w>
-      <w>lckr</w>
-      <w>mpie</w>
-      <w>mstatus</w>
-      <w>outdr</w>
-      <w>pfic</w>
-      <w>swio</w>
-    </words>
-  </dictionary>
-</component>
-```
-
 ## MISRA 2008
 - `-clion-misra-cpp2008-5-0-11` The plain char type shall only be used for the storage and use of character values
   - Doesn't recognize `std::uint8_t` even in the cases where it's matching the underlying HW concept/register and treats `std::uint8_t` as plain `char`
@@ -47,4 +23,68 @@
 
 ## MISRA 2023
 - `-clion-misra-cpp2023-17-8-1` Function templates shall not be explicitly specialized
-  - It's necessary for compile-time recursion-based for-loop-style iterations 
+  - It's necessary for compile-time recursion-based for-loop-style iterations
+
+## Clion spell checking
+
+```xml
+<component name="ProjectDictionaryState">
+  <dictionary name="project">
+    <words>
+      <w>acdpre</w>
+      <w>addr</w>
+      <w>afio</w>
+      <w>baudrate</w>
+      <w>bshr</w>
+      <w>cfghr</w>
+      <w>cfglr</w>
+      <w>cfgr</w>
+      <w>cntr</w>
+      <w>cssc</w>
+      <w>cssf</w>
+      <w>ctlr</w>
+      <w>datar</w>
+      <w>eabien</w>
+      <w>extem</w>
+      <w>hclk</w>
+      <w>hseon</w>
+      <w>hserdy</w>
+      <w>hserdyc</w>
+      <w>hsical</w>
+      <w>hsirdyc</w>
+      <w>htif</w>
+      <w>indr</w>
+      <w>inesten</w>
+      <w>initfr</w>
+      <w>intfcr</w>
+      <w>intfr</w>
+      <w>intr</w>
+      <w>intsyscr</w>
+      <w>lckr</w>
+      <w>lsion</w>
+      <w>lsirdy</w>
+      <w>lsirdyc</w>
+      <w>maddr</w>
+      <w>mpie</w>
+      <w>msize</w>
+      <w>mstatus</w>
+      <w>nrst</w>
+      <w>outdr</w>
+      <w>paddr</w>
+      <w>pfic</w>
+      <w>pllrdyc</w>
+      <w>psize</w>
+      <w>rmvf</w>
+      <w>rstsckr</w>
+      <w>statr</w>
+      <w>swio</w>
+      <w>sysclk</w>
+      <w>tcif</w>
+      <w>teif</w>
+      <w>usart</w>
+      <w>usartdiv</w>
+    </words>
+  </dictionary>
+</component>
+```
+
