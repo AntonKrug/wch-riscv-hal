@@ -11,7 +11,7 @@ namespace peripheral::dma {
 
     enum class Id: std::uint32_t { // NOLINT
         // DMA1 ch1 triggers
-        adc1_hw_trigger     = 0x011U, // DMA1 ch1
+        adc1_hw_trigger      = 0x011U, // DMA1 ch1
         tim2_ch3_hw_trigger  = 0x011U, // DMA1 ch1
         dma1_ch1_sw_trigger  = 0x111U, // DMA1 ch1
 
@@ -40,12 +40,12 @@ namespace peripheral::dma {
         dma1_ch5_sw_trigger  = 0x115U, // DMA1 ch5
 
         // DMA1 ch6 triggers
-        i2c1_tx_hw_trigger   = 0x016U, // DMA1 ch6
+        twi1_tx_hw_trigger   = 0x016U, // DMA1 ch6
         tim1_ch3_hw_trigger  = 0x016U, // DMA1 ch6
         dma1_ch6_sw_trigger  = 0x116U, // DMA1 ch6
 
         // DMA1 ch7 triggers
-        i2c_rx_hw_trigger    = 0x017U, // DMA1 ch7
+        twi1_rx_hw_trigger   = 0x017U, // DMA1 ch7
         tim2_ch2_hw_trigger  = 0x017U, // DMA1 ch7
         tim2_ch4_hw_trigger  = 0x017U, // DMA1 ch7
         dma1_ch7_sw_trigger  = 0x117U, // DMA1 ch7

@@ -14,7 +14,7 @@
 
 namespace peripheral::rcc {
 
-    struct Cfgr0 {
+    struct Cfgr0 { // NOLINT
         // Clock configuration
 
         constexpr static std::uint32_t reg_mem_offset = 0x04U;
@@ -116,48 +116,48 @@ namespace peripheral::rcc {
 
         enum class ADCPRE_RW_AnalogDigitalConverterClockPrescaler: std::uint32_t { // NOLINT
             // see getAcdDividerFromPrescalerFieldValue() for equation, lower 3-bits are threaten differently than higher 2-bits
-            field_bit_mask    = 0b11'111U << 11U, // not holding any settings or value, it's a bitmask for this specific field
+            field_bit_mask    = static_cast<std::uint32_t>(0b11'111U) << 11U, // not holding any settings or value, it's a bitmask for this specific field
             field_access      = soc::reg::field_access_right::ReadWrite,
 
-            divide2_even      = 0b00'000U << 11U, // default ADC = HB / 2 (must be less than 24MHz)
-            divide4_odd       = 0b00'001U << 11U, // ADC = HB / 4 (must be less than 24MHz)
-            divide4_even      = 0b00'010U << 11U, // ADC = HB / 4 (must be less than 24MHz)
-            divide8_odd       = 0b00'011U << 11U, // ADC = HB / 8 (must be less than 24MHz)
-            divide6_even      = 0b00'100U << 11U, // ADC = HB / 6 (must be less than 24MHz)
-            divide12_odd      = 0b00'101U << 11U, // ADC = HB / 12 (must be less than 24MHz)
-            divide8_even      = 0b00'110U << 11U, // ADC = HB / 8 (must be less than 24MHz)
-            divide16_odd      = 0b00'111U << 11U, // ADC = HB / 16 (must be less than 24MHz)
+            divide2_even      = static_cast<std::uint32_t>(0b00'000U) << 11U, // default ADC = HB / 2 (must be less than 24MHz)
+            divide4_odd       = static_cast<std::uint32_t>(0b00'001U) << 11U, // ADC = HB / 4 (must be less than 24MHz)
+            divide4_even      = static_cast<std::uint32_t>(0b00'010U) << 11U, // ADC = HB / 4 (must be less than 24MHz)
+            divide8_odd       = static_cast<std::uint32_t>(0b00'011U) << 11U, // ADC = HB / 8 (must be less than 24MHz)
+            divide6_even      = static_cast<std::uint32_t>(0b00'100U) << 11U, // ADC = HB / 6 (must be less than 24MHz)
+            divide12_odd      = static_cast<std::uint32_t>(0b00'101U) << 11U, // ADC = HB / 12 (must be less than 24MHz)
+            divide8_even      = static_cast<std::uint32_t>(0b00'110U) << 11U, // ADC = HB / 8 (must be less than 24MHz)
+            divide16_odd      = static_cast<std::uint32_t>(0b00'111U) << 11U, // ADC = HB / 16 (must be less than 24MHz)
 
-            divide2_even_alt1 = 0b01'000U << 11U, // ADC = HB / 2 (must be less than 24MHz)
-            divide8_odd_alt1  = 0b01'001U << 11U, // ADC = HB / 8 (must be less than 24MHz)
-            divide4_even_alt1 = 0b01'010U << 11U, // ADC = HB / 4 (must be less than 24MHz)
-            divide16_odd_alt1 = 0b01'011U << 11U, // ADC = HB / 16 (must be less than 24MHz)
-            divide5_even_alt1 = 0b01'100U << 11U, // ADC = HB / 6 (must be less than 24MHz)
-            divide24_odd      = 0b01'101U << 11U, // ADC = HB / 24 (must be less than 24MHz)
-            divide8_even_alt1 = 0b01'110U << 11U, // ADC = HB / 8 (must be less than 24MHz)
-            divide32_odd      = 0b01'111U << 11U, // ADC = HB / 32 (must be less than 24MHz)
+            divide2_even_alt1 = static_cast<std::uint32_t>(0b01'000U) << 11U, // ADC = HB / 2 (must be less than 24MHz)
+            divide8_odd_alt1  = static_cast<std::uint32_t>(0b01'001U) << 11U, // ADC = HB / 8 (must be less than 24MHz)
+            divide4_even_alt1 = static_cast<std::uint32_t>(0b01'010U) << 11U, // ADC = HB / 4 (must be less than 24MHz)
+            divide16_odd_alt1 = static_cast<std::uint32_t>(0b01'011U) << 11U, // ADC = HB / 16 (must be less than 24MHz)
+            divide5_even_alt1 = static_cast<std::uint32_t>(0b01'100U) << 11U, // ADC = HB / 6 (must be less than 24MHz)
+            divide24_odd      = static_cast<std::uint32_t>(0b01'101U) << 11U, // ADC = HB / 24 (must be less than 24MHz)
+            divide8_even_alt1 = static_cast<std::uint32_t>(0b01'110U) << 11U, // ADC = HB / 8 (must be less than 24MHz)
+            divide32_odd      = static_cast<std::uint32_t>(0b01'111U) << 11U, // ADC = HB / 32 (must be less than 24MHz)
 
-            divide2_even_alt2 = 0b10'000U << 11U, // ADC = HB / 2 (must be less than 24MHz)
-            divide16_odd_alt2 = 0b10'001U << 11U, // ADC = HB / 16 (must be less than 24MHz)
-            divide4_even_alt2 = 0b10'010U << 11U, // ADC = HB / 4 (must be less than 24MHz)
-            divide32_odd_alt1 = 0b10'011U << 11U, // ADC = HB / 32 (must be less than 24MHz)
-            divide6_even_alt2 = 0b10'100U << 11U, // ADC = HB / 6 (must be less than 24MHz)
-            divide48_odd      = 0b10'101U << 11U, // ADC = HB / 48 (must be less than 24MHz)
-            divide8_even_alt2 = 0b10'110U << 11U, // ADC = HB / 8 (must be less than 24MHz)
-            divide64_odd      = 0b10'111U << 11U, // ADC = HB / 64 (must be less than 24MHz)
+            divide2_even_alt2 = static_cast<std::uint32_t>(0b10'000U) << 11U, // ADC = HB / 2 (must be less than 24MHz)
+            divide16_odd_alt2 = static_cast<std::uint32_t>(0b10'001U) << 11U, // ADC = HB / 16 (must be less than 24MHz)
+            divide4_even_alt2 = static_cast<std::uint32_t>(0b10'010U) << 11U, // ADC = HB / 4 (must be less than 24MHz)
+            divide32_odd_alt1 = static_cast<std::uint32_t>(0b10'011U) << 11U, // ADC = HB / 32 (must be less than 24MHz)
+            divide6_even_alt2 = static_cast<std::uint32_t>(0b10'100U) << 11U, // ADC = HB / 6 (must be less than 24MHz)
+            divide48_odd      = static_cast<std::uint32_t>(0b10'101U) << 11U, // ADC = HB / 48 (must be less than 24MHz)
+            divide8_even_alt2 = static_cast<std::uint32_t>(0b10'110U) << 11U, // ADC = HB / 8 (must be less than 24MHz)
+            divide64_odd      = static_cast<std::uint32_t>(0b10'111U) << 11U, // ADC = HB / 64 (must be less than 24MHz)
 
-            divide2_even_alt3 = 0b11'000U << 11U, // ADC = HB / 2 (must be less than 24MHz)
-            divide32_odd_alt2 = 0b11'001U << 11U, // ADC = HB / 32 (must be less than 24MHz)
-            divide4_even_alt3 = 0b11'010U << 11U, // ADC = HB / 4 (must be less than 24MHz)
-            divide64_odd_alt1 = 0b11'011U << 11U, // ADC = HB / 64 (must be less than 24MHz)
-            divide6_even_alt3 = 0b11'100U << 11U, // ADC = HB / 6 (must be less than 24MHz)
-            divide96_odd      = 0b11'101U << 11U, // ADC = HB / 96 (must be less than 24MHz)
-            divide8_even_alt3 = 0b11'110U << 11U, // ADC = HB / 8 (must be less than 24MHz)
-            divide128_odd     = 0b11'111U << 11U, // ADC = HB / 128 (must be less than 24MHz)
+            divide2_even_alt3 = static_cast<std::uint32_t>(0b11'000U) << 11U, // ADC = HB / 2 (must be less than 24MHz)
+            divide32_odd_alt2 = static_cast<std::uint32_t>(0b11'001U) << 11U, // ADC = HB / 32 (must be less than 24MHz)
+            divide4_even_alt3 = static_cast<std::uint32_t>(0b11'010U) << 11U, // ADC = HB / 4 (must be less than 24MHz)
+            divide64_odd_alt1 = static_cast<std::uint32_t>(0b11'011U) << 11U, // ADC = HB / 64 (must be less than 24MHz)
+            divide6_even_alt3 = static_cast<std::uint32_t>(0b11'100U) << 11U, // ADC = HB / 6 (must be less than 24MHz)
+            divide96_odd      = static_cast<std::uint32_t>(0b11'101U) << 11U, // ADC = HB / 96 (must be less than 24MHz)
+            divide8_even_alt3 = static_cast<std::uint32_t>(0b11'110U) << 11U, // ADC = HB / 8 (must be less than 24MHz)
+            divide128_odd     = static_cast<std::uint32_t>(0b11'111U) << 11U, // ADC = HB / 128 (must be less than 24MHz)
         };
 
         //TODO: v2x/v3x has simpler ACDPRE, but also lower limit for maximal clock 14MHz
-        template<std::uint32_t Value>
+        template<std::uint32_t TplValue>
         constexpr static auto getAcdDividerFromPrescalerFieldValue() -> std::uint8_t {
             // single equation to cover both case:
             // divisor=(2*(1-MOD(lower,2))+(lower+MOD(lower,2))*POWER(2,(higher+1)*MOD(lower,2)))
@@ -168,8 +168,8 @@ namespace peripheral::rcc {
             // lower=(divisor/(2(upper+1)))-1
             // if that is in lowers range and odd, then confirm our higher value matches
             // calculated higher = log2(divisor/(lower+1))−1
-            constexpr std::uint32_t lower3  = Value & 0b00'111U;
-            constexpr std::uint32_t higher2 = Value & 0b11'000U;
+            constexpr std::uint32_t lower3  = TplValue & 0b00'111U;
+            constexpr std::uint32_t higher2 = TplValue & 0b11'000U;
             if ((lower3 % 2U) != 0U) {
                 // Lower 3bits are even(0,2,4,6), ignore the higher 2bits and just produce 2+lower3 value (2,4,6,8)
                 return static_cast<std::uint8_t>(lower3 + 2U);
@@ -182,27 +182,27 @@ namespace peripheral::rcc {
         // TODO on other SoCs this is bigger register, might be worth making it bigger here
         enum class PLLSRC_RW_InputClockSourceForPhaseLockedLoopGenerator: std::uint32_t { // NOLINT
             // see getAcdPrescaler() for equation
-            field_bit_mask = 0b1U << 16U,  // not holding any settings or value, it's a bitmask for this specific field
+            field_bit_mask = static_cast<std::uint32_t>(0b1U) << 16U,  // not holding any settings or value, it's a bitmask for this specific field
             field_access   = soc::reg::field_access_right::ReadWrite,
 
-            hsi2_x         = 0U,           // PLL = 2 * internal high speed clock, default, configure before enabling PLL (PLLCLK = 2*PLLSCR)
+            hsi2_x         = 0U,             // PLL = 2 * internal high speed clock, default, configure before enabling PLL (PLLCLK = 2*PLLSCR)
             hse2_x         = field_bit_mask, // PLL = 2 * external high speed clock, configure before enabling PLL (PLLCLK = 2*PLLSCR)
         };
 
         //TODO: this register might change between SoCs
         enum class MCO_RW_MicrocontrollerClockPinOutput: std::uint32_t { // NOLINT
-            field_bit_mask = 0b111U << 24U,  // not holding any settings or value, it's a bitmask for this specific field
+            field_bit_mask = static_cast<std::uint32_t>(0b111U) << 24U,  // not holding any settings or value, it's a bitmask for this specific field
             field_access   = soc::reg::field_access_right::ReadWrite,
 
-            no_output      = 0b0'00U << 24U, // default, no clock is output
-            no_output_alt1 = 0b0'01U << 24U, // no clock is output
-            no_output_alt2 = 0b0'10U << 24U, // no clock is output
-            no_output_alt3 = 0b0'11U << 24U, // no clock is output
+            no_output      = static_cast<std::uint32_t>(0b0'00U) << 24U, // default, no clock is output
+            no_output_alt1 = static_cast<std::uint32_t>(0b0'01U) << 24U, // no clock is output
+            no_output_alt2 = static_cast<std::uint32_t>(0b0'10U) << 24U, // no clock is output
+            no_output_alt3 = static_cast<std::uint32_t>(0b0'11U) << 24U, // no clock is output
 
-            sysclk         = 0b1'00U << 24U, // sysclk is exposed on the pin output
-            hsi            = 0b1'01U << 24U, // hsi is exposed on the pin output
-            hse            = 0b1'10U << 24U, // hse is exposed on the pin output
-            pll            = 0b1'11U << 24U, // pll is exposed on the pin output
+            sysclk         = static_cast<std::uint32_t>(0b1'00U) << 24U, // sysclk is exposed on the pin output
+            hsi            = static_cast<std::uint32_t>(0b1'01U) << 24U, // hsi is exposed on the pin output
+            hse            = static_cast<std::uint32_t>(0b1'10U) << 24U, // hse is exposed on the pin output
+            pll            = static_cast<std::uint32_t>(0b1'11U) << 24U, // pll is exposed on the pin output
         };
 
         constexpr static std::tuple<

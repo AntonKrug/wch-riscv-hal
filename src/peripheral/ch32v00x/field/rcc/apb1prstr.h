@@ -20,31 +20,31 @@ namespace peripheral::rcc {
             field_bit_mask = 0b1U << 0U, // not holding any settings or value, it's a bitmask for this specific field
             field_access   = soc::reg::field_access_right::ReadWrite,
 
-            no_impact      = 0U,          // Peripheral is NOT held in RESET
+            no_impact      = 0U,            // Peripheral is NOT held in RESET
             keep_in_reset  = field_bit_mask // Peripheral held in RESET
         };
 
         enum class WWDGRST_RW_WindowWatchdogReset: std::uint32_t { //NOLINT
-            field_bit_mask = 0b1U << 11U, // not holding any settings or value, it's a bitmask for this specific field
+            field_bit_mask = static_cast<std::uint32_t>(0b1U) << 11U, // not holding any settings or value, it's a bitmask for this specific field
             field_access   = soc::reg::field_access_right::ReadWrite,
 
-            no_impact      = 0U,          // Peripheral is NOT held in RESET
+            no_impact      = 0U,            // Peripheral is NOT held in RESET
             keep_in_reset  = field_bit_mask // Peripheral held in RESET
         };
 
         enum class I2C1RST_RW_WindowWatchdogReset: std::uint32_t { //NOLINT
-            field_bit_mask = 0b1U << 21U, // not holding any settings or value, it's a bitmask for this specific field
+            field_bit_mask = static_cast<std::uint32_t>(0b1U) << 21U, // not holding any settings or value, it's a bitmask for this specific field
             field_access   = soc::reg::field_access_right::ReadWrite,
 
-            no_impact      = 0U,          // Peripheral is NOT held in RESET
+            no_impact      = 0U,            // Peripheral is NOT held in RESET
             keep_in_reset  = field_bit_mask // Peripheral held in RESET
         };
 
         enum class PWRRST_RW_PowerInterfaceModuleReset: std::uint32_t { //NOLINT
-            field_bit_mask = 0b1U << 28U, // not holding any settings or value, it's a bitmask for this specific field
+            field_bit_mask = static_cast<std::uint32_t>(0b1U) << 28U, // not holding any settings or value, it's a bitmask for this specific field
             field_access   = soc::reg::field_access_right::ReadWrite,
 
-            no_impact      = 0U,          // Peripheral is NOT held in RESET
+            no_impact      = 0U,            // Peripheral is NOT held in RESET
             keep_in_reset  = field_bit_mask // Peripheral held in RESET
         };
 

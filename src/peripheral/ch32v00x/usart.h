@@ -42,51 +42,53 @@ namespace peripheral::usart{
 
     namespace _internal {
 
-        template<typename TYPE>
-        constexpr auto absolute_value_ct(TYPE const value) -> TYPE {
-            return (value < 0U) ? -value : value;
+        template<typename TplType>
+        constexpr auto absolute_value_ct(TplType const value) -> TplType {
+            return (static_cast<std::uint32_t>(value) < 0U) ? -value : value;
         }
 
-        template<typename TYPE>
-        constexpr auto round_ct(TYPE const value) -> TYPE {
-            return static_cast<TYPE>(static_cast<int>(value + 0.5F)); // NOLINT(*-incorrect-roundings)
+        template<typename TplType>
+        constexpr auto round_ct(TplType const value) -> TplType {
+            return static_cast<TplType>(static_cast<int>(value + 0.5F)); // NOLINT(*-incorrect-roundings)
         }
 
-        template<std::uint32_t ExpectedBaudRate, std::uint32_t ActualBaudRate, double ErrorThreshold>
-        constexpr void checkBaudRateError() {
+        template<std::uint32_t TplExpectedBaudRate, std::uint32_t TplActualBaudRate, double TplErrorThreshold>
+        constexpr void check_baud_rate_error() {
             // https://ccsinfo.com/forum/viewtopic.php?t=51587
-            constexpr double baudError =
+            constexpr double baud_error =
                 absolute_value_ct(100.0F *
-                     ((static_cast<double>(ExpectedBaudRate) - ActualBaudRate) / ExpectedBaudRate));
-            static_assert(baudError < ErrorThreshold, "Bauderror of USARTDIV is over the threashold");
+                     ((static_cast<double>(TplExpectedBaudRate) - static_cast<double>(TplActualBaudRate))
+                         / static_cast<double>(TplExpectedBaudRate)));
+
+            static_assert(baud_error < TplErrorThreshold, "Baud error of USARTDIV is over the threshold");
         }
 
     }
 
 
-    template<std::uint32_t hclk, std::uint32_t expectedBaudRate, double errorThreshold = 1.0>
-    constexpr static std::uint32_t calculateUsartDivCT() {
-        constexpr double expected_divider = hclk / (16.0F * expectedBaudRate);
-        static_assert((1U << 12U) > expected_divider, "USARTDIV's 12bit mantisa would overflow with these hclk and baudRate values");
-        constexpr std::uint16_t mantisa = static_cast<std::uint16_t>(expected_divider);
+    template<std::uint32_t TplHclk, std::uint32_t TplExpectedBaudRate, double TplErrorThreshold = 1.0>
+    constexpr static std::uint32_t calculate_usart_div_ct() {
+        constexpr double expected_divider = static_cast<double>(TplHclk) / (16.0F * static_cast<double>(TplExpectedBaudRate));
+        static_assert(static_cast<double>(static_cast<std::uint32_t>(1U) << 12U) > expected_divider, "USARTDIV's 12bit mantissa would overflow with these TplHclk and baudRate values");
+        constexpr auto mantissa = static_cast<std::uint16_t>(expected_divider);
 
-        constexpr double leftOver = _internal::round_ct(expected_divider - mantisa);
-        constexpr std::uint8_t fraction = static_cast<std::uint8_t>(leftOver * 16U);
+        constexpr double left_over = _internal::round_ct(expected_divider - static_cast<double>(mantissa));
+        constexpr auto fraction = static_cast<std::uint8_t>(left_over * 16.0F);
 
-        static_assert(fraction > 0 || mantisa >0U, "Expected baud rate needs to be 16x slower than HCLK or it would result a zero USARTDIV");
+        static_assert(fraction>0U || mantissa >0U, "Expected baud rate needs to be 16x slower than HCLK or it would result a zero USARTDIV");
 
-        constexpr std::uint32_t actualBaudRate = hclk / (16.0F * mantisa + fraction);
-        _internal::checkBaudRateError<expectedBaudRate, actualBaudRate, errorThreshold>();
+        constexpr std::uint32_t actual_baud_rate = TplHclk / (static_cast<std::uint32_t>(16U) * mantissa + fraction);
+        _internal::check_baud_rate_error<TplExpectedBaudRate, actual_baud_rate, TplErrorThreshold>();
 
         // TODO static print
-        constexpr std::uint32_t usart_div = mantisa << 4U | fraction;
+        constexpr std::uint32_t usart_div = static_cast<std::uint32_t>(mantissa) << 4U | fraction;
         return usart_div;
     }
 
 
     template<std::uint32_t Hclk, BaudRate BaudRate, double ErrorThreshold = 1.0F>
     constexpr static std::uint32_t calculate_usart_div_ct() {
-        return calculateUsartDivCT<Hclk, std::to_underlying(BaudRate), ErrorThreshold>();
+        return calculate_usart_div_ct<Hclk, std::to_underlying(BaudRate), ErrorThreshold>();
     }
 
 
@@ -94,12 +96,12 @@ namespace peripheral::usart{
 
 
     template<base_address TplBaseAddress>
-    struct Device {
+    struct Device { // NOLINT
     private:
         template<base_address TplRegisterBase>
         struct RegistersType {
             constexpr static std::uint32_t RegisterBaseUint32     = static_cast<std::uint32_t>(TplRegisterBase);
-            constexpr static std::uint32_t status                 = RegisterBaseUint32;         // R32_USART_STATR
+            constexpr static std::uint32_t status                 = RegisterBaseUint32;          // R32_USART_STATR
             constexpr static std::uint32_t data                   = RegisterBaseUint32 + 0x04U;  // R32_USART_DATAR
             constexpr static std::uint32_t baudrate               = RegisterBaseUint32 + 0x08U;  // R32_USART_BRR
             constexpr static std::uint32_t control1               = RegisterBaseUint32 + 0x0CU;  // R32_USART_CTLR1

@@ -13,7 +13,7 @@ namespace peripheral::dma {
     struct Cfgr { // NOLINT
         // Write to this whole register only when the channel is off, after setting EN=enabled, do not configure
         // (aka write to CFGR, CNTR, PADDR, MADDR) any further until it's off.
-        // It can set itselff off on error, on finished transmission while cyclic mode is off
+        // It can set itself off on error, on finished transmission while cyclic mode is off
 
         enum class MEM2MEM_RW_MemoryToMemory: std::uint32_t { // NOLINT
             field_bit_offset = 14U,
@@ -81,7 +81,7 @@ namespace peripheral::dma {
             field_access     = soc::reg::field_access_right::ReadWrite,
 
             disable = 0b0U,          // After CNT register is 0 the DMA is finished, and EN=disabled
-            enable  = field_bit_mask // After CNT register is 0 it will get reloaded to its initial written value and continues transfering until EN is disabled
+            enable  = field_bit_mask // After CNT register is 0 it will get reloaded to its initial written value and continues transferring until EN is disabled
         };
 
         enum class DIR_RW_DataTransferDirection: std::uint32_t { // NOLINT

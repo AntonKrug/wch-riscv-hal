@@ -28,7 +28,7 @@ namespace peripheral::rcc {
             field_bit_mask = 0b1U << 2U, // not holding any settings or value, it's a bitmask for this specific field
             field_access   = soc::reg::field_access_right::ReadWrite,
 
-            no_clock       = 0U,          // The SRAM clock disabled during sleep
+            no_clock       = 0U,            // The SRAM clock disabled during sleep
             clock_enable   = field_bit_mask // The SRAM clock enabled during sleep
         };
 

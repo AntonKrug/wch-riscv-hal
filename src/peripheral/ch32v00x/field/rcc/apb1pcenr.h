@@ -25,7 +25,7 @@ namespace peripheral::rcc {
         };
 
         enum class WWDGEN_RW_WindowWatchdogClockEnable: std::uint32_t { //NOLINT
-            field_bit_mask = 0b1U << 11U, // not holding any settings or value, it's a bitmask for this specific field
+            field_bit_mask = static_cast<std::uint32_t>(0b1U) << 11U, // not holding any settings or value, it's a bitmask for this specific field
             field_access   = soc::reg::field_access_right::ReadWrite,
 
             no_clock       = 0U,          // Clock signal is NOT feed to this peripheral
@@ -33,7 +33,7 @@ namespace peripheral::rcc {
         };
 
         enum class I2C1EN_RW_InterIntegratedCircuitClockEnable: std::uint32_t { //NOLINT
-            field_bit_mask = 0b1U << 21U, // not holding any settings or value, it's a bitmask for this specific field
+            field_bit_mask = static_cast<std::uint32_t>(0b1U) << 21U, // not holding any settings or value, it's a bitmask for this specific field
             field_access   = soc::reg::field_access_right::ReadWrite,
 
             no_clock       = 0U,          // Clock signal is NOT feed to this peripheral
@@ -41,7 +41,7 @@ namespace peripheral::rcc {
         };
 
         enum class PWREN_RW_PowerInterfaceModuleClockEnable: std::uint32_t { //NOLINT
-            field_bit_mask = 0b1U << 28U, // not holding any settings or value, it's a bitmask for this specific field
+            field_bit_mask = static_cast<std::uint32_t>(0b1U) << 28U, // not holding any settings or value, it's a bitmask for this specific field
             field_access   = soc::reg::field_access_right::ReadWrite,
 
             no_clock       = 0U,          // Clock signal is NOT feed to this peripheral

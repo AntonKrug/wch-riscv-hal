@@ -49,7 +49,7 @@ namespace peripheral::rcc {
         };
 
         enum class ACD1EN_RW_AnalogDigitalConverter1ClockEnable: std::uint32_t { //NOLINT
-            field_bit_mask = 0b1U << 9U, // not holding any settings or value, it's a bitmask for this specific field
+            field_bit_mask = static_cast<std::uint32_t>(0b1U) << 9U, // not holding any settings or value, it's a bitmask for this specific field
             field_access   = soc::reg::field_access_right::ReadWrite,
 
             no_clock       = 0U,
@@ -57,7 +57,7 @@ namespace peripheral::rcc {
         };
 
         enum class TIM1EN_RW_Timer1ClockEnable: std::uint32_t { //NOLINT
-            field_bit_mask = 0b1U << 11U, // not holding any settings or value, it's a bitmask for this specific field
+            field_bit_mask = static_cast<std::uint32_t>(0b1U) << 11U, // not holding any settings or value, it's a bitmask for this specific field
             field_access   = soc::reg::field_access_right::ReadWrite,
 
             no_clock       = 0U,
@@ -65,7 +65,7 @@ namespace peripheral::rcc {
         };
 
         enum class SPI1EN_RW_SerialPeripheralInterface1ClockEnable: std::uint32_t { //NOLINT
-            field_bit_mask = 0b1U << 12U, // not holding any settings or value, it's a bitmask for this specific field
+            field_bit_mask = static_cast<std::uint32_t>(0b1U) << 12U, // not holding any settings or value, it's a bitmask for this specific field
             field_access   = soc::reg::field_access_right::ReadWrite,
 
             no_clock       = 0U,
@@ -73,7 +73,7 @@ namespace peripheral::rcc {
         };
 
         enum class USART1EN_RW_UniversalSynchronousAsynchronousReceiverTransmitter1ClockEnable: std::uint32_t { //NOLINT
-            field_bit_mask = 0b1U << 14U, // not holding any settings or value, it's a bitmask for this specific field
+            field_bit_mask = static_cast<std::uint32_t>(0b1U) << 14U, // not holding any settings or value, it's a bitmask for this specific field
             field_access   = soc::reg::field_access_right::ReadWrite,
 
             no_clock       = 0U,

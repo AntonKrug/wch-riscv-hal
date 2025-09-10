@@ -20,7 +20,7 @@ namespace peripheral::rcc {
             field_bit_mask  = 1U, // not holding any settings or value, it's a bitmask for this specific field
             field_access    = soc::reg::field_access_right::ReadOnly,
 
-            no_interrupt    = 0U, // default
+            no_interrupt    = 0U,             // default
             ready_interrupt = field_bit_mask, // set by hw, to clear write LSIRDYC
         };
 
@@ -28,7 +28,7 @@ namespace peripheral::rcc {
             field_bit_mask  = 1U << 2U, // not holding any settings or value, it's a bitmask for this specific field
             field_access    = soc::reg::field_access_right::ReadOnly,
 
-            no_interrupt    = 0U, // default
+            no_interrupt    = 0U,             // default
             ready_interrupt = field_bit_mask, // set by hw, to clear write HSIRDYC
         };
 
@@ -59,7 +59,7 @@ namespace peripheral::rcc {
         };
 
         enum class LSIRDYIE_RW_InternalLowSpeedReadyInterruptEnable: std::uint32_t { // NOLINT
-            field_bit_mask = 1U << 8U, // not holding any settings or value, it's a bitmask for this specific field
+            field_bit_mask = static_cast<std::uint32_t>(1U) << 8U, // not holding any settings or value, it's a bitmask for this specific field
             field_access   = soc::reg::field_access_right::ReadWrite,
 
             disable        = 0U, // default
@@ -69,7 +69,7 @@ namespace peripheral::rcc {
         // 1 bit reserved
 
         enum class HSIRDYIE_RW_InternalHighSpeedReadyInterruptEnable: std::uint32_t { // NOLINT
-            field_bit_mask = 1U << 10U, // not holding any settings or value, it's a bitmask for this specific field
+            field_bit_mask = static_cast<std::uint32_t>(1U) << 10U, // not holding any settings or value, it's a bitmask for this specific field
             field_access   = soc::reg::field_access_right::ReadWrite,
 
             disable        = 0U, // default
@@ -77,7 +77,7 @@ namespace peripheral::rcc {
         };
 
         enum class HSERDYIE_RW_ExternalHighSpeedReadyInterruptEnable: std::uint32_t { // NOLINT
-            field_bit_mask = 1U << 11U, // not holding any settings or value, it's a bitmask for this specific field
+            field_bit_mask = static_cast<std::uint32_t>(1U) << 11U, // not holding any settings or value, it's a bitmask for this specific field
             field_access   = soc::reg::field_access_right::ReadWrite,
 
             disable        = 0U, // default
@@ -85,7 +85,7 @@ namespace peripheral::rcc {
         };
 
         enum class PLLRDYIE_RW_PhaseLockedLoopReadyInterruptEnable: std::uint32_t { // NOLINT
-            field_bit_mask = 1U << 12U, // not holding any settings or value, it's a bitmask for this specific field
+            field_bit_mask = static_cast<std::uint32_t>(1U) << 12U, // not holding any settings or value, it's a bitmask for this specific field
             field_access   = soc::reg::field_access_right::ReadWrite,
 
             disable        = 0U, // default
@@ -95,7 +95,7 @@ namespace peripheral::rcc {
         // 3bits reserved
 
         enum class LSIRDYC_WO_InternalLowSpeedReadyClear: std::uint32_t { // NOLINT
-            field_bit_mask = 1U << 16U, // not holding any settings or value, it's a bitmask for this specific field
+            field_bit_mask = static_cast<std::uint32_t>(1U) << 16U, // not holding any settings or value, it's a bitmask for this specific field
             field_access   = soc::reg::field_access_right::WriteOnly,
 
             no_action      = 0U, // default
@@ -105,7 +105,7 @@ namespace peripheral::rcc {
         // 1bit reserved
 
         enum class HSIRDYC_WO_InternalHighSpeedReadyClear: std::uint32_t { // NOLINT
-            field_bit_mask = 1U << 18U, // not holding any settings or value, it's a bitmask for this specific field
+            field_bit_mask = static_cast<std::uint32_t>(1U) << 18U, // not holding any settings or value, it's a bitmask for this specific field
             field_access   = soc::reg::field_access_right::WriteOnly,
 
             no_action      = 0U, // default
@@ -113,7 +113,7 @@ namespace peripheral::rcc {
         };
 
         enum class HSERDYC_WO_ExternalHighSpeedReadyClear: std::uint32_t { // NOLINT
-            field_bit_mask = 1U << 19U, // not holding any settings or value, it's a bitmask for this specific field
+            field_bit_mask = static_cast<std::uint32_t>(1U) << 19U, // not holding any settings or value, it's a bitmask for this specific field
             field_access   = soc::reg::field_access_right::WriteOnly,
 
             no_action      = 0U, // default
@@ -121,7 +121,7 @@ namespace peripheral::rcc {
         };
 
         enum class PLLRDYC_WO_PhaseLockedLoopReadyClear: std::uint32_t { // NOLINT
-            field_bit_mask = 1U << 20U, // not holding any settings or value, it's a bitmask for this specific field
+            field_bit_mask = static_cast<std::uint32_t>(1U) << 20U, // not holding any settings or value, it's a bitmask for this specific field
             field_access   = soc::reg::field_access_right::WriteOnly,
 
             no_action      = 0U, // default
@@ -131,7 +131,7 @@ namespace peripheral::rcc {
         // 2bits reserved
 
         enum class CSSC_WO_ExternalHighSpeedSecurityClear: std::uint32_t { // NOLINT
-            field_bit_mask = 1U << 23U,  // not holding any settings or value, it's a bitmask for this specific field
+            field_bit_mask = static_cast<std::uint32_t>(1U) << 23U,  // not holding any settings or value, it's a bitmask for this specific field
             field_access   = soc::reg::field_access_right::WriteOnly,
 
             no_action      = 0U, // default

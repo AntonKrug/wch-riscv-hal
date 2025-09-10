@@ -9,7 +9,6 @@
 #include <cstdint>
 #include <tuple>
 
-#include "system/register/util.h"
 #include "system/register/field_access_privilege.h"
 
 namespace peripheral::afio {
@@ -19,31 +18,31 @@ namespace peripheral::afio {
 
         constexpr static std::uint32_t reg_mem_offset = 0x04U;
 
-        enum class SPI1_RM_RW_SerialPeripheralInterface1Remapping: std::uint32_t { //NOLINT
+        enum class SPI1_RM_RW_SerialPeripheralInterface1Remapping: std::uint32_t { // NOLINT
             field_bit_mask   = 0b1U, // not holding any settings or value, it's a bitmask for this specific field
             field_access     = soc::reg::field_access_right::ReadWrite,
 
-            default_map      = 0U,           // NSS/PC1 CK/PC5 MISO/PC7 MOSI/PC6
+            default_map      = 0U,             // NSS/PC1 CK/PC5 MISO/PC7 MOSI/PC6
             alternative_map  = field_bit_mask, // NSS/PC0 CK/PC5 MISO/PC7 MOSI/PC6
         };
 
-        enum class I2C1_RM_RW_InterIntegratedCircuit1Remapping: std::uint32_t { //NOLINT
+        enum class I2C1_RM_RW_InterIntegratedCircuit1Remapping: std::uint32_t { // NOLINT
             field_bit_mask   = 0b1U << 1U, // not holding any settings or value, it's a bitmask for this specific field
             field_access     = soc::reg::field_access_right::ReadWrite,
 
-            default_map      = 0U,           // SCL/PB6 SD/PB7
+            default_map      = 0U,             // SCL/PB6 SD/PB7
             alternative_map  = field_bit_mask, // SCL/PB8 SD/PB9
         };
 
-        enum class USART1_RM_RW_UniversalSynchronousAsynchronousReceiverTransmitter1Remapping: std::uint32_t { //NOLINT
+        enum class USART1_RM_RW_UniversalSynchronousAsynchronousReceiverTransmitter1Remapping: std::uint32_t { // NOLINT
             field_bit_mask   = 0b1U << 2U, // not holding any settings or value, it's a bitmask for this specific field
             field_access     = soc::reg::field_access_right::ReadWrite,
 
-            default_map      = 0U,           // TX/PA9 RX/PA10
+            default_map      = 0U,             // TX/PA9 RX/PA10
             alternative_map  = field_bit_mask, // TX/PB6 RX/PB7
         };
 
-        enum class TIM1_RM_RW_Timmer1Remapping: std::uint32_t { //NOLINT
+        enum class TIM1_RM_RW_Timmer1Remapping: std::uint32_t { // NOLINT
             field_bit_mask    = 0b11U << 6U, // not holding any settings or value, it's a bitmask for this specific field
             field_access      = soc::reg::field_access_right::ReadWrite,
 
