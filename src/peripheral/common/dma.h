@@ -18,7 +18,7 @@ namespace peripheral::dma {
 
     // DMA boundaries section and sentences are confusing and in some cases do not make sense
     // "penultimate digit" second last number 0, 1, 2
-    // DMA 1 channels must be on 64K bondaries 0-64K or 64k-128k 63k-65k
+    // DMA 1 channels must be on 64K boundaries 0-64K or 64k-128k 63k-65k
     // CH32v307VCT6 with 128k ram
     // DMA1 channel 2, 3, 4, 5 128k boundaries
     // DMA1 channel 1, 6, 7 needs 64k boundaries
@@ -178,7 +178,7 @@ namespace peripheral::dma {
     #pragma region Init DMA channel
 
     template<
-        Id              TplRequesterId,
+        Id                  TplRequesterId,
         std::uint32_t       TplSourceAddress,
         PeripheralAlignment TplSourceAlignment,
         bool                TplSourceIncrement,
@@ -196,19 +196,19 @@ namespace peripheral::dma {
     inline constexpr auto
     __attribute__ ((always_inline))
     initPeripheralToMemoryCt(const TplDestinationPointerType destinationPointer) -> void {
-        constexpr auto isHwTrigger          = IdHelperCt<TplRequesterId>::isHwTrigger;
-        constexpr auto sourceIncrement      = soc::reg::bool_to_register_field_enum<TplSourceIncrement,      Cfgr::PINC_RW_PeripheralAddressIncrementMode>();
-        constexpr auto destinationIncrement = soc::reg::bool_to_register_field_enum<TplDestinationIncrement, Cfgr::MINC_RW_MemoryAddressIncrementMode>();
-        constexpr auto isCyclic             = soc::reg::bool_to_register_field_enum<TplCyclicMode,           Cfgr::CIRC_RW_CyclicMode>();
-        constexpr auto irqTransmissionError = soc::reg::bool_to_register_field_enum<TplTransmissionErrorIrq, Cfgr::TEIE_RW_TransmissionErrorInterruptEnable>();
-        constexpr auto irqHalfTransmission  = soc::reg::bool_to_register_field_enum<TplHalfTransmissionIrq,  Cfgr::HTIE_RW_HalfTransmissionInterruptEnable>();
-        constexpr auto irqFullTransmission  = soc::reg::bool_to_register_field_enum<TplFullTransmissionIrq,  Cfgr::TCIE_RW_TransmissionCompletionInterruptEnable>();
-        constexpr auto isEnabled            = soc::reg::bool_to_register_field_enum<TplEnableDma,            Cfgr::EN_RW_ChannelEnable>();
+        constexpr auto is_hw_trigger     = IdHelperCt<TplRequesterId>::isHwTrigger;
+        constexpr auto source_increment       = soc::reg::bool_to_register_field_enum<TplSourceIncrement,      Cfgr::PINC_RW_PeripheralAddressIncrementMode>();
+        constexpr auto destination_increment  = soc::reg::bool_to_register_field_enum<TplDestinationIncrement, Cfgr::MINC_RW_MemoryAddressIncrementMode>();
+        constexpr auto is_cyclic              = soc::reg::bool_to_register_field_enum<TplCyclicMode,           Cfgr::CIRC_RW_CyclicMode>();
+        constexpr auto irq_transmission_error = soc::reg::bool_to_register_field_enum<TplTransmissionErrorIrq, Cfgr::TEIE_RW_TransmissionErrorInterruptEnable>();
+        constexpr auto irq_half_transmission  = soc::reg::bool_to_register_field_enum<TplHalfTransmissionIrq,  Cfgr::HTIE_RW_HalfTransmissionInterruptEnable>();
+        constexpr auto irq_full_transmission  = soc::reg::bool_to_register_field_enum<TplFullTransmissionIrq,  Cfgr::TCIE_RW_TransmissionCompletionInterruptEnable>();
+        constexpr auto is_enabled            = soc::reg::bool_to_register_field_enum<TplEnableDma,            Cfgr::EN_RW_ChannelEnable>();
         constexpr AddressCt<TplRequesterId> addresses;
 
-        constexpr auto destinationAlignment = pointerToMemorySizeAlignment<TplDestinationPointerType>();
+        constexpr auto destination_alignment = pointerToMemorySizeAlignment<TplDestinationPointerType>();
 
-        static_assert(isHwTrigger == true, "PeripheralToMemory Requester ID can't be triggered by SW requester ID, enabling EN field will not start transmission, but wait for HW event requester");
+        static_assert(is_hw_trigger == true, "PeripheralToMemory Requester ID can't be triggered by SW requester ID, enabling EN field will not start transmission, but wait for HW event requester");
 
         if constexpr (TplTransferCount == 0U) {
             static_assert(!TplSourceIncrement && !TplDestinationIncrement,
@@ -225,16 +225,16 @@ namespace peripheral::dma {
             soc::reg::combine::enums_to_uint32<
                 Cfgr::MEM2MEM_RW_MemoryToMemory::disable,
                 TplPriority,
-                destinationAlignment,
+                destination_alignment,
                 TplSourceAlignment,
-                destinationIncrement,
-                sourceIncrement,
-                isCyclic,
+                destination_increment,
+                source_increment,
+                is_cyclic,
                 Cfgr::DIR_RW_DataTransferDirection::read_from_peripheral,
-                irqTransmissionError,
-                irqHalfTransmission,
-                irqFullTransmission,
-                isEnabled
+                irq_transmission_error,
+                irq_half_transmission,
+                irq_full_transmission,
+                is_enabled
             >()
         >();
     }
@@ -258,19 +258,19 @@ namespace peripheral::dma {
     inline constexpr auto
     __attribute__ ((always_inline))
     initMemoryToPeripheralCt(const TplSourcePointerType sourcePointer) -> void {
-        constexpr auto isHwTrigger          = IdHelperCt<TplRequesterId>::isHwTrigger;
-        constexpr auto sourceIncrement      = soc::reg::bool_to_register_field_enum<TplSourceIncrement,      Cfgr::PINC_RW_PeripheralAddressIncrementMode>();
-        constexpr auto destinationIncrement = soc::reg::bool_to_register_field_enum<TplDestinationIncrement, Cfgr::MINC_RW_MemoryAddressIncrementMode>();
-        constexpr auto isCyclic             = soc::reg::bool_to_register_field_enum<TplCyclicMode,           Cfgr::CIRC_RW_CyclicMode>();
-        constexpr auto irqTransmissionError = soc::reg::bool_to_register_field_enum<TplTransmissionErrorIrq, Cfgr::TEIE_RW_TransmissionErrorInterruptEnable>();
-        constexpr auto irqHalfTransmission  = soc::reg::bool_to_register_field_enum<TplHalfTransmissionIrq,  Cfgr::HTIE_RW_HalfTransmissionInterruptEnable>();
-        constexpr auto irqFullTransmission  = soc::reg::bool_to_register_field_enum<TplFullTransmissionIrq,  Cfgr::TCIE_RW_TransmissionCompletionInterruptEnable>();
-        constexpr auto isEnabled            = soc::reg::bool_to_register_field_enum<TplEnableDma,            Cfgr::EN_RW_ChannelEnable>();
+        constexpr auto is_hw_trigger     = IdHelperCt<TplRequesterId>::isHwTrigger;
+        constexpr auto source_increment       = soc::reg::bool_to_register_field_enum<TplSourceIncrement,      Cfgr::PINC_RW_PeripheralAddressIncrementMode>();
+        constexpr auto destination_increment  = soc::reg::bool_to_register_field_enum<TplDestinationIncrement, Cfgr::MINC_RW_MemoryAddressIncrementMode>();
+        constexpr auto is_cyclic              = soc::reg::bool_to_register_field_enum<TplCyclicMode,           Cfgr::CIRC_RW_CyclicMode>();
+        constexpr auto irq_transmission_error = soc::reg::bool_to_register_field_enum<TplTransmissionErrorIrq, Cfgr::TEIE_RW_TransmissionErrorInterruptEnable>();
+        constexpr auto irq_half_transmission  = soc::reg::bool_to_register_field_enum<TplHalfTransmissionIrq,  Cfgr::HTIE_RW_HalfTransmissionInterruptEnable>();
+        constexpr auto irq_full_transmission  = soc::reg::bool_to_register_field_enum<TplFullTransmissionIrq,  Cfgr::TCIE_RW_TransmissionCompletionInterruptEnable>();
+        constexpr auto is_enabled            = soc::reg::bool_to_register_field_enum<TplEnableDma,            Cfgr::EN_RW_ChannelEnable>();
         constexpr AddressCt<TplRequesterId> addresses;
 
-        constexpr auto sourceAlignment = pointerToMemorySizeAlignment<TplSourcePointerType>();
+        constexpr auto source_alignment = pointerToMemorySizeAlignment<TplSourcePointerType>();
 
-        static_assert(isHwTrigger == true, "MemoryToPeripheral Requester ID can't be triggered by SW requester ID, enabing EN field will not start transmission, but wait for HW event requester");
+        static_assert(is_hw_trigger == true, "MemoryToPeripheral Requester ID can't be triggered by SW requester ID, enabling EN field will not start transmission, but wait for HW event requester");
 
         if constexpr (TplTransferCount == 0U) {
             static_assert(!TplSourceIncrement && !TplDestinationIncrement,
@@ -287,16 +287,16 @@ namespace peripheral::dma {
             soc::reg::combine::enums_to_uint32<
                 Cfgr::MEM2MEM_RW_MemoryToMemory::disable,
                 TplPriority,
-                sourceAlignment,
+                source_alignment,
                 TplDestinationAlignment,
-                destinationIncrement,
-                sourceIncrement,
-                isCyclic,
+                destination_increment,
+                source_increment,
+                is_cyclic,
                 Cfgr::DIR_RW_DataTransferDirection::read_from_memory,
-                irqTransmissionError,
-                irqHalfTransmission,
-                irqFullTransmission,
-                isEnabled
+                irq_transmission_error,
+                irq_half_transmission,
+                irq_full_transmission,
+                is_enabled
             >()
         >();
     }
@@ -321,20 +321,20 @@ namespace peripheral::dma {
         const TplSourcePointerType      sourcePointer,
         const TplDestinationPointerType destinationPointer
     ) -> void {
-        constexpr auto isHwTrigger          = IdHelperCt<TplRequesterId>::isHwTrigger;
-        constexpr auto sourceIncrement      = soc::reg::bool_to_register_field_enum<TplSourceIncrement,      Cfgr::PINC_RW_PeripheralAddressIncrementMode>();
-        constexpr auto destinationIncrement = soc::reg::bool_to_register_field_enum<TplDestinationIncrement, Cfgr::MINC_RW_MemoryAddressIncrementMode>();
-        constexpr auto irqTransmissionError = soc::reg::bool_to_register_field_enum<TplTransmissionErrorIrq, Cfgr::TEIE_RW_TransmissionErrorInterruptEnable>();
-        constexpr auto irqHalfTransmission  = soc::reg::bool_to_register_field_enum<TplHalfTransmissionIrq,  Cfgr::HTIE_RW_HalfTransmissionInterruptEnable>();
-        constexpr auto irqFullTransmission  = soc::reg::bool_to_register_field_enum<TplFullTransmissionIrq,  Cfgr::TCIE_RW_TransmissionCompletionInterruptEnable>();
+        constexpr auto is_hw_trigger          = IdHelperCt<TplRequesterId>::isHwTrigger;
+        constexpr auto source_increment       = soc::reg::bool_to_register_field_enum<TplSourceIncrement,      Cfgr::PINC_RW_PeripheralAddressIncrementMode>();
+        constexpr auto destination_increment  = soc::reg::bool_to_register_field_enum<TplDestinationIncrement, Cfgr::MINC_RW_MemoryAddressIncrementMode>();
+        constexpr auto irq_transmission_error = soc::reg::bool_to_register_field_enum<TplTransmissionErrorIrq, Cfgr::TEIE_RW_TransmissionErrorInterruptEnable>();
+        constexpr auto irq_half_transmission  = soc::reg::bool_to_register_field_enum<TplHalfTransmissionIrq,  Cfgr::HTIE_RW_HalfTransmissionInterruptEnable>();
+        constexpr auto irq_full_transmission  = soc::reg::bool_to_register_field_enum<TplFullTransmissionIrq,  Cfgr::TCIE_RW_TransmissionCompletionInterruptEnable>();
         // When enabling channel in MemoryToMemory mode, it will start transition instantly
-        constexpr auto isEnabled            = soc::reg::bool_to_register_field_enum<TplEnableDma,            Cfgr::EN_RW_ChannelEnable>();
+        constexpr auto is_enabled            = soc::reg::bool_to_register_field_enum<TplEnableDma,            Cfgr::EN_RW_ChannelEnable>();
         constexpr AddressCt<TplRequesterId> addresses;
 
         constexpr auto sourceAlignment      = pointerToPeripheralSizeAlignment<TplSourcePointerType>();
         constexpr auto destinationAlignment = pointerToMemorySizeAlignment<TplDestinationPointerType>();
 
-        static_assert(isHwTrigger == false, "MemomryToMemory mode can't be triggered by HW requester ID, it will be triggered instanly as EN field is enabled");
+        static_assert(is_hw_trigger == false, "MemoryToMemory mode can't be triggered by HW requester ID, it will be triggered instantly as EN field is enabled");
 
         if constexpr (TplTransferCount == 0U) {
             static_assert(!TplSourceIncrement && !TplDestinationIncrement,
@@ -357,14 +357,14 @@ namespace peripheral::dma {
                 TplPriority,
                 destinationAlignment,
                 sourceAlignment,
-                destinationIncrement,
-                sourceIncrement,
+                destination_increment,
+                source_increment,
                 Cfgr::CIRC_RW_CyclicMode::disable,
                 Cfgr::DIR_RW_DataTransferDirection::read_from_peripheral,
-                irqTransmissionError,
-                irqHalfTransmission,
-                irqFullTransmission,
-                isEnabled
+                irq_transmission_error,
+                irq_half_transmission,
+                irq_full_transmission,
+                is_enabled
             >()
         >();
     }
@@ -391,20 +391,20 @@ namespace peripheral::dma {
     inline constexpr auto
     __attribute__ ((always_inline))
     initGenericCt(
-        const TplPeripheralPointerType peripheralPointer,
-        const TplMemoryPointerType memoryPointer
+        const TplPeripheralPointerType peripheral_pointer,
+        const TplMemoryPointerType memory_pointer
     ) -> void {
-        constexpr auto isHwTrigger          = IdHelperCt<TplRequesterId>::isHwTrigger;
-        constexpr auto isMemoryToMemory     = TplDirection == Direction::MemoryToMemory;
-        constexpr auto isCyclic             = soc::reg::bool_to_register_field_enum<TplCyclicMode,           Cfgr::CIRC_RW_CyclicMode>();
-        constexpr auto irqTransmissionError = soc::reg::bool_to_register_field_enum<TplTransmissionErrorIrq, Cfgr::TEIE_RW_TransmissionErrorInterruptEnable>();
-        constexpr auto irqHalfTransmission  = soc::reg::bool_to_register_field_enum<TplHalfTransmissionIrq,  Cfgr::HTIE_RW_HalfTransmissionInterruptEnable>();
-        constexpr auto irqFullTransmission  = soc::reg::bool_to_register_field_enum<TplFullTransmissionIrq,  Cfgr::TCIE_RW_TransmissionCompletionInterruptEnable>();
-        constexpr auto isEnabled            = soc::reg::bool_to_register_field_enum<TplEnableDma,            Cfgr::EN_RW_ChannelEnable>();
+        constexpr auto is_hw_trigger          = IdHelperCt<TplRequesterId>::isHwTrigger;
+        constexpr auto is_memory_to_memory     = TplDirection == Direction::MemoryToMemory;
+        constexpr auto is_cyclic              = soc::reg::bool_to_register_field_enum<TplCyclicMode,           Cfgr::CIRC_RW_CyclicMode>();
+        constexpr auto irq_transmission_error = soc::reg::bool_to_register_field_enum<TplTransmissionErrorIrq, Cfgr::TEIE_RW_TransmissionErrorInterruptEnable>();
+        constexpr auto irq_half_transmission  = soc::reg::bool_to_register_field_enum<TplHalfTransmissionIrq,  Cfgr::HTIE_RW_HalfTransmissionInterruptEnable>();
+        constexpr auto irq_full_transmission  = soc::reg::bool_to_register_field_enum<TplFullTransmissionIrq,  Cfgr::TCIE_RW_TransmissionCompletionInterruptEnable>();
+        constexpr auto is_enabled            = soc::reg::bool_to_register_field_enum<TplEnableDma,            Cfgr::EN_RW_ChannelEnable>();
         constexpr AddressCt<TplRequesterId> addresses;
 
         if constexpr (TplDirection == Direction::MemoryToMemory) {
-            static_assert(!isHwTrigger, "MemomryToMemory mode can't be triggered by HW requester ID, it will be triggered instanly as EN field is enabled");
+            static_assert(!is_hw_trigger, "MemoryToMemory mode can't be triggered by HW requester ID, it will be triggered instantly as EN field is enabled");
             static_assert(!TplCyclicMode, "MemoryToMemory mode can't be used with Cyclic mode");
         }
 
@@ -414,7 +414,7 @@ namespace peripheral::dma {
             );
         }
 
-        // Allow manually "override" these alignment asserts with TplAllowTruncatingTransfer if the truncatitation is intentional
+        // Allow manually "override" these alignment asserts with TplAllowTruncatingTransfer if the truncation is intentional
         if constexpr (!TplAllowTruncatingTransfer) {
 
             // MemoryToMemory      MEM2MEM=1, DIR=x  PADDR (source) => MADDR (destination)
@@ -437,24 +437,24 @@ namespace peripheral::dma {
         }
 
         soc::reg::access::writeCtAddrVal<addresses.cntr, static_cast<std::uint32_t>(TplTransferCount)>();
-        soc::reg::access::writeCtAddr<addresses.paddr>(reinterpret_cast<std::uint32_t>(peripheralPointer));
-        soc::reg::access::writeCtAddr<addresses.maddr>(reinterpret_cast<std::uint32_t>(memoryPointer));
+        soc::reg::access::writeCtAddr<addresses.paddr>(reinterpret_cast<std::uint32_t>(peripheral_pointer));
+        soc::reg::access::writeCtAddr<addresses.maddr>(reinterpret_cast<std::uint32_t>(memory_pointer));
 
         soc::reg::access::writeCtAddrVal<
             addresses.cfgr,
             soc::reg::combine::enums_to_uint32<
                 TplDirection,
-                isMemoryToMemory,
+                is_memory_to_memory,
                 TplPriority,
                 TplMemoryAlignment,
                 TplMemoryIncrement,
                 TplPeripheralAlignment,
                 TplPeripheralIncrement,
-                isCyclic,
-                irqTransmissionError,
-                irqHalfTransmission,
-                irqFullTransmission,
-                isEnabled
+                is_cyclic,
+                irq_transmission_error,
+                irq_half_transmission,
+                irq_full_transmission,
+                is_enabled
             >()
         >();
     }
