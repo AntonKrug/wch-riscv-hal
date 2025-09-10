@@ -13,7 +13,31 @@
     - Cmake
       - Create DEBUG profile and add -DCMAKE_VERBOSE_MAKEFILE=ON for troubleshooting
 
-# Suppressed checks
+# Suppressions
+
+## Clion spell checking
+
+```xml
+<component name="ProjectDictionaryState">
+  <dictionary name="project">
+    <words>
+      <w>bshr</w>
+      <w>cfghr</w>
+      <w>cfglr</w>
+      <w>eabien</w>
+      <w>indr</w>
+      <w>inesten</w>
+      <w>intsyscr</w>
+      <w>lckr</w>
+      <w>mpie</w>
+      <w>mstatus</w>
+      <w>outdr</w>
+      <w>pfic</w>
+      <w>swio</w>
+    </words>
+  </dictionary>
+</component>
+```
 
 ## MISRA 2008
 - `-clion-misra-cpp2008-5-0-11` The plain char type shall only be used for the storage and use of character values
