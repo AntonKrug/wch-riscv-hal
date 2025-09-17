@@ -48,8 +48,11 @@ namespace peripheral::gpio {
     };
 
     // pin mode state after reset (valid value for all current chips)
-    constexpr std::uint8_t pin_configuration_after_reset = static_cast<std::uint8_t>(PinConfiguration::input_floating);
-    constexpr std::uint8_t pin_configuration_bit_offset = 4U;
+    constexpr std::uint8_t pin_reset_mode = static_cast<std::uint8_t>(PinConfiguration::input_floating);
+    constexpr std::uint8_t pin_reset_out_data_offset = 4U;
+
+    constexpr std::uint8_t pin_reset_out_data = 0U; // output data register is relevant when using floating input
+    constexpr std::uint8_t pin_reset_value_offset = 1U;
 
     // the drive offsets for input and output are the same
     constexpr std::uint16_t pin_drive_bit_offset = 2U;

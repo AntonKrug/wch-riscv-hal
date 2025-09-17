@@ -17,7 +17,8 @@ namespace soc::gpio {
         std::uint32_t mask;                  // bitmask of what part of the value is the desired value
         std::uint32_t writable;              // bitmask of the whole register to know what is writable at that address
         std::uint32_t port_number;           // to tell apart portA from B without need to check address
-        bool          mode_operation;        // to tell if this operation is changing the pin's mode
+        std::uint32_t reset_value;           // to know what the rest of the register to reset to (if we will fill the rest of OP with reset)
+        std::uint32_t reset_bit_offset;      // how many bits the reset_value takes
     };
 
     // GPIOx_OUTDR register layout converted to GPIOx_BSHR register layout

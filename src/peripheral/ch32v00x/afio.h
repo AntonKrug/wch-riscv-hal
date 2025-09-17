@@ -7,6 +7,7 @@
 #include <cstdint>
 
 #include "field/afio/pcfr1.h"
+#include "system/register/util.h"
 
 namespace peripheral::afio {
 

@@ -184,7 +184,8 @@ namespace peripheral::gpio{
             .mask                  = register_configuration_shift<mask_configuration_keep>(),
             .writable              = full_of_ones,
             .port_number           = TplPortNumber,
-            .mode_operation        = true
+            .reset_value           = pin_reset_mode,
+            .reset_bit_offset      = pin_reset_out_data_offset
         };
     }
 
@@ -212,7 +213,8 @@ namespace peripheral::gpio{
             .mask                  = register_configuration_shift<mask_configuration_keep>(),
             .writable              = full_of_ones,
             .port_number           = TplPortNumber,
-            .mode_operation        = true
+            .reset_value           = pin_reset_mode,
+            .reset_bit_offset      = pin_reset_out_data_offset
         };
     }
 
@@ -236,7 +238,8 @@ namespace peripheral::gpio{
             .mask                  = register_pin_data_shift_ct<0b1U>(),
             .writable              = 0b1111'1111U, // Only 8pins in output data port
             .port_number           = TplPortNumber,
-            .mode_operation        = false
+            .reset_value           = pin_reset_out_data,
+            .reset_bit_offset      = pin_reset_out_data_offset
         };
     }
 
