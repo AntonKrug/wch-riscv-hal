@@ -41,10 +41,10 @@ namespace peripheral::gpio {
         alternate_output_open_drain_normal_rate = 0b11'01U, // 10Mhz
 
         // 2,4,6, 7 support only fast rate for output
-        output_push_pull_fast_rate              = 0b00'11U, // 50Mhz for all, expect 30Mhz for CH32V00X, 3, 2, 4, 6, 7
-        output_open_drain_fast_rate             = 0b01'11U, // 50Mhz for all, expect 30Mhz for CH32V00X, 3, 2, 4, 6, 7
-        alternate_output_push_pull_fast_rate    = 0b10'11U, // 50Mhz for all, expect 30Mhz for CH32V00X, 3, 2, 4, 6, 7
-        alternate_output_open_drain_fast_rate   = 0b11'11U, // 50Mhz for all, expect 30Mhz for CH32V00X, 3, 2, 4, 6, 7
+        output_push_pull_fast_rate              = 0b00'11U, // 50Mhz for all, expect 30Mhz for CH32V00X (3, 2, 4, 6, 7)
+        output_open_drain_fast_rate             = 0b01'11U, // 50Mhz for all, expect 30Mhz for CH32V00X (3, 2, 4, 6, 7)
+        alternate_output_push_pull_fast_rate    = 0b10'11U, // 50Mhz for all, expect 30Mhz for CH32V00X (3, 2, 4, 6, 7)
+        alternate_output_open_drain_fast_rate   = 0b11'11U, // 50Mhz for all, expect 30Mhz for CH32V00X (3, 2, 4, 6, 7)
     };
 
     // pin mode state after reset (valid value for all current chips)
@@ -60,7 +60,7 @@ namespace peripheral::gpio {
     enum class PinOutputSlewRateCt: std::uint8_t { // NOLINT
         slow   = 0b10U, // 5MHz for all, except 2MHz for CH32V003
         normal = 0b01U, // 10MHz
-        fast   = 0b11U  // 50MHz for all, except 30MHz for CH32V00X, 3, 2, 4, 6, 7 (only supported mode for 2, 4, 6, 7)
+        fast   = 0b11U  // 50MHz for all, except 30MHz for CH32V00X  (3, 2, 4, 6, 7, it's only supported mode for 2, 4, 6, 7)
     };
 
     constexpr std::uint8_t pin_output_multiplexing_bit_offset = 3U; // NOLINT
