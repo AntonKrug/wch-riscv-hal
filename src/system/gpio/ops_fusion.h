@@ -79,8 +79,8 @@ namespace soc::gpio {
 
                 // Confirm that we will not change state of values we expect to not change
                 static_assert(
-                    old_op.bit_set_reset_address == TplOp.bit_set_reset_address,
-                    "Old and new OP doesn't mach in fields where they should (bit_set_reset_address)");
+                    old_op.bit_set_reset_address == TplOp.bit_alias_address,
+                    "Old and new OP doesn't mach in fields where they should (bit_alias_address)");
 
                 static_assert(
                     old_op.writable == TplOp.writable,
@@ -92,7 +92,7 @@ namespace soc::gpio {
 
                 constexpr Op new_op{
                     .address = TplOp.address,
-                    .bit_set_reset_address = TplOp.bit_set_reset_address,
+                    .bit_alias_address = TplOp.bit_alias_address,
                     .value = TplOp.value | old_op.value,
                     .mask = TplOp.mask | old_op.mask,
                     .writable = TplOp.writable,

@@ -178,14 +178,14 @@ namespace peripheral::gpio{
     template<PinInputDrive TplDrive>
     WCH_OPTIMIZE_GPIO_PIN inline constexpr soc::gpio::Op Pin<TplBaseAddress, TplPortNumber, TplPinNumber>::mode_input_op_ct() {
         return {
-            .address               = register_address_configuration,
-            .bit_set_reset_address = 0U,
-            .value                 = register_configuration_shift<static_cast<std::uint32_t>(TplDrive)>(),
-            .mask                  = register_configuration_shift<mask_configuration_keep>(),
-            .writable              = full_of_ones,
-            .port_number           = TplPortNumber,
-            .reset_value           = pin_reset_mode,
-            .reset_bit_offset      = pin_reset_out_data_offset
+            .address           = register_address_configuration,
+            .bit_alias_address = 0U,
+            .value             = register_configuration_shift<static_cast<std::uint32_t>(TplDrive)>(),
+            .mask              = register_configuration_shift<mask_configuration_keep>(),
+            .writable          = full_of_ones,
+            .port_number       = TplPortNumber,
+            .reset_value       = pin_reset_mode,
+            .reset_bits        = pin_reset_out_data_offset
         };
     }
 
@@ -207,14 +207,14 @@ namespace peripheral::gpio{
             0U;
 
         return {
-            .address               =  register_address_configuration,
-            .bit_set_reset_address = 0U,
-            .value                 = register_configuration_shift<slew | drive | multiplexing>(),
-            .mask                  = register_configuration_shift<mask_configuration_keep>(),
-            .writable              = full_of_ones,
-            .port_number           = TplPortNumber,
-            .reset_value           = pin_reset_mode,
-            .reset_bit_offset      = pin_reset_out_data_offset
+            .address           =  register_address_configuration,
+            .bit_alias_address = 0U,
+            .value             = register_configuration_shift<slew | drive | multiplexing>(),
+            .mask              = register_configuration_shift<mask_configuration_keep>(),
+            .writable          = full_of_ones,
+            .port_number       = TplPortNumber,
+            .reset_value       = pin_reset_mode,
+            .reset_bits        = pin_reset_out_data_offset
         };
     }
 
@@ -232,14 +232,14 @@ namespace peripheral::gpio{
         static_assert(TplValue <= 1U, "Single pin value must be 0 or 1");
 
         return {
-            .address               = register_address_output_data,
-            .bit_set_reset_address = register_address_set_reset,  // if we can use set/reset register if we want
-            .value                 = register_pin_data_shift_ct<TplValue>(),
-            .mask                  = register_pin_data_shift_ct<0b1U>(),
-            .writable              = 0b1111'1111U, // Only 8pins in output data port
-            .port_number           = TplPortNumber,
-            .reset_value           = pin_reset_out_data,
-            .reset_bit_offset      = pin_reset_out_data_offset
+            .address           = register_address_output_data,
+            .bit_alias_address = register_address_set_reset,  // if we can use set/reset register if we want
+            .value             = register_pin_data_shift_ct<TplValue>(),
+            .mask              = register_pin_data_shift_ct<0b1U>(),
+            .writable          = 0b1111'1111U, // Only 8pins in output data port
+            .port_number       = TplPortNumber,
+            .reset_value       = pin_reset_out_data,
+            .reset_bits        = pin_reset_out_data_offset
         };
     }
 
